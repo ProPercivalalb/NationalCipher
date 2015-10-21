@@ -23,12 +23,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.geom.Rectangle2D;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -63,6 +57,7 @@ import javalibrary.listener.CustomMouseListener;
 import javalibrary.math.ArrayHelper;
 import javalibrary.math.MathHelper;
 import javalibrary.math.Rounder;
+import javalibrary.math.Statistics;
 import javalibrary.math.Units.Time;
 import javalibrary.string.LetterCount;
 import javalibrary.string.StringAnalyzer;
@@ -70,9 +65,11 @@ import javalibrary.string.StringTransformer;
 import javalibrary.swing.FrameUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.ProgressValue;
+import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
+import javalibrary.thread.Threads;
 import javalibrary.util.MapHelper;
 
 import javax.swing.BorderFactory;
@@ -243,9 +240,9 @@ public class UIDefinition extends JFrame {
 		cancel.addActionListener(new ActionListener () {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if(thread != null) {
+				if(thread != null)
 					thread.stop();
-				}
+				
 				DecimalFormat df = new DecimalFormat("#.#");
 				outputObj.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
 				outputObj.println("");
@@ -1093,14 +1090,9 @@ public class UIDefinition extends JFrame {
 								counts.put(s, counts.containsKey(s) ? counts.get(s) + 1 : 1);
 							}
 							
-							double average =  MathHelper.sum(counts.values()) / (double)counts.size();
-						    
-						    double totalDiff = 0.0D;
-						    for(String s : counts.keySet()) {
-						    	double diff = average - counts.get(s);
-						    	totalDiff += Math.pow(diff, 2);
-						    }
-						    double variance = totalDiff / counts.size();
+							Statistics stats = new Statistics(counts.values());
+
+						    double variance = stats.getVariance();
 						 
 							chartList.add(new ChartData("Step: " + step, variance));
 							values.put(step, variance);
@@ -1194,9 +1186,9 @@ public class UIDefinition extends JFrame {
 						orders2 = new ArrayList<Integer[]>();
 						
 						for(int length = 2; length <= 6; length++)
-							permutate(text, ArrayHelper.range(0, length), 0, true);
+							permutate(text, ArrayHelper.range(0, length), 0, true, Main.instance.language);
 						for(int length = 2; length <= 6; length++)
-							permutate(text, ArrayHelper.range(0, length), 0, false);
+							permutate(text, ArrayHelper.range(0, length), 0, false, Main.instance.language);
 						
 						String s = "";
 						
@@ -1238,10 +1230,10 @@ public class UIDefinition extends JFrame {
 	private double closestIC = Double.MAX_VALUE;
 	private List<Integer[]> orders2 = new ArrayList<Integer[]>();
 	
-	public void permutate(String text, int[] arr, int pos, boolean flag) {
+	public void permutate(String text, int[] arr, int pos, boolean flag, ILanguage language) {
 	    if(arr.length - pos == 1) {
 	    	String s = ColumnarRow.decode(text, arr);
-	    	double n = calculate(s);
+	    	double n = calculate(s, language);
 	    	double ic = indexOfc(s);
 
 	    	Integer[] newArray = new Integer[arr.length];
@@ -1272,7 +1264,7 @@ public class UIDefinition extends JFrame {
 	            arr[pos] = j;
 	            arr[i] = h;
 	            
-	            permutate(text, arr, pos + 1, flag);
+	            permutate(text, arr, pos + 1, flag, language);
 	            arr[pos] = h;
 	    	    arr[i] = j;
 	        }
@@ -1314,24 +1306,22 @@ public class UIDefinition extends JFrame {
 		return total / (length * (length - 1));
 	}
 	
-	public static double calculate(String text) {
-		Map<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, 2, 2, false);
-		letters = MapHelper.sortMapByValue(letters, false);
-		//System.out.println(letters);
+	public static double calculate(String text, ILanguage language) {
+		Map<String, Integer> letters = MapHelper.sortMapByValue(StringAnalyzer.getEmbeddedStrings(text, 2, 2, false), false);
 		double total = 0.0D;
 		
-		double[] normalOrder = new double[] {12.702, 9.056, 8.167, 7.507, 6.996, 6.749, 6.327, 6.094, 5.987, 4.253, 4.025, 2.782, 2.758, 2.406, 2.36, 2.228, 2.015, 1.974, 1.929, 1.492, 0.978, 0.772, 0.153, 0.15, 0.095, 0.074};
-		
+		List<Double> normalOrder = language.getFrequencyLargestFirst();
+		System.out.println(normalOrder);
 		int index = 0;
 		for(String letter : letters.keySet()) {
 			
 			double count = letters.get(letter);
-			double expectedCount = normalOrder[index] * (text.length() / 2) / 100;
+			double expectedCount = normalOrder.get(index) * (text.length() / 2) / 100;
 			
 			double sum = Math.abs(count - expectedCount);
 			index += 1;
 			total += sum;
-			if(index >= normalOrder.length)
+			if(index >= normalOrder.size())
 				break;
 		}
 		//while(index < 26) {
@@ -1347,13 +1337,11 @@ public class UIDefinition extends JFrame {
 	}
 
 	public void finalizeObjects() {
-		Thread thread = new Thread(new Runnable() {
-
+		//Loading
+		Threads.runTask(new Runnable() {
 			@Override
 			public void run() {
-				disableAll(contentPane, false);
-				disableAll(menuBar, false);
-
+				Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents(contentPane, menuBar);
 
                 JProgressBar loadBar = new JProgressBar(0, Languages.languages.size() + 3);
                 loadBar.setStringPainted(true);
@@ -1361,7 +1349,7 @@ public class UIDefinition extends JFrame {
 				
                 Object[] options = {"Cancel"};
 
-				JOptionPane optionPane = new JOptionPane(loadBar, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, null,options, options[0]);
+				JOptionPane optionPane = new JOptionPane(loadBar, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, null, options, options[0]);
 				JDialog dialog = optionPane.createDialog(contentPane, "Loading...");
 				dialog.setModal(false);
 				dialog.setVisible(true);
@@ -1382,42 +1370,16 @@ public class UIDefinition extends JFrame {
 					loadBar.setValue(loadBar.getValue() + 1);
 				}
 				
-				disableReturn(contentPane);
-				disableReturn(menuBar);
+				SwingHelper.rewindAllChildComponents(stateMap);
 				dialog.dispose();
 			}
 		});
-		thread.start();
 	}
 	
-	public HashMap<Component, Boolean> lastEnabled = new HashMap<Component, Boolean>();
-	
-	public void disableAll(JComponent component, boolean enabled) {
-		Component[] com = component.getComponents();
-		
-		for(int a = 0; a < com.length; a++) {
-			this.lastEnabled.put(com[a], com[a].isEnabled());
-			com[a].setEnabled(enabled);
-			if(com[a] instanceof JComponent)
-				disableAll((JComponent)com[a], enabled);
-		}
-	}
-	
-	public void disableReturn(JComponent component) {
-		Component[] com = component.getComponents();
-		
-		for(int a = 0; a < com.length; a++) {
-			com[a].setEnabled(lastEnabled.get(com[a]));
-			if(com[a] instanceof JComponent)
-				disableReturn((JComponent)com[a]);
-		}
-	}
-		
 	public void end() {
 		this.pack();
 		FrameUtil.repostionToCentre(this);
         this.setVisible(true);
-		
 	}
 
 	public void addText(String text, Object... format) {
