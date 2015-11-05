@@ -47,9 +47,10 @@ import javalibrary.cipher.auto.ColumnarAuto;
 import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.cipher.stats.StatisticType;
 import javalibrary.cipher.stats.TraverseTree;
+import javalibrary.cipher.stats.WordSplit;
 import javalibrary.dict.Dictionary;
 import javalibrary.fitness.ChiSquared;
-import javalibrary.fitness.QuadgramStats;
+import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
@@ -92,6 +93,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -119,6 +121,7 @@ public class UIDefinition extends JFrame {
 	public JTextArea output;
 	public JTextArea input;
 	
+	public JPanel base;
 	public JPanel contentPane;
 	public JMenuBar menuBar;
 	public JMenu file;
@@ -138,8 +141,6 @@ public class UIDefinition extends JFrame {
 	public JMenuItem modular;
 	public JMenuItem multiplicativeFactors;
 	public JMenuItem binaryToString;
-	public JMenuItem bifidPeriod;
-	public JMenuItem adfgvxKey;
 	
 	public JProgressBar progressBar;
 	public JTextField mostLikely;
@@ -152,25 +153,6 @@ public class UIDefinition extends JFrame {
 	}
 	
 	public void initializeObjects() {
-		contentPane = new JPanel();
-		
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-		contentPane.setOpaque(true); 
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		this.setContentPane(contentPane);
-		
-		JPanel topPanel = new JPanel();
-		topPanel.setBorder(new EmptyBorder(0, 0, 5, 0));
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-		
-		final JComboBox cipher = new JComboBox(ForceDecryptManager.getNames());
-		cipher.setMaximumSize(new Dimension(180, 20));
-		topPanel.add(cipher);
-		final JButton decode = new JButton("Force Decrypt");
-		final JButton dictionary = new JButton("Dictionary Attack");
-		dictionary.setEnabled(ForceDecryptManager.ciphers.get(cipher.getSelectedIndex()).canDictionaryAttack());
-		final JButton cancel = new JButton("Cancel");
-		cancel.setEnabled(false);
 		final Output outputObj = new Output() {
 
 			@Override
@@ -184,6 +166,74 @@ public class UIDefinition extends JFrame {
 			}
 			
 		};
+		
+		base = new JPanel();
+		base.setLayout(new BoxLayout(base, BoxLayout.X_AXIS));
+		
+		contentPane = new JPanel();
+		
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		contentPane.setOpaque(true); 
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
+		JPanel helperPanel = new JPanel();
+		helperPanel.setLayout(new BoxLayout(helperPanel, BoxLayout.Y_AXIS));
+		helperPanel.setOpaque(true); 
+		helperPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		helperPanel.setPreferredSize(new Dimension(500, 0));
+		
+		final JTabbedPane tabbedPane = new JTabbedPane();
+		
+		for(IStatisticsPanel ispanel : IStatisticsPanel.panels) {
+			tabbedPane.addTab(ispanel.getName(), ispanel.getIcon(), ispanel.createPanel(), ispanel.getDescription());
+		}
+		helperPanel.add(tabbedPane);
+		JButton button = new JButton("Update");
+		button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JButton button = (JButton)event.getSource();
+				if(input.getText() == null || input.getText().isEmpty())
+					return;
+
+				IStatisticsPanel.panels.get(tabbedPane.getSelectedIndex()).update(input.getText(), Main.instance.language, outputObj);
+			}
+			
+		});
+		
+		tabbedPane.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent event) {
+				if(input.getText() == null || input.getText().isEmpty())
+					return;
+
+				IStatisticsPanel.panels.get(tabbedPane.getSelectedIndex()).update(input.getText(), Main.instance.language, outputObj);
+			}
+			
+		});
+		helperPanel.add(button);
+		
+		base.add(contentPane);
+		base.add(helperPanel);
+		
+		this.setContentPane(base);
+		
+		
+		JPanel topPanel = new JPanel();
+		topPanel.setBorder(new EmptyBorder(0, 0, 5, 0));
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		
+		final JComboBox cipher = new JComboBox(ForceDecryptManager.getNames());
+		cipher.setMaximumSize(new Dimension(180, 20));
+		topPanel.add(cipher);
+		final JButton decode = new JButton("Force Decrypt");
+		final JButton dictionary = new JButton("Dictionary Attack");
+		dictionary.setEnabled(ForceDecryptManager.ciphers.get(cipher.getSelectedIndex()).canDictionaryAttack());
+		final JButton cancel = new JButton("Cancel");
+		cancel.setEnabled(false);
+	
 		cipher.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -350,11 +400,10 @@ public class UIDefinition extends JFrame {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBorder(new EmptyBorder(5, 5, 5, 0));
 		buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonPanel.setLayout(new GridLayout(4, 1));
+		buttonPanel.setLayout(new GridLayout(3, 1));
 		JButton uppercase = new JButton("Uppercase");
 		JButton nospaces = new JButton("Remove _");
 		JButton nonletters = new JButton("Keep A-Z");
-		JButton textStats = new JButton("Text Stats");
 		uppercase.addMouseListener(new CustomMouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent event) {
@@ -379,82 +428,12 @@ public class UIDefinition extends JFrame {
 			}
 		});
 		
-		textStats.addMouseListener(new CustomMouseListener() {
-			@Override
-			public void mouseClicked(MouseEvent event) {
-				JFrame panel = new JFrame();
-				
-				final JTextArea output = new JTextArea();
-				JScrollPane outputScrollPanel = new JScrollPane(output);
-				outputScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				outputScrollPanel.setPreferredSize(new Dimension(1000, 200));
-				output.setEditable(false);
-				
-				String cipherText = input.getText();
-				int length = cipherText.length();
-				
-				String text = "Length: " + length;
-
-
-				text += "\n IC: " + StatCalculator.calculateIC(cipherText);
-				text += "\n MIC: " + StatCalculator.calculateMIC(cipherText);
-			    text += "\n MKA: " + StatCalculator.calculateMKA(cipherText);
-			    text += "\n DIC: " + StatCalculator.calculateDIC(cipherText);
-			    text += "\n EDI: " + StatCalculator.calculateEDI(cipherText);
-			    text += "\n LR: " + StatCalculator.calculateLR(cipherText);
-			    text += "\n ROD: " + StatCalculator.calculateROD(cipherText);
-			    text += "\n LDI: " + StatCalculator.calculateLDI(cipherText);
-			    text += "\n SDD: " + StatCalculator.calculateSDD(cipherText);
-			    
-			    text += "\n DIV_2: " + StatCalculator.calculateDIV2(cipherText);
-			    text += "\n DIV_3: " + StatCalculator.calculateDIV3(cipherText);
-			    text += "\n DIV_5: " + StatCalculator.calculateDIV5(cipherText);
-			    text += "\n DIV_25: " + StatCalculator.calculateDIV25(cipherText);
-			    text += "\n DIV_4_15: " + StatCalculator.calculateDIV4_15(cipherText);
-			    text += "\n DIV_4_30: " + StatCalculator.calculateDIV4_30(cipherText);
-			    text += "\n PSQ: " + StatCalculator.calculatePSQ(cipherText);
-			    text += "\n HAS_LETTERS: " + StatCalculator.calculateHASL(cipherText);
-			    text += "\n HAS_DIGITS: " + StatCalculator.calculateHASD(cipherText);
-			    text += "\n HAS_J: " + StatCalculator.calculateHASJ(cipherText);
-			    text += "\n HAS_#: " + StatCalculator.calculateHASH(cipherText);
-			    text += "\n DBL: " + StatCalculator.calculateDBL(cipherText);
-			    
-			    text += "\n A_LDI: " + StatCalculator.calculateALDI(cipherText);
-			    text += "\n B_LDI: " + StatCalculator.calculateBLDI(cipherText);
-			    text += "\n P_LDI: " + StatCalculator.calculatePLDI(cipherText);
-			    text += "\n S_LDI: " + StatCalculator.calculateSLDI(cipherText);
-			    text += "\n V_LDI: " + StatCalculator.calculateVLDI(cipherText);
-			    
-			    text += "\n NOMOR: " + StatCalculator.calculateNOMOR(cipherText);
-			    text += "\n RDI: " + StatCalculator.calculateRDI(cipherText);
-			    text += "\n PTX: " + StatCalculator.calculatePTX(cipherText);
-			    text += "\n NIC: " +  StatCalculator.calculateNIC(cipherText);
-			    text += "\n PHIC: " + StatCalculator.calculatePHIC(cipherText);
-			    text += "\n HAS_0: " + StatCalculator.calculateHAS0(cipherText);
-			    text += "\n BDI: " +  StatCalculator.calculateBDI(cipherText);
-			    text += "\n CDD: " +  StatCalculator.calculateCDD(cipherText);
-			    text += "\n SSTD: " +  StatCalculator.calculateSSTD(cipherText);
-			    text += "\n MPIC: " + StatCalculator.calculateMPIC(cipherText);
-			    text += "\n SERP: " + StatCalculator.calculateSERP(cipherText);
-			    
-				text += "\n Suggested Fitness: " + QuadgramStats.getEstimatedFitness(cipherText, Main.instance.language);
-				
-				output.setText(text);
-				
-				
-				panel.add(output);
-				panel.pack();
-				panel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				panel.setVisible(true);
-			}
-		});
 		buttonPanel.setPreferredSize(new Dimension(200, 200));
 		buttonPanel.setMaximumSize(new Dimension(300, 200));
 		
 		buttonPanel.add(uppercase);
 		buttonPanel.add(nospaces);
 		buttonPanel.add(nonletters);
-		buttonPanel.add(textStats);
 		inputPanel.add(buttonPanel);
 		contentPane.add(inputPanel);
 		
@@ -608,10 +587,10 @@ public class UIDefinition extends JFrame {
 				HashMap<StatisticType, Double> currentData = new HashMap<StatisticType, Double>();
 			    
 			    currentData.put(StatisticType.INDEX_OF_COINCIDENCE, StatCalculator.calculateIC(cipherText));
-			    currentData.put(StatisticType.MAX_IOC, StatCalculator.calculateMIC(cipherText));
-			    currentData.put(StatisticType.MAX_KAPPA, StatCalculator.calculateMKA(cipherText));
-			    currentData.put(StatisticType.DIGRAPHIC_IOC, StatCalculator.calculateDIC(cipherText));
-			    currentData.put(StatisticType.EVEN_DIGRAPHIC_IOC, StatCalculator.calculateEDI(cipherText));
+			    currentData.put(StatisticType.MAX_IOC, StatCalculator.calculateMaxIC(cipherText, 1, 15));
+			    currentData.put(StatisticType.MAX_KAPPA, StatCalculator.calculateMaxKappaIC(cipherText, 1, 15));
+			    currentData.put(StatisticType.DIGRAPHIC_IOC, StatCalculator.calculateDiagrahpicIC(cipherText));
+			    currentData.put(StatisticType.EVEN_DIGRAPHIC_IOC, StatCalculator.calculateEvenDiagrahpicIC(cipherText) * 10000);
 			    currentData.put(StatisticType.LONG_REPEAT_3, StatCalculator.calculateLR(cipherText));
 			    currentData.put(StatisticType.LONG_REPEAT_ODD, StatCalculator.calculateROD(cipherText));
 			    currentData.put(StatisticType.LOG_DIGRAPH, StatCalculator.calculateLDI(cipherText));
@@ -649,10 +628,10 @@ public class UIDefinition extends JFrame {
 			    Object[] statValues = new Object[38];
 			    
 			    statValues[0] = StatCalculator.calculateIC(cipherText);
-				statValues[1] = StatCalculator.calculateMIC(cipherText);
-				statValues[2] = StatCalculator.calculateMKA(cipherText);
-				statValues[3] = StatCalculator.calculateDIC(cipherText);
-				statValues[4] = StatCalculator.calculateEDI(cipherText);
+				statValues[1] = StatCalculator.calculateMaxIC(cipherText, 1, 15);
+				statValues[2] = StatCalculator.calculateMaxKappaIC(cipherText, 1, 15);
+				statValues[3] = StatCalculator.calculateDiagrahpicIC(cipherText);
+				statValues[4] = StatCalculator.calculateEvenDiagrahpicIC(cipherText) * 10000;
 				statValues[5] = StatCalculator.calculateLR(cipherText);
 				statValues[6] = StatCalculator.calculateROD(cipherText);
 				statValues[7] = StatCalculator.calculateLDI(cipherText);
@@ -660,17 +639,17 @@ public class UIDefinition extends JFrame {
 			    
 				statValues[9] = "CIPHER";
 			    
-				statValues[10] = StatCalculator.calculateDIV2(cipherText);
-				statValues[11] = StatCalculator.calculateDIV3(cipherText);
-				statValues[12] = StatCalculator.calculateDIV5(cipherText);
-				statValues[13] = StatCalculator.calculateDIV25(cipherText);
-				statValues[14] = StatCalculator.calculateDIV4_15(cipherText);
-				statValues[15] = StatCalculator.calculateDIV4_30(cipherText);
-				statValues[16] = StatCalculator.calculatePSQ(cipherText);
-				statValues[17] = StatCalculator.calculateHASL(cipherText);
-				statValues[18] = StatCalculator.calculateHASD(cipherText);
-				statValues[19] = StatCalculator.calculateHASJ(cipherText);
-				statValues[20] = StatCalculator.calculateHASH(cipherText);
+				statValues[10] = StatCalculator.isLengthDivisible2(cipherText);
+				statValues[11] = StatCalculator.isLengthDivisible3(cipherText);
+				statValues[12] = StatCalculator.isLengthDivisible5(cipherText);
+				statValues[13] = StatCalculator.isLengthDivisible25(cipherText);
+				statValues[14] = StatCalculator.isLengthDivisible4_15(cipherText);
+				statValues[15] = StatCalculator.isLengthDivisible4_30(cipherText);
+				statValues[16] = StatCalculator.isLengthPerfectSquare(cipherText);
+				statValues[17] = StatCalculator.containsLetter(cipherText);
+				statValues[18] = StatCalculator.containsDigit(cipherText);
+				statValues[19] = StatCalculator.containsJ(cipherText);
+				statValues[20] = StatCalculator.containsHash(cipherText);
 				statValues[21] = StatCalculator.calculateDBL(cipherText);
 				
 				
@@ -679,17 +658,17 @@ public class UIDefinition extends JFrame {
 				statValues[24] = StatCalculator.calculatePLDI(cipherText);
 				statValues[25] = StatCalculator.calculateSLDI(cipherText);
 				statValues[26] = StatCalculator.calculateVLDI(cipherText);
-				statValues[27] = StatCalculator.calculateNOMOR(cipherText);
+				statValues[27] = StatCalculator.calculateNormalOrder(cipherText, Main.instance.language);
 				statValues[28] = StatCalculator.calculateRDI(cipherText);
 				statValues[29] = StatCalculator.calculatePTX(cipherText);
-				statValues[30] = StatCalculator.calculateNIC(cipherText);
+				statValues[30] = StatCalculator.calculateMaxNicodemusIC(cipherText, 3, 15);
 				statValues[31] = StatCalculator.calculatePHIC(cipherText);
 				statValues[32] = StatCalculator.calculateHAS0(cipherText);
-				statValues[33] = StatCalculator.calculateBDI(cipherText);
+				statValues[33] = StatCalculator.calculateMaxBifidDiagraphicIC(cipherText, 3, 15);
 				statValues[34] = StatCalculator.calculateCDD(cipherText);
 				statValues[35] = StatCalculator.calculateSSTD(cipherText);
 				statValues[36] = StatCalculator.calculateMPIC(cipherText);
-				statValues[37] = StatCalculator.calculateSERP(cipherText);
+				statValues[37] = StatCalculator.calculateSeriatedPlayfair(cipherText);
 			    
 				Map<String, Integer> answers = new HashMap<String, Integer>();
 				
@@ -1050,315 +1029,42 @@ public class UIDefinition extends JFrame {
 	    
 		this.helper.add(this.binaryToString);
 		
-		this.bifidPeriod = new JMenuItem("Bifid Period");
-	    this.bifidPeriod.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JPanel panel = new JPanel();
-			    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			    
-			    final JTextArea input = new JTextArea();
-				JScrollPane inputScrollPanel = new JScrollPane(input);
-				inputScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				inputScrollPanel.setPreferredSize(new Dimension(500, 200));
-				input.setLineWrap(true);
-
-				final JBarChart chart = new JBarChart(new ChartList()).setHasBarText(false);
-			    chart.setMinimumSize(new Dimension(1000, 200));
-			    chart.setMaximumSize(new Dimension(1000, 200));
-			    chart.setPreferredSize(new Dimension(1000, 200));
-			    chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Steps 1-20"));
-			    final JLabel label = new JLabel("Guess Period: ");
-				JButton button = new JButton("Convert");
-				button.addMouseListener(new CustomMouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent event) {
-						String text = input.getText();
-						ChartList chartList = new ChartList();
-						
-						Map<Integer, Double> values = new HashMap<Integer, Double>();
-						double maxValue = Double.MIN_VALUE;
-						int maxStep = 0;
-						
-						double secondValue = Double.MIN_VALUE;
-						
-						for(int step = 1; step < 20; step++) {
-							HashMap<String, Integer> counts = new HashMap<String, Integer>();
-							for(int i = 0; i < text.length() - step; i++) {
-								String s = text.charAt(i) + "" + text.charAt(i + step);
-								counts.put(s, counts.containsKey(s) ? counts.get(s) + 1 : 1);
-							}
-							
-							Statistics stats = new Statistics(counts.values());
-
-						    double variance = stats.getVariance();
-						 
-							chartList.add(new ChartData("Step: " + step, variance));
-							values.put(step, variance);
-							
-							if(variance > maxValue) {
-								secondValue = maxValue;
-								maxValue = variance;
-								maxStep = step;
-							}
-							else if(variance > secondValue) {
-								secondValue = variance;
-							}
-						}
-		
-						
-						int periodGuess = 0;
-		
-						if(maxValue - maxValue / 4 > secondValue)
-							periodGuess = maxStep * 2;
-						else {
-							double max = Double.MAX_VALUE;
-							int bestStep = 0;
-							
-							for(int step = maxStep - 1; step <= maxStep + 1; step++) {
-								if(step < 1 || step == maxStep || maxStep > 20)
-									continue;
-								
-								double diff = Math.abs(values.get(maxStep) - values.get(step));
-								if(diff < max) {
-									max = diff;
-									bestStep = step;
-								}
-							}
-							
-							
-							periodGuess = Math.min(bestStep, maxStep) * 2 + Math.abs(bestStep - maxStep);
-						}
-						
-						label.setText("Guess Period: " + periodGuess);
-						
-						chart.values = chartList;
-						chart.updateUI();
-					}
-				});
-				
-				panel.add(inputScrollPanel);
-			    panel.add(chart);
-				panel.add(button);
-				panel.add(label);
-				
-			    JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
-			    JDialog dialog = optionPane.createDialog(Main.instance.definition, "Bifid Period");
-			    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			    dialog.setModal(true);
-			    dialog.setVisible(true);
-			}
-	    });
-	    
-		this.helper.add(this.bifidPeriod);
-		
-		this.adfgvxKey = new JMenuItem("ADFGVX Key");
-	    this.adfgvxKey.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JPanel panel = new JPanel();
-			    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			    
-			    final JTextArea input = new JTextArea();
-				JScrollPane inputScrollPanel = new JScrollPane(input);
-				inputScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				inputScrollPanel.setPreferredSize(new Dimension(500, 200));
-				input.setLineWrap(true);
-
-				final JTextArea output = new JTextArea();
-				JScrollPane outputScrollPanel = new JScrollPane(output);
-				outputScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				outputScrollPanel.setPreferredSize(new Dimension(500, 200));
-				output.setLineWrap(true);
-				output.setEditable(false);
-				
-				JButton button = new JButton("Convert");
-				button.addMouseListener(new CustomMouseListener() {
-					@Override
-					public void mouseClicked(MouseEvent event) {
-						final String text = input.getText();
-						
-						smallest = Double.MAX_VALUE;
-						orders1 = new ArrayList<Integer[]>();
-						closestIC = Double.MAX_VALUE;
-						orders2 = new ArrayList<Integer[]>();
-						
-						for(int length = 2; length <= 6; length++)
-							permutate(text, ArrayHelper.range(0, length), 0, true, Main.instance.language);
-						for(int length = 2; length <= 6; length++)
-							permutate(text, ArrayHelper.range(0, length), 0, false, Main.instance.language);
-						
-						String s = "";
-						
-						s += "Like english: " + smallest + "\n";
-						for(Integer[] i : orders1) {
-							s += Arrays.toString(i) + "\n";
-						}
-						
-						s += "\nIOC: " + closestIC + " off normal\n";
-						
-						for(Integer[] i : orders2) {
-							s += Arrays.toString(i) + "\n";
-						}
-						
-						output.setText(s);
-					}
-				});
-				
-				panel.add(inputScrollPanel);
-				panel.add(outputScrollPanel);
-				panel.add(button);
-				
-			    JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
-			    JDialog dialog = optionPane.createDialog(Main.instance.definition, "ADFGVX Key");
-			    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			    dialog.setModal(true);
-			    dialog.setVisible(true);
-			}
-	    });
-	    
-		this.helper.add(this.adfgvxKey);
-		
 		//Add the components pane to this panel.
 		this.setJMenuBar(this.menuBar);
 	}
-	
-	private double smallest = Double.MAX_VALUE;
-	private List<Integer[]> orders1 = new ArrayList<Integer[]>();
-	private double closestIC = Double.MAX_VALUE;
-	private List<Integer[]> orders2 = new ArrayList<Integer[]>();
-	
-	public void permutate(String text, int[] arr, int pos, boolean flag, ILanguage language) {
-	    if(arr.length - pos == 1) {
-	    	String s = ColumnarRow.decode(text, arr);
-	    	double n = calculate(s, language);
-	    	double ic = indexOfc(s);
 
-	    	Integer[] newArray = new Integer[arr.length];
-	    	int i = 0;
-	    	for (int value : arr)
-	    	    newArray[i++] = Integer.valueOf(value);
-	    	
-	    	
-	    	if(flag && n <= this.smallest) {
-	    		if(n != this.smallest)
-	    			orders1.clear();
-	    		orders1.add(newArray);
-	    		this.smallest = n;
-	    	}
-	    	double diff = Math.abs(Languages.english.getNormalCoincidence() - ic);
-	    	if(!flag && diff <= closestIC) {
-	    		if(n != this.smallest)
-	    			orders2.clear();
-	    		orders2.add(newArray);
-	    		
-	    		this.closestIC = diff;
-	    	}
-	    }
-	    else
-	        for(int i = pos; i < arr.length; i++) {
-	            int h = arr[pos];
-	            int j = arr[i];
-	            arr[pos] = j;
-	            arr[i] = h;
-	            
-	            permutate(text, arr, pos + 1, flag, language);
-	            arr[pos] = h;
-	    	    arr[i] = j;
-	        }
-	}
-	
-	public int findKeywordLength(String text, ILanguage language) {
-		int bestLength = 2;
-	
-	    double smallestDifference = Double.MAX_VALUE;
-	    for(int i = 2; i <= 15; ++i) {
-	    	double total = 0;
-	    	String temp = StringTransformer.rotateRight(text, i);
-		    for(int j = 0; j < text.length(); j += 2)
-		       if(temp.substring(j, j + 2).equals(text.substring(j, j + 2)))
-		    	   total += 1;
-	    	
-	    	double average = total / (text.length() / 2);
-	    	double currentSquaredDiff = Math.abs((language.getNormalCoincidence() - average));
-	    	
-	        if(currentSquaredDiff < smallestDifference) {
-	        	bestLength = i;
-	        	smallestDifference = currentSquaredDiff;
-	        }
-	    }
-	    
-	    return bestLength;
-	}	
-	
-	public static double indexOfc(String text) {
-		Map<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, 2, 2, false);
-
-		double total = 0.0D;
-		
-		for(String letter : letters.keySet())
-			total += letters.get(letter) * (letters.get(letter) - 1);
-
-		int length = text.length() / 2;
-		
-		return total / (length * (length - 1));
-	}
-	
-	public static double calculate(String text, ILanguage language) {
-		Map<String, Integer> letters = MapHelper.sortMapByValue(StringAnalyzer.getEmbeddedStrings(text, 2, 2, false), false);
-		double total = 0.0D;
-		
-		List<Double> normalOrder = language.getFrequencyLargestFirst();
-		System.out.println(normalOrder);
-		int index = 0;
-		for(String letter : letters.keySet()) {
-			
-			double count = letters.get(letter);
-			double expectedCount = normalOrder.get(index) * (text.length() / 2) / 100;
-			
-			double sum = Math.abs(count - expectedCount);
-			index += 1;
-			total += sum;
-			if(index >= normalOrder.size())
-				break;
-		}
-		//while(index < 26) {
-		//	total += normalOrder[index] * (text.length() / 2) / 100;
-		//	index += 1;
-		//}
-		
-		return total;
-	}
 
 	public void placeObjects() {
 		
 	}
 
 	public void finalizeObjects() {
+		final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents(base, menuBar);
+        final JProgressBar loadBar = new JProgressBar(0, Languages.languages.size() + 4);
+        loadBar.setStringPainted(true);
+        loadBar.setPreferredSize(new Dimension(500, 60));
+		
+        Object[] options = {"Cancel"};
+
+		JOptionPane optionPane = new JOptionPane(loadBar, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, null, options, options[0]);
+		final JDialog dialog = optionPane.createDialog(contentPane, "Loading...");
+		dialog.setModal(false);
+		dialog.setVisible(true);
+		dialog.setLocationRelativeTo(UIDefinition.this);
+		
 		//Loading
 		Threads.runTask(new Runnable() {
 			@Override
 			public void run() {
-				Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents(contentPane, menuBar);
 
-                JProgressBar loadBar = new JProgressBar(0, Languages.languages.size() + 3);
-                loadBar.setStringPainted(true);
-                loadBar.setPreferredSize(new Dimension(500, 60));
-				
-                Object[] options = {"Cancel"};
-
-				JOptionPane optionPane = new JOptionPane(loadBar, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, null, options, options[0]);
-				JDialog dialog = optionPane.createDialog(contentPane, "Loading...");
-				dialog.setModal(false);
-				dialog.setVisible(true);
-				dialog.setLocationRelativeTo(UIDefinition.this);
 				dialog.setTitle("Loading... TranverseTree");
 				TraverseTree.onLoad();
 				loadBar.setValue(loadBar.getValue() + 1);
 				dialog.setTitle("Loading... Dictinary");
 				Dictionary.onLoad();
+				loadBar.setValue(loadBar.getValue() + 1);
+				dialog.setTitle("Loading... Word statitics");
+				WordSplit.loadFile();
 				loadBar.setValue(loadBar.getValue() + 1);
 				dialog.setTitle("Loading... SaveData");
 				SaveHandler.load();
