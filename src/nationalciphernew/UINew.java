@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -16,20 +18,29 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -64,15 +75,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
 import javalibrary.ForceDecryptManager;
+import javalibrary.IForceDecrypt;
 import javalibrary.Output;
+import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.cipher.stats.TraverseTree;
 import javalibrary.cipher.stats.WordSplit;
 import javalibrary.dict.Dictionary;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
+import javalibrary.lib.Timer;
 import javalibrary.math.MathHelper;
 import javalibrary.math.Rounder;
+import javalibrary.math.Statistics;
+import javalibrary.math.Units.Time;
 import javalibrary.string.LetterCount;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
@@ -81,6 +97,7 @@ import javalibrary.swing.ButtonUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
+import javalibrary.swing.ProgressValue;
 import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
@@ -99,9 +116,20 @@ public class UINew extends JFrame {
 	public Settings settings;
 	public Output output;
 
+	private Thread thread;
+	private Timer threadTimer;
+	private List<JDialog> dialogs;
+	private List<JDialog> lastStates;
+	
+	private WindowListener windowListener;
+	private WindowStateListener windowStateListener;
+	
     public UINew() {
     	super("Cryptography Solver");
     	this.settings = new Settings();
+    	this.threadTimer = new Timer();
+    	this.dialogs = new ArrayList<JDialog>();
+    	this.lastStates = new ArrayList<JDialog>();
     	
         initComponents();
         finishComponents();
@@ -117,13 +145,13 @@ public class UINew extends JFrame {
         Object[] options = {"Cancel"};
 
 		JOptionPane optionPane = new JOptionPane(loadBar, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, null, options, options[0]);
-		final JDialog dialog = optionPane.createDialog(UINew.this, "Loading...");
+		final JDialog dialog = optionPane.createDialog(this, "Loading...");
 		dialog.setModal(false);
 		dialog.setVisible(true);
-		dialog.setLocationRelativeTo(UINew.this);
+		dialog.setLocationRelativeTo(this);
 		
 		//Loading
-		SwingUtilities.invokeLater(new Runnable() {
+		Threads.runTask(new Runnable() {
 			@Override
 			public void run() {
 				
@@ -138,13 +166,12 @@ public class UINew extends JFrame {
 				WordSplit.loadFile();
 				loadBar.setValue(loadBar.getValue() + 1);
 				
-				/**
+				
 				for(ILanguage language : Languages.languages) {
 					dialog.setTitle("Loading... Lang(" + language.getName() + ")");
 					language.loadNGramData();
 					loadBar.setValue(loadBar.getValue() + 1);
-				}**/
-				Languages.english.loadNGramData();
+				}
 				
 				SwingHelper.rewindAllChildComponents(stateMap);
 				dialog.dispose();
@@ -154,6 +181,34 @@ public class UINew extends JFrame {
 	}
 
 	public void finishComponents() {
+		this.addWindowStateListener(windowStateListener = new WindowStateListener() {
+			
+			@Override
+			public void windowStateChanged(WindowEvent event) {
+				int newState = event.getNewState();
+				if((newState & Frame.ICONIFIED) == Frame.ICONIFIED) {
+					for(JDialog dialog : dialogs) {
+						dialog.setVisible(false);
+					}
+				}
+			}
+		});
+		this.addWindowListener(windowListener = new WindowAdapter() {
+			
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            	for(JDialog dialog : dialogs) {
+            		dialog.setVisible(false);
+            	}
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            	for(JDialog dialog : dialogs)
+            		dialog.setVisible(lastStates.contains(dialog));
+            }
+        });
+		
 		this.output = new Output.TextComponent(this.outputTextArea);
         this.pack();
 		this.setSize(900, 800);
@@ -161,6 +216,8 @@ public class UINew extends JFrame {
     }
                      
     private void initComponents() {
+    	this.cipherSelect = new JComboBox<String>(ForceDecryptManager.getNames());
+    	this.decryptionType = new JComboBox<String>(new String[] {"Brute Force", "Simulated Annealing", "Calculated", "Dictionary"});
     	this.inputPanel = new JPanel();
         this.inputTextScroll = new JScrollPane();
         this.inputTextArea = new JTextArea();
@@ -177,7 +234,13 @@ public class UINew extends JFrame {
         this.menuItemEdit = new JMenu();
         this.menuItemPaste = new JMenuItem();
         this.menuItemTools = new JMenu();
+        this.menuItemNGram = new JMenuItem();
         this.menuItemLetterFrequency = new JMenuItem();
+        this.menuItemIoC = new JMenu();
+        this.menuItemIoCNormal = new JMenuItem();
+        this.menuItemIoCBifid = new JMenuItem();
+        this.menuItemIoCNicodemus = new JMenuItem();
+        this.menuItemIdentify = new JMenuItem();
         this.menuItemWordSplit = new JMenuItem();
         this.menuItemInfo = new JMenuItem();
         this.menuItemSettings = new JMenu();
@@ -204,19 +267,19 @@ public class UINew extends JFrame {
      
 		
         this.toolBar.setFloatable(false);
-        //this.toolBar.setfr
-        JComboBox cipher = new JComboBox(ForceDecryptManager.getNames());
-     	cipher.setMaximumSize(new Dimension(180, Integer.MAX_VALUE));
-     	this.toolBar.add(cipher);
+        
+        
+        this.cipherSelect.setMaximumSize(new Dimension(180, Integer.MAX_VALUE));
+     	this.toolBar.add(this.cipherSelect);
      		 
-     	final JComboBox type = new JComboBox(new String[] {"Brute Force", "Calculated", "Dictionary"});
-     	type.setMaximumSize(new Dimension(120, Integer.MAX_VALUE));
-      	this.toolBar.add(type);
+     	this.decryptionType.setMaximumSize(new Dimension(120, Integer.MAX_VALUE));
+      	this.toolBar.add(this.decryptionType);
         
         this.toolBarStart.setText("Execute");
         this.toolBarStart.setIcon(ImageUtil.createImageIcon("/image/accept.png", "Start"));
         this.toolBarStart.setFocusPainted(false);
         this.toolBarStart.setToolTipText("Tries to decrypt the given text.");
+        this.toolBarStart.addActionListener(new ExecuteAction());
         this.toolBar.add(this.toolBarStart);
         
         this.toolBarStop.setText("Terminate");
@@ -224,6 +287,7 @@ public class UINew extends JFrame {
         this.toolBarStop.setFocusPainted(false);
         this.toolBarStop.setEnabled(false);
         this.toolBarStop.setToolTipText("Terminates the current process.");
+        this.toolBarStop.addActionListener(new TerminateAction());
         this.toolBar.add(this.toolBarStop);
    
         //this.toolBar.add(ButtonUtil.createIconButton(ImageUtil.createImageIcon("/image/text_letterspacing.png", "Remove Letters")));
@@ -255,13 +319,10 @@ public class UINew extends JFrame {
         scrollPane.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
     	scrollPane.setViewportView(this.statTextArea);
     	
-	   // this.inputPanel.add(scrollPane, LayoutUtil.createConstraintsIPad(1, 0, 0.25, 1, 200, 0));
 	    this.inputPanel.add(scrollPane);
 	    this.add(this.inputPanel, LayoutUtil.createConstraints(0, 1, 1, 0.2));
 	    
 	    //Output panel
-	    
- 
         this.outputTextArea.setEditable(false);
         this.outputTextScroll.setViewportView(this.outputTextArea);
         this.outputTextScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -292,11 +353,36 @@ public class UINew extends JFrame {
         this.menuBar.add(this.menuItemEdit);
 
         this.menuItemTools.setText("Tools");
-        
         this.menuItemLetterFrequency.setText("Letter Frequency");
         this.menuItemLetterFrequency.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Letter Frequency"));
         this.menuItemLetterFrequency.addActionListener(new LetterFrequencyAction());
         this.menuItemTools.add(this.menuItemLetterFrequency);
+        
+        
+        this.menuItemNGram.setText("N-Gram Frequency");
+        this.menuItemNGram.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "N-Gram Frequency"));
+        this.menuItemNGram.addActionListener(new NGramFrequencyAction());
+        this.menuItemTools.add(this.menuItemNGram);
+        
+        
+        this.menuItemIoC.setText("Index of Coincidence");
+        //this.menuItemIoC.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Letter Frequency"));
+        this.menuItemTools.add(this.menuItemIoC);
+        
+        this.menuItemIoCNormal.setText("Normal");
+        this.menuItemIoCNormal.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Normal IoC"));
+        this.menuItemIoCNormal.addActionListener(new NormalIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCNormal);
+        
+        this.menuItemIoCBifid.setText("Bifid");
+        this.menuItemIoCBifid.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Bifid IoC"));
+        this.menuItemIoCBifid.addActionListener(new BifidIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCBifid);
+        
+        this.menuItemIoCNicodemus.setText("Nicodemus");
+        this.menuItemIoCNicodemus.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nicodemus"));
+        this.menuItemIoCNicodemus.addActionListener(new NicodemusIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCNicodemus);
         
         this.menuItemTools.addSeparator();
         
@@ -305,9 +391,14 @@ public class UINew extends JFrame {
         this.menuItemWordSplit.addActionListener(new WordSplitAction());
         this.menuItemTools.add(this.menuItemWordSplit);
         
+        this.menuItemIdentify.setText("Identify Cipher");
+        this.menuItemIdentify.setIcon(ImageUtil.createImageIcon("/image/page_white_find.png", "Idenifty Cipher"));
+        this.menuItemIdentify.addActionListener(new IdentifyAction());
+        this.menuItemTools.add(this.menuItemIdentify);
+        
         this.menuItemInfo.setText("Text Information");
         this.menuItemInfo.setIcon(ImageUtil.createImageIcon("/image/information.png", "Information"));
-        //this.menuItemInfo.addActionListener(new Action());
+        this.menuItemInfo.addActionListener(new TextInformationAction());
         this.menuItemTools.add(this.menuItemInfo);
         
         this.menuBar.add(this.menuItemTools);
@@ -416,32 +507,108 @@ public class UINew extends JFrame {
     	
     }
     
-    public boolean outFullscreen = false;
+    private class ExecuteAction implements ActionListener {
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+			final String text = inputTextArea.getText();
+			
+			if(text == null || text.isEmpty())
+				return;
+			
+			thread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					threadTimer.restart();
+					IForceDecrypt force = ForceDecryptManager.ciphers.get(cipherSelect.getSelectedIndex());
+					output.println("Cipher: " + force.getName());
+					try {
+						force.tryDecode(text, force.getEncryptionData(), settings.language, output, new ProgressValue(1000, new JProgressBar()), new JTextField());
+					}
+					catch(Exception e) {
+						output.println(e.toString());
+						e.printStackTrace();
+					}
+					
+					DecimalFormat df = new DecimalFormat("#.#");
+					output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
+					output.println("");
+					toolBarStart.setEnabled(true);
+					toolBarStop.setEnabled(false);
+					menuItemLanguage.setEnabled(true);
+					try {
+						Thread.sleep(1000L);
+					} 
+					catch(InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			});
+			thread.start();
+			toolBarStart.setEnabled(false);
+			toolBarStop.setEnabled(true);
+			menuItemLanguage.setEnabled(false);
+		}
+    }
     
+    public class TerminateAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			if(thread != null)
+				thread.stop();
+			
+			DecimalFormat df = new DecimalFormat("#.#");
+			output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
+			output.println("");
+			toolBarStart.setEnabled(true);
+			toolBarStop.setEnabled(false);
+			menuItemLanguage.setEnabled(true);
+			
+			try {
+				Thread.sleep(500L);
+			} 
+			catch(InterruptedException e) {
+				e.printStackTrace();
+			}
+			//progressBar.setMaximum(10);
+			//progressBar.setValue(0);
+		}
+    	
+    }
+    
+
     private class FullScreenAction implements ActionListener {
 
     	public Dimension lastSize;
     	public Point lastLocation;
+    	public boolean fullscreen;
     	
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			removeNotify();
+		public void actionPerformed(ActionEvent event) {
+			//removeWindowListener(windowListener);
+			//removeWindowStateListener(windowStateListener);
+			
+			dispose();
 			if(!isUndecorated()) {
 				setExtendedState(Frame.MAXIMIZED_BOTH);
 		    	setUndecorated(true);
-		    	outFullscreen = true;
 			}
 			else {
 				setSize(this.lastSize);
 				setLocation(this.lastLocation);
 				setExtendedState(Frame.NORMAL);
 				setUndecorated(false);
-				outFullscreen = true;
 			}
 			
 			this.lastSize = getSize();
 			this.lastLocation = getLocation();
-		    addNotify();
+			setVisible(true);
+		    //addNotify();
+			//addWindowListener(windowListener);
+			//addWindowStateListener(windowStateListener);
 		}
     }
     
@@ -476,6 +643,23 @@ public class UINew extends JFrame {
 		}
     }
     
+    private class JDialogCloseEvent extends WindowAdapter {
+    	
+    	private JDialog dialog;
+    	
+    	public JDialogCloseEvent(JDialog dialog) {
+    		this.dialog = dialog;
+    		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    	}
+    	
+		@Override
+		public void windowClosed(WindowEvent event) {
+			
+			lastStates.remove(dialog);
+			
+		}
+    }
+    
     public class LetterFrequencyAction implements ActionListener {
     	
     	private JDialog dialog;
@@ -483,63 +667,19 @@ public class UINew extends JFrame {
     	private JBarChart chartAlphabeticly;
     	
     	public LetterFrequencyAction() {
-    		addWindowStateListener(new WindowStateListener() {
-    			
-    			@Override
-    			public void windowStateChanged(WindowEvent event) {
-    				int newState = event.getNewState();
-    				if((newState | Frame.ICONIFIED) == Frame.ICONIFIED) {
-    					dialog.toBack();
-    				}
-    			}
-    		});
-    		addWindowListener(new WindowAdapter() {
-    			
-                @Override
-                public void windowDeactivated(WindowEvent e) {
-                	if(dialog != null && !outFullscreen) {
-                		dialog.toBack();
-                		toBack();
-                	}
-                	outFullscreen = false;
-                }
-
-                @Override
-                public void windowActivated(WindowEvent e) {
-                	if(dialog != null)
-                		dialog.setAlwaysOnTop(true);
-                }
-            });
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
 
 				@Override
 				public void onUpdate(DocumentEvent event) {
 					if(dialog.isVisible()) {
-						Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(inputTextArea.getText().replaceAll("[^a-zA-Z]+", ""), 1, 1, false);
-						
-						List<String> asendingOrder = new ArrayList<String>(counts.keySet());
-						Collections.sort(asendingOrder, new StringAnalyzer.SortStringInteger(counts));
-						Collections.reverse(asendingOrder);
-						
-						chart.values.clear();
-				        for(String letterCount : asendingOrder)
-				        	chart.values.add(new ChartData(letterCount, (double)counts.get(letterCount)));
-						
-						
-				        chartAlphabeticly.values.clear();
-						if(!counts.isEmpty())
-							for(char ch = 'A'; ch <= 'Z'; ch++)
-								chartAlphabeticly.values.add(new ChartData("" + ch, (double)(counts.containsKey("" + ch) ? counts.get("" + ch) : 0)));
-	
-						
-				        chart.repaint();
-				        chartAlphabeticly.repaint();
+						updateDialog();
 					}
 				}
     			
     		});
     		
     		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
     		this.dialog.setTitle("Letter Frequency");
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
@@ -551,41 +691,598 @@ public class UINew extends JFrame {
     		JPanel panel = new JPanel();
 	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 	          
-	        chart = new JBarChart(new ChartList());
-	        chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered by Size"));
-	        panel.add(chart);
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered by Size"));
+	        panel.add(this.chart);
 	        
-	        chartAlphabeticly = new JBarChart(new ChartList());
-	        chartAlphabeticly.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered Alphabeticly"));
-	        panel.add(chartAlphabeticly);
+	        this.chartAlphabeticly = new JBarChart(new ChartList());
+	        this.chartAlphabeticly.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered Alphabeticly"));
+	        panel.add(this.chartAlphabeticly);
 	         
     		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
+    		lastStates.add(this.dialog);
     		
-    		Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(inputTextArea.getText().replaceAll("[^a-zA-Z]+", ""), 1, 1, false);
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+	        this.chartAlphabeticly.resetAll();
+    		
+    		String text = getInputTextOnlyAlpha();
 			
-			List<String> asendingOrder = new ArrayList<String>(counts.keySet());
-			Collections.sort(asendingOrder, new StringAnalyzer.SortStringInteger(counts));
-			Collections.reverse(asendingOrder);
-			
-			this.chart.values.clear();
-	        for(String letterCount : asendingOrder)
-	        	this.chart.values.add(new ChartData(letterCount, (double)counts.get(letterCount)));
-			
-			
-	        this.chartAlphabeticly.values.clear();
-	        if(!counts.isEmpty())
-	        	for(char ch = 'A'; ch <= 'Z'; ch++)
-	        		this.chartAlphabeticly.values.add(new ChartData("" + ch, (double)(counts.containsKey("" + ch) ? counts.get("" + ch) : 0)));
-		  		
+    		if(!text.isEmpty()) {
+	    		
+	    		Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(text, 1, 1, false);
+				
+				List<String> asendingOrder = new ArrayList<String>(counts.keySet());
+				Collections.sort(asendingOrder, new StringAnalyzer.SortStringInteger(counts));
+				Collections.reverse(asendingOrder);
+				
+		        for(String letterCount : asendingOrder)
+		        	this.chart.values.add(new ChartData(letterCount, (double)counts.get(letterCount)));
+				
+				
+		        if(!counts.isEmpty())
+		        	for(char ch = 'A'; ch <= 'Z'; ch++)
+		        		this.chartAlphabeticly.values.add(new ChartData("" + ch, (double)(counts.containsKey("" + ch) ? counts.get("" + ch) : 0)));
+    		}
+    		
 			this.chart.repaint();
 			this.chartAlphabeticly.repaint();
+    	}
+    }
+    
+    private class NGramFrequencyAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	private JComboBox<String> comboBox;
+    	
+    	public NGramFrequencyAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}
+				}
+    			
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("N-Gram Frequency");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(900, 300));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart();
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered by Size"));
+	        panel.add(this.chart);
+
+	        this.comboBox = new JComboBox<String>(new String[] {"ALL", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"});
+	        this.comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+	        this.comboBox.addItemListener(new ItemListener() {
+				@Override
+			    public void itemStateChanged(ItemEvent event) {
+					if(event.getStateChange() == ItemEvent.SELECTED) {
+						updateDialog();
+			       }
+			    }       
+			});
+	        panel.add(this.comboBox);
+	        
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+    		lastStates.add(this.dialog);
+    		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+    		
+    		String text = getInputTextOnlyAlpha();
+			
+    		if(!text.isEmpty()) {
+	    		
+	    		
+	    		String label = (String)this.comboBox.getSelectedItem();
+				int minlength = 2;
+	      		int maxlength = 15;
+	      		if(!label.contains("ALL")) {
+	      			minlength = Integer.valueOf(label);
+	      			maxlength = minlength;
+	      		}
+    			
+	    		Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(text, minlength, maxlength, true);
+				
+	    		List<String> asendingOrder = new ArrayList<String>(counts.keySet());
+				Collections.sort(asendingOrder, new StringAnalyzer.SortStringInteger(counts));
+				Collections.reverse(asendingOrder);
+	    		
+		        for(String ngram : asendingOrder)
+		        	if(this.chart.values.size() < 40)
+		        		this.chart.values.add(new ChartData(ngram, (double)counts.get(ngram)));
+    		}
+    		
+			this.chart.repaint();
+    	}
+    }
+    
+    private class NormalIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public NormalIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Normal IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Normal IoC Calculation"));
+	        panel.add(this.chart);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+    		String text = getInputTextOnlyAlpha();
+    		if(!text.isEmpty()) {
+    			int bestPeriod = -1;
+    		    double bestKappa = Double.MAX_VALUE;
+    		    
+    		    for(int period = 0; period <= Math.min(40, text.length()); ++period) {
+    		    	double sqDiff = Math.pow(StatCalculator.calculateKappaIC(text, period) - settings.language.getNormalCoincidence(), 2);
+    		    	
+    		    	if(sqDiff < bestKappa)
+    		    		bestPeriod = period;
+    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	
+    		    	bestKappa = Math.min(bestKappa, sqDiff);
+    		    }
+    			
+    		    this.chart.setSelected(bestPeriod);
+    		}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
+    public class BifidIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	private JBarChart chart2;
+    	
+    	public BifidIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Bifid IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation"));
+	        panel.add(this.chart);
+	        
+	        this.chart2 = new JBarChart(new ChartList());
+	        this.chart2.setHasBarText(false);
+	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart2);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+    		lastStates.add(this.dialog);
+    		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+    		this.chart.resetAll();
+    		this.chart2.resetAll();
+			
+    		String text = getInputTextOnlyAlpha();
+    		if(!text.isEmpty()) {
+				
+				Map<Integer, Double> values = new HashMap<Integer, Double>();
+				double maxValue = Double.MIN_VALUE;
+				int maxStep = -1;
+				
+				double secondValue = Double.MIN_VALUE;
+				
+				for(int step = 1; step <= Math.min(40, text.length()); step++) {
+					HashMap<String, Integer> counts = new HashMap<String, Integer>();
+					for(int i = 0; i < text.length() - step; i++) {
+						String s = text.charAt(i) + "" + text.charAt(i + step);
+						counts.put(s, counts.containsKey(s) ? counts.get(s) + 1 : 1);
+					}
+					
+					Statistics stats = new Statistics(counts.values());
+				    double variance = stats.getVariance();
+				 
+				    this.chart.values.add(new ChartData("Step: " + step, variance));
+					values.put(step, variance);
+					
+					if(variance > maxValue) {
+						secondValue = maxValue;
+						maxValue = variance;
+						maxStep = step;
+					}
+					else if(variance > secondValue) {
+						secondValue = variance;
+					}
+				}
+	
+				
+				int periodGuess = -1;
+	
+				if(maxStep != -1) {
+					if(maxValue - maxValue / 4 > secondValue)
+						periodGuess = maxStep * 2;
+					else {
+						double max = Double.MAX_VALUE;
+						int bestStep = 0;
+						
+						for(int step = maxStep - 1; step <= maxStep + 1; step++) {
+							if(!values.containsKey(step) || step == maxStep)
+								continue;
+							
+							double diff = Math.abs(values.get(maxStep) - values.get(step));
+							if(diff < max) {
+								max = diff;
+								bestStep = step;
+							}
+						}
+						this.chart.setSelected(bestStep - 1);
+						
+						periodGuess = Math.min(bestStep, maxStep) * 2 + Math.abs(bestStep - maxStep);
+					}
+				}
+				
+				int bestPeriod = -1;
+				double bestIC = Double.MIN_VALUE;
+			    for(int period = 0; period <= 40; period++) {
+			    	if(period == 1) continue;
+			    	
+			        double score = StatCalculator.calculateBifidDiagraphicIC(text, period);
+			        this.chart2.values.add(new ChartData("Period: " + period, score));
+			        if(bestIC < score)
+			        	bestPeriod = period;
+			        
+			        bestIC = Math.max(bestIC, score);
+			    }
+			    
+			    this.chart.setSelected(maxStep - 1);
+				this.chart2.setSelected(bestPeriod > 0 ? bestPeriod - 1 : 0);
+    		}
+    		
+    		this.chart.repaint();
+    		this.chart2.repaint();
+    	}
+    }
+    
+    private class NicodemusIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public NicodemusIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Nicodemus IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+    		String text = getInputTextOnlyAlpha();
+    		if(!text.isEmpty()) {
+    			int bestPeriod = -1;
+    		    double bestIC = Double.POSITIVE_INFINITY;
+    		    
+    		    for(int period = 2; period <= 40; ++period) {
+    		    	double sqDiff = Math.pow(StatCalculator.calculateNicodemusIC(text, 5, period) - settings.language.getNormalCoincidence(), 2) * 10000;
+    		    	
+    		    	if(sqDiff < bestIC)
+    		    		bestPeriod = period;
+    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	
+    		    	bestIC = Math.min(bestIC, sqDiff);
+    		    }
+    			
+    		    this.chart.setSelected(bestPeriod - 2);
+    		}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
+    private class IdentifyAction implements ActionListener {
+    	
+    	public IdentifyAction() {
+    		
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		
 		}
     }
+    
+    
+    private class TextInformationAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	public JTextArea output;
+    	
+    	public TextInformationAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Text Statistics");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(375, 600));
+	       
+	        this.output = new JTextArea();
+			JScrollPane outputScrollPanel = new JScrollPane(this.output);
+			outputScrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			outputScrollPanel.setPreferredSize(new Dimension(1000, 200));
+			this.output.setEditable(false);
+			this.output.setLineWrap(true);
+		
+	
+    		this.dialog.add(outputScrollPanel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			
+			
+    		String text = getInputTextOnlyAlpha();
+    		int length = text.length();
+    		
+    		String outputText = "Length: " + length;
+			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, settings.language), 4);
+    		
+    		if(!text.isEmpty()) {
+
+    			outputText += "\n IC: " + StatCalculator.calculateIC(text);
+    			outputText += "\n MIC: " + StatCalculator.calculateMaxIC(text, 1, 15);
+    		    outputText += "\n MKA: " + StatCalculator.calculateMaxKappaIC(text, 1, 15);
+    		    outputText += "\n DIC: " + StatCalculator.calculateDiagrahpicIC(text);
+    		    outputText += "\n EDI: " + StatCalculator.calculateEvenDiagrahpicIC(text) * 10000;
+    		    outputText += "\n LR: " + StatCalculator.calculateLR(text);
+    		    outputText += "\n ROD: " + StatCalculator.calculateROD(text);
+    		    outputText += "\n LDI: " + StatCalculator.calculateLDI(text);
+    		    outputText += "\n SDD: " + StatCalculator.calculateSDD(text);
+
+    		    outputText += "\n A_LDI: " + StatCalculator.calculateALDI(text);
+    		    outputText += "\n B_LDI: " + StatCalculator.calculateBLDI(text);
+    		    outputText += "\n P_LDI: " + StatCalculator.calculatePLDI(text);
+    		    outputText += "\n S_LDI: " + StatCalculator.calculateSLDI(text);
+    		    outputText += "\n V_LDI: " + StatCalculator.calculateVLDI(text);
+    		    
+    		    outputText += "\n NOMOR: " + StatCalculator.calculateNormalOrder(text, settings.language);
+    		    outputText += "\n RDI: " + StatCalculator.calculateRDI(text);
+    		    outputText += "\n PTX: " + StatCalculator.calculatePTX(text);
+    		    outputText += "\n NIC: " +  StatCalculator.calculateMaxNicodemusIC(text, 3, 15);
+    		    outputText += "\n PHIC: " + StatCalculator.calculatePHIC(text);
+    		    outputText += "\n BDI: " +  StatCalculator.calculateBestBifidDiagraphicIC(text, 3, 15);
+    		    outputText += "\n CDD: " +  StatCalculator.calculateCDD(text);
+    		    outputText += "\n SSTD: " +  StatCalculator.calculateSSTD(text);
+    		    outputText += "\n MPIC: " + StatCalculator.calculateMPIC(text);
+    		    outputText += "\n SERP: " + StatCalculator.calculateSeriatedPlayfair(text);
+    		    
+    		    
+    		    outputText += "\n DIV_2: " + StatCalculator.isLengthDivisible2(text);
+    		    outputText += "\n DIV_3: " + StatCalculator.isLengthDivisible3(text);
+    		    outputText += "\n DIV_5: " + StatCalculator.isLengthDivisible5(text);
+    		    outputText += "\n DIV_25: " + StatCalculator.isLengthDivisible25(text);
+    		    outputText += "\n DIV_4_15: " + StatCalculator.isLengthDivisible4_15(text);
+    		    outputText += "\n DIV_4_30: " + StatCalculator.isLengthDivisible4_30(text);
+    		    List<Integer> factors =  MathHelper.getFactors(length);
+    		    Collections.sort(factors);
+    		    outputText += "\n DIV_N: " + factors;
+    		    outputText += "\n PSQ: " + StatCalculator.isLengthPerfectSquare(text);
+    		    outputText += "\n HAS_LETTERS: " + StatCalculator.containsLetter(text);
+    		    outputText += "\n HAS_DIGITS: " + StatCalculator.containsDigit(text);
+    		    outputText += "\n HAS_J: " + StatCalculator.containsJ(text);
+    		    outputText += "\n HAS_#: " + StatCalculator.containsHash(text);
+    		    outputText += "\n HAS_0: " + StatCalculator.calculateHAS0(text);
+    		    outputText += "\n DBL: " + StatCalculator.calculateDBL(text);
+    		    int lastPos = this.output.getCaretPosition();
+    		    this.output.setText(outputText);
+    		    this.output.setCaretPosition(lastPos);
+    		}
+    		else {
+    			outputText += "\n IC: 0.0";
+    			outputText += "\n MIC: 0.0";
+    			outputText += "\n MKA: 0.0";
+    			outputText += "\n DIC: 0.0";
+    			outputText += "\n EDI: 0.0";
+    			outputText += "\n LR: 0.0";
+    			outputText += "\n ROD: 0.0";
+    			outputText += "\n LDI: 0.0";
+    		    
+    			outputText += "\n SDD: 0.0";
+    		    
+    			outputText += "\n A_LDI: 0.0";
+    			outputText += "\n B_LDI: 0.0";
+    			outputText += "\n P_LDI: 0.0";
+    			outputText += "\n S_LDI: 0.0";
+    			outputText += "\n V_LDI: 0.0";
+    		    
+    			outputText += "\n NOMOR: 0.0";
+    			outputText += "\n RDI: 0.0";
+    			outputText += "\n PTX: 0.0";
+    			outputText += "\n NIC: 0.0";
+    			outputText += "\n PHIC: 0.0";
+    			outputText += "\n BDI: 0.0";
+    			outputText += "\n CDD: 0.0";
+    		    outputText += "\n SSTD: 0.0";
+    		    outputText += "\n MPIC: 0.0";
+    		    outputText += "\n SERP: 0.0";
+    		    
+    		    
+    		    outputText += "\n DIV_2: true";
+    		    outputText += "\n DIV_3: true";
+    		    outputText += "\n DIV_5: true";
+    		    outputText += "\n DIV_25: true";
+    		    outputText += "\n DIV_4_15: true";
+    		    outputText += "\n DIV_4_30: true";
+    		    outputText += "\n DIV_N: []";
+    		    outputText += "\n PSQ: true";
+    		    outputText += "\n HAS_LETTERS: false";
+    		    outputText += "\n HAS_DIGITS: false";
+    		    outputText += "\n HAS_J: false";
+    		    outputText += "\n HAS_#: false";
+    		    outputText += "\n HAS_0: false";
+    		    outputText += "\n DBL: false";
+    		}
+    		int lastPos = this.output.getCaretPosition();
+ 		    this.output.setText(outputText);
+ 		    this.output.setCaretPosition(lastPos);
+    	}
+    }
+    
     
     private class LanguageChangeAction implements ActionListener {
     	
@@ -642,7 +1339,13 @@ public class UINew extends JFrame {
 			
 		}
     }
+    
+    public String getInputTextOnlyAlpha() {
+    	return this.inputTextArea.getText().replaceAll("[^a-zA-Z]+", "");
+    }
      
+    private JComboBox<String> cipherSelect;
+    private JComboBox<String> decryptionType;
     private JPanel inputPanel;
     private JScrollPane inputTextScroll;
     private JTextArea inputTextArea;
@@ -660,6 +1363,12 @@ public class UINew extends JFrame {
     private JMenuItem menuItemPaste;
     private JMenu menuItemTools; 
     private JMenuItem menuItemLetterFrequency;
+    private JMenuItem menuItemNGram;
+    private JMenu menuItemIoC;
+    private JMenuItem menuItemIoCNormal;
+    private JMenuItem menuItemIoCBifid;
+    private JMenuItem menuItemIoCNicodemus;
+    private JMenuItem menuItemIdentify;
     private JMenuItem menuItemWordSplit;
     private JMenuItem menuItemInfo;
     private JMenu menuItemSettings;
