@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import javalibrary.lib.Timer;
-import nationalciphernew.cipher.Playfair;
 
 public class MainNew {
 	

@@ -3,50 +3,32 @@ package nationalciphernew;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
-import java.io.IOException;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -64,12 +46,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.LayoutStyle;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -85,6 +66,7 @@ import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
+import javalibrary.listener.CustomMouseListener;
 import javalibrary.math.MathHelper;
 import javalibrary.math.Rounder;
 import javalibrary.math.Statistics;
@@ -93,7 +75,6 @@ import javalibrary.string.LetterCount;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.string.ValueFormat;
-import javalibrary.swing.ButtonUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
@@ -103,9 +84,9 @@ import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.Threads;
-import nationalcipher.Main;
-import nationalcipher.SaveHandler;
-import nationalcipher.UIDefinition;
+import nationalciphernew.cipher.DecryptionManager;
+import nationalciphernew.cipher.DecryptionMethod;
+import nationalciphernew.cipher.IDecrypt;
 
 /**
  *
@@ -113,6 +94,9 @@ import nationalcipher.UIDefinition;
  */
 public class UINew extends JFrame {
 
+	public static String BEST_SOULTION = "";
+	public KeyPanel keyPanel;
+	
 	public Settings settings;
 	public Output output;
 
@@ -120,9 +104,6 @@ public class UINew extends JFrame {
 	private Timer threadTimer;
 	private List<JDialog> dialogs;
 	private List<JDialog> lastStates;
-	
-	private WindowListener windowListener;
-	private WindowStateListener windowStateListener;
 	
     public UINew() {
     	super("Cryptography Solver");
@@ -181,7 +162,7 @@ public class UINew extends JFrame {
 	}
 
 	public void finishComponents() {
-		this.addWindowStateListener(windowStateListener = new WindowStateListener() {
+		this.addWindowStateListener(new WindowStateListener() {
 			
 			@Override
 			public void windowStateChanged(WindowEvent event) {
@@ -193,7 +174,7 @@ public class UINew extends JFrame {
 				}
 			}
 		});
-		this.addWindowListener(windowListener = new WindowAdapter() {
+		this.addWindowListener(new WindowAdapter() {
 			
             @Override
             public void windowDeactivated(WindowEvent e) {
@@ -216,14 +197,15 @@ public class UINew extends JFrame {
     }
                      
     private void initComponents() {
-    	this.cipherSelect = new JComboBox<String>(ForceDecryptManager.getNames());
-    	this.decryptionType = new JComboBox<String>(new String[] {"Brute Force", "Simulated Annealing", "Calculated", "Dictionary"});
+    	this.cipherSelect = new JComboBox<String>(DecryptionManager.getNames());
+    	this.decryptionType = new JComboBox<DecryptionMethod>();
     	this.inputPanel = new JPanel();
         this.inputTextScroll = new JScrollPane();
         this.inputTextArea = new JTextArea();
         this.statTextArea = new JTextArea();
     	this.outputTextScroll = new JScrollPane();
         this.outputTextArea = new JTextArea();
+        this.progressBar = new JProgressBar();
         this.toolBar = new JToolBar();
         this.toolBarStart = new JButton();
         this.toolBarStop = new JButton();
@@ -233,6 +215,8 @@ public class UINew extends JFrame {
         this.menuItemExit = new JMenuItem();
         this.menuItemEdit = new JMenu();
         this.menuItemPaste = new JMenuItem();
+        this.menuItemCopySolution = new JMenuItem();
+        this.menuItemBinary = new JMenuItem();
         this.menuItemTools = new JMenu();
         this.menuItemNGram = new JMenuItem();
         this.menuItemLetterFrequency = new JMenuItem();
@@ -240,6 +224,7 @@ public class UINew extends JFrame {
         this.menuItemIoCNormal = new JMenuItem();
         this.menuItemIoCBifid = new JMenuItem();
         this.menuItemIoCNicodemus = new JMenuItem();
+        this.menuItemIoCVigenere = new JMenuItem();
         this.menuItemIdentify = new JMenuItem();
         this.menuItemWordSplit = new JMenuItem();
         this.menuItemInfo = new JMenuItem();
@@ -268,13 +253,41 @@ public class UINew extends JFrame {
 		
         this.toolBar.setFloatable(false);
         
+
+      	JButton nospaces = new JButton(" Remove _ ");
+		nospaces.addMouseListener(new CustomMouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				String s = inputTextArea.getText();
+				inputTextArea.setText(s.replaceAll("\\s+", ""));
+			}
+		});
+		this.toolBar.add(nospaces);
+		
+		
+		JButton nonletters = new JButton(" Keep A-Z ");
+		nonletters.addMouseListener(new CustomMouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent event) {
+				String s = inputTextArea.getText();
+				inputTextArea.setText(s.replaceAll("[^a-zA-Z]+", ""));
+			}
+		});
+		this.toolBar.add(nonletters);
+      	
+		
         
         this.cipherSelect.setMaximumSize(new Dimension(180, Integer.MAX_VALUE));
-     	this.toolBar.add(this.cipherSelect);
+        this.cipherSelect.addActionListener(new CipherSelectAction());
+        this.toolBar.add(this.cipherSelect);
      		 
-     	this.decryptionType.setMaximumSize(new Dimension(120, Integer.MAX_VALUE));
+     	this.decryptionType.setMaximumSize(new Dimension(130, Integer.MAX_VALUE));
+		List<DecryptionMethod> methods = getDecryptManager().getDecryptionMethods();
+		
+		for(DecryptionMethod method : methods)
+			decryptionType.addItem(method);
       	this.toolBar.add(this.decryptionType);
-        
+
         this.toolBarStart.setText("Execute");
         this.toolBarStart.setIcon(ImageUtil.createImageIcon("/image/accept.png", "Start"));
         this.toolBarStart.setFocusPainted(false);
@@ -315,19 +328,40 @@ public class UINew extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setMinimumSize(new Dimension(300, 0));
-        scrollPane.setPreferredSize(new Dimension(300, 0));
+        //scrollPane.setPreferredSize(new Dimension(300, 0));
         scrollPane.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
     	scrollPane.setViewportView(this.statTextArea);
     	
 	    this.inputPanel.add(scrollPane);
 	    this.add(this.inputPanel, LayoutUtil.createConstraints(0, 1, 1, 0.2));
 	    
+	    
+	    this.keyPanel = new KeyPanel();
+
+	    this.add(this.keyPanel, LayoutUtil.createConstraints(0, 2, 0, 0));
+	    
+	    
+	    
+	    
+	    
+	    
 	    //Output panel
         this.outputTextArea.setEditable(false);
         this.outputTextScroll.setViewportView(this.outputTextArea);
         this.outputTextScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        this.add(this.outputTextScroll, LayoutUtil.createConstraints(0, 3, 1, 0.5));
         
-        this.add(this.outputTextScroll, LayoutUtil.createConstraints(0, 2, 1, 0.5));
+        
+        this.progressBar = new JProgressBar(0, 10);
+		this.progressBar.setValue(0);
+		this.progressBar.setStringPainted(true);
+		this.progressBar.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent event) {
+				progressBar.setString(Rounder.round(progressBar.getPercentComplete() * 100, 1) + "%");
+			}
+	    });
+		this.add(this.progressBar, LayoutUtil.createConstraints(0, 4, 1, 0.01));
         
         this.menuItemFile.setText("File");
         
@@ -349,6 +383,19 @@ public class UINew extends JFrame {
         this.menuItemPaste.addActionListener(new PasteAction());
         this.menuItemPaste.setToolTipText("Pastes the text from the system clipboard.");
         this.menuItemEdit.add(this.menuItemPaste);
+        
+        this.menuItemCopySolution.setText("Copy Solution");
+        this.menuItemCopySolution.setIcon(ImageUtil.createImageIcon("/image/page_copy.png", "Copy Solution"));
+        this.menuItemCopySolution.addActionListener(new CopySolutionAction());
+        this.menuItemCopySolution.setToolTipText("Copies the best lastest solution to the system clipboard.");
+        this.menuItemEdit.add(this.menuItemCopySolution);
+        
+        this.menuItemEdit.addSeparator();
+        
+        this.menuItemBinary.setText("Binary to Text");
+        this.menuItemBinary.setIcon(ImageUtil.createImageIcon("/image/page_white_text.png", "Binary Convert"));
+        this.menuItemBinary.addActionListener(new BinaryConvertAction());
+        this.menuItemEdit.add(this.menuItemBinary);
         
         this.menuBar.add(this.menuItemEdit);
 
@@ -383,6 +430,11 @@ public class UINew extends JFrame {
         this.menuItemIoCNicodemus.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nicodemus"));
         this.menuItemIoCNicodemus.addActionListener(new NicodemusIoCAction());
         this.menuItemIoC.add(this.menuItemIoCNicodemus);
+        
+        this.menuItemIoCVigenere.setText("Vigenere");
+        this.menuItemIoCVigenere.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Vigenere"));
+        this.menuItemIoCVigenere.addActionListener(new VigenereIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCVigenere);
         
         this.menuItemTools.addSeparator();
         
@@ -499,12 +551,30 @@ public class UINew extends JFrame {
 				statText += "\n *?!: " + StringTransformer.countOtherChars(inputText);
 				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, settings.language);
 				statTextArea.setText(statText);
+				
+				menuItemBinary.setEnabled(inputText.length() != 0 && inputText.replaceAll("[^0-1]", "").length() == inputText.length());
 			} 
 			catch(BadLocationException e) {
 				e.printStackTrace();
 			}
 		}
+    }
+    
+    private class CipherSelectAction implements ActionListener {
     	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		DecryptionMethod lastMethod = (DecryptionMethod)decryptionType.getSelectedItem();
+    		decryptionType.removeAllItems();
+    		IDecrypt decrypt = getDecryptManager();
+    		List<DecryptionMethod> methods = decrypt.getDecryptionMethods();
+    		
+    		for(DecryptionMethod method : methods)
+    			decryptionType.addItem(method);
+    		
+    		if(methods.contains(lastMethod))
+    			decryptionType.setSelectedItem(lastMethod);
+    	}
     }
     
     private class ExecuteAction implements ActionListener {
@@ -521,10 +591,14 @@ public class UINew extends JFrame {
 				@Override
 				public void run() {
 					threadTimer.restart();
-					IForceDecrypt force = ForceDecryptManager.ciphers.get(cipherSelect.getSelectedIndex());
+					UINew.BEST_SOULTION = "";
+					IDecrypt force = getDecryptManager();
 					output.println("Cipher: " + force.getName());
+					
+					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
+					
 					try {
-						force.tryDecode(text, force.getEncryptionData(), settings.language, output, new ProgressValue(1000, new JProgressBar()), new JTextField());
+						force.attemptDecrypt(text, settings, method, settings.language, output, keyPanel, new ProgressValue(1000, progressBar));
 					}
 					catch(Exception e) {
 						output.println(e.toString());
@@ -536,7 +610,7 @@ public class UINew extends JFrame {
 					output.println("");
 					toolBarStart.setEnabled(true);
 					toolBarStop.setEnabled(false);
-					menuItemLanguage.setEnabled(true);
+					menuItemSettings.setEnabled(true);
 					try {
 						Thread.sleep(1000L);
 					} 
@@ -549,7 +623,7 @@ public class UINew extends JFrame {
 			thread.start();
 			toolBarStart.setEnabled(false);
 			toolBarStop.setEnabled(true);
-			menuItemLanguage.setEnabled(false);
+			menuItemSettings.setEnabled(false);
 		}
     }
     
@@ -565,7 +639,7 @@ public class UINew extends JFrame {
 			output.println("");
 			toolBarStart.setEnabled(true);
 			toolBarStop.setEnabled(false);
-			menuItemLanguage.setEnabled(true);
+			menuItemSettings.setEnabled(true);
 			
 			try {
 				Thread.sleep(500L);
@@ -573,24 +647,18 @@ public class UINew extends JFrame {
 			catch(InterruptedException e) {
 				e.printStackTrace();
 			}
-			//progressBar.setMaximum(10);
-			//progressBar.setValue(0);
+			progressBar.setMaximum(10);
+			progressBar.setValue(0);
 		}
-    	
     }
     
-
     private class FullScreenAction implements ActionListener {
 
     	public Dimension lastSize;
     	public Point lastLocation;
-    	public boolean fullscreen;
     	
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			//removeWindowListener(windowListener);
-			//removeWindowStateListener(windowStateListener);
-			
 			dispose();
 			if(!isUndecorated()) {
 				setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -606,9 +674,6 @@ public class UINew extends JFrame {
 			this.lastSize = getSize();
 			this.lastLocation = getLocation();
 			setVisible(true);
-		    //addNotify();
-			//addWindowListener(windowListener);
-			//addWindowStateListener(windowStateListener);
 		}
     }
     
@@ -633,14 +698,95 @@ public class UINew extends JFrame {
 			}
 		}
     }
-    
-    public class WordSplitAction implements ActionListener {
+
+    public class CopySolutionAction implements ActionListener {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String split = WordSplit.splitText(inputTextArea.getText());
-    		output.println(split);
+    		if(!BEST_SOULTION.isEmpty()) {
+	    		StringSelection selection = new StringSelection(BEST_SOULTION);
+	    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+    		}
 		}
+    }
+    
+    public class BinaryConvertAction implements ActionListener {
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		String binaryText = inputTextArea.getText();
+			List<String> split = StringTransformer.splitInto(binaryText, (int)5);
+			
+			String cipherText = "";
+			for(String binary : split) {
+				try {
+					int decimal = Integer.parseInt(binary, 2);
+					if(decimal < 0 || decimal > 25) {
+						cipherText = "ERROR: Binary number \'" + binary + "' dec(" + decimal + ") is valid letter"; 
+						break;
+					}
+					char letter = (char)(decimal + 'A');
+					cipherText += letter;
+				}
+				catch(NumberFormatException e) {
+					cipherText = "ERROR: Cannot parse \'" + binary + "'"; 
+					break;
+				}
+			}
+			inputTextArea.setText(cipherText);
+		}
+    }
+    
+    public class WordSplitAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JTextArea textOutput;
+    	
+    	public WordSplitAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Word Split");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(500, 200));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.textOutput = new JTextArea();
+	        this.textOutput.setLineWrap(true);
+	        panel.add(this.textOutput);
+	        
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+    		String split = WordSplit.splitText(inputTextArea.getText().replaceAll(" ", ""));
+    		textOutput.setText(split);
+    	}
     }
     
     private class JDialogCloseEvent extends WindowAdapter {
@@ -1113,6 +1259,78 @@ public class UINew extends JFrame {
     	}
     }
     
+    private class VigenereIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public VigenereIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Vigenere IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+    		String text = getInputTextOnlyAlpha();
+    		if(!text.isEmpty()) {
+    			int bestPeriod = -1;
+    		    double bestKappa = Double.MAX_VALUE;
+    		    
+    		    for(int period = 2; period <= 40; ++period) {
+    		    	double sqDiff = Math.pow(StatCalculator.calculateKappaIC(text, period) - settings.language.getNormalCoincidence(), 2);
+    		    	
+    		    	if(sqDiff < bestKappa)
+    		    		bestPeriod = period;
+    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	
+    		    	bestKappa = Math.min(bestKappa, sqDiff);
+    		    }
+    		    
+    		    this.chart.setSelected(bestPeriod - 2);
+    		}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
     private class IdentifyAction implements ActionListener {
     	
     	public IdentifyAction() {
@@ -1124,8 +1342,7 @@ public class UINew extends JFrame {
     		
 		}
     }
-    
-    
+     
     private class TextInformationAction implements ActionListener {
     	
     	private JDialog dialog;
@@ -1283,7 +1500,6 @@ public class UINew extends JFrame {
     	}
     }
     
-    
     private class LanguageChangeAction implements ActionListener {
     	
     	public ILanguage language;
@@ -1343,15 +1559,20 @@ public class UINew extends JFrame {
     public String getInputTextOnlyAlpha() {
     	return this.inputTextArea.getText().replaceAll("[^a-zA-Z]+", "");
     }
+    
+    public IDecrypt getDecryptManager() {
+    	return DecryptionManager.ciphers.get(cipherSelect.getSelectedIndex());
+    }
      
     private JComboBox<String> cipherSelect;
-    private JComboBox<String> decryptionType;
+    private JComboBox<DecryptionMethod> decryptionType;
     private JPanel inputPanel;
     private JScrollPane inputTextScroll;
     private JTextArea inputTextArea;
     private JTextArea statTextArea;
     private JScrollPane outputTextScroll;
     private JTextArea outputTextArea;
+    private JProgressBar progressBar;
     private JToolBar toolBar;
     private JButton toolBarStart;
     private JButton toolBarStop;
@@ -1361,6 +1582,8 @@ public class UINew extends JFrame {
 	private JMenuItem menuItemExit;
     private JMenu menuItemEdit;
     private JMenuItem menuItemPaste;
+    private JMenuItem menuItemCopySolution;
+    private JMenuItem menuItemBinary;
     private JMenu menuItemTools; 
     private JMenuItem menuItemLetterFrequency;
     private JMenuItem menuItemNGram;
@@ -1368,6 +1591,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemIoCNormal;
     private JMenuItem menuItemIoCBifid;
     private JMenuItem menuItemIoCNicodemus;
+    private JMenuItem menuItemIoCVigenere;
     private JMenuItem menuItemIdentify;
     private JMenuItem menuItemWordSplit;
     private JMenuItem menuItemInfo;
