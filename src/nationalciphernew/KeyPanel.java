@@ -22,7 +22,7 @@ public class KeyPanel extends JPanel {
 		this.iterations.setEditable(false);
 		this.fitness.setMaximumSize(new Dimension(150, Integer.MAX_VALUE));
 		this.key.setMaximumSize(new Dimension(290, Integer.MAX_VALUE));
-		this.iterations.setMaximumSize(new Dimension(140, Integer.MAX_VALUE));
+		this.iterations.setMaximumSize(new Dimension(100, Integer.MAX_VALUE));
 		this.add(new JLabel("Fitness "));
 		this.add(this.fitness);
 		this.add(new JLabel(" Key "));

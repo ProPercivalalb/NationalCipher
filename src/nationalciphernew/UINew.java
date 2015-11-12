@@ -236,6 +236,7 @@ public class UINew extends JFrame {
 		this.menuItemKeywordHalf = new JCheckBoxMenuItem();
 		this.menuItemKeywordReverse = new JCheckBoxMenuItem();
 		this.menuItemSimulatedAnnealing = new JMenu();
+        this.menuItemSAPreset = new JMenu();
         
 		this.setLayout(new GridBagLayout());
 
@@ -281,7 +282,7 @@ public class UINew extends JFrame {
         this.cipherSelect.addActionListener(new CipherSelectAction());
         this.toolBar.add(this.cipherSelect);
      		 
-     	this.decryptionType.setMaximumSize(new Dimension(130, Integer.MAX_VALUE));
+     	this.decryptionType.setMaximumSize(new Dimension(150, Integer.MAX_VALUE));
 		List<DecryptionMethod> methods = getDecryptManager().getDecryptionMethods();
 		
 		for(DecryptionMethod method : methods)
@@ -517,6 +518,21 @@ public class UINew extends JFrame {
 		countSetting.addKeyListener(new SimulatedAnnealingAction(countSetting, 2));
 		this.menuItemSimulatedAnnealing.add(new JLabel("Count"));
 		this.menuItemSimulatedAnnealing.add(countSetting);
+		
+		this.menuItemSAPreset.setText("Presets");
+		JMenuItem saPreset1 = new JMenuItem("Substitution");
+		saPreset1.addActionListener(new PresetAction(tempSetting, tempStepSetting, countSetting, 20D, 0.1D, 100));
+		this.menuItemSAPreset.add(saPreset1);
+		JMenuItem saPreset2 = new JMenuItem("Playfair");
+		saPreset2.addActionListener(new PresetAction(tempSetting, tempStepSetting, countSetting, 20D, 0.1D, 10000));
+		this.menuItemSAPreset.add(saPreset2);
+		//JMenuItem saPreset3 = new JMenuItem("Substitution");
+		//saPreset3.addActionListener(new PresetAction(tempSetting, tempStepSetting, countSetting, 20D, 0.1D, 100));
+		//this.menuItemSAPreset.add(saPreset3);
+		
+		
+		
+		this.menuItemSimulatedAnnealing.add(this.menuItemSAPreset);
 		
 		this.menuItemSettings.add(this.menuItemSimulatedAnnealing);
 		
@@ -1556,6 +1572,39 @@ public class UINew extends JFrame {
 		}
     }
     
+    public class PresetAction implements ActionListener {
+    	
+    	public JTextField tempSetting;
+    	public JTextField tempStepSetting;
+    	public JTextField countSetting;
+    	public double tempStart;
+    	public double tempStep;
+    	public int count;
+    	
+    	public PresetAction(JTextField tempSetting, JTextField tempStepSetting, JTextField countSetting, double tempStart, double tempStep, int count) {
+    		this.tempSetting = tempSetting;
+    		this.tempStepSetting = tempStepSetting;
+    		this.countSetting = countSetting;
+    		this.tempStart = tempStart;
+    		this.tempStep = tempStep;
+    		this.count = count;
+    	}
+    	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			settings.simulatedAnnealing.set(0, this.tempStart);
+			settings.simulatedAnnealing.set(1, this.tempStep);
+			settings.simulatedAnnealing.set(2, (double)this.count);
+			tempSetting.setText(ValueFormat.getNumber(this.tempStart));
+
+			tempStepSetting.setText(ValueFormat.getNumber(this.tempStep));
+
+			countSetting.setText(ValueFormat.getNumber(this.count));
+			
+		}
+    	
+    }
+    
     public String getInputTextOnlyAlpha() {
     	return this.inputTextArea.getText().replaceAll("[^a-zA-Z]+", "");
     }
@@ -1603,4 +1652,5 @@ public class UINew extends JFrame {
     private JMenuItem menuItemKeywordHalf;
     private JMenuItem menuItemKeywordReverse;
     public JMenu menuItemSimulatedAnnealing;
+    public JMenu menuItemSAPreset;
 }

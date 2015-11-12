@@ -58,8 +58,29 @@ public class Settings {
 		
 		this.readFromFile();
 	}
+	
+	public ILanguage getLanguage() {
+		return this.language;
+	}
+	
+	public int getKeywordCreationId() {
+		return this.keywordCreation;
+	}
+	
+	public double getSATempStart() {
+		return this.simulatedAnnealing.get(0);
+	}
+	
+	public double getSATempStep() {
+		return this.simulatedAnnealing.get(1);
+	}
+	
+	public int getSACount() {
+		return this.simulatedAnnealing.get(2).intValue();
+	}
 		
-	public void writeToFile() {
+		
+	private void writeToFile() {
 		try {
 			File file = new File(OSIdentifier.getMyDataFolder("nationalcipher"), "savedata.txt");
 			if(!file.exists()) file.createNewFile();
@@ -79,7 +100,7 @@ public class Settings {
 		}
 	}
 		
-	public void readFromFile() {
+	private void readFromFile() {
 		try {
 			File myFile = new File(OSIdentifier.getMyDataFolder("nationalcipher"), "savedata.txt");
 			String input = StringTransformer.joinWith(FileReader.compileTextFromFile(myFile), "");

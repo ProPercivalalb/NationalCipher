@@ -36,77 +36,20 @@ public class PlayfairDecrypt implements IDecrypt {
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			Creator.iteratePlayfair(task);
 			
-			output.println(task.bestText);
+			output.println(new String(task.bestSolution.text));
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
-			progress.addMaxValue((int)(settings.simulatedAnnealing.get(0) / settings.simulatedAnnealing.get(1)) * settings.simulatedAnnealing.get(2).intValue());
+			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
 			task.run(text, settings);
 			
-			/**
-			char[] textChar = text.toCharArray();
-			
-			double bestFitnessFinal = Double.NEGATIVE_INFINITY;
-			
-			int iteration = 0;
-			String maxValue = progress.maxValue.toString();
-			
-			while(true) {
-				String bestKey = KeySquareManipulation.generateRandKeySquare();
-				String bestText = Playfair.decode(textChar, bestKey);
-				double maxscore = TextFitness.scoreFitnessQuadgrams(bestText, language);
-				
-				String bestEverKey = bestKey;
-				String bestEverText = bestText;
-				double bestscore = maxscore;
-				
-				for(double TEMP = settings.simulatedAnnealing.get(0); TEMP >= 0; TEMP -= settings.simulatedAnnealing.get(1)) {
-					for(int count = 0; count < settings.simulatedAnnealing.get(2); count++){ 
-						iteration += 1;
-						String lastKey = KeySquareManipulation.modifyKey(bestKey);
-				
-						String lastText = Playfair.decode(textChar, lastKey);
-						double score = TextFitness.scoreFitnessQuadgrams(lastText, language);
-						double dF = score - maxscore;
-						
-					    if(dF >= 0) {
-					        maxscore = score;
-					        bestKey = lastKey;
-					    }
-					    else if(TEMP > 0) { 
-					    	double prob = Math.exp(dF / TEMP);
-					        if(prob > RandomUtil.pickDouble()) {
-					        	maxscore = score;
-						        bestKey = lastKey;
-					        }
-						}
-					    
-					    if(maxscore > bestscore) {
-					        bestEverKey = lastKey;
-					        bestEverText = lastText;
-					        bestscore = maxscore;
-					        keyPanel.fitness.setText("" + bestscore);
-					        keyPanel.key.setText(lastKey);
-						}
-					    
-					    keyPanel.iterations.setText("" + iteration++ + "/" + maxValue);
-					    progress.increase();
-					}
-				}
-				
-				if(bestscore > bestFitnessFinal) {
-					bestFitnessFinal = bestscore;
-					output.println("BEST EVERRRRR!!!  Best Fitness: %f, Key: %s, Plaintext: %s", bestscore, bestEverKey, bestEverText);
-					UINew.BEST_SOULTION = bestEverText;
-				}
-			    progress.setValue(0);
-			}**/
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
 			progress.addMaxValue(Dictionary.words.size());
+			
 			for(String word : Dictionary.words) {
 				String change = "";
 				for(char i : word.toCharArray()) {
@@ -120,7 +63,7 @@ public class PlayfairDecrypt implements IDecrypt {
 						change += i;
 				}
 				
-				//output.println(word + " " + change);
+	
 				task.onIteration(change);
 			}
 		}
@@ -129,38 +72,22 @@ public class PlayfairDecrypt implements IDecrypt {
 		}	
 	}
 	
-
 	public static class PlayfairTask extends SimulatedAnnealing implements PlayfairKey {
 
-		public char[] text;
-		public Settings settings;
-		public KeyPanel keyPanel;	
-		public Output output;
-		public ProgressValue progress;
+		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
 		public PlayfairTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
-			this.text = text;
-			this.settings = settings;
-			this.keyPanel = keyPanel;
-			this.output = output;
-			this.progress = progress;
+			super(text, settings, keyPanel, output, progress);
 		}
-		
-		public char[] bestText = "", lastText = "";
-		public String bestKey = "", lastKey = "";
-		public double bestScore = Double.NEGATIVE_INFINITY, currentScore = 0;
-			
+
 		@Override
 		public void onIteration(String keysquare) {
-			this.lastText = Playfair.decode(text, keysquare);
+			this.lastSolution = new Solution(Playfair.decode(this.text, keysquare), this.settings.getLanguage());
 			
-			this.currentScore = TextFitness.scoreFitnessQuadgrams(this.lastText, this.settings.language);
-			
-			if(this.currentScore >= this.bestScore) {
-				this.output.println("Fitness: %f, KeySquare: %s, Plaintext: %s", this.currentScore, keysquare, new String(bestText));	
-				this.bestScore = this.currentScore;
-				this.bestText = this.lastText;
-				UINew.BEST_SOULTION = new String(this.bestText);
+			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.bestSolution = this.lastSolution;
+				this.output.println("Fitness: %f, KeySquare: %s, Plaintext: %s", this.bestSolution.score, keysquare, new String(this.bestSolution.text));	
+				UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			}
 			
 			progress.increase();
@@ -168,30 +95,40 @@ public class PlayfairDecrypt implements IDecrypt {
 
 		@Override
 		public Solution generateKey() {
-			this.bestKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(Playfair.decode(this.text, this.bestKey), this.settings.language);
+			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
+			return new Solution(Playfair.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey() {
-			this.lastKey = KeySquareManipulation.modifyKey(this.bestKey);
-			return new Solution(Playfair.decode(this.text, this.lastKey), this.settings.language);
+			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
+			return new Solution(Playfair.decode(this.text, this.lastKey), this.settings.getLanguage());
 		}
 
 		@Override
-		public void storeKey(Solution solution, boolean searchingMaximas) {
-			this.bestKey = this.lastKey;
-			if(!searchingMaximas) {
-				//keyPanel.fitness.setText("" + bestscore);
-			    keyPanel.key.setText(this.lastKey);
-			}
-				
+		public void storeKey() {
+			this.bestMaximaKey = this.lastKey;
 		}
 
 		@Override
 		public void solutionFound() {
-			output.println("BEST EVERRRRR!!!  Best Fitness: %f, Key: %s, Plaintext: %s", bestscore, bestEverKey, bestEverText);
-			//UINew.BEST_SOULTION = bestEverText;
+			this.bestKey = this.bestMaximaKey;
+			this.keyPanel.fitness.setText("" + this.bestSolution.score);
+			this.keyPanel.key.setText(this.bestKey);
+		}
+		
+		@Override
+		public void onIteration() {
+			this.progress.increase();
+			this.keyPanel.iterations.setText("" + this.iteration++);
+		}
+
+		@Override
+		public boolean endIteration() {
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.text));
+			UINew.BEST_SOULTION = new String(this.bestSolution.text);
+			this.progress.setValue(0);
+			return false;
 		}
 	}
 }

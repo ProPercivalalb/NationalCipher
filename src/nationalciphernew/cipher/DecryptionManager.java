@@ -28,6 +28,13 @@ public class DecryptionManager {
 		ciphers.add(new AffineDecrypt());
 		ciphers.add(new CaesarDecrypt());
 		ciphers.add(new SubstitutionDecrypt());
+		
+		
+		ciphers.add(new SingleTranspostion());
+		ciphers.add(new DoubleTranspostionDecrypt());
+		ciphers.add(new RailFenceDecrypt());
+		
+		
 		ciphers.add(new PlayfairDecrypt());
 	}
 }

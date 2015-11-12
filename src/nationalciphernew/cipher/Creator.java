@@ -14,9 +14,12 @@ public class Creator {
 		public void onIteration(String keysquare);
 	}
 	
-	
 	public static interface SubstitutionKey {
 		public void onIteration(String keyalphabet);
+	}
+	
+	public static interface RailFenceKey {
+		public void onIteration(int rows);
 	}
 	
 	public static void iterateCaesar(CaesarShift task) {
@@ -36,5 +39,10 @@ public class Creator {
 	
 	public static void iterateSubstitution(SubstitutionKey task) {
 		
+	}
+	
+	public static void iterateRailFence(RailFenceKey task, int min, int max) {
+		for(int i = min; i < max; i++)
+			task.onIteration(i);
 	}
 }
