@@ -44,8 +44,6 @@ import javalibrary.IForceDecrypt;
 import javalibrary.Output;
 import javalibrary.cipher.ColumnarRow;
 import javalibrary.cipher.auto.ColumnarAuto;
-import javalibrary.cipher.stats.StatCalculator;
-import javalibrary.cipher.stats.StatisticType;
 import javalibrary.cipher.stats.TraverseTree;
 import javalibrary.cipher.stats.WordSplit;
 import javalibrary.dict.Dictionary;
@@ -72,6 +70,8 @@ import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.Threads;
 import javalibrary.util.MapHelper;
+import nationalciphernew.cipher.stats.StatCalculator;
+import nationalciphernew.cipher.stats.StatisticType;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

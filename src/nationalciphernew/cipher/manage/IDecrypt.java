@@ -1,4 +1,4 @@
-package nationalciphernew.cipher;
+package nationalciphernew.cipher.manage;
 
 import java.util.List;
 
@@ -14,5 +14,5 @@ public interface IDecrypt {
 	
 	public List<DecryptionMethod> getDecryptionMethods();
 
-	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, ILanguage language, Output output, KeyPanel keyPanel, ProgressValue progress);
+	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress);
 }

@@ -16,7 +16,6 @@ import javalibrary.cipher.Columnar;
 import javalibrary.cipher.ColumnarRow;
 import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.cipher.permentate.Permentations;
-import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.math.ArrayHelper;
@@ -26,6 +25,7 @@ import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.util.MapHelper;
+import nationalciphernew.cipher.stats.StatCalculator;
 
 public class ADFGVXPanel implements IStatisticsPanel {
 

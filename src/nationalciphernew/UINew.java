@@ -3,6 +3,7 @@ package nationalciphernew;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -22,6 +23,7 @@ import java.awt.event.WindowStateListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,6 @@ import javax.swing.text.JTextComponent;
 import javalibrary.ForceDecryptManager;
 import javalibrary.IForceDecrypt;
 import javalibrary.Output;
-import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.cipher.stats.TraverseTree;
 import javalibrary.cipher.stats.WordSplit;
 import javalibrary.dict.Dictionary;
@@ -84,9 +85,11 @@ import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.Threads;
-import nationalciphernew.cipher.DecryptionManager;
-import nationalciphernew.cipher.DecryptionMethod;
-import nationalciphernew.cipher.IDecrypt;
+import nationalciphernew.cipher.manage.DecryptionManager;
+import nationalciphernew.cipher.manage.DecryptionMethod;
+import nationalciphernew.cipher.manage.IDecrypt;
+import nationalciphernew.cipher.stats.StatCalculator;
+import nationalciphernew.cipher.stats.StatisticType;
 
 /**
  *
@@ -137,8 +140,8 @@ public class UINew extends JFrame {
 			public void run() {
 				
 				
-				dialog.setTitle("Loading... TranverseTree");
-				TraverseTree.onLoad();
+				//dialog.setTitle("Loading... TranverseTree");
+				//TraverseTree.onLoad();
 				loadBar.setValue(loadBar.getValue() + 1);
 				dialog.setTitle("Loading... Dictinary");
 				Dictionary.onLoad();
@@ -224,6 +227,7 @@ public class UINew extends JFrame {
         this.menuItemIoCNormal = new JMenuItem();
         this.menuItemIoCBifid = new JMenuItem();
         this.menuItemIoCNicodemus = new JMenuItem();
+        this.menuItemIoCNihilist = new JMenuItem();
         this.menuItemIoCVigenere = new JMenuItem();
         this.menuItemIdentify = new JMenuItem();
         this.menuItemWordSplit = new JMenuItem();
@@ -328,9 +332,9 @@ public class UINew extends JFrame {
 	    JScrollPane scrollPane = new JScrollPane();
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setMinimumSize(new Dimension(300, 0));
+        //scrollPane.setMinimumSize(new Dimension(300, 300));
         //scrollPane.setPreferredSize(new Dimension(300, 0));
-        scrollPane.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
+        //scrollPane.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
     	scrollPane.setViewportView(this.statTextArea);
     	
 	    this.inputPanel.add(scrollPane);
@@ -396,6 +400,7 @@ public class UINew extends JFrame {
         this.menuItemBinary.setText("Binary to Text");
         this.menuItemBinary.setIcon(ImageUtil.createImageIcon("/image/page_white_text.png", "Binary Convert"));
         this.menuItemBinary.addActionListener(new BinaryConvertAction());
+        this.menuItemBinary.setEnabled(false);
         this.menuItemEdit.add(this.menuItemBinary);
         
         this.menuBar.add(this.menuItemEdit);
@@ -431,6 +436,11 @@ public class UINew extends JFrame {
         this.menuItemIoCNicodemus.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nicodemus"));
         this.menuItemIoCNicodemus.addActionListener(new NicodemusIoCAction());
         this.menuItemIoC.add(this.menuItemIoCNicodemus);
+        
+        this.menuItemIoCNihilist.setText("Nihilist");
+        this.menuItemIoCNihilist.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nihilist"));
+        this.menuItemIoCNihilist.addActionListener(new NihilistIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCNihilist);
         
         this.menuItemIoCVigenere.setText("Vigenere");
         this.menuItemIoCVigenere.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Vigenere"));
@@ -614,7 +624,7 @@ public class UINew extends JFrame {
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
 					
 					try {
-						force.attemptDecrypt(text, settings, method, settings.language, output, keyPanel, new ProgressValue(1000, progressBar));
+						force.attemptDecrypt(text, settings, method, output, keyPanel, new ProgressValue(1000, progressBar));
 					}
 					catch(Exception e) {
 						output.println(e.toString());
@@ -633,6 +643,8 @@ public class UINew extends JFrame {
 					catch(InterruptedException e) {
 						e.printStackTrace();
 					}
+					progressBar.setMaximum(10);
+					progressBar.setValue(0);
 				}
 				
 			});
@@ -1275,6 +1287,78 @@ public class UINew extends JFrame {
     	}
     }
     
+    private class NihilistIoCAction implements ActionListener {
+
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public NihilistIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Nihilist IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Nihilist IoC"));
+	        panel.add(this.chart);
+	        
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+    		String text = getInputTextOnlyDigits();
+    		if(!text.isEmpty() && text.length() % 2 == 0) {
+    			int bestPeriod = -1;
+    		    double bestIC = Double.POSITIVE_INFINITY;
+    		    
+    		    for(int period = 2; period <= 40; ++period) {
+    		    	double sqDiff = Math.pow(StatCalculator.calculateDiagraphicKappaIC(text, period * 2) - settings.language.getNormalCoincidence(), 2) * 10000;
+    		    	
+    		    	if(sqDiff < bestIC)
+    		    		bestPeriod = period;
+    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	
+    		    	bestIC = Math.min(bestIC, sqDiff);
+    		    }
+    			
+    		    this.chart.setSelected(bestPeriod - 2);
+    		}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
     private class VigenereIoCAction implements ActionListener {
     	
     	private JDialog dialog;
@@ -1349,14 +1433,120 @@ public class UINew extends JFrame {
     
     private class IdentifyAction implements ActionListener {
     	
+    	private JDialog dialog;
+    	private JPanel cipherInfoPanel;
+    	private JPanel cipherScorePanel;
+    	private  JScrollPane scrollPane;
+    	
     	public IdentifyAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
     		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Identify Cipher");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(500, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+	          
+	        JPanel basePanel = new JPanel();
+	        basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.X_AXIS));
+	        scrollPane = new JScrollPane(basePanel);
+		    scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+	        
+	        
+	        this.cipherInfoPanel = new JPanel();
+		    this.cipherInfoPanel.setLayout(new BoxLayout(this.cipherInfoPanel, BoxLayout.Y_AXIS));
+		    basePanel.add(this.cipherInfoPanel);
+		    
+		    this.cipherScorePanel = new JPanel();
+		    this.cipherScorePanel.setLayout(new BoxLayout(this.cipherScorePanel, BoxLayout.Y_AXIS));
+		    basePanel.add(this.cipherScorePanel);
+		    
+		    
+		    panel.add(scrollPane);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+    		scrollPane.repaint();
 		}
+    	
+    	public void updateDialog() {
+    		this.cipherInfoPanel.removeAll();
+    		this.cipherScorePanel.removeAll();
+    		
+    		String text = getInputText();
+    		
+    		if(!text.isEmpty()) {
+	    		HashMap<StatisticType, Double> currentData = new HashMap<StatisticType, Double>();
+			    
+			    currentData.put(StatisticType.INDEX_OF_COINCIDENCE, StatCalculator.calculateIC(text));
+			    currentData.put(StatisticType.MAX_IOC, StatCalculator.calculateMaxIC(text, 1, 15));
+			    currentData.put(StatisticType.MAX_KAPPA, StatCalculator.calculateMaxKappaIC(text, 1, 15));
+			    currentData.put(StatisticType.DIGRAPHIC_IOC, StatCalculator.calculateDiagrahpicIC(text));
+			    currentData.put(StatisticType.EVEN_DIGRAPHIC_IOC, StatCalculator.calculateEvenDiagrahpicIC(text) * 10000);
+			    currentData.put(StatisticType.LONG_REPEAT_3, StatCalculator.calculateLR(text));
+			    currentData.put(StatisticType.LONG_REPEAT_ODD, StatCalculator.calculateROD(text));
+			    currentData.put(StatisticType.LOG_DIGRAPH, StatCalculator.calculateLDI(text));
+			    currentData.put(StatisticType.SINGLE_LETTER_DIGRAPH, StatCalculator.calculateSDD(text));
+	    		
+	    		List<List<Object>> num_dev = StatCalculator.getResultsFromStats(currentData);
+			    
+			    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
+			    	@Override
+			        public int compare(List<Object> c1, List<Object> c2) {
+			        	double diff = (double)c1.get(1) - (double)c2.get(1);
+			        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
+			        }
+			    };
+	
+			    Collections.sort(num_dev, comparator);
+			    
+			    JLabel titleLabel = new JLabel("Cipher");
+			    titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
+			    this.cipherInfoPanel.add(titleLabel);
+			    
+			    JLabel titleScoreLabel = new JLabel("Likelyhood");
+			    titleScoreLabel.setFont(titleScoreLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
+			    this.cipherScorePanel.add(titleScoreLabel);
+			    
+			    for(int i = 0; i < num_dev.size(); i++) {
+			    	JLabel cipherInfoLabel = new JLabel(num_dev.get(i).get(0) + ":            ");
+			    	cipherInfoLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
+			    	this.cipherInfoPanel.add(cipherInfoLabel);
+			    	
+			    	
+			    	JLabel cipherScoreLabel = new JLabel("" + Rounder.round((double)num_dev.get(i).get(1), 2));
+			    	cipherScoreLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
+			    	this.cipherScorePanel.add(cipherScoreLabel);
+			    }
+    		}
+    		this.cipherInfoPanel.revalidate();
+    		this.cipherInfoPanel.repaint();
+    		this.cipherScorePanel.repaint();
+    	}
     }
      
     private class TextInformationAction implements ActionListener {
@@ -1407,8 +1597,6 @@ public class UINew extends JFrame {
 		}
     	
     	public void updateDialog() {
-			
-			
     		String text = getInputTextOnlyAlpha();
     		int length = text.length();
     		
@@ -1599,14 +1787,20 @@ public class UINew extends JFrame {
 
 			tempStepSetting.setText(ValueFormat.getNumber(this.tempStep));
 
-			countSetting.setText(ValueFormat.getNumber(this.count));
-			
+			countSetting.setText(ValueFormat.getNumber(this.count));	
 		}
-    	
+    }
+    
+    public String getInputText() {
+    	return this.inputTextArea.getText();
     }
     
     public String getInputTextOnlyAlpha() {
     	return this.inputTextArea.getText().replaceAll("[^a-zA-Z]+", "");
+    }
+    
+    public String getInputTextOnlyDigits() {
+    	return this.inputTextArea.getText().replaceAll("[^0-9]+", "");
     }
     
     public IDecrypt getDecryptManager() {
@@ -1640,6 +1834,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemIoCNormal;
     private JMenuItem menuItemIoCBifid;
     private JMenuItem menuItemIoCNicodemus;
+    private JMenuItem menuItemIoCNihilist;
     private JMenuItem menuItemIoCVigenere;
     private JMenuItem menuItemIdentify;
     private JMenuItem menuItemWordSplit;

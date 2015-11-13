@@ -1,4 +1,4 @@
-package nationalciphernew.cipher;
+package nationalciphernew.cipher.manage;
 
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;

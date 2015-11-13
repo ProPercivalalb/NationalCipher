@@ -9,12 +9,12 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.language.ILanguage;
 import javalibrary.math.Statistics;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
+import nationalciphernew.cipher.stats.StatCalculator;
 
 public class BifidPeriodPanel implements IStatisticsPanel {
 

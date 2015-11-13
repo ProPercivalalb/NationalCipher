@@ -11,10 +11,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import javalibrary.Output;
-import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.math.MathHelper;
+import nationalciphernew.cipher.stats.StatCalculator;
 
 public class StatisticsPanel implements IStatisticsPanel {
 

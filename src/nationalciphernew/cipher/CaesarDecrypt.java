@@ -14,7 +14,10 @@ import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
-import nationalciphernew.cipher.Creator.CaesarShift;
+import nationalciphernew.cipher.manage.Creator;
+import nationalciphernew.cipher.manage.DecryptionMethod;
+import nationalciphernew.cipher.manage.IDecrypt;
+import nationalciphernew.cipher.manage.Creator.CaesarShift;
 
 public class CaesarDecrypt implements IDecrypt {
 
@@ -29,10 +32,10 @@ public class CaesarDecrypt implements IDecrypt {
 	}
 
 	@Override
-	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, ILanguage language, Output output, KeyPanel keyPanel, ProgressValue progress) {
+	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			progress.addMaxValue(26);
-			CaesarTask task = new CaesarTask(text.toCharArray(), language, output, progress);
+			CaesarTask task = new CaesarTask(text.toCharArray(), settings.getLanguage(), output, progress);
 			
 			Creator.iterateCaesar(task);
 			

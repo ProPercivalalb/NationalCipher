@@ -18,7 +18,10 @@ import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
-import nationalciphernew.cipher.Creator.AffineKey;
+import nationalciphernew.cipher.manage.Creator;
+import nationalciphernew.cipher.manage.DecryptionMethod;
+import nationalciphernew.cipher.manage.IDecrypt;
+import nationalciphernew.cipher.manage.Creator.AffineKey;
 
 public class AffineDecrypt implements IDecrypt {
 
@@ -33,9 +36,9 @@ public class AffineDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, ILanguage language, Output output, KeyPanel keyPanel, ProgressValue progress) {
+	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			AffineTask task = new AffineTask(text.toCharArray(), language, output);
+			AffineTask task = new AffineTask(text.toCharArray(), settings.getLanguage(), output);
 			
 			Creator.iterateAffine(task);
 			
@@ -45,8 +48,8 @@ public class AffineDecrypt implements IDecrypt {
 			Map<String, Integer> chars = StringAnalyzer.getEmbeddedStrings(text, 1, 1);
 			List<String> sorted = new ArrayList<String>(chars.keySet());
 			Collections.sort(sorted, new StringAnalyzer.SortStringInteger(chars));
-			char language0 = language.getLetterLargestFirst().get(0);
-			char language1 = language.getLetterLargestFirst().get(1);
+			char language0 = settings.getLanguage().getLetterLargestFirst().get(0);
+			char language1 = settings.getLanguage().getLetterLargestFirst().get(1);
 			
 			char sorted0 = sorted.get(sorted.size() - 1).charAt(0);
 			char sorted1 = sorted.get(sorted.size() - 2).charAt(0);

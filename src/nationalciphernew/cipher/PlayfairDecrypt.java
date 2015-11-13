@@ -15,7 +15,12 @@ import javalibrary.util.RandomUtil;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
-import nationalciphernew.cipher.Creator.PlayfairKey;
+import nationalciphernew.cipher.manage.Creator;
+import nationalciphernew.cipher.manage.DecryptionMethod;
+import nationalciphernew.cipher.manage.IDecrypt;
+import nationalciphernew.cipher.manage.SimulatedAnnealing;
+import nationalciphernew.cipher.manage.Solution;
+import nationalciphernew.cipher.manage.Creator.PlayfairKey;
 
 public class PlayfairDecrypt implements IDecrypt {
 
@@ -30,7 +35,7 @@ public class PlayfairDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, ILanguage language, Output output, KeyPanel keyPanel, ProgressValue progress) {
+	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		PlayfairTask task = new PlayfairTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {

@@ -1,4 +1,4 @@
-package nationalciphernew.cipher;
+package nationalciphernew.cipher.manage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,7 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, ILanguage language, Output output, KeyPanel keyPanel, ProgressValue progress) {
+	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		SubstitutionTask task = new SubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());

@@ -13,6 +13,10 @@ import javalibrary.util.RandomUtil;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
+import nationalciphernew.cipher.manage.DecryptionMethod;
+import nationalciphernew.cipher.manage.IDecrypt;
+import nationalciphernew.cipher.manage.SimulatedAnnealing;
+import nationalciphernew.cipher.manage.Solution;
 
 
 public class SingleTranspostion implements IDecrypt {
@@ -28,7 +32,7 @@ public class SingleTranspostion implements IDecrypt {
 	}
 	
 	@Override
-	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, ILanguage language, Output output, KeyPanel keyPanel, ProgressValue progress) {
+	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		SubstitutionTask task = new SubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());

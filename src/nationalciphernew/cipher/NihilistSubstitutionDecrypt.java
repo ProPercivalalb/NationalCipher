@@ -5,6 +5,7 @@ import java.util.List;
 
 import javalibrary.Output;
 import javalibrary.cipher.Keyword;
+import javalibrary.cipher.NihilistSubstitution;
 import javalibrary.cipher.Playfair;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.dict.Dictionary;
@@ -17,7 +18,6 @@ import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
 import nationalciphernew.cipher.PlayfairDecrypt.PlayfairTask;
-import nationalciphernew.cipher.manage.Creator;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.SimulatedAnnealing;
@@ -25,54 +25,25 @@ import nationalciphernew.cipher.manage.Solution;
 import nationalciphernew.cipher.manage.Creator.PlayfairKey;
 import nationalciphernew.cipher.manage.Creator.SubstitutionKey;
 
-public class SubstitutionDecrypt implements IDecrypt {
+public class NihilistSubstitutionDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Substitution";
+		return "Nihilist Substitution";
 	}
 
 	@Override
 	public List<DecryptionMethod> getDecryptionMethods() {
-		return Arrays.asList(DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.CALCULATED, DecryptionMethod.DICTIONARY);
+		return Arrays.asList(DecryptionMethod.SIMULATED_ANNEALING);
 	}
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		SubstitutionTask task = new SubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
-		
-		if(method == DecryptionMethod.BRUTE_FORCE) {
-	
-			Creator.iterateSubstitution(task);
-			
-			output.println(new String(task.bestSolution.text));
-		}
-		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
+		NihilistSubstitutionTask task = new NihilistSubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
+		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
 			task.run(text, settings);
-		}
-		else if(method == DecryptionMethod.CALCULATED) {
-			
-		}
-		else if(method == DecryptionMethod.DICTIONARY) {
-			progress.addMaxValue(Dictionary.words.size());
-			for(String word : Dictionary.words) {
-				String change = "";
-				for(char i : word.toCharArray()) {
-					if(!change.contains("" + i))
-						change += i;
-				}
-				String regex = new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIJKLM", "ZYXWVUTSRQPONMLKJIHGFEDCBA"}[settings.keywordCreation];
-				
-				for(char i : regex.toCharArray()) {
-					if(!change.contains("" + i))
-						change += i;
-				}
-				
-				//output.println(word + " " + change);
-				task.onIteration(change);
-			}
 		}
 		else {
 			output.println(" Unexpected decryption method provided!");
@@ -80,37 +51,24 @@ public class SubstitutionDecrypt implements IDecrypt {
 	}
 	
 
-	public static class SubstitutionTask extends SimulatedAnnealing implements SubstitutionKey {
+	public static class NihilistSubstitutionTask extends SimulatedAnnealing {
 
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
-		public SubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public NihilistSubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 		}
 
 		@Override
-		public void onIteration(String keyalpha) {
-			this.lastSolution = new Solution(Keyword.decode(this.text, keyalpha), this.settings.getLanguage());
-			
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.output.println("Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, keyalpha, new String(this.bestSolution.text));	
-				UINew.BEST_SOULTION = new String(this.bestSolution.text);
-			}
-			
-			progress.increase();
-		}
-
-		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey = KeySquareManipulation.generateRandKey();
-			return new Solution(Keyword.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
+			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
+			return new Solution(NihilistSubstitution.decode(this.text, this.bestMaximaKey, "EASY"), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey() {
-			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new Solution(Keyword.decode(this.text, this.lastKey), this.settings.getLanguage());
+			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
+			return new Solution(NihilistSubstitution.decode(this.text, this.lastKey, "EASY"), this.settings.getLanguage());
 		}
 
 		@Override

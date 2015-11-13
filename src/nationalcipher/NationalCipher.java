@@ -3,7 +3,6 @@ package nationalcipher;
 import java.util.List;
 import java.util.Map;
 
-import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.cipher.stats.WordSplit;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
@@ -12,6 +11,7 @@ import javalibrary.math.Units.Time;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.MapHelper;
+import nationalciphernew.cipher.stats.StatCalculator;
 
 /**
  * @author Alex Barter (10AS)

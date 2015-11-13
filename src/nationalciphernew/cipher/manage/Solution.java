@@ -1,4 +1,4 @@
-package nationalciphernew.cipher;
+package nationalciphernew.cipher.manage;
 
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;

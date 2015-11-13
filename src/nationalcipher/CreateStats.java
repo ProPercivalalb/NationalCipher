@@ -14,11 +14,11 @@ import com.google.gson.Gson;
 
 import javalibrary.cipher.Columnar;
 import javalibrary.cipher.auto.HillAuto.MatrixCreation;
-import javalibrary.cipher.stats.StatCalculator;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.string.NumberString;
+import nationalciphernew.cipher.stats.StatCalculator;
 
 public class CreateStats {
 	public static PrintWriter writer;
