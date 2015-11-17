@@ -1,29 +1,22 @@
 package nationalciphernew.cipher;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JDialog;
+
 import javalibrary.Output;
-import javalibrary.cipher.Keyword;
 import javalibrary.cipher.NihilistSubstitution;
-import javalibrary.cipher.Playfair;
 import javalibrary.cipher.wip.KeySquareManipulation;
-import javalibrary.dict.Dictionary;
-import javalibrary.fitness.TextFitness;
-import javalibrary.language.ILanguage;
-import javalibrary.math.MathHelper;
 import javalibrary.swing.ProgressValue;
-import javalibrary.util.RandomUtil;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
-import nationalciphernew.cipher.PlayfairDecrypt.PlayfairTask;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.SimulatedAnnealing;
 import nationalciphernew.cipher.manage.Solution;
-import nationalciphernew.cipher.manage.Creator.PlayfairKey;
-import nationalciphernew.cipher.manage.Creator.SubstitutionKey;
 
 public class NihilistSubstitutionDecrypt implements IDecrypt {
 
@@ -40,17 +33,124 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		NihilistSubstitutionTask task = new NihilistSubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
+		
+		char[] textChar = text.toCharArray();
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
-			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
+	
+			int period = 4;
 			
-			task.run(text, settings);
+			List<Integer> list = new ArrayList<Integer>();
+			for(int i = 0; i < textChar.length / 2; i++)
+				list.add(Integer.valueOf(new String(textChar, i * 2, 2)));
+			
+			char[] tempText = new char[textChar.length / 2];
+			
+			boolean error = false;
+			
+			for(int i = 0; i < period; i++) {
+				List<Integer> old = getEveryNthChar(list, i, period);
+				List<Integer> key = getBestKey(old, i);
+				if(key.size() == 2) {
+					output.println("PeriodColumn %d -- %d%d", i, key.get(0), key.get(1));
+					
+					
+					int count = 0;
+					for(int no : old) {
+						if(no <= 10) no += 100;
+						int newInt = no -= (key.get(0) * 10 + key.get(1));
+						
+						int alphaInt = ((int)(newInt / 10) - 1) * 5 + ((newInt % 10) - 1);
+						tempText[count * period + i] = "ABCDEFGHIKLMNOPQRSTUVWXYZ".charAt(alphaInt);
+						count += 1;
+					}
+				}
+				else {
+					if(key.get(0) == key.get(1))
+						output.println("PeriodColumn %d -- Row: %d Column: %d-%d", i, key.get(0), key.get(2), key.get(3));
+					else if(key.get(2) == key.get(3))
+						output.println("PeriodColumn %d -- Row: %d-%d Column: %d", i, key.get(0), key.get(1), key.get(2));
+					else 
+						output.println("PeriodColumn %d -- Row: %d-%d Column: %d-%d", i, key.get(0), key.get(1), key.get(2), key.get(3));
+					
+					error = true;
+				}
+				
+
+			}
+			if(!error)
+				new SubstitutionDecrypt().attemptDecrypt(new String(tempText), settings, method, output, keyPanel, progress);
+			else {
+				output.println("Cannot complete decryption");
+			}
 		}
 		else {
 			output.println(" Unexpected decryption method provided!");
 		}	
 	}
 	
+	public static List<Integer> getEveryNthChar(List<Integer> old, int start, int n) {
+		List<Integer> list = new ArrayList<Integer>();
+        for(int i = 0; i < old.size(); ++i) {
+            if((i % n) == start) {
+            	list.add(old.get(i));
+            }
+        }
+        return list;
+    }
+	
+	public List<Integer> getBestKey(List<Integer> nos, int periodColumn) {
+		int rowMin = 1;
+		int rowMax = 5;
+		int colMin = 1;
+		int colMax = 5;
+		
+		for(int no : nos) {
+			if(periodColumn == 0) {
+				System.out.println(no + " " + rowMin + " " + rowMax + " " + colMin + " " + colMax);
+			}
+			int col = no % 10;
+			if(col == 0) {
+				colMin = Math.min(Math.max(colMin, 5), colMax);
+				colMax = Math.min(colMax, 5);
+				no -= 10;
+			}
+			if(col - 1 <= 5) {
+				colMin = Math.min(Math.max(colMin, 1), colMax);
+				colMax = Math.min(colMax, col - 1);
+			}
+			else {
+				colMin = Math.min(Math.max(colMin, col - 5), colMax);
+				colMax = Math.min(colMax, 5);
+			}
+			
+			int row = (int)(no / 10);
+			if(row == 0) {
+				rowMin = Math.min(Math.max(rowMin, 5), rowMax);
+				rowMax = Math.min(rowMax, 5);
+			}
+			else if(row - 1 <= 5) {
+				rowMin = Math.min(Math.max(rowMin, 1), rowMax);
+				rowMax = Math.min(rowMax, row - 1);
+			}
+			else {
+				rowMin = Math.min(Math.max(rowMin, row - 5), rowMax);
+				rowMax = Math.min(rowMax, 5);
+			}
 
+		}
+
+		if(rowMin == rowMax && colMin == colMax)
+			return Arrays.asList(rowMin, colMin);
+		
+		else
+			return Arrays.asList(rowMin,rowMax, colMin, colMax);
+	}
+	
+	@Override
+	public void createSettingsUI(JDialog dialog) {
+		
+	}
+	
 	public static class NihilistSubstitutionTask extends SimulatedAnnealing {
 
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
@@ -66,7 +166,7 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey() {
+		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(NihilistSubstitution.decode(this.text, this.lastKey, "EASY"), this.settings.getLanguage());
 		}

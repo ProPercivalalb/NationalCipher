@@ -1,15 +1,10 @@
 package nationalciphernew.cipher.manage;
 
 import javalibrary.Output;
-import javalibrary.cipher.Playfair;
-import javalibrary.cipher.wip.KeySquareManipulation;
-import javalibrary.fitness.TextFitness;
-import javalibrary.language.ILanguage;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
-import nationalciphernew.UINew;
 
 public abstract class SimulatedAnnealing extends InternalDecryption {
 
@@ -19,16 +14,16 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 
 	public Solution maxSolution;
 	
-	public void run(String text, Settings settings) {
+	public void run() {
 		while(true) {
 			this.bestSolution = this.generateKey();
 			this.maxSolution = this.bestSolution;
 
 
-			for(double TEMP = settings.getSATempStart(); TEMP >= 0; TEMP -= settings.getSATempStep()) {
-				for(int count = 0; count < settings.getSACount(); count++) { 
+			for(double TEMP = this.settings.getSATempStart(); TEMP >= 0; TEMP -= this.settings.getSATempStep()) {
+				for(int count = 0; count < this.settings.getSACount(); count++) { 
 					
-					this.lastSolution = this.modifyKey();
+					this.lastSolution = this.modifyKey(count);
 					double score = this.lastSolution.score;
 					double dF = score - this.maxSolution.score;
 					
@@ -59,7 +54,7 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 	
 	public abstract Solution generateKey();
 	
-	public abstract Solution modifyKey();
+	public abstract Solution modifyKey(int count);
 	
 	public abstract void storeKey();
 

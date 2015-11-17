@@ -7,11 +7,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JDialog;
+
 import javalibrary.Output;
 import javalibrary.cipher.Affine;
-import javalibrary.cipher.Caesar;
-import javalibrary.fitness.TextFitness;
-import javalibrary.language.ILanguage;
 import javalibrary.math.MathHelper;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.ProgressValue;
@@ -19,9 +18,11 @@ import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
 import nationalciphernew.cipher.manage.Creator;
+import nationalciphernew.cipher.manage.Creator.AffineKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
-import nationalciphernew.cipher.manage.Creator.AffineKey;
+import nationalciphernew.cipher.manage.InternalDecryption;
+import nationalciphernew.cipher.manage.Solution;
 
 public class AffineDecrypt implements IDecrypt {
 
@@ -38,11 +39,13 @@ public class AffineDecrypt implements IDecrypt {
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			AffineTask task = new AffineTask(text.toCharArray(), settings.getLanguage(), output);
+			AffineTask task = new AffineTask(text.toCharArray(), settings, keyPanel, output, progress);
+			
+			progress.addMaxValue(312);
 			
 			Creator.iterateAffine(task);
 			
-			output.println(task.plainText);
+			output.println(new String(task.bestSolution.text));
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			Map<String, Integer> chars = StringAnalyzer.getEmbeddedStrings(text, 1, 1);
@@ -68,42 +71,40 @@ public class AffineDecrypt implements IDecrypt {
 			output.println("a = %d", a);
 			int b = MathHelper.mod((sorted0 - 'A') - a * (language0 - 'A'), 26);
 			output.println("b = %d", b);
-			String plainText = Affine.decode(text.toCharArray(), a, b);
-			output.println(plainText);
-			UINew.BEST_SOULTION = plainText;
+			char[] plainText = Affine.decode(text.toCharArray(), a, b);
+			output.println(new String(plainText));
+			UINew.BEST_SOULTION = new String(plainText);
 		}
 		else {
 			output.println(" Unexpected decryption method provided!");
 		}	
 	}
 	
-	public static class AffineTask implements AffineKey {
+	@Override
+	public void createSettingsUI(JDialog dialog) {
+		
+	}
+	
+	public class AffineTask extends InternalDecryption implements AffineKey {
 
-		public char[] text;
-		public ILanguage language;
-		public Output output;
-		
-		public AffineTask(char[] text, ILanguage language, Output output) {
-			this.text = text;
-			this.language = language;
-			this.output = output;
+		public AffineTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+			super(text, settings, keyPanel, output, progress);
 		}
-		
-		public String plainText = "", lastText = "";
-		public double bestScore = Double.NEGATIVE_INFINITY, currentScore = 0;
 			
 		@Override
 		public void onIteration(int a, int b) {
-			this.lastText = Affine.decode(this.text, a, b);
-			this.currentScore = TextFitness.scoreFitnessQuadgrams(this.lastText, this.language);
+			this.lastSolution = new Solution(Affine.decode(this.text, a, b), this.settings.getLanguage());
 			
-			if(this.currentScore >= this.bestScore) {
-				this.output.println("Fitness: %f, A: %d, B: %d, Plaintext: %s", this.currentScore, a, b, this.lastText);	
-				this.bestScore = this.currentScore;
-				this.plainText = this.lastText;
-				UINew.BEST_SOULTION = this.plainText;
+			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.bestSolution = this.lastSolution;
+				this.output.println("Fitness: %f, A: %d, B: %d, Plaintext: %s", this.bestSolution.score, a, b, new String(this.bestSolution.text));	
+				this.keyPanel.fitness.setText("" + this.bestSolution.score);
+				this.keyPanel.key.setText("A: " + a + " B: " + b);
+				UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			}
+			
+			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.progress.increase();
 		}
 	}
-
 }

@@ -1,24 +1,15 @@
 package nationalcipher;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import com.google.gson.Gson;
-
-import javalibrary.cipher.Columnar;
-import javalibrary.cipher.auto.HillAuto.MatrixCreation;
-import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.string.NumberString;
-import nationalciphernew.cipher.stats.StatCalculator;
 
 public class CreateStats {
 	public static PrintWriter writer;

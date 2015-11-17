@@ -3,15 +3,15 @@ package nationalcipher;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import javalibrary.lib.OSIdentifier;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import javalibrary.lib.OSIdentifier;
 
 public class SaveHandler {
 

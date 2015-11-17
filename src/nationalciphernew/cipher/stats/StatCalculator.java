@@ -7,15 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javalibrary.ForceDecryptManager;
-import javalibrary.IForceDecrypt;
-import javalibrary.cipher.Bifid;
 import javalibrary.language.ILanguage;
 import javalibrary.math.ArrayHelper;
-import javalibrary.string.LetterCount;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
-import javalibrary.util.MapHelper;
 
 /**
  * @author Alex Barter (10AS)
@@ -32,7 +27,7 @@ public class StatCalculator {
 		for(String letter : letters.keySet())
 			total += letters.get(letter) * (letters.get(letter) - 1);
 
-		return total / (text.length() * (text.length() - 1)) * 1000.0D;
+		return total / (text.length() * (text.length() - 1));
 	}
 	
 	public static double calculateMaxIC(String text, int minPeriod, int maxPeriod) {
@@ -57,7 +52,7 @@ public class StatCalculator {
 			sum += letters.get(letter) * (letters.get(letter) - 1);
 		
 		int n = text.length() - 1;
-		return sum / (n * (n - 1)) * 10000.0D;
+		return sum / (n * (n - 1));
 	}
 	
 	public static double calculateEvenDiagrahpicIC(String text) {
@@ -290,6 +285,10 @@ public class StatCalculator {
 		
 	    return bestPeriod;
 	}
+	
+	//public static double calculatePortaIC(String text, int period) {
+	//	
+	//}
 	
 	/*                              Normor test                              */
 	
@@ -1176,5 +1175,5 @@ public class StatCalculator {
 			{2,0,0,0,8,0,0,0,0,6,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,9}};
 	
 
-	static int[] bstd = new int[17580];
+	public static int[] bstd = new int[17580];
 }

@@ -1,24 +1,28 @@
-package nationalciphernew.cipher.manage;
+package nationalciphernew.cipher;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JDialog;
+
 import javalibrary.Output;
-import javalibrary.cipher.Columnar;
+import javalibrary.cipher.FourSquare;
 import javalibrary.cipher.wip.KeySquareManipulation;
-import javalibrary.language.ILanguage;
 import javalibrary.swing.ProgressValue;
-import javalibrary.util.RandomUtil;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
+import nationalciphernew.cipher.manage.DecryptionMethod;
+import nationalciphernew.cipher.manage.IDecrypt;
+import nationalciphernew.cipher.manage.SimulatedAnnealing;
+import nationalciphernew.cipher.manage.Solution;
 
 
-public class DoubleTranspostionDecrypt implements IDecrypt {
+public class FourSquareDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Double Transpostion";
+		return "Four Square";
 	}
 
 	@Override
@@ -32,18 +36,22 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
-			task.run(text, settings);
+			task.run();
 		}
 		else {
 			output.println(" Unexpected decryption method provided!");
 		}	
 	}
 	
+	@Override
+	public void createSettingsUI(JDialog dialog) {
+		
+	}
 
 	public static class SubstitutionTask extends SimulatedAnnealing  {
 
-		public int[] bestKey1, bestMaximaKey1, lastKey1;
-		public int[] bestKey2, bestMaximaKey2, lastKey2;
+		public String bestKey1, bestMaximaKey1, lastKey1;
+		public String bestKey2, bestMaximaKey2, lastKey2;
 		
 		public SubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
@@ -51,20 +59,21 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey1 = new int[] {1, 4, 2, 0, 3};
-			this.bestMaximaKey2 = new int[] {0, 3, 4, 1, 2};
+			this.bestMaximaKey1 = KeySquareManipulation.generateRandKeySquare();
+			this.bestMaximaKey2 = KeySquareManipulation.generateRandKeySquare();
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(Columnar.decode(Columnar.decode(this.text, this.bestMaximaKey1), this.bestMaximaKey2), this.settings.getLanguage());
+			return new Solution(FourSquare.decode(text, this.bestMaximaKey1, this.bestMaximaKey2), this.settings.getLanguage());
 		}
 
 		@Override
-		public Solution modifyKey() {
-			if(RandomUtil.pickRandomElement(0, 1) == 1)
-				this.lastKey1 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey1);
+		public Solution modifyKey(int count) {
+			if(count % 2 == 0)
+				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
 			else
-				this.lastKey2 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey2);
-			return new Solution(Columnar.decode(Columnar.decode(this.text, this.lastKey1), this.lastKey2), this.settings.getLanguage());
+				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
+			
+			return new Solution(FourSquare.decode(this.text, this.lastKey1, this.lastKey2), this.settings.getLanguage());
 		}
 
 		@Override
@@ -78,7 +87,7 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 			this.bestKey1 = this.bestMaximaKey1;
 			this.bestKey2 = this.bestMaximaKey2;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
-			this.keyPanel.key.setText(Arrays.toString(this.bestKey1) + " " + Arrays.toString(this.bestKey2));
+			this.keyPanel.key.setText(this.bestKey1 + " " + this.bestKey2);
 		}
 		
 		@Override
@@ -89,7 +98,7 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 
 		@Override
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, Arrays.toString(this.bestKey1) + " " + Arrays.toString(this.bestKey2), new String(this.bestSolution.text));
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey1 + " " + this.bestKey2, new String(this.bestSolution.text));
 			UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			this.progress.setValue(0);
 			return false;

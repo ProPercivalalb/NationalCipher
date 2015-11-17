@@ -1,8 +1,5 @@
 package nationalcipher;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -12,12 +9,9 @@ import javalibrary.Output;
 import javalibrary.cipher.Caesar;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
-import javalibrary.math.MathHelper;
-import javalibrary.math.Statistics;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
-import nationalciphernew.cipher.stats.StatCalculator;
 
 public class CaesarPanel implements IStatisticsPanel {
 

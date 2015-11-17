@@ -95,7 +95,7 @@ public class StatisticsPanel implements IStatisticsPanel {
 		text += "\n IC: " + StatCalculator.calculateIC(cipherText);
 		text += "\n MIC: " + StatCalculator.calculateMaxIC(cipherText, 1, 15);
 	    text += "\n MKA: " + StatCalculator.calculateMaxKappaIC(cipherText, 1, 15);
-	    text += "\n DIC: " + StatCalculator.calculateDiagrahpicIC(cipherText);
+	    text += "\n DIC: " + StatCalculator.calculateDiagrahpicIC(cipherText) * 10000.0D;
 	    text += "\n EDI: " + StatCalculator.calculateEvenDiagrahpicIC(cipherText) * 10000;
 	    text += "\n LR: " + StatCalculator.calculateLR(cipherText);
 	    text += "\n ROD: " + StatCalculator.calculateROD(cipherText);

@@ -5,7 +5,8 @@ public enum DecryptionMethod {
 	BRUTE_FORCE("Brute Force"),
 	SIMULATED_ANNEALING("Simulated Annealing"),
 	CALCULATED("Calculated"),
-	DICTIONARY("Dictionary");
+	DICTIONARY("Dictionary"),
+	KEY_MANIPULATION("Key Manipulation");
 	
 	private String name;
 	

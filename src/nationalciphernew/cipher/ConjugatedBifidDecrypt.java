@@ -6,7 +6,8 @@ import java.util.List;
 import javax.swing.JDialog;
 
 import javalibrary.Output;
-import javalibrary.cipher.ColumnarRow;
+import javalibrary.cipher.ConjugatedBifid;
+import javalibrary.cipher.TwoSquare;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
@@ -18,11 +19,11 @@ import nationalciphernew.cipher.manage.SimulatedAnnealing;
 import nationalciphernew.cipher.manage.Solution;
 
 
-public class SingleTranspostion implements IDecrypt {
+public class ConjugatedBifidDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Single Transpostion";
+		return "Conjugated Bifid";
 	}
 
 	@Override
@@ -48,9 +49,11 @@ public class SingleTranspostion implements IDecrypt {
 		
 	}
 
-	public class SubstitutionTask extends SimulatedAnnealing  {
+	public static class SubstitutionTask extends SimulatedAnnealing  {
 
-		public int[] bestKey1, bestMaximaKey1, lastKey1;
+		public int period = 7;
+		public String bestKey1, bestMaximaKey1, lastKey1;
+		public String bestKey2, bestMaximaKey2, lastKey2;
 		
 		public SubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
@@ -58,27 +61,34 @@ public class SingleTranspostion implements IDecrypt {
 
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey1 = new int[] {1, 4, 2, 0, 3, 5};
+			this.bestMaximaKey1 = KeySquareManipulation.generateRandKeySquare();
+			this.bestMaximaKey2 = KeySquareManipulation.generateRandKeySquare();
 			this.lastKey1 = this.bestMaximaKey1;
-			return new Solution(ColumnarRow.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage());
+			this.lastKey2 = this.bestMaximaKey2;
+			return new Solution(ConjugatedBifid.decode(text, this.bestMaximaKey1, this.bestMaximaKey2, this.period), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
-			this.lastKey1 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey1);
-			return new Solution(ColumnarRow.decode(this.text, this.lastKey1), this.settings.getLanguage());
+			if(count % 2 == 0)
+				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
+			else
+				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
+			
+			return new Solution(ConjugatedBifid.decode(this.text, this.lastKey1, this.lastKey2, this.period), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
 		}
 
 		@Override
 		public void storeKey() {
 			this.bestMaximaKey1 = this.lastKey1;
+			this.bestMaximaKey2 = this.lastKey2;
 		}
 
 		@Override
 		public void solutionFound() {
 			this.bestKey1 = this.bestMaximaKey1;
-			this.keyPanel.fitness.setText("" + this.bestSolution.score);
-			this.keyPanel.key.setText(Arrays.toString(this.bestKey1));
+			this.bestKey2 = this.bestMaximaKey2;
+			this.keyPanel.updateSolution(this.bestSolution);
 		}
 		
 		@Override
@@ -89,7 +99,7 @@ public class SingleTranspostion implements IDecrypt {
 
 		@Override
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, Arrays.toString(this.bestKey1), new String(this.bestSolution.text));
+			this.output.println("%s", this.bestSolution);
 			UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			this.progress.setValue(0);
 			return false;

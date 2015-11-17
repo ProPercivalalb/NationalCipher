@@ -1,8 +1,5 @@
 package nationalcipher;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -11,7 +8,6 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.language.ILanguage;
 import javalibrary.math.MathHelper;
-import javalibrary.math.Statistics;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;

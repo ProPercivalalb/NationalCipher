@@ -1,19 +1,12 @@
 package nationalcipher;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.Enumeration;
 
-import javalibrary.cipher.ADFGVX;
 import javalibrary.cipher.Nicodemus;
-import javalibrary.cipher.auto.GodSolverAuto;
-import javalibrary.cipher.stats.WordSplit;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.math.ArrayHelper;
-import javalibrary.math.MathHelper;
 import nationalciphernew.cipher.stats.StatCalculator;
 
 public class Other {

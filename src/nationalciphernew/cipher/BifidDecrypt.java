@@ -6,25 +6,24 @@ import java.util.List;
 import javax.swing.JDialog;
 
 import javalibrary.Output;
-import javalibrary.cipher.Keyword;
+import javalibrary.cipher.Bifid;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
-import nationalciphernew.cipher.manage.Creator;
-import nationalciphernew.cipher.manage.Creator.SubstitutionKey;
+import nationalciphernew.cipher.manage.Creator.BifidKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.SimulatedAnnealing;
 import nationalciphernew.cipher.manage.Solution;
 
-public class SubstitutionDecrypt implements IDecrypt {
+public class BifidDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Substitution";
+		return "Bifid";
 	}
 
 	@Override
@@ -34,38 +33,39 @@ public class SubstitutionDecrypt implements IDecrypt {
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		SubstitutionTask task = new SubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
+		PlayfairTask task = new PlayfairTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-	
-			Creator.iterateSubstitution(task);
+			//Creator.iterateBifid(task);
 			
-			output.println(task.getBestSolution());
+			//output.println(new String(task.bestSolution.text));
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
 			task.run();
+			
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
 			progress.addMaxValue(Dictionary.words.size());
+			
 			for(String word : Dictionary.words) {
 				String change = "";
 				for(char i : word.toCharArray()) {
-					if(!change.contains("" + i))
+					if(i != 'J' && !change.contains("" + i))
 						change += i;
 				}
-				String regex = new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIJKLM", "ZYXWVUTSRQPONMLKJIHGFEDCBA"}[settings.keywordCreation];
+				String regex = new String[]{"ABCDEFGHIKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIKLM", "ZYXWVUTSRQPONMLKIHGFEDCBA"}[settings.keywordCreation];
 				
 				for(char i : regex.toCharArray()) {
 					if(!change.contains("" + i))
 						change += i;
 				}
 				
-				//output.println(word + " " + change);
+	
 				task.onIteration(change);
 			}
 		}
@@ -78,41 +78,39 @@ public class SubstitutionDecrypt implements IDecrypt {
 	public void createSettingsUI(JDialog dialog) {
 		
 	}
+	
+	public static class PlayfairTask extends SimulatedAnnealing implements BifidKey {
 
-	public static class SubstitutionTask extends SimulatedAnnealing implements SubstitutionKey {
-
+		public int period = 5;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
-		public SubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public PlayfairTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 		}
 
 		@Override
-		public void onIteration(String keyalpha) {
-			this.lastSolution = new Solution(Keyword.decode(this.text, keyalpha), this.settings.getLanguage());
+		public void onIteration(String keysquare) {
+			this.lastSolution = new Solution(Bifid.decode(this.text, keysquare, this.period), this.settings.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.output.println("Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, keyalpha, new String(this.bestSolution.text));	
-				this.keyPanel.fitness.setText("" + this.bestSolution.score);
-				this.keyPanel.key.setText(keyalpha);
+				this.output.println("Fitness: %f, KeySquare: %s, Plaintext: %s", this.bestSolution.score, keysquare, new String(this.bestSolution.text));	
 				UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
-			this.progress.increase();
+			progress.increase();
 		}
 
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey = KeySquareManipulation.generateRandKey();
-			return new Solution(Keyword.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
+			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
+			return new Solution(Bifid.decode(this.text, this.bestMaximaKey, this.period), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
-			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new Solution(Keyword.decode(this.text, this.lastKey), this.settings.getLanguage());
+			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
+			return new Solution(Bifid.decode(this.text, this.lastKey, this.period), this.settings.getLanguage());
 		}
 
 		@Override

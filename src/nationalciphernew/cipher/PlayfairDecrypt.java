@@ -3,24 +3,22 @@ package nationalciphernew.cipher;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JDialog;
+
 import javalibrary.Output;
 import javalibrary.cipher.Playfair;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.dict.Dictionary;
-import javalibrary.fitness.TextFitness;
-import javalibrary.language.ILanguage;
-import javalibrary.math.MathHelper;
 import javalibrary.swing.ProgressValue;
-import javalibrary.util.RandomUtil;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
 import nationalciphernew.cipher.manage.Creator;
+import nationalciphernew.cipher.manage.Creator.PlayfairKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.SimulatedAnnealing;
 import nationalciphernew.cipher.manage.Solution;
-import nationalciphernew.cipher.manage.Creator.PlayfairKey;
 
 public class PlayfairDecrypt implements IDecrypt {
 
@@ -41,12 +39,12 @@ public class PlayfairDecrypt implements IDecrypt {
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			Creator.iteratePlayfair(task);
 			
-			output.println(new String(task.bestSolution.text));
+			output.println(task.getBestSolution());
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
-			task.run(text, settings);
+			task.run();
 			
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
@@ -77,6 +75,11 @@ public class PlayfairDecrypt implements IDecrypt {
 		}	
 	}
 	
+	@Override
+	public void createSettingsUI(JDialog dialog) {
+		
+	}
+	
 	public static class PlayfairTask extends SimulatedAnnealing implements PlayfairKey {
 
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
@@ -92,10 +95,13 @@ public class PlayfairDecrypt implements IDecrypt {
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.output.println("Fitness: %f, KeySquare: %s, Plaintext: %s", this.bestSolution.score, keysquare, new String(this.bestSolution.text));	
+				this.keyPanel.fitness.setText("" + this.bestSolution.score);
+				this.keyPanel.key.setText(keysquare);
 				UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			}
 			
-			progress.increase();
+			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.progress.increase();
 		}
 
 		@Override
@@ -105,7 +111,7 @@ public class PlayfairDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey() {
+		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(Playfair.decode(this.text, this.lastKey), this.settings.getLanguage());
 		}

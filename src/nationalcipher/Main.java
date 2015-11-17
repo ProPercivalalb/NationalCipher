@@ -1,9 +1,9 @@
 package nationalcipher;
 
+import javax.swing.UIManager;
+
 import javalibrary.cipher.wip.RouteCipher;
 import javalibrary.swing.FontUtil;
-
-import javax.swing.UIManager;
 
 /**
  * @author Alex Barter (10AS)

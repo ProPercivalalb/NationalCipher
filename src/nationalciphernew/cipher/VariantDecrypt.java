@@ -6,8 +6,8 @@ import java.util.List;
 import javax.swing.JDialog;
 
 import javalibrary.Output;
-import javalibrary.cipher.Beaufort;
 import javalibrary.cipher.Caesar;
+import javalibrary.cipher.Variant;
 import javalibrary.fitness.ChiSquared;
 import javalibrary.language.ILanguage;
 import javalibrary.string.StringTransformer;
@@ -19,11 +19,11 @@ import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.stats.StatCalculator;
 
-public class BeaufortDecrypt implements IDecrypt {
+public class VariantDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Beaufort";
+		return "Variant";
 	}
 
 	@Override
@@ -36,26 +36,19 @@ public class BeaufortDecrypt implements IDecrypt {
 		char[] textChar = text.toCharArray();
 		
 		if(method == DecryptionMethod.CALCULATED) {
-			char[] invervedText = new char[textChar.length];
-			//Runs through all the characters from the array
-			for(int i = 0; i < textChar.length; i++) {
-
-				invervedText[i] = (char)('Z' - textChar[i] + 'A');
-			}
-			
 			int keyLength = StatCalculator.calculateBestKappaIC(text, 2, 50, settings.getLanguage());
 			
 			progress.addMaxValue(keyLength * 26);
 			
 			String keyword = "";
 	        for(int i = 0; i < keyLength; ++i) {
-	        	String temp = StringTransformer.getEveryNthChar(new String(invervedText), i, keyLength);
+	        	String temp = StringTransformer.getEveryNthChar(text, i, keyLength);
 	            int shift = this.findBestCaesarShift(temp.toCharArray(), settings.getLanguage(), progress);
-	            keyword += (char)('Z' - shift);
+	            keyword += (char)('A' - (shift - 26) % 26);
 	        }
 	        output.println("Keyword: " + keyword);
 			
-	        String plainText = new String(Beaufort.decode(textChar, keyword));
+	        String plainText = new String(Variant.decode(textChar, keyword));
 	        output.println("Plaintext: " + plainText);
 			UINew.BEST_SOULTION = plainText;
 		}

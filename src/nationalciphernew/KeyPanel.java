@@ -7,6 +7,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import nationalciphernew.cipher.manage.Solution;
+
 public class KeyPanel extends JPanel {
 
 	public JTextField fitness;
@@ -31,5 +33,11 @@ public class KeyPanel extends JPanel {
 		this.add(this.iterations);
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+	}
+
+	public void updateSolution(Solution solution) {
+		this.fitness.setText("" + solution.score);
+		this.key.setText(solution.keyString);
+		UINew.BEST_SOULTION = new String(solution.text);
 	}
 }

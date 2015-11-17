@@ -2,7 +2,6 @@ package nationalcipher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,16 +11,13 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.cipher.Columnar;
 import javalibrary.cipher.ColumnarRow;
 import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.cipher.permentate.Permentations;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.math.ArrayHelper;
-import javalibrary.math.MathHelper;
 import javalibrary.string.StringAnalyzer;
-import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.util.MapHelper;
