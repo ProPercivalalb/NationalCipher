@@ -4,13 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.cipher.Caesar;
 import javalibrary.cipher.Vigenere;
-import javalibrary.cipher.VigenereAutokey;
 import javalibrary.fitness.ChiSquared;
-import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
@@ -20,7 +19,6 @@ import nationalciphernew.UINew;
 import nationalciphernew.cipher.manage.Creator.VigereneKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
-import nationalciphernew.cipher.manage.InternalDecryption;
 import nationalciphernew.cipher.manage.KeySearch;
 import nationalciphernew.cipher.manage.Solution;
 import nationalciphernew.cipher.stats.StatCalculator;
@@ -90,7 +88,7 @@ public class VigenereDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void createSettingsUI(JDialog dialog) {
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}
 	

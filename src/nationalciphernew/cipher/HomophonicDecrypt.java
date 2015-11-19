@@ -5,17 +5,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.cipher.Homophonic;
-import javalibrary.cipher.Myszkowski;
 import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
 import nationalciphernew.cipher.manage.Creator;
 import nationalciphernew.cipher.manage.Creator.HomophonicKey;
-import nationalciphernew.cipher.manage.Creator.MyszkowskiKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.InternalDecryption;
@@ -57,7 +56,7 @@ public class HomophonicDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void createSettingsUI(JDialog dialog) {
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}
 	

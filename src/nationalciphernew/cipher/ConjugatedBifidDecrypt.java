@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.cipher.ConjugatedBifid;
-import javalibrary.cipher.TwoSquare;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
@@ -45,7 +45,7 @@ public class ConjugatedBifidDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void createSettingsUI(JDialog dialog) {
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}
 

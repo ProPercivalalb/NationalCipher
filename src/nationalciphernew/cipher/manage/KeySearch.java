@@ -13,7 +13,7 @@ public abstract class KeySearch extends InternalDecryption {
 	}
 	
 	public void run(int minLength, int maxLength) {
-		for(int length = minLength; length <= maxLength; length += 1) {
+		for(int length = minLength; length <= maxLength; length++) {
 			
 			String parent = StringTransformer.repeat("A", length);
 

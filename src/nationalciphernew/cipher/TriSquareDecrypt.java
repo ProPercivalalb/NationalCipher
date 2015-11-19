@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.cipher.TriSquare;
@@ -43,7 +44,7 @@ public class TriSquareDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void createSettingsUI(JDialog dialog) {
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}
 	

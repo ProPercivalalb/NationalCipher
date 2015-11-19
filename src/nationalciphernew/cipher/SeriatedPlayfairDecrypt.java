@@ -7,39 +7,40 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.cipher.Bifid;
+import javalibrary.cipher.SeriatedPlayfair;
 import javalibrary.cipher.wip.KeySquareManipulation;
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
 import nationalciphernew.UINew;
-import nationalciphernew.cipher.manage.Creator.BifidKey;
+import nationalciphernew.cipher.manage.Creator;
+import nationalciphernew.cipher.manage.Creator.PlayfairKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.SimulatedAnnealing;
 import nationalciphernew.cipher.manage.Solution;
 
-public class BifidDecrypt implements IDecrypt {
+public class SeriatedPlayfairDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Bifid";
+		return "Seriated Playfair";
 	}
 
 	@Override
 	public List<DecryptionMethod> getDecryptionMethods() {
-		return Arrays.asList(DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.CALCULATED, DecryptionMethod.DICTIONARY);
+		return Arrays.asList(DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.DICTIONARY);
 	}
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		BifidTask task = new BifidTask(text.toCharArray(), settings, keyPanel, output, progress);
+		PlayfairTask task = new PlayfairTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			//Creator.iterateBifid(task);
+			Creator.iteratePlayfair(task);
 			
-			//output.println(new String(task.bestSolution.text));
+			output.println(task.getBestSolution());
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
@@ -80,38 +81,39 @@ public class BifidDecrypt implements IDecrypt {
 		
 	}
 	
-	public static class BifidTask extends SimulatedAnnealing implements BifidKey {
+	public static class PlayfairTask extends SimulatedAnnealing implements PlayfairKey {
 
-		public int period = 5;
+		public int period = 6;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
-		public BifidTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public PlayfairTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 		}
 
 		@Override
 		public void onIteration(String keysquare) {
-			this.lastSolution = new Solution(Bifid.decode(this.text, keysquare, this.period), this.settings.getLanguage());
+			this.lastSolution = new Solution(SeriatedPlayfair.decode(this.text, keysquare, this.period), this.settings.getLanguage()).setKeyString(keysquare);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.output.println("Fitness: %f, KeySquare: %s, Plaintext: %s", this.bestSolution.score, keysquare, new String(this.bestSolution.text));	
-				UINew.BEST_SOULTION = new String(this.bestSolution.text);
+				this.output.println("%s", this.bestSolution);	
+				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			progress.increase();
+			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.progress.increase();
 		}
 
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(Bifid.decode(this.text, this.bestMaximaKey, this.period), this.settings.getLanguage());
+			return new Solution(SeriatedPlayfair.decode(this.text, this.bestMaximaKey, this.period), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Bifid.decode(this.text, this.lastKey, this.period), this.settings.getLanguage());
+			return new Solution(SeriatedPlayfair.decode(this.text, this.lastKey, this.period), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}
 
 		@Override
@@ -134,7 +136,7 @@ public class BifidDecrypt implements IDecrypt {
 
 		@Override
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.text));
+			this.output.println("%s", this.bestSolution);	
 			UINew.BEST_SOULTION = new String(this.bestSolution.text);
 			this.progress.setValue(0);
 			return false;

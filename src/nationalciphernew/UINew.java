@@ -3,7 +3,6 @@ package nationalciphernew;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -27,7 +26,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +51,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.ProgressMonitor;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -93,13 +90,11 @@ import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.Threads;
 import javalibrary.util.MapHelper;
-import nationalcipher.Main;
 import nationalciphernew.cipher.manage.DecryptionManager;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.Solution;
 import nationalciphernew.cipher.stats.StatCalculator;
-import nationalciphernew.cipher.stats.StatisticType;
 
 /**
  *
@@ -257,6 +252,8 @@ public class UINew extends JFrame {
         this.menuItemIoCNicodemus = new JMenuItem();
         this.menuItemIoCNihilist = new JMenuItem();
         this.menuItemIoCPorta = new JMenuItem();
+        this.menuItemIoCSeriatedPlayfair = new JMenuItem();
+        this.menuItemIoCTrifid = new JMenuItem();
         this.menuItemIoCVigenere = new JMenuItem();
         this.menuItemIdentify = new JMenuItem();
         this.menuItemWordSplit = new JMenuItem();
@@ -484,7 +481,7 @@ public class UINew extends JFrame {
         this.menuItemIoCNicodemus.addActionListener(new NicodemusIoCAction());
         this.menuItemIoC.add(this.menuItemIoCNicodemus);
         
-        this.menuItemIoCNihilist.setText("Nihilist");
+        this.menuItemIoCNihilist.setText("Nihilist Substitution");
         this.menuItemIoCNihilist.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nihilist"));
         this.menuItemIoCNihilist.addActionListener(new NihilistIoCAction());
         this.menuItemIoC.add(this.menuItemIoCNihilist);
@@ -493,7 +490,16 @@ public class UINew extends JFrame {
         this.menuItemIoCPorta.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Porta"));
         this.menuItemIoCPorta.addActionListener(new PortaIoCAction());
         this.menuItemIoC.add(this.menuItemIoCPorta);
- 
+        
+        this.menuItemIoCSeriatedPlayfair.setText("Seriated Playfair");
+        this.menuItemIoCSeriatedPlayfair.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Seriated Playfair"));
+        this.menuItemIoCSeriatedPlayfair.addActionListener(new SeriatedPlayfairIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCSeriatedPlayfair);
+        
+        this.menuItemIoCTrifid.setText("Trifid");
+        this.menuItemIoCTrifid.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Trifid"));
+        this.menuItemIoCTrifid.addActionListener(new TrifidIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCTrifid);
         
         this.menuItemIoCVigenere.setText("Vigenere");
         this.menuItemIoCVigenere.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Vigenere"));
@@ -666,24 +672,25 @@ public class UINew extends JFrame {
     		
     		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/cog.png")));
     		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    		dialog.setLocationRelativeTo(UINew.this);
     		dialog.setResizable(false);
     		dialog.setMinimumSize(new Dimension(400, 200));
+    		dialog.setLocationRelativeTo(UINew.this);
     		
     		ActionListener escListener = new ActionListener() {
     	        @Override
     	        public void actionPerformed(ActionEvent e) {
-    	        	dialog.dispatchEvent(new WindowEvent( 
-    	                    dialog, WindowEvent.WINDOW_CLOSING 
-    	                ));
+    	        	dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
     	        }
     	    };
 
     	    dialog.getRootPane().registerKeyboardAction(escListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     		
+    		JPanel panel = new JPanel();
+            panel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(2, 2, 2, 2), BorderFactory.createEtchedBorder()));
+    	    dialog.add(panel);
     		
 	        IDecrypt force = getDecryptManager();
-	        force.createSettingsUI(dialog);
+	        force.createSettingsUI(dialog, panel);
 	   
 			dialog.setModal(true);
 			dialog.setVisible(true);
@@ -775,23 +782,25 @@ public class UINew extends JFrame {
 
     	public Dimension lastSize;
     	public Point lastLocation;
+    	public int lastState;
     	
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			dispose();
 			if(!isUndecorated()) {
+				this.lastSize = getSize();
+				this.lastLocation = getLocation();
+				this.lastState = getExtendedState();
 				setExtendedState(Frame.MAXIMIZED_BOTH);
 		    	setUndecorated(true);
 			}
 			else {
 				setSize(this.lastSize);
 				setLocation(this.lastLocation);
-				setExtendedState(Frame.NORMAL);
+				setExtendedState(this.lastState);
 				setUndecorated(false);
 			}
 			
-			this.lastSize = getSize();
-			this.lastLocation = getLocation();
 			setVisible(true);
 		}
     }
@@ -1621,7 +1630,7 @@ public class UINew extends JFrame {
     		
     		this.dialog = new JDialog();
     		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Nihilist IoC");
+    		this.dialog.setTitle("Nihilist Substitution IoC");
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
@@ -1634,7 +1643,7 @@ public class UINew extends JFrame {
 	          
 	        this.chart = new JBarChart(new ChartList());
 	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Nihilist IoC"));
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
 	        panel.add(this.chart);
 	        
     		this.dialog.add(panel);
@@ -1725,6 +1734,164 @@ public class UINew extends JFrame {
     	public void updateDialog() {
 			this.chart.resetAll();
 			
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
+    private class SeriatedPlayfairIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public SeriatedPlayfairIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Seriated Playfair IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Double Letter Calculation"));
+	        panel.add(this.chart);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+	
+			String text = getInputTextOnlyAlpha();
+			if(!text.isEmpty()) {
+				for(int period = 2; period <= 40; period++) {
+					boolean valid = true;
+
+					for(int i = 0; i < text.length() && valid; i += period * 2) {
+						int min = Math.min(period, (text.length() - i) / 2);
+
+						for(int j = 0; j < min; j++) {
+							char a = text.charAt(i + j);
+							char b = text.charAt(i + j + min);
+							if(a == b) {
+								valid = false;
+								break;
+							}
+						}
+					}
+	
+					this.chart.values.add(new ChartData("Period: " + period, valid ? 1 : 0));
+			    }
+			}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
+    public class TrifidIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public TrifidIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Trifid IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		lastStates.add(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+	
+			String text = getInputText();
+			if(!text.isEmpty()) {
+				for(int period = 2; period <= 15; period++) {
+					Map<String, Integer> theatricalDiagram = new HashMap<String, Integer>();
+					int count = 0;
+					for(int i = 0; i < text.length(); i += period) {
+						int columns = Math.min(period / 3, (text.length() - i) / 3);
+						//System.out.println(columns);
+						int limit = Math.min(i + period, text.length());
+						
+						for(int j = i; j < limit - columns; j++) {
+							String theatrical = text.charAt(j) + "" + text.charAt(j + columns) + "" + text.charAt(j + columns * 2);
+							System.out.println(i + " " + theatrical);
+							theatricalDiagram.put(theatrical, 1 + (theatricalDiagram.containsKey(theatrical) ? theatricalDiagram.get(theatrical) : 0));
+						}
+						count += limit - columns - i;
+					}
+					
+					System.out.println(period + " " + theatricalDiagram);
+					
+					double sum = 0.0;
+					for(String diagram : theatricalDiagram.keySet())
+						sum += theatricalDiagram.get(diagram) * (theatricalDiagram.get(diagram) - 1);
+					
+					this.chart.values.add(new ChartData("Period: " + period, 62500 * sum / (count * (count - 1))));
+			    }
+			}
     		
     		this.chart.repaint();
     	}
@@ -2295,6 +2462,8 @@ public class UINew extends JFrame {
     private JMenuItem menuItemIoCNicodemus;
     private JMenuItem menuItemIoCNihilist;
     private JMenuItem menuItemIoCPorta;
+    private JMenuItem menuItemIoCSeriatedPlayfair;
+    private JMenuItem menuItemIoCTrifid;
     private JMenuItem menuItemIoCVigenere;
     private JMenuItem menuItemIdentify;
     private JMenuItem menuItemWordSplit;

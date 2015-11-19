@@ -14,22 +14,16 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.AbstractDocument;
 
-import javalibrary.EncryptionData;
 import javalibrary.Output;
-import javalibrary.cipher.Vigenere;
 import javalibrary.cipher.VigenereAutokey;
-import javalibrary.fitness.TextFitness;
-import javalibrary.string.StringTransformer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalciphernew.KeyPanel;
 import nationalciphernew.Settings;
-import nationalciphernew.UINew;
 import nationalciphernew.cipher.manage.Creator;
 import nationalciphernew.cipher.manage.Creator.VigenereAutoKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
-import nationalciphernew.cipher.manage.InternalDecryption;
 import nationalciphernew.cipher.manage.KeySearch;
 import nationalciphernew.cipher.manage.SettingParse;
 import nationalciphernew.cipher.manage.Solution;
@@ -83,11 +77,9 @@ public class VigenereAutoKeyDecrypt implements IDecrypt {
 	private JTextField rangeBox = new JTextField("2-25");
 	
 	@Override
-	public void createSettingsUI(JDialog dialog) {
-		JPanel panel = new JPanel();
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(2, 2, 2, 2), BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Vigenere Settings")));
-        
+
         JLabel range = new JLabel("Keyword length range:");
 		this.rangeBox.setMaximumSize(new Dimension(100, 20));
 		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());

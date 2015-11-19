@@ -1,6 +1,5 @@
 package nationalciphernew.cipher.manage;
 
-import javalibrary.cipher.auto.HillAuto.MatrixCreation;
 import javalibrary.math.ArrayHelper;
 import javalibrary.math.matrics.Matrix;
 

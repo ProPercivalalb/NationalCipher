@@ -11,7 +11,6 @@ import nationalciphernew.cipher.BeaufortDecrypt;
 import nationalciphernew.cipher.BifidDecrypt;
 import nationalciphernew.cipher.CadenusDecrypt;
 import nationalciphernew.cipher.CaesarDecrypt;
-import nationalciphernew.cipher.CheckerboardDecrypt;
 import nationalciphernew.cipher.ConjugatedBifidDecrypt;
 import nationalciphernew.cipher.DoubleTranspostionDecrypt;
 import nationalciphernew.cipher.FourSquareDecrypt;
@@ -25,9 +24,11 @@ import nationalciphernew.cipher.PortaDecrypt;
 import nationalciphernew.cipher.RailFenceDecrypt;
 import nationalciphernew.cipher.ReddefenceDecrypt;
 import nationalciphernew.cipher.RouteDecrypt;
+import nationalciphernew.cipher.SeriatedPlayfairDecrypt;
 import nationalciphernew.cipher.SingleTranspostion;
 import nationalciphernew.cipher.SubstitutionDecrypt;
 import nationalciphernew.cipher.TriSquareDecrypt;
+import nationalciphernew.cipher.TrifidDecrypt;
 import nationalciphernew.cipher.TwoSquareDecrypt;
 import nationalciphernew.cipher.VariantDecrypt;
 import nationalciphernew.cipher.VigenereAutoKeyDecrypt;
@@ -80,7 +81,9 @@ public class DecryptionManager {
 		
 		ciphers.add(new BifidDecrypt());
 		ciphers.add(new ConjugatedBifidDecrypt());
+		ciphers.add(new TrifidDecrypt());
 		ciphers.add(new PlayfairDecrypt());
+		ciphers.add(new SeriatedPlayfairDecrypt());
 		ciphers.add(new HillDecrypt());
 		
 		ciphers.add(new NihilistSubstitutionDecrypt());

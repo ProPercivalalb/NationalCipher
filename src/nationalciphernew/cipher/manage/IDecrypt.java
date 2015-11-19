@@ -3,6 +3,7 @@ package nationalciphernew.cipher.manage;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
@@ -17,5 +18,5 @@ public interface IDecrypt {
 
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress);
 
-	public void createSettingsUI(JDialog dialog);
+	public void createSettingsUI(JDialog dialog, JPanel panel);
 }

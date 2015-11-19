@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.cipher.NihilistTransposition;
-import javalibrary.cipher.Redefence;
 import javalibrary.math.MathHelper;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
@@ -16,7 +16,6 @@ import nationalciphernew.Settings;
 import nationalciphernew.UINew;
 import nationalciphernew.cipher.manage.Creator;
 import nationalciphernew.cipher.manage.Creator.NihilistTranspositionKey;
-import nationalciphernew.cipher.manage.Creator.RedefenceKey;
 import nationalciphernew.cipher.manage.DecryptionMethod;
 import nationalciphernew.cipher.manage.IDecrypt;
 import nationalciphernew.cipher.manage.InternalDecryption;
@@ -66,7 +65,7 @@ public class NihilistTranspositionDecrypt implements IDecrypt {
 	}
 	
 	@Override
-	public void createSettingsUI(JDialog dialog) {
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}
 	
