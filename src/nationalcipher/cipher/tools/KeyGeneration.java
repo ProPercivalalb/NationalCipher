@@ -22,12 +22,12 @@ public class KeyGeneration {
 		
 		String key = "";
 		
-		for(int i = 0; i < length; i++) {
+		for(int i = 0; i < length; i++)
 			key += RandomUtil.pickRandomChar(all26Chars);
-		}
 		
 		return key;
 	}
+	
 
 	public static int[] createOrder(int length) {
 		int[] array = ArrayHelper.range(0, length);

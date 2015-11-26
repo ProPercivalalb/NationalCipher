@@ -7,7 +7,13 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class VigenereProgressiveKey implements IRandEncrypter {
 
+	public static void main(String[] args) {
+		System.out.println(new String(encode("TESTINGTHISCIPHERNOW", "CAT", 4, 5)));
+		System.out.println(new String(decode("VELVNLNYKUCFZEPVLAKQ".toCharArray(), "CAT", 4, 5)));
+	}
+	
 	public static String encode(String plainText, String keyword, int period, int progressiveKey) {
+		System.out.println(keyword + "Period: " + period + " prog i: " + progressiveKey);
 		String cipherText = "";
 
 		for(int index = 0; index < plainText.length(); index++) {

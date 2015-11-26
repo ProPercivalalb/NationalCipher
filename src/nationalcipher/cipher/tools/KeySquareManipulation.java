@@ -24,9 +24,42 @@ public class KeySquareManipulation {
 	    return new String(chars);
 	}
 	
+	public static int[] modifyOrder(int[] order) {
+	    int modification = RandomUtil.pickRandomInt(50);
+	    
+	    switch(modification) {
+	      	case 0: return reverseOrder(order);
+	        case 1: return cutOrder(order);      
+	        default: 
+	        	return exchangeOrder(order);
+	    }
+	}
+	
+	public static int[] reverseOrder(int[] order) {
+		int length = order.length;
+		
+		for(int i = 0; i < length / 2; i++) {
+		    int temp = order[i];
+		    order[i] = order[length - i - 1];
+		    order[length - i - 1] = temp;
+		}
+		
+		return order;
+	}
+	
+	public static int[] cutOrder(int[] order) {
+		int length = order.length;
+		int cuttingPos = RandomUtil.pickRandomInt(1, length - 1);
+		
+		int[] newOrder = new int[length];
+		System.arraycopy(order, 0, newOrder, length - cuttingPos, cuttingPos);
+		System.arraycopy(order, cuttingPos, newOrder, 0, length - cuttingPos);
+		return newOrder;
+	}
+	
 	public static int[] exchangeOrder(int[] order){
-	    int i = rand.nextInt(100) % order.length;
-	    int j = rand.nextInt(100) % order.length;
+	    int i = rand.nextInt(order.length);
+	    int j = rand.nextInt(order.length);
 	    int temp = order[i];
 	    order[i] = order[j];
 	    order[j] = temp;

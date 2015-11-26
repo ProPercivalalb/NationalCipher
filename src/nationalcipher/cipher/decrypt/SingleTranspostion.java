@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
+import javalibrary.math.ArrayHelper;
 import javalibrary.math.MathHelper;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
@@ -33,6 +34,7 @@ import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.RedefenceKey;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.InternalDecryption;
+import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
@@ -48,7 +50,7 @@ public class SingleTranspostion implements IDecrypt {
 
 	@Override
 	public List<DecryptionMethod> getDecryptionMethods() {
-		return Arrays.asList(DecryptionMethod.BRUTE_FORCE);
+		return Arrays.asList(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.SIMULATED_ANNEALING);
 	}
 	
 	@Override
@@ -70,6 +72,11 @@ public class SingleTranspostion implements IDecrypt {
 			
 			output.println(task.getBestSolution());
 		}
+		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
+			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
+			
+			task.run();
+		}
 		else {
 			output.println(" Unexpected decryption method provided!");
 		}	
@@ -90,13 +97,17 @@ public class SingleTranspostion implements IDecrypt {
 		dialog.add(panel);
 	}
 
-	public class SubstitutionTask extends InternalDecryption implements RedefenceKey  {
+	public class SubstitutionTask extends SimulatedAnnealing implements RedefenceKey  {
 
+		public int[] bestKey1, bestMaximaKey1, lastKey1;
 		public boolean readColumns;
+		public int length;
 		
 		public SubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 			this.readColumns = directionOption.getSelectedItem().equals("Columns");
+			int[] range = SettingParse.getIntegerRange(rangeBox);
+			this.length = range[0];
 		}
 
 		@Override
@@ -112,6 +123,45 @@ public class SingleTranspostion implements IDecrypt {
 			this.keyPanel.iterations.setText("" + this.iteration++);
 			this.progress.increase();
 			
+		}
+
+		@Override
+		public Solution generateKey() {
+			this.bestMaximaKey1 = KeyGeneration.createOrder(this.length);
+			return new Solution(this.readColumns ? Columnar.decode(this.text, this.bestMaximaKey1) : ColumnarRow.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.bestMaximaKey1));
+		}
+
+		@Override
+		public Solution modifyKey(int count) {
+			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
+
+			return new Solution(this.readColumns ? Columnar.decode(this.text, this.lastKey1) : ColumnarRow.decode(this.text, this.lastKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.lastKey1));
+		}
+
+		@Override
+		public void storeKey() {
+			this.bestMaximaKey1 = this.lastKey1;
+		}
+
+		@Override
+		public void solutionFound() {
+			this.bestKey1 = this.bestMaximaKey1;
+			this.keyPanel.fitness.setText("" + this.bestSolution.score);
+			this.keyPanel.key.setText(this.bestSolution.keyString);
+		}
+		
+		@Override
+		public void onIteration() {
+			this.progress.increase();
+			this.keyPanel.iterations.setText("" + this.iteration++);
+		}
+
+		@Override
+		public boolean endIteration() {
+			this.output.println("%s", this.bestSolution);
+			UINew.BEST_SOULTION = this.bestSolution.text;
+			this.progress.setValue(0);
+			return false;
 		}
 	}
 }

@@ -1823,6 +1823,7 @@ public class UINew extends JFrame {
     	
     	private JDialog dialog;
     	private JBarChart chart;
+    	private JTextArea textOutput;
     	
     	public ProgressiveKeyIoCAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -1852,6 +1853,14 @@ public class UINew extends JFrame {
 	        this.chart.setHasBarText(false);
 	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Progressive Key IoC Calculation"));
 	        panel.add(this.chart);
+	        
+	
+	        this.textOutput = new JTextArea();
+	        this.textOutput.setLineWrap(true);
+
+	        JScrollPane scrollPane = new JScrollPane(this.textOutput);
+	
+	        panel.add(scrollPane);
 	         
     		this.dialog.add(panel);
     		
@@ -1861,8 +1870,8 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
-     		
+    		lastStates.add(this.dialog);
+    		
     		this.updateDialog();
 		}
     	
@@ -1881,6 +1890,7 @@ public class UINew extends JFrame {
 					int bestProgressivePeriod = -1;
 					int bestProgressiveIndex = -1;
 					double bestIoC = Double.MAX_VALUE;
+					List<ProgressiveKeySearch> list = new ArrayList<ProgressiveKeySearch>();
 					
 					for(int progressivePeriod = 1; progressivePeriod <= 25; progressivePeriod++) {
 						for(int progressiveIndex = 1; progressiveIndex <= 25; progressiveIndex++) {
@@ -1900,8 +1910,18 @@ public class UINew extends JFrame {
 		    		    	}
 		  
 		    		    	bestIoC = Math.min(bestIoC, sqDiff);
+		    		    	list.add(new ProgressiveKeySearch(progressivePeriod, progressiveIndex, sqDiff));
 						}
 					}
+					
+					Collections.sort(list);
+					
+					//String outputText = "\n\n\n\n\nPeriod: " + period + "\n";
+					
+					//for(int i = 0; i < Math.min(list.size(), 15); i++) {
+					//	outputText += list.get(i) + "\n";
+					//}
+					//this.textOutput.setText(this.textOutput.getText() + outputText);
 					
 					if(bestIoC < bestEverIoC) {
 						bestEverIoC = bestIoC;
@@ -1919,6 +1939,29 @@ public class UINew extends JFrame {
 			}
     		
     		this.chart.repaint();
+    	}
+    }
+    
+    private class ProgressiveKeySearch implements Comparable<ProgressiveKeySearch> {
+    	
+    	public final int progPeriod, progIndex;
+    	public final double score;
+    	
+    	public ProgressiveKeySearch(int progPeriod, int progIndex, double score) {
+    		this.progPeriod = progPeriod;
+    		this.progIndex = progIndex;
+    		this.score = score;
+    	}
+    	
+    	@Override
+    	public int compareTo(ProgressiveKeySearch o) {
+    		double dF = o.score - this.score;
+    		return dF == 0 ? 0 : dF > 0 ? 1 : -1;
+    	}
+    	
+    	@Override
+    	public String toString() {
+    		return String.format("Score: %f, ProgPeriod: %d, ProgIndex: %d", this.score, this.progPeriod, this.progIndex);
     	}
     }
     
@@ -1973,7 +2016,7 @@ public class UINew extends JFrame {
 			this.chart.resetAll();
 	
 			String text = getInputTextOnlyAlpha();
-			if(!text.isEmpty()) {
+			if(!text.isEmpty() && text.length() % 2 == 0) {
 				for(int period = 2; period <= 40; period++) {
 					boolean valid = true;
 

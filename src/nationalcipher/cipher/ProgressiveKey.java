@@ -18,9 +18,14 @@ public class ProgressiveKey {
 	public static char[] decodeBase(char[] cipherText, int period, int progressiveKey) {
 		char[] decodedText = new char[cipherText.length];
 
+		int progression = 0;
+		int count = 0;
 		for(int index = 0; index < cipherText.length; index++) {
-			int progression = ((int)(index / period) * progressiveKey) % 26;
 			decodedText[index] = (char)((26 + cipherText[index] - 'A' - progression) % 26 + 'A');
+			if(count++ == period) {
+				count = 0;
+				progression = (progression + progressiveKey) % 26;
+			}
 		}
 		
 		return decodedText;

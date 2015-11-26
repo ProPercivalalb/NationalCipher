@@ -40,6 +40,7 @@ import nationalcipher.cipher.decrypt.VariantAutokeyDecrypt;
 import nationalcipher.cipher.decrypt.VariantDecrypt;
 import nationalcipher.cipher.decrypt.VigenereAutoKeyDecrypt;
 import nationalcipher.cipher.decrypt.VigenereDecrypt;
+import nationalcipher.cipher.decrypt.VigenereProgressiveKeyDecrypt;
 
 /**
  * @author Alex Barter (10AS)
@@ -68,6 +69,7 @@ public class DecryptionManager {
 		ciphers.add(new SubstitutionDecrypt());
 		ciphers.add(new VigenereDecrypt());
 		ciphers.add(new VigenereAutoKeyDecrypt());
+		ciphers.add(new VigenereProgressiveKeyDecrypt());
 		ciphers.add(new BeaufortDecrypt());
 		ciphers.add(new BeaufortAutokeyDecrypt());
 		ciphers.add(new VariantDecrypt());
