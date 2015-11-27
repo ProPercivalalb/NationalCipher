@@ -102,4 +102,10 @@ public class RouteDecrypt implements IDecrypt {
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}
+
+	@Override
+	public void onTermination() {
+		// TODO Auto-generated method stub
+		
+	}
 }

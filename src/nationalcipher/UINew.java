@@ -264,6 +264,7 @@ public class UINew extends JFrame {
         this.menuItemIoCBifid = new JMenuItem();
         this.menuItemIoCNicodemus = new JMenuItem();
         this.menuItemIoCNihilist = new JMenuItem();
+        this.menuItemIoCPortax = new JMenuItem();
         this.menuItemIoCProgKey = new JMenuItem();
         this.menuItemIoCSeriatedPlayfair = new JMenuItem();
         this.menuItemIoCTrifid = new JMenuItem();
@@ -501,6 +502,12 @@ public class UINew extends JFrame {
         this.menuItemIoCNihilist.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nihilist"));
         this.menuItemIoCNihilist.addActionListener(new NihilistIoCAction());
         this.menuItemIoC.add(this.menuItemIoCNihilist);
+
+        this.menuItemIoCPortax.setText("Portax");
+        this.menuItemIoCPortax.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Portax"));
+        this.menuItemIoCPortax.addActionListener(new PortaxIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCPortax);
+        
         
         this.menuItemIoCProgKey.setText("Progressive Key");
         this.menuItemIoCProgKey.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Progressive Key"));
@@ -1542,7 +1549,7 @@ public class UINew extends JFrame {
 	          
 	        this.chart = new JBarChart(new ChartList());
 	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation"));
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation x2"));
 	        panel.add(this.chart);
 	        
 	        this.chart2 = new JBarChart(new ChartList());
@@ -1819,11 +1826,124 @@ public class UINew extends JFrame {
     	}
     }
     
+    public class PortaxIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public PortaxIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Portax IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Portax IoC Calculation"));
+	        panel.add(this.chart);
+
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+    		lastStates.add(this.dialog);
+    		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+			String text = getInputTextOnlyAlpha();
+			if(!text.isEmpty() && text.length() % 2 == 0) {
+				double bestIoC = 0.0D;
+				int bestPeriod = -1;
+				
+				for(int period = 2; period <= 40; period++) {
+			        int step = 2 * period;
+			        
+			 
+			        String string = "";
+			        for(int j = 0; j < text.length(); j += step) {
+			        	for(int k = 0; k < period; k++) {
+			                if(j + k + period >= text.length()) 
+			                	break;
+			        		int c1 = text.charAt(j + k) - 'A';
+			                int c2 = text.charAt(j + k + period) - 'A';
+			                int[] result = decodePair(k, c1, c2);
+			                if (result[0] == 1) {
+			                	char c3 = (char)(result[1] + 'A');
+			                	char c4 = (char)(result[2] + 'A');
+			                	string += c3 + "" + c4;
+			                }
+			        	}
+			        }
+			        double sqDiff = StatCalculator.calculateIC(string);
+			        
+			        if(sqDiff < bestIoC)
+    		    		bestPeriod = period;
+    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	
+    		    	bestIoC = Math.min(bestIoC, sqDiff);
+			
+			    }
+				
+				this.chart.setSelected(bestPeriod - 2);
+			}
+    		
+    		this.chart.repaint();
+    	}
+    	
+    	private int[] decodePair(int k, int c1, int c2) {
+    		int t_flag = 0;
+    		int b_flag = 0;
+            if (c1 < 13) 
+            	t_flag = 0;
+            else 
+            	t_flag = 2;
+            if (c2 % 2 == 1) 
+            	b_flag = 1;
+            else 
+            	b_flag = 0;
+            int[] rvalue = new int[] {0,0,0};
+            int sum = t_flag + b_flag;
+            if(sum == 2)
+    			if(c1 - 13 != (c2 >> 1))
+    				rvalue = new int[] {1, (c2 >> 1) + 13, (c1 - 13) << 1};
+            if(sum == 3)
+    			if(c1 - 13 != (c2 >> 1))
+    				rvalue = new int[] {1, (c2 >> 1) + 13, ((c1 - 13) << 1 ) + 1};
+            return rvalue;
+    	} 
+    }
+    
     public class ProgressiveKeyIoCAction implements ActionListener {
     	
     	private JDialog dialog;
     	private JBarChart chart;
-    	private JTextArea textOutput;
     	
     	public ProgressiveKeyIoCAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -1853,14 +1973,7 @@ public class UINew extends JFrame {
 	        this.chart.setHasBarText(false);
 	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Progressive Key IoC Calculation"));
 	        panel.add(this.chart);
-	        
-	
-	        this.textOutput = new JTextArea();
-	        this.textOutput.setLineWrap(true);
 
-	        JScrollPane scrollPane = new JScrollPane(this.textOutput);
-	
-	        panel.add(scrollPane);
 	         
     		this.dialog.add(panel);
     		
@@ -2045,6 +2158,7 @@ public class UINew extends JFrame {
     	
     	private JDialog dialog;
     	private JBarChart chart;
+    	private JBarChart chart2;
     	
     	public TrifidIoCAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -2072,9 +2186,14 @@ public class UINew extends JFrame {
 	          
 	        this.chart = new JBarChart(new ChartList());
 	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation x3"));
 	        panel.add(this.chart);
 	         
+	        this.chart2 = new JBarChart(new ChartList());
+	        this.chart2.setHasBarText(false);
+	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart2);
+	        
     		this.dialog.add(panel);
     		
     		dialogs.add(this.dialog);
@@ -2090,36 +2209,87 @@ public class UINew extends JFrame {
     	
     	public void updateDialog() {
 			this.chart.resetAll();
+			this.chart2.resetAll();
 	
 			String text = getInputText();
 			if(!text.isEmpty()) {
-				for(int period = 2; period <= 15; period++) {
-					Map<String, Integer> theatricalDiagram = new HashMap<String, Integer>();
-					int count = 0;
-					for(int i = 0; i < text.length(); i += period) {
-						int columns = Math.min(period / 3, (text.length() - i) / 3);
-						//System.out.println(columns);
-						int limit = Math.min(i + period, text.length());
-						
-						for(int j = i; j < limit - columns; j++) {
-							String theatrical = text.charAt(j) + "" + text.charAt(j + columns) + "" + text.charAt(j + columns * 2);
-							System.out.println(i + " " + theatrical);
-							theatricalDiagram.put(theatrical, 1 + (theatricalDiagram.containsKey(theatrical) ? theatricalDiagram.get(theatrical) : 0));
-						}
-						count += limit - columns - i;
+
+				
+				Map<Integer, Double> values = new HashMap<Integer, Double>();
+				double maxValue = Double.MIN_VALUE;
+				int maxStep = -1;
+				
+				double secondValue = Double.MIN_VALUE;
+				
+				for(int step = 1; step <= Math.min(40, text.length()); step++) {
+					HashMap<String, Integer> counts = new HashMap<String, Integer>();
+					for(int i = 0; i < text.length() - step * 2; i++) {
+						String s = text.charAt(i) + "" + text.charAt(i + step) + "" + text.charAt(i + step * 2);
+						counts.put(s, counts.containsKey(s) ? counts.get(s) + 1 : 1);
 					}
 					
-					System.out.println(period + " " + theatricalDiagram);
+					Statistics stats = new Statistics(counts.values());
+				    double variance = stats.getVariance();
+				 
+				    this.chart.values.add(new ChartData("Step: " + step, variance));
+					values.put(step, variance);
 					
-					double sum = 0.0;
-					for(String diagram : theatricalDiagram.keySet())
-						sum += theatricalDiagram.get(diagram) * (theatricalDiagram.get(diagram) - 1);
-					
-					this.chart.values.add(new ChartData("Period: " + period, 62500 * sum / (count * (count - 1))));
+					if(variance > maxValue) {
+						secondValue = maxValue;
+						maxValue = variance;
+						maxStep = step;
+					}
+					else if(variance > secondValue) {
+						secondValue = variance;
+					}
+				}
+	
+				
+				int periodGuess = -1;
+	
+				if(maxStep != -1) {
+					if(maxValue - maxValue / 4 > secondValue)
+						periodGuess = maxStep * 3;
+					else {
+						double max = Double.MAX_VALUE;
+						int bestStep = 0;
+						
+						for(int step = maxStep - 1; step <= maxStep + 1; step++) {
+							if(!values.containsKey(step) || step == maxStep)
+								continue;
+							
+							double diff = Math.abs(values.get(maxStep) - values.get(step));
+							if(diff < max) {
+								max = diff;
+								bestStep = step;
+							}
+						}
+						this.chart.setSelected(bestStep - 1);
+						
+						periodGuess = Math.min(bestStep, maxStep) * 3 + Math.abs(bestStep - maxStep);
+					}
+				}
+				
+				int bestPeriod = -1;
+				double bestIC = Double.MIN_VALUE;
+			    for(int period = 0; period <= 40; period++) {
+			    	if(period == 1) continue;
+			    	if(period == 2) continue;
+			    	
+			        double score = StatCalculator.calculateTrifidDiagraphicIC(text, period);
+			        this.chart2.values.add(new ChartData("Period: " + period, score));
+			        if(bestIC < score)
+			        	bestPeriod = period;
+			        
+			        bestIC = Math.max(bestIC, score);
 			    }
+			    
+			    this.chart.setSelected(maxStep - 1);
+				this.chart2.setSelected(bestPeriod > 0 ? bestPeriod - 2 : 0);
 			}
     		
     		this.chart.repaint();
+    		this.chart2.repaint();
     	}
     }
     
@@ -2730,6 +2900,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemIoCBifid;
     private JMenuItem menuItemIoCNicodemus;
     private JMenuItem menuItemIoCNihilist;
+    private JMenuItem menuItemIoCPortax;
     private JMenuItem menuItemIoCProgKey;
     private JMenuItem menuItemIoCSeriatedPlayfair;
     private JMenuItem menuItemIoCTrifid;

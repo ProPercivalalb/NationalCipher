@@ -33,6 +33,7 @@ public class RandomEncrypter {
 		ciphers.add(new Porta());
 		ciphers.add(new PortaAutokey());
 		ciphers.add(new PortaProgressiveKey());
+		ciphers.add(new Portax());
 		ciphers.add(new RailFence());
 		ciphers.add(new SeriatedPlayfair());
 		ciphers.add(new Trifid());

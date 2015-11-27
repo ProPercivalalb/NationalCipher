@@ -120,8 +120,6 @@ public class PortaDecrypt implements IDecrypt {
 			}
 		});
 		panel.add(area);
-		
-		dialog.add(panel);
 	}
 	
 	public class PortaTask extends KeySearch implements PortaKey {
@@ -162,6 +160,12 @@ public class PortaDecrypt implements IDecrypt {
 		public void onIteration() {
 			this.keyPanel.iterations.setText("" + this.iteration++);
 		}
+	}
+
+	@Override
+	public void onTermination() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

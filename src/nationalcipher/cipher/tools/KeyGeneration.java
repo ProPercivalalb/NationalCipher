@@ -10,6 +10,7 @@ import javalibrary.util.RandomUtil;
 
 public class KeyGeneration {
 
+	private static char[] all27Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
 	private static char[] all26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	private static char[] all25Chars = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
 	
@@ -62,6 +63,21 @@ public class KeyGeneration {
 	public static String createFullKey() {
 		List<Character> characters = new ArrayList<Character>();
 		for(char character : all26Chars)
+			characters.add(character);
+		
+		String key = "";
+		while(!characters.isEmpty()) {
+			char rC = RandomUtil.pickRandomElement(characters);
+			key += rC;
+			characters.remove((Character)rC);
+		}
+
+		return key;
+	}
+	
+	public static String createFullKeyWithHash() {
+		List<Character> characters = new ArrayList<Character>();
+		for(char character : all27Chars)
 			characters.add(character);
 		
 		String key = "";

@@ -1,39 +1,46 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Component;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
+import javalibrary.math.MathHelper;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.cipher.VigenereAutokey;
+import nationalcipher.cipher.Beaufort;
+import nationalcipher.cipher.Porta;
+import nationalcipher.cipher.Portax;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
+import nationalcipher.cipher.tools.Creator.PortaKey;
 
-public class VigenereAutoKeyDecrypt implements IDecrypt {
+public class PortaxDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Vigenere Autokey";
+		return "Portax";
 	}
 
 	@Override
@@ -43,28 +50,27 @@ public class VigenereAutoKeyDecrypt implements IDecrypt {
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		VigenereAutoKeyTask task = new VigenereAutoKeyTask(text.toCharArray(), settings, keyPanel, output, progress);
+		PortaTask task = new PortaTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
-		int[] range = SettingParse.getIntegerRange(this.rangeBox);
-		int minLength = range[0];
-		int maxLength = range[1];
+		List<Integer> factors = MathHelper.getFactors(text.length() / 2);
+		output.println("Factors: %s", factors);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-
-			BigInteger TWENTY_SIX = BigInteger.valueOf(26);
 			
-			for(int length = minLength; length <= maxLength; ++length)
-				progress.addMaxValue(TWENTY_SIX.pow(length));
+			BigInteger THIRTEEN = BigInteger.valueOf(13);
+			for(int factor : factors)
+				progress.addMaxValue(THIRTEEN.pow(factor));
 			
-			for(int keyLength = minLength; keyLength <= maxLength; ++keyLength)
-				Creator.iterateVigenereAutoKey(task, keyLength);
+			for(int factor : factors)
+				Creator.iteratePorta(task, factor);
 			
 			output.println(task.getBestSolution());
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 
 			progress.setIndeterminate(true);
-			task.run(minLength, maxLength);
+			for(int factor : factors)
+				task.run(factor, factor);
 			
 			output.println(task.getBestSolution());
 		}
@@ -72,41 +78,42 @@ public class VigenereAutoKeyDecrypt implements IDecrypt {
 			output.println(" Unexpected decryption method provided!");
 		}	
 	}
-
-	private JTextField rangeBox = new JTextField("2-15");
+	
+	private JTextField rangeBox = new JTextField("2-25");
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-        JLabel range = new JLabel("Period Range:");
+
+        JLabel range = new JLabel("Keyword length range: ");
 		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
 		
-		panel.add(new SubOptionPanel(range, this.rangeBox));
-        
-		dialog.add(panel);
+		panel.add(new SubOptionPanel(range, this.rangeBox), BorderLayout.WEST);
 	}
 	
-	public class VigenereAutoKeyTask extends KeySearch implements VigenereAutoKey {
-		
-		public VigenereAutoKeyTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+	public class PortaTask extends KeySearch implements PortaKey {
+
+	
+		public PortaTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 		}
-
+			
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(VigenereAutokey.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(Portax.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;	
+				this.bestSolution = this.lastSolution;
+				this.output.println("%s", this.bestSolution);	
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
 			this.keyPanel.iterations.setText("" + this.iteration++);
 			this.progress.increase();
 		}
-
+		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(VigenereAutokey.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			return new Solution(Portax.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
 		}
 
 		@Override
@@ -126,4 +133,5 @@ public class VigenereAutoKeyDecrypt implements IDecrypt {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

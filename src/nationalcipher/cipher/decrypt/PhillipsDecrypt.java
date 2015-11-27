@@ -97,4 +97,10 @@ public class PhillipsDecrypt implements IDecrypt {
 			return false;
 		}
 	}
+
+	@Override
+	public void onTermination() {
+		// TODO Auto-generated method stub
+		
+	}
 }

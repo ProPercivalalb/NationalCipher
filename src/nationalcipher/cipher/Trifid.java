@@ -7,7 +7,8 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class Trifid implements IRandEncrypter {
 	
 	public static String encode(String plainText, String keysquares, int period) {
-		char[] numberText = new char[plainText.length() * 3];
+		System.out.println("trifid: " + period);
+		int[] numberText = new int[plainText.length() * 3];
 		for(int i = 0; i < plainText.length(); i++) {
 			
 			char a = plainText.charAt(i);
@@ -19,9 +20,9 @@ public class Trifid implements IRandEncrypter {
 			int blockBase = (int)(i / period) * (period * 3) + i % period;
 			int min = Math.min(period, plainText.length() - (int)(i / period) * period);
 			
-			numberText[blockBase] = (char)(tableNo + '0');
-			numberText[blockBase + min] = (char)(rowNo + '0');
-			numberText[blockBase + min * 2] = (char)(colNo + '0');
+			numberText[blockBase] = tableNo;
+			numberText[blockBase + min] = rowNo;
+			numberText[blockBase + min * 2] = colNo;
 		}
 
 		char[] cipherText = new char[plainText.length()];
@@ -29,9 +30,9 @@ public class Trifid implements IRandEncrypter {
 		
 		for(int i = 0; i < numberText.length; i += 3) {
 
-			int a = numberText[i] - '0' - 1;
-			int b = numberText[i + 1] - '0' - 1;
-			int c = numberText[i + 2] - '0' - 1;
+			int a = numberText[i] - 1;
+			int b = numberText[i + 1] - 1;
+			int c = numberText[i + 2] - 1;
 			cipherText[index++] = keysquares.charAt(a * 9 + b * 3 + c);
 		}
 
@@ -72,6 +73,6 @@ public class Trifid implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKeySquare5x5(), RandomUtil.pickRandomInt(2, 15));
+		return encode(plainText, KeyGeneration.createFullKeyWithHash(), RandomUtil.pickRandomInt(3, 15));
 	}
 }

@@ -120,8 +120,6 @@ public class PortaAutokeyDecrypt implements IDecrypt {
 			}
 		});
 		panel.add(area);
-		
-		dialog.add(panel);
 	}
 	
 	public class PortaAutoKeyTask extends KeySearch implements PortaAutoKey {
@@ -166,5 +164,11 @@ public class PortaAutokeyDecrypt implements IDecrypt {
 		public int alphaIncrease() {
 			return 2;
 		}
+	}
+
+	@Override
+	public void onTermination() {
+		// TODO Auto-generated method stub
+		
 	}
 }

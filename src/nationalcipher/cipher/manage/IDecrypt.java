@@ -18,5 +18,7 @@ public interface IDecrypt {
 
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress);
 
+	public void onTermination();
+	
 	public void createSettingsUI(JDialog dialog, JPanel panel);
 }

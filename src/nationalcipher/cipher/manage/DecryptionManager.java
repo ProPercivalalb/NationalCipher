@@ -27,6 +27,7 @@ import nationalcipher.cipher.decrypt.PlayfairDecrypt;
 import nationalcipher.cipher.decrypt.PolluxDecrypt;
 import nationalcipher.cipher.decrypt.PortaAutokeyDecrypt;
 import nationalcipher.cipher.decrypt.PortaDecrypt;
+import nationalcipher.cipher.decrypt.PortaxDecrypt;
 import nationalcipher.cipher.decrypt.RailFenceDecrypt;
 import nationalcipher.cipher.decrypt.ReddefenceDecrypt;
 import nationalcipher.cipher.decrypt.RouteDecrypt;
@@ -76,6 +77,7 @@ public class DecryptionManager {
 		ciphers.add(new VariantAutokeyDecrypt());
 		ciphers.add(new PortaDecrypt());
 		ciphers.add(new PortaAutokeyDecrypt());
+		ciphers.add(new PortaxDecrypt());
 		ciphers.add(new TwoSquareDecrypt());
 		ciphers.add(new TriSquareDecrypt());
 		ciphers.add(new FourSquareDecrypt());

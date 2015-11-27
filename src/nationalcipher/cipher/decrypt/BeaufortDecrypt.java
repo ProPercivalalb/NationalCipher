@@ -138,4 +138,10 @@ public class BeaufortDecrypt implements IDecrypt {
 			this.keyPanel.iterations.setText("" + this.iteration++);
 		}
 	}
+
+	@Override
+	public void onTermination() {
+		// TODO Auto-generated method stub
+		
+	}
 }

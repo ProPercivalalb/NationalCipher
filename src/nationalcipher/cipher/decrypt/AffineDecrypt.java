@@ -82,6 +82,11 @@ public class AffineDecrypt implements IDecrypt {
 	}
 	
 	@Override
+	public void onTermination() {
+		
+	}
+	
+	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		
 	}

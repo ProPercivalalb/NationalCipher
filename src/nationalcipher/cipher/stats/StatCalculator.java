@@ -192,6 +192,29 @@ public class StatCalculator {
 		return 62500 * sum / (count * (count - 1));
 	}
 	
+	public static double calculateTrifidDiagraphicIC(String text, int period) {
+		if(period == 0) period = text.length();
+		
+		Map<String, Integer> theatricalDiagram = new HashMap<String, Integer>();
+		int count = 0;
+		for(int i = 0; i < text.length(); i += period) {
+			int columns = Math.min(period / 3, (text.length() - i) / 3);
+			int limit = Math.min(i + period, text.length());
+			
+			for(int j = i; j < limit - columns * 2; j++) {
+				String theatrical = text.charAt(j) + "" + text.charAt(j + columns) + "" + text.charAt(j + columns * 2);
+				theatricalDiagram.put(theatrical, 1 + (theatricalDiagram.containsKey(theatrical) ? theatricalDiagram.get(theatrical) : 0));
+			}
+			count += limit - columns * 2 - i;
+		}
+		
+		double sum = 0.0;
+		for(String diagram : theatricalDiagram.keySet())
+			sum += theatricalDiagram.get(diagram) * (theatricalDiagram.get(diagram) - 1);
+		
+		return 27 * 27 * 2700 * sum / (count * (count - 1));
+	}
+	
 	public static double calculateMaxBifidDiagraphicIC(String text, int minPeriod, int maxPeriod) {
 		if(containsDigit(text) || containsHash(text))
 			return 0.0D;
@@ -712,7 +735,7 @@ public class StatCalculator {
 	        if(count == 0)
 	        	break;
 	        score /= count;
-
+	        System.out.println(period + " " + score);
 	        best_score = Math.max(best_score, score);
 	    }
 	    return Math.floor(best_score);
