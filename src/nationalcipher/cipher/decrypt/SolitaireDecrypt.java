@@ -78,7 +78,7 @@ public class SolitaireDecrypt implements IDecrypt {
 
 	public class SolitaireTask extends SimulatedAnnealing {
 
-		public List<Integer> bestKey1, bestMaximaKey1, lastKey1;
+		public int[] bestKey1, bestMaximaKey1, lastKey1;
 		
 		public SolitaireTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
@@ -87,15 +87,15 @@ public class SolitaireDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			//this.bestMaximaKey1 = KeyGeneration.createListOrder(54);
-			this.bestMaximaKey1 = new ArrayList<Integer>(Arrays.asList(53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0));
-			return new Solution(Solitaire.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(this.bestMaximaKey1.toString());
+			this.bestMaximaKey1 = new int[] {53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0};
+			return new Solution(Solitaire.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.bestMaximaKey1));
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
 
-			return new Solution(Solitaire.decode(this.text, this.lastKey1), this.settings.getLanguage()).setKeyString(this.lastKey1.toString());
+			return new Solution(Solitaire.decode(this.text, this.lastKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.lastKey1));
 		}
 
 		@Override
@@ -108,6 +108,7 @@ public class SolitaireDecrypt implements IDecrypt {
 			this.bestKey1 = this.bestMaximaKey1;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
 			this.keyPanel.key.setText(this.bestSolution.keyString);
+			this.output.println("%s", this.bestSolution);
 		}
 		
 		@Override
