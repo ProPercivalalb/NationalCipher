@@ -35,6 +35,15 @@ public class KeySquareManipulation {
 	    }
 	}
 	
+	public static List<Integer> modifyOrder(List<Integer> list) {
+		int i = rand.nextInt(list.size());
+		int j = rand.nextInt(list.size());
+		int temp = list.get(i);
+		list.set(i, list.get(j));
+		list.set(j, temp);
+		return list;
+	}
+	
 	public static int[] reverseOrder(int[] order) {
 		int length = order.length;
 		
@@ -79,6 +88,14 @@ public class KeySquareManipulation {
 	    char i = list[rand.nextInt(3)];
 	    order[rand.nextInt(order.length)] = i;
 	    return order;
+	}
+	
+	private static char[] list2 = new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'}; 
+	public static String swapCharIndex(String order) {
+	    char i = RandomUtil.pickRandomChar(list2);
+	    char[] c = order.toCharArray();
+	    c[rand.nextInt(order.length())] = i;
+	    return new String(c);
 	}
 	
 	public static String exchange2lettersWithKnows(String keySquare, String knows){

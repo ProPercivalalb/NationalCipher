@@ -23,12 +23,16 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -61,6 +66,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.MenuSelectionManager;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -79,6 +85,7 @@ import javalibrary.dict.Dictionary;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
+import javalibrary.lib.OSIdentifier;
 import javalibrary.lib.Timer;
 import javalibrary.listener.CustomMouseListener;
 import javalibrary.math.ArrayHelper;
@@ -92,6 +99,7 @@ import javalibrary.string.ValueFormat;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
+import javalibrary.swing.MenuScroller;
 import javalibrary.swing.ProgressValue;
 import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
@@ -138,6 +146,42 @@ public class UINew extends JFrame {
         initComponents();
         finishComponents();
         loadDataFiles();
+    }
+    
+    public void addDialog(JDialog dialog) {
+    	lastStates.add(dialog);
+    	changeDialog(dialog);
+    }
+    
+    public void removeDialog(JDialog dialog) {
+    	lastStates.remove(dialog);
+    	changeDialog(dialog);
+    }
+    
+    public void changeDialog(JDialog dialog) {
+    	this.menuScreenShot.removeAll();
+    	for(final JDialog listDialog : lastStates) {
+    		JMenuItem jmi = new JMenuItem(listDialog.getTitle());
+    		this.menuScreenShot.add(jmi);
+    		jmi.addActionListener(new ActionListener() {
+    	        @Override
+    	        public void actionPerformed(ActionEvent event) {
+    	        	listDialog.setBackground(Color.red);
+    	        	BufferedImage image = new BufferedImage(listDialog.getContentPane().getWidth(), listDialog.getContentPane().getHeight(), BufferedImage.TYPE_INT_RGB);
+    	        	listDialog.getContentPane().paint(image.getGraphics()); // alternately use .printAll(..)
+    	          //  JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(image)));
+    	        	SimpleDateFormat sdf = new     SimpleDateFormat("yyyy-M-dd_hh.mm.ss");
+    	            String dateTime = sdf.format(Calendar.getInstance().getTime());
+    	            try {
+    	            	ImageIO.write(image, "png", new File(OSIdentifier.getMyDataFolder("nationalcipher/screenshots"), "screenshot" + dateTime + ".png"));
+    	            }
+    	          	catch(Exception e) {
+    	          		e.printStackTrace();
+    	          	}
+    	        }
+    		});
+    	}
+    	this.menuScreenShot.setEnabled(!lastStates.isEmpty());
     }
 
     public void loadDataFiles() {
@@ -249,6 +293,7 @@ public class UINew extends JFrame {
         this.menuBar = new JMenuBar();
         this.menuItemFile = new JMenu();
         this.menuItemFullScreen = new JMenuItem();
+        this.menuScreenShot = new JMenu();
         this.menuItemExit = new JMenuItem();
         this.menuItemEdit = new JMenu();
         this.menuItemPaste = new JMenuItem();
@@ -267,6 +312,7 @@ public class UINew extends JFrame {
         this.menuItemIoCPortax = new JMenuItem();
         this.menuItemIoCProgKey = new JMenuItem();
         this.menuItemIoCSeriatedPlayfair = new JMenuItem();
+        this.menuItemIoCSlidefair = new JMenuItem();
         this.menuItemIoCTrifid = new JMenuItem();
         this.menuItemIoCVigenere = new JMenuItem();
         this.menuItemIdentify = new JMenuItem();
@@ -312,7 +358,6 @@ public class UINew extends JFrame {
 		});
 		this.toolBar.add(nospaces);
 		
-		
 		JButton nonletters = new JButton(" Keep A-Z ");
 		nonletters.addMouseListener(new CustomMouseListener() {
 			@Override
@@ -322,8 +367,6 @@ public class UINew extends JFrame {
 			}
 		});
 		this.toolBar.add(nonletters);
-      	
-		
         
         this.cipherSelect.setMaximumSize(new Dimension(180, Integer.MAX_VALUE));
         this.cipherSelect.addActionListener(new CipherSelectAction());
@@ -421,9 +464,14 @@ public class UINew extends JFrame {
         this.menuItemFile.setText("File");
         
         this.menuItemFullScreen.setText("Full Screen");
-        this.menuItemFullScreen.addActionListener(new FullScreenAction());
         this.menuItemFullScreen.setIcon(ImageUtil.createImageIcon("/image/page_white_magnify.png", "Full Screen"));
+        this.menuItemFullScreen.addActionListener(new FullScreenAction());
         this.menuItemFile.add(this.menuItemFullScreen);
+        
+        this.menuScreenShot.setText("Take Picture");
+        this.menuScreenShot.setIcon(ImageUtil.createImageIcon("/image/picture_save.png", "Take Picture"));
+        this.menuScreenShot.setEnabled(false);
+        this.menuItemFile.add(this.menuScreenShot);
         
         this.menuItemExit.setText("Exit");
         this.menuItemExit.addActionListener(new ExitAction());
@@ -519,6 +567,11 @@ public class UINew extends JFrame {
         this.menuItemIoCSeriatedPlayfair.addActionListener(new SeriatedPlayfairIoCAction());
         this.menuItemIoC.add(this.menuItemIoCSeriatedPlayfair);
         
+        this.menuItemIoCSlidefair.setText("Slidefair");
+        this.menuItemIoCSlidefair.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Slidefair"));
+        this.menuItemIoCSlidefair.addActionListener(new SlidefairIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCSlidefair);
+        
         this.menuItemIoCTrifid.setText("Trifid");
         this.menuItemIoCTrifid.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Trifid"));
         this.menuItemIoCTrifid.addActionListener(new TrifidIoCAction());
@@ -575,6 +628,7 @@ public class UINew extends JFrame {
         this.menuItemEncrypter.addSeparator();
         
         this.menuItemEncodeChose.setText("Specific");
+        MenuScroller.setScrollerFor( this.menuItemEncodeChose, 15, 125, 0, 0);
         for(final IRandEncrypter encrypt : RandomEncrypter.ciphers) {
         	JMenuItem jmi = new JMenuItem(encrypt.getClass().getSimpleName());
         	jmi.addActionListener(new ActionListener() {
@@ -807,12 +861,7 @@ public class UINew extends JFrame {
 					DecimalFormat df = new DecimalFormat("#.#");
 					output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
 					output.println("");
-					try {
-						Thread.sleep(1000L);
-					} 
-					catch(InterruptedException e) {
-						e.printStackTrace();
-					}
+		
 					toolBarStart.setEnabled(true);
 					toolBarStop.setEnabled(false);
 					menuItemSettings.setEnabled(true);
@@ -822,6 +871,7 @@ public class UINew extends JFrame {
 				}
 				
 			});
+			thread.setDaemon(true);
 			thread.start();
 			toolBarStart.setEnabled(false);
 			toolBarStop.setEnabled(true);
@@ -833,26 +883,27 @@ public class UINew extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			if(thread != null)
-				thread.stop();
+			if(thread != null) {
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						thread.stop();
+						DecimalFormat df = new DecimalFormat("#.#");
+						output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
+						output.println("");
+						toolBarStart.setEnabled(true);
+						toolBarStop.setEnabled(false);
+						menuItemSettings.setEnabled(true);
+
+						progressBar.setIndeterminate(false);
+						progressBar.setMaximum(10);
+						progressBar.setValue(0);
+					}
+					
+				});
 			
-			DecimalFormat df = new DecimalFormat("#.#");
-			output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
-			output.println("");
-			toolBarStart.setEnabled(true);
-			toolBarStop.setEnabled(false);
-			menuItemSettings.setEnabled(true);
-			
-			try {
-				Thread.sleep(500L);
-			} 
-			catch(InterruptedException e) {
-				e.printStackTrace();
 			}
-			
-			progressBar.setIndeterminate(false);
-			progressBar.setMaximum(10);
-			progressBar.setValue(0);
 		}
     }
     
@@ -968,7 +1019,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
 		}
     	
     	public void sortSolutions() {
@@ -1067,7 +1118,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -1091,7 +1142,7 @@ public class UINew extends JFrame {
     	
 		@Override
 		public void windowClosed(WindowEvent event) {
-			lastStates.remove(dialog);
+			removeDialog(dialog);
 		}
     }
     
@@ -1142,7 +1193,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -1231,7 +1282,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -1315,7 +1366,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -1487,7 +1538,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -1565,7 +1616,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -1696,7 +1747,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -1774,7 +1825,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -1869,7 +1920,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -1983,7 +2034,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -2120,7 +2171,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -2151,6 +2202,91 @@ public class UINew extends JFrame {
 			}
     		
     		this.chart.repaint();
+    	}
+    }
+    
+    public class SlidefairIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	private JBarChart chart2;
+    	
+    	public SlidefairIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Slidefair IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation x3"));
+	        panel.add(this.chart);
+	         
+	        this.chart2 = new JBarChart(new ChartList());
+	        this.chart2.setHasBarText(false);
+	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart2);
+	        
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		addDialog(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			this.chart2.resetAll();
+	
+			String text = getInputText();
+			if(!text.isEmpty()) {
+				int bestPeriod = -1;
+	    		double bestIoC = Double.MAX_VALUE;
+	    		    
+	    		for(int period = 2; period <= 40; ++period) {
+	    		    double total = 0.0D;
+	    		    for(int i = 0; i < period * 2; i++)
+	    		    	total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period * 2));
+	    		    total /= period * 2;
+	    		    	
+	    		    double sqDiff = Math.pow(total - settings.language.getNormalCoincidence(), 2);
+	    		    	
+	    		    if(sqDiff < bestIoC)
+	    		    	bestPeriod = period;
+	    		    this.chart2.values.add(new ChartData("Period: " + period, sqDiff));
+	    		    	
+	    		    bestIoC = Math.min(bestIoC, sqDiff);
+	    		}
+	    		    
+	    		this.chart2.setSelected(bestPeriod - 2);
+			}
+    		
+    		this.chart.repaint();
+    		this.chart2.repaint();
     	}
     }
     
@@ -2202,7 +2338,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -2341,7 +2477,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		lastStates.add(this.dialog);
+    		addDialog(this.dialog);
     		
     		this.updateDialog();
 		}
@@ -2449,7 +2585,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -2610,7 +2746,7 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		lastStates.add(this.dialog);
+     		addDialog(this.dialog);
      		
     		this.updateDialog();
 		}
@@ -2885,6 +3021,7 @@ public class UINew extends JFrame {
     private JMenuBar menuBar;
     private JMenu menuItemFile;
 	private JMenuItem menuItemFullScreen;
+	private JMenu menuScreenShot;
 	private JMenuItem menuItemExit;
     private JMenu menuItemEdit;
     private JMenuItem menuItemPaste;
@@ -2903,6 +3040,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemIoCPortax;
     private JMenuItem menuItemIoCProgKey;
     private JMenuItem menuItemIoCSeriatedPlayfair;
+    private JMenuItem menuItemIoCSlidefair;
     private JMenuItem menuItemIoCTrifid;
     private JMenuItem menuItemIoCVigenere;
     private JMenuItem menuItemIdentify;

@@ -10,7 +10,8 @@ public class NihilistSubstitution implements IRandEncrypter {
 		String cipherText = "";
 		int index = 0;
 		for(char ch : plainText.toCharArray()) {
-
+			if(index < key.length())
+				System.out.print(" " + getNumberValue(key.charAt(index % key.length()), keysquare));
 			int no = getNumberValue(ch, keysquare) + getNumberValue(key.charAt(index % key.length()), keysquare);
 			if(no >= 100) no -= 100;
 			String strNo = "" + no;

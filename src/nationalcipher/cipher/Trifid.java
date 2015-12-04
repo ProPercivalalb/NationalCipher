@@ -6,6 +6,10 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Trifid implements IRandEncrypter {
 	
+	public static void main(String[] args) {
+		System.out.println(encode("THEENEMYWILLFALLTONIGHT", "MERKATBCDFGHIJLNOPQSUVWXYZ#", 5));
+	}
+	
 	public static String encode(String plainText, String keysquares, int period) {
 		System.out.println("trifid: " + period);
 		int[] numberText = new int[plainText.length() * 3];
@@ -43,26 +47,29 @@ public class Trifid implements IRandEncrypter {
 	public static char[] decode(char[] cipherText, String keysquares, int period) {
 		char[] plainText = new char[cipherText.length];
 		
-		String numberText = "";
+		int[] numberText = new int[plainText.length * 3];
 		for(int i = 0; i < cipherText.length; i++) {
 			char a = cipherText[i];
 			
 			int index = keysquares.indexOf(a);
-			int tableNo = index / 9 + 1;
-			int rowNo = (int)(index / 3) % 3 + 1;
-			int colNo = index % 3 + 1;
-			numberText += tableNo + "" + rowNo + "" + colNo;
+			int tableNo = index / 9;
+			int rowNo = (int)(index / 3) % 3;
+			int colNo = index % 3;
+			
+			numberText[i * 3] = tableNo;
+			numberText[i * 3 + 1] = rowNo;
+			numberText[i * 3 + 2] = colNo;
 		}
 		
 		int index = 0;
 		
-		for(int i = 0; i < numberText.length(); i += period * 3) {
-			int min = Math.min(period, (numberText.length() - i) / 3);
+		for(int i = 0; i < numberText.length; i += period * 3) {
+			int min = Math.min(period, (numberText.length - i) / 3);
 
 			for(int j = 0; j < min; j++) {
-				int a = numberText.charAt(i + j) - '0' - 1;
-				int b = numberText.charAt(i + j + min) - '0' - 1;
-				int c = numberText.charAt(i + j + min * 2) - '0' - 1;
+				int a = numberText[i + j];
+				int b = numberText[i + j + min];
+				int c = numberText[i + j + min * 2];
 				plainText[index++] = keysquares.charAt(a * 9 + b * 3 + c);
 			}
 		}

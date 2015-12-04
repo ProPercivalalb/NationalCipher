@@ -8,9 +8,12 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
+import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
@@ -20,7 +23,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.tools.Creator.BifidKey;
 
 public class TrifidDecrypt implements IDecrypt {
@@ -70,27 +75,27 @@ public class TrifidDecrypt implements IDecrypt {
 		}	
 	}
 	
+	private JTextField rangeBox = new JTextField("5");
 	public JComboBox<Character> comboBox = new JComboBox<Character>(new Character[] {'#', '.', '*', '@', '_'});
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 
-        
-        JLabel range = new JLabel("27th Character  ");
-		this.comboBox.setMaximumSize(new Dimension(40, 20));
-		panel.add(range);
-		panel.add(this.comboBox);
-        
-		dialog.add(panel);
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
+			
+		panel.add(new SubOptionPanel("Period:", this.rangeBox));
+
+		panel.add(new SubOptionPanel("27th Character: ", this.comboBox));
 	}
 	
 	public class TrifidTask extends SimulatedAnnealing implements BifidKey {
 
-		public int period = 10;
+		public int period;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
 		public TrifidTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
+			this.period = SettingParse.getInteger(rangeBox);
 		}
 
 		@Override

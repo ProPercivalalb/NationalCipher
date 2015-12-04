@@ -85,7 +85,7 @@ public class PortaxDecrypt implements IDecrypt {
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 
         JLabel range = new JLabel("Keyword length range: ");
-		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
 		
 		panel.add(new SubOptionPanel(range, this.rangeBox), BorderLayout.WEST);
 	}

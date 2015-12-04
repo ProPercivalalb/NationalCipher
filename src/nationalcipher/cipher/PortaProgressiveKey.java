@@ -11,9 +11,9 @@ public class PortaProgressiveKey implements IRandEncrypter {
 		return ProgressiveKey.encodeBase(encodedText, period, progressiveKey);
 	}
 	
-	public static char[] decode(char[] plainText, String keyword, int period, int progressiveKey) {
+	public static char[] decode(char[] plainText, String keyword, boolean shiftRight, int period, int progressiveKey) {
 		char[] decodedText = ProgressiveKey.decodeBase(plainText, period, progressiveKey);
-		return Porta.decode(decodedText, keyword, false);
+		return Porta.decode(decodedText, keyword, shiftRight);
 	}
 	
 	@Override

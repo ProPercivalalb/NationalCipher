@@ -4,9 +4,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
+import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
@@ -16,7 +20,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
+import nationalcipher.cipher.tools.SubOptionPanel;
 
 
 public class ConjugatedBifidDecrypt implements IDecrypt {
@@ -33,7 +39,7 @@ public class ConjugatedBifidDecrypt implements IDecrypt {
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		SubstitutionTask task = new SubstitutionTask(text.toCharArray(), settings, keyPanel, output, progress);
+		ConjugatedBifidTask task = new ConjugatedBifidTask(text.toCharArray(), settings, keyPanel, output, progress);
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
@@ -44,19 +50,27 @@ public class ConjugatedBifidDecrypt implements IDecrypt {
 		}	
 	}
 	
+	private JTextField rangeBox = new JTextField("5");
+	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		
+
+		JLabel range = new JLabel("Period:");
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
+			
+		panel.add(new SubOptionPanel(range, this.rangeBox));
+
 	}
 
-	public static class SubstitutionTask extends SimulatedAnnealing  {
+	public class ConjugatedBifidTask extends SimulatedAnnealing  {
 
-		public int period = 7;
+		public int period;
 		public String bestKey1, bestMaximaKey1, lastKey1;
 		public String bestKey2, bestMaximaKey2, lastKey2;
 		
-		public SubstitutionTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public ConjugatedBifidTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
+			this.period = SettingParse.getInteger(rangeBox);
 		}
 
 		@Override

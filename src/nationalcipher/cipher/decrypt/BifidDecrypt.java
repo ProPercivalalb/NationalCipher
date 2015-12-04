@@ -4,10 +4,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
+import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
@@ -17,7 +21,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.tools.Creator.BifidKey;
 
 public class BifidDecrypt implements IDecrypt {
@@ -75,18 +81,26 @@ public class BifidDecrypt implements IDecrypt {
 		}	
 	}
 	
+	private JTextField rangeBox = new JTextField("5");
+	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		
+
+		JLabel range = new JLabel("Period:");
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
+			
+		panel.add(new SubOptionPanel(range, this.rangeBox));
+
 	}
 	
-	public static class BifidTask extends SimulatedAnnealing implements BifidKey {
+	public class BifidTask extends SimulatedAnnealing implements BifidKey {
 
-		public int period = 8;
+		public int period;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
 		public BifidTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
+			this.period = SettingParse.getInteger(rangeBox);
 		}
 
 		@Override

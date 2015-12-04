@@ -44,7 +44,7 @@ public class VigenereProgressiveKeyDecrypt implements IDecrypt {
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		VigenereAutoKeyTask task = new VigenereAutoKeyTask(text.toCharArray(), settings, keyPanel, output, progress);
+		VigenereProgressiveKeyTask task = new VigenereProgressiveKeyTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
 		int[] range = SettingParse.getIntegerRange(this.rangeBox);
 		int minLength = range[0];
@@ -89,13 +89,13 @@ public class VigenereProgressiveKeyDecrypt implements IDecrypt {
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
         JLabel range = new JLabel("Period Range:");
-		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
 		
 		JLabel range2 = new JLabel("Prog Period:");
-		((AbstractDocument)this.rangeBox2.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox2.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox2));
 		
 		JLabel range3 = new JLabel("Prog Index:");
-		((AbstractDocument)this.rangeBox3.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox3.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox3));
 		
 		panel.add(new SubOptionPanel(range, this.rangeBox));
 		panel.add(new SubOptionPanel(range2, this.rangeBox2));
@@ -104,12 +104,12 @@ public class VigenereProgressiveKeyDecrypt implements IDecrypt {
 		dialog.add(panel);
 	}
 	
-	public class VigenereAutoKeyTask extends KeySearch implements VigenereAutoKey {
+	public class VigenereProgressiveKeyTask extends KeySearch implements VigenereAutoKey {
 		
 		public int progPeriod;
 		public int progIndex;
 		
-		public VigenereAutoKeyTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public VigenereProgressiveKeyTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 			this.progPeriod = SettingParse.getInteger(rangeBox2);
 			this.progIndex = SettingParse.getInteger(rangeBox3);

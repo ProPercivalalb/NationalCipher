@@ -2,6 +2,8 @@ package nationalcipher.cipher.manage;
 
 import java.util.Arrays;
 
+import javalibrary.cipher.stats.WordSplit;
+import javalibrary.fitness.ChiSquared;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 
@@ -19,6 +21,13 @@ public class Solution implements Comparable<Solution> {
 	
 	public Solution(char[] text, ILanguage language) {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
+	}
+	
+	public Solution(char[] text) {
+		WordSplit.splitText(text);
+		this.text = text;
+		this.score = WordSplit.lastScore;
+		this.keyString = "UNKNOWN";
 	}
 	
 	public Solution setKeyString(String keyString) {

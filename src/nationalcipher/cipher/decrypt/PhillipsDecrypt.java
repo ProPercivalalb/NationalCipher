@@ -3,10 +3,13 @@ package nationalcipher.cipher.decrypt;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
+import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
@@ -17,6 +20,7 @@ import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
+import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class PhillipsDecrypt implements IDecrypt {
 
@@ -44,19 +48,29 @@ public class PhillipsDecrypt implements IDecrypt {
 		}	
 	}
 	
+	private JComboBox<Boolean> booleanOption1 = new JComboBox<Boolean>(new Boolean[] {true, false});
+	private JComboBox<Boolean> booleanOption2 = new JComboBox<Boolean>(new Boolean[] {true, false});
+	//private JComboBox<String> directionOption = new JComboBox<String>(new String[] {"Columns", "Rows"});
+	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
+
+		panel.add(new SubOptionPanel("Move rows? ", this.booleanOption1));
+		panel.add(new SubOptionPanel("Move columns? ", this.booleanOption2));
 		
+		dialog.add(panel);
 	}
 	
 	public class PhillipsTask extends SimulatedAnnealing {
 
-		public boolean orderRows = true;
-		public boolean orderColumns = false;
+		public boolean orderRows;
+		public boolean orderColumns;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
 		public PhillipsTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
+			this.orderRows = (Boolean)booleanOption1.getSelectedItem();
+			this.orderColumns = (Boolean)booleanOption2.getSelectedItem();
 		}
 
 		@Override

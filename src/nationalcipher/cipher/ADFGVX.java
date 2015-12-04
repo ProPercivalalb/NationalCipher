@@ -8,7 +8,10 @@ public class ADFGVX {
 		String cipherText = "";
 		
 		for(int i = 0; i < plainText.length(); i++) {
-			int charIndex = keysquare.indexOf(plainText.charAt(i));
+			char c = plainText.charAt(i);
+			if(c == 'J') c = 'I';
+			
+			int charIndex = keysquare.indexOf(c);
 			int row = (int)Math.floor(charIndex / adfgvx.length());
 			int column = charIndex % adfgvx.length();
 			

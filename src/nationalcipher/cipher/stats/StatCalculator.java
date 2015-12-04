@@ -62,7 +62,7 @@ public class StatCalculator {
 		for(String letter : letters.keySet())
 			sum += letters.get(letter) * (letters.get(letter) - 1);
 		
-		int n = (int)Math.floor(text.length() / 2);
+		int n = text.length() / 2;
 		return sum / (n * (n - 1));
 	}
 	

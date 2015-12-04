@@ -14,6 +14,10 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class SubOptionPanel extends JPanel {
 	
+	public SubOptionPanel(String label, JComponent field) {
+		this(new JLabel(label), field);
+	}
+	
 	public SubOptionPanel(JLabel label, JComponent field) {
 		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

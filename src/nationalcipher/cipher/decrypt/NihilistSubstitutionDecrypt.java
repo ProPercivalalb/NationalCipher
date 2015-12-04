@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
+import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
@@ -17,7 +21,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
+import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class NihilistSubstitutionDecrypt implements IDecrypt {
 
@@ -38,7 +44,7 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 		char[] textChar = text.toCharArray();
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 	
-			int period = 4;
+			int period = SettingParse.getInteger(this.rangeBox);
 			
 			List<Integer> list = new ArrayList<Integer>();
 			for(int i = 0; i < textChar.length / 2; i++)
@@ -106,36 +112,37 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 		int colMax = 5;
 		
 		for(int no : nos) {
-			if(periodColumn == 0) {
-				System.out.println(no + " " + rowMin + " " + rowMax + " " + colMin + " " + colMax);
-			}
+			if(no <= 10)
+				no += 100;
+			
 			int col = no % 10;
 			if(col == 0) {
-				colMin = Math.min(Math.max(colMin, 5), colMax);
-				colMax = Math.min(colMax, 5);
+				colMin = 5;
+				colMax = 5;
 				no -= 10;
 			}
-			if(col - 1 <= 5) {
-				colMin = Math.min(Math.max(colMin, 1), colMax);
-				colMax = Math.min(colMax, col - 1);
+			else if(col - 1 <= 5) {
+				colMin = Math.max(1, colMin);
+				colMax = Math.min(col - 1, Math.max(colMin, colMax));
 			}
 			else {
-				colMin = Math.min(Math.max(colMin, col - 5), colMax);
-				colMax = Math.min(colMax, 5);
+				colMin = Math.max(col - 5, colMin);
+				colMax = Math.min(5, Math.max(colMin, colMax));
 			}
+	
 			
-			int row = (int)(no / 10);
+			int row = (int)(no / 10) % 10;
 			if(row == 0) {
-				rowMin = Math.min(Math.max(rowMin, 5), rowMax);
-				rowMax = Math.min(rowMax, 5);
+				rowMin = 5;
+				rowMax = 5;
 			}
 			else if(row - 1 <= 5) {
-				rowMin = Math.min(Math.max(rowMin, 1), rowMax);
-				rowMax = Math.min(rowMax, row - 1);
+				rowMin = Math.max(1, rowMin);
+				rowMax = Math.min(row - 1, Math.max(rowMin, rowMax));
 			}
 			else {
-				rowMin = Math.min(Math.max(rowMin, row - 5), rowMax);
-				rowMax = Math.min(rowMax, 5);
+				rowMin = Math.max(row - 5, rowMin);
+				rowMax = Math.min(5, Math.max(rowMin, rowMax));
 			}
 
 		}
@@ -147,12 +154,17 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 			return Arrays.asList(rowMin,rowMax, colMin, colMax);
 	}
 	
+	private JTextField rangeBox = new JTextField("5");
+	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		
+
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
+			
+		panel.add(new SubOptionPanel("Period:", this.rangeBox));
 	}
 	
-	public static class NihilistSubstitutionTask extends SimulatedAnnealing {
+	public class NihilistSubstitutionTask extends SimulatedAnnealing {
 
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		

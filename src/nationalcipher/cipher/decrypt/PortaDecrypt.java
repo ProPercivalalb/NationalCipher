@@ -86,11 +86,11 @@ public class PortaDecrypt implements IDecrypt {
 		dialog.setMinimumSize(new Dimension(400, 400));
 
         JLabel range = new JLabel("Keyword length range: ");
-		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
 		JLabel direction = new JLabel("Key created moving right? ");
 		
-		panel.add(new SubOptionPanel(range, this.rangeBox), BorderLayout.WEST);
-		panel.add(new SubOptionPanel(direction, this.directionOption), BorderLayout.WEST);
+		panel.add(new SubOptionPanel(range, this.rangeBox));
+		panel.add(new SubOptionPanel(direction, this.directionOption));
 		
 		final JTextArea area = new JTextArea();
 		area.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Key Tabular"));

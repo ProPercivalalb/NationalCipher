@@ -87,17 +87,16 @@ public class SeriatedPlayfairDecrypt implements IDecrypt {
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-        JLabel range = new JLabel("Period:");
 		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
 		
-		panel.add(new SubOptionPanel(range, this.rangeBox));
+		panel.add(new SubOptionPanel("Period:", this.rangeBox));
         
 		dialog.add(panel);
 	}
 	
 	public class PlayfairTask extends SimulatedAnnealing implements PlayfairKey {
 
-		public int period = 6;
+		public int period;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
 		public PlayfairTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {

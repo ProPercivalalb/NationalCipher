@@ -86,7 +86,7 @@ public class PortaAutokeyDecrypt implements IDecrypt {
 		dialog.setMinimumSize(new Dimension(400, 400));
 
         JLabel range = new JLabel("Keyword length range: ");
-		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
 		JLabel direction = new JLabel("Key created moving right? ");
 		
 		panel.add(new SubOptionPanel(range, this.rangeBox));

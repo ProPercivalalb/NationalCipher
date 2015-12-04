@@ -48,6 +48,19 @@ public class KeyGeneration {
 		return key3;
 	}
 	
+	public static List<Integer> createListOrder(int length) {
+		int[] array = ArrayHelper.range(0, length);
+
+		List<Integer> key2 = new ArrayList<Integer>();
+		for(int ch : array) {
+			key2.add(ch);
+		}
+		
+		Collections.shuffle(key2);
+
+		return key2;
+	}
+	
 	public static String createKeySquare5x5() {
 		String keySquare = "";
 		

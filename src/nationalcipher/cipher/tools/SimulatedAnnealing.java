@@ -19,7 +19,7 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 		while(true) {
 			this.bestSolution = this.generateKey();
 			this.maxSolution = this.bestSolution;
-
+			this.solutionFound();
 
 			for(double TEMP = this.settings.getSATempStart(); TEMP >= 0; TEMP -= this.settings.getSATempStep()) {
 				for(int count = 0; count < this.settings.getSACount(); count++) { 

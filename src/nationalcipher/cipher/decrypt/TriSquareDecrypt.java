@@ -53,7 +53,7 @@ public class TriSquareDecrypt implements IDecrypt {
 		
 	}
 	
-	public static class SubstitutionTask extends SimulatedAnnealing  {
+	public class SubstitutionTask extends SimulatedAnnealing  {
 
 		public String bestKey1, bestMaximaKey1, lastKey1;
 		public String bestKey2, bestMaximaKey2, lastKey2;

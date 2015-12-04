@@ -2,8 +2,8 @@ package nationalcipherold;
 
 import javax.swing.UIManager;
 
-import javalibrary.cipher.wip.RouteCipher;
 import javalibrary.swing.FontUtil;
+import nationalcipher.cipher.transposition.RouteTransposition;
 
 /**
  * @author Alex Barter (10AS)
@@ -19,7 +19,7 @@ public class Main {
 		//RouteCipher.decode("EJXCTEDECDAEWRIORFEONALEVSE");
 		//RouteCipher.decode("EOEFROIRWEADCEDETCXJNALEVSE");
 		//RouteCipher.decode("WEADERISCEVOREDELFEATCNOEJX");
-		RouteCipher.decode("XJCENTOAEELDFEERVCOSDIEAREW");
+		RouteTransposition.decode("XJCENTOAEELDFEERVCOSDIEAREW");
 		
 		
 		instance = new NationalCipher();

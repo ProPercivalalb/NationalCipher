@@ -78,7 +78,7 @@ public class VigenereAutoKeyDecrypt implements IDecrypt {
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
         JLabel range = new JLabel("Period Range:");
-		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput());
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
 		
 		panel.add(new SubOptionPanel(range, this.rangeBox));
         
