@@ -23,6 +23,10 @@ public class Solution implements Comparable<Solution> {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
 	}
 	
+	public Solution(char[] text, ILanguage language, double currentLowest) {
+		this(text, TextFitness.scoreFitnessQuadgrams(text, language, currentLowest));
+	}
+	
 	public Solution(char[] text) {
 		WordSplit.splitText(text);
 		this.text = text;

@@ -125,21 +125,25 @@ public class Creator {
 	        }
 	}
 
-	public static void iterateAMSCO(AMSCOKey task, int keyLength) {
-		iterateAMSCO(task, ArrayHelper.range(0, keyLength), 0);
+	public static void iterateAMSCO(AMSCOKey task, int[] order) {
+		iterateAMSCO(task, order, order.length, 0);
 	}
 	
-	private static void iterateAMSCO(AMSCOKey task, int[] arr, int pos) {
-		if(arr.length - pos == 1)
+	public static void iterateAMSCO(AMSCOKey task, int keyLength) {
+		iterateAMSCO(task, ArrayHelper.range(0, keyLength), keyLength, 0);
+	}
+	
+	private static void iterateAMSCO(AMSCOKey task, int[] arr, int length, int pos) {
+		if(length - pos == 1)
 			task.onIteration(arr);
 		else
-		    for(int i = pos; i < arr.length; i++) {
+		    for(int i = pos; i < length; i++) {
 		        int h = arr[pos];
 		        int j = arr[i];
 		        arr[pos] = j;
 		        arr[i] = h;
 		            
-		        iterateAMSCO(task, arr, pos + 1);
+		        iterateAMSCO(task, arr, length, pos + 1);
 		        arr[pos] = h;
 		    	arr[i] = j;
 		    }
@@ -181,6 +185,24 @@ public class Creator {
 			}
 			
 			iteratePorta(task, no, time + 1, backup);
+		}
+	}
+	
+	public static void iterateVigerene(VigereneKey task, int length) {
+		iterateVigerene(task, length, 0, "");
+	}
+	
+	private static void iterateVigerene(VigereneKey task, int no, int time, String key) {
+		for(char i = 'A'; i <= 'Z'; i += 1) {
+			String backup = key;
+			backup += i;
+			
+			if(time + 1 >= no) {
+				task.onIteration(backup);
+				continue;
+			}
+			
+			iterateVigerene(task, no, time + 1, backup);
 		}
 	}
 	

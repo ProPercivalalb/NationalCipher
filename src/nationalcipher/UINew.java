@@ -96,6 +96,7 @@ import javalibrary.math.Units.Time;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.string.ValueFormat;
+import javalibrary.swing.ComponentMover;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
@@ -315,6 +316,7 @@ public class UINew extends JFrame {
         this.menuItemIoCSlidefair = new JMenuItem();
         this.menuItemIoCTrifid = new JMenuItem();
         this.menuItemIoCVigenere = new JMenuItem();
+        this.menuItemSolitaire = new JMenuItem();
         this.menuItemIdentify = new JMenuItem();
         this.menuItemWordSplit = new JMenuItem();
         this.menuItemInfo = new JMenuItem();
@@ -581,6 +583,11 @@ public class UINew extends JFrame {
         this.menuItemIoCVigenere.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Vigenere"));
         this.menuItemIoCVigenere.addActionListener(new VigenereIoCAction());
         this.menuItemIoC.add(this.menuItemIoCVigenere);
+  
+        this.menuItemSolitaire.setText("Solitaire");
+        this.menuItemSolitaire.setIcon(ImageUtil.createImageIcon("/image/playing_card.png", "Card"));
+        this.menuItemSolitaire.addActionListener(new SolitaireAction());
+        this.menuItemTools.add(this.menuItemSolitaire);
         
         this.menuItemTools.addSeparator();
         
@@ -822,7 +829,7 @@ public class UINew extends JFrame {
     		dialog.setLocationRelativeTo(UINew.this);
     		
 	        
-	        
+    		dialog.pack();
 			dialog.setModal(true);
 			dialog.setVisible(true);
    
@@ -872,10 +879,10 @@ public class UINew extends JFrame {
 				
 			});
 			thread.setDaemon(true);
-			thread.start();
 			toolBarStart.setEnabled(false);
 			toolBarStop.setEnabled(true);
 			menuItemSettings.setEnabled(false);
+			thread.start();
 		}
     }
     
@@ -889,6 +896,8 @@ public class UINew extends JFrame {
 					@Override
 					public void run() {
 						thread.stop();
+						IDecrypt force = getDecryptManager();
+						force.onTermination();
 						DecimalFormat df = new DecimalFormat("#.#");
 						output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
 						output.println("");
@@ -2529,6 +2538,59 @@ public class UINew extends JFrame {
     	}
     }
     
+    private class SolitaireAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart barChart;
+    	
+    	public SolitaireAction() {
+    		this.dialog = new JDialog();
+    		this.dialog.setTitle("Solitaire Cipher");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/playing_card.png")));
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	        
+	        this.barChart = new JBarChart();
+	       
+			panel.add(this.barChart);
+			//this.barChart.repaint();
+    		this.dialog.add(panel);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+    		
+    		this.barChart.resetAll();
+	        HashMap<Character, Double> map = new HashMap<Character, Double>();
+			
+	        for(char a = 'A'; a <= 'Z'; a++) {
+	        	map.put(a, 0.0D);
+	        }
+			for(char a = 'A'; a <= 'Z'; a++) {
+				for(char b = 'A'; b <= 'Z'; b++) {
+					char finalChar = (char) (((a - 'A') + (b - 'A') + 1) % 26 + 'A');
+	
+					//System.out.println((Languages.english.getFrequencyOfLetter(b) / 100.0D) * (1/26) * 1000);
+					map.put(finalChar, map.get(finalChar) + (Languages.english.getFrequencyOfLetter(b) / 100.0D) * (0.035));
+				}
+			}
+			
+			for(char a = 'A'; a <= 'Z'; a++) {
+				System.out.println(a + " "  + map.get(a));
+				this.barChart.values.add(new ChartData("" + a, (map.get(a) - 0.035) * 100000 - 1));
+			}
+			
+			this.barChart.repaint();
+		}
+    	
+    }
+    
     private class IdentifyAction implements ActionListener {
     	
     	private JDialog dialog;
@@ -3046,6 +3108,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemIdentify;
     private JMenuItem menuItemWordSplit;
     private JMenuItem menuItemInfo;
+    private JMenuItem menuItemSolitaire;
     private JMenu menuItemEncrypter;
     private JMenuItem menuItemEncode;
     private JMenu menuItemEncodeChose;
