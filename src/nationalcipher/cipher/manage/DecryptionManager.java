@@ -3,6 +3,7 @@ package nationalcipher.cipher.manage;
 import java.util.ArrayList;
 import java.util.List;
 
+import nationalcipher.SolitaireNewDecrypt;
 import nationalcipher.cipher.decrypt.ADFGXDecrypt;
 import nationalcipher.cipher.decrypt.AMSCODecrypt;
 import nationalcipher.cipher.decrypt.AffineDecrypt;
@@ -132,6 +133,7 @@ public class DecryptionManager {
 		ciphers.add(new MorbitDecrypt());
 		ciphers.add(new PolluxDecrypt());
 		ciphers.add(new SolitaireDecrypt());
+		ciphers.add(new SolitaireNewDecrypt());
 		//ciphers.add(new CheckerboardDecrypt());
 	}
 }

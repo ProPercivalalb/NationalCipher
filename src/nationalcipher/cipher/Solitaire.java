@@ -11,6 +11,9 @@ import javalibrary.cipher.permentate.Permentations;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.math.ArrayHelper;
+import javalibrary.math.MathHelper;
+import javalibrary.util.ListUtil;
+import nationalcipher.cipher.tools.Creator.PortaAutoKey;
 
 public class Solitaire {
 	
@@ -18,7 +21,7 @@ public class Solitaire {
 	public static final int JOKER_B = 53;
 	
 	public static final int TOTAL_CARDS = 54;
-	public static String[] KEY = new String[]{"8d","9d","3h","Kd","Ah","Jc","5h","6h","7h","8h","9h","Th","6c","Kh","4d","Qd","2s","Tc","Ad","5s","Ts","A","Kc","4s","7s","Ks","Qc","9s","Jh","Qh","2h","7c","3s","6s","8c","Qs","2d","3d","4h","5d","6d","As","Js","B","4c","5c","Ac","9c","2c","Td","Jd","8s","7d","3c"};
+	public static String[] KEY = new String[] {"8d","9d","3h","Kd","Ah","Jc","5h","6h","7h","8h","9h","Th","6c","Kh","4d","Qd","2s","Tc","Ad","5s","Ts","A","Kc","4s","7s","Ks","Qc","9s","Jh","Qh","2h","7c","3s","6s","8c","Qs","2d","3d","4h","5d","6d","As","Js","B","4c","5c","Ac","9c","2c","Td","Jd","8s","7d","3c"};
 	
 	public static void main(String[] args) {
 
@@ -91,14 +94,25 @@ public class Solitaire {
 			}
 	}
 		
-		int[] cardOrder2 = new int[order.size()];
-		for(int i = 0; i < order.size(); i++)
-			cardOrder2[i] = order.get(i);
-		System.out.println(Arrays.toString(cardOrder2));
-		int[] cardOrder = createCardOrder("SOL");
-		//System.out.println(Arrays.toString(cardOrder));
-		//System.out.println(encode("REPORTONTHELOSSOFTHEKOHINOORLIGHTBEAMWEAPONSFACILITYINUTTARPRADESHTHELOSSOFTHEKOHINOORLIGHTBEAMWEAPONSFACILITYINUTTARPRADESHISAMINORDISRUPTIONINOURPLANSTOREESTABLISHTHEREICHINDEEDGIVENTHEDEATHSOFTHEINCOMPETENTLETZTERANDHERZFEUERINTHEINITIALBLASTITCOULDBESEENASAGOLDENOPPORTUNITYTOREFOCUSOURAMBITIONSONALTERNATIVEWEAPONSSYSTEMSWHICHOFFERGREATERPOTENTIALAPROPOSALOFTHISKINDFORMSTHEMAINANDFINALRECOMMENDATIONOFTHISREPORTTHEDESTRUCTIONOFTHEFACILITYAPPEARSTOHAVEBEENACHIEVEDBYTHECOMBINEDEFFORTSOFTHEENEMYAGENTSKNOWNASKHOLICHARLIEANDHARRYWEHAVEBEENUNABLETOIDENTIFYTHEIRBODIESINTHEWRECKAGEASLOCALINVESTIGATORSHAVEHAMPEREDOURACCESSTOTHESITEOURPREVIOUSGOODRELATIONSWITHTHELOCALOFFICIALSHAVEBEENSERIOUSLYDAMAGEDBYTHEIRBELIEFTHATWEARETOBLAMEFORTHEACCIDENTITISEXTREMELYFORTUNATETHATWEHAVEBEENABLETOCONVINCETHEMTHATITWASINDEEDANACCIDENTINRETROSPECTITMAYHAVEBEENANERRORINOURINITIALDEALINGSWITHTHEMTOTRYTOCONVINCETHEMTHATTHEINCIDENTWASCAUSEDBYINADEQUATEWORKBYPOORLOCALCONTRACTORSTHECONSIDERABLEDAMAGETOTHEFACILITYANDSOMEWHATLESSERDAMAGETOLOCALPROPERTYWASCAUSEDBYTHEDESTRUCTIONOFCONTROLVALVESINTHEFACILITYTHERESULTINGFLOODINTHELABORATORYSECTIONOFTHEFACILITYDESTROYEDRECORDSANDEQUIPMENTBUTTHESOUNDBAFFLESWEHADBUILTCAUGHTMUCHOFTHEFLOWANDITWASDIRECTEDINTOTHELOWERWATERSINTHISWEWERELUCKYMANYOFOUROWNAGENTSANDALLOFTHELOCALCITIZENSESCAPEDDEATHONTHEOTHERHANDWITHMUCHOFTHEFACILITYSURVIVINGWEHAVEHADTOWORKHARDTOCONCEALITSTRUENATUREFROMTHELOCALSANDHAVINGLOSTTHESUPPORTOFTHECULTOFTHEKOHINOORTHISHASBEENANEXPENSIVETASKITISUNLIKELYTHATWEWILLBEABLETOREESTABLISHABASEINTHISREGIONOFMORECONCERNWENOTETHATINDIANINTELLIGENCEAPPEARSTOHAVEBEENTRACKINGOURENEMIESANDTHISMAYHAVELEDTOTHEMINFILTRATINGOUROWNOPERATIONHEREININDIAITWOULDBEPRUDENTTOMOVEOURMAINCENTREOFOPERATIONSANDWEBELIEVETHATSOUTHAMERICAWOULDPROVIDEAMORECONVENIENTLOCATIONTHELOSSOFTHELIGHTBEAMWEAPONSRESEARCHISDISAPPOINTINGTHOUGHITISCLEARTHATTHISISSTILLATAVERYEARLYSTAGEOFDEVELOPMENTANDWEDONOTRECOMMENDFURTHERINVESTMENTATTHISTIMEWEBELIEVETHATIFSALINENSURVIVEDTHENHEWILLSURFACEAGAINSHORTLYANDITWOULDBEBESTTOKEEPAWATCHONHISLABORATORIESWEMAYFINDAUSEFORHIMORHISTECHNOLOGYWHOKNOWSWHATTHISSTRANGELASERMAYDOINTHEMEANTIMEWEWOULDSUGGESTKEEPINGANEYEONPROFSAMUELCOHENOFTHERANDCORPORATIONHEISBELIEVEDTOBEWORKINGONTHEEFFECTSOFRADIATIONANDMAYHAVEBEENINVOLVEDINTHEMANHATTANPROJECTITMAYBETIMETOREVIVEDIEALCHEMISTENFORTHEHONOUROFTHEREICHSCHWARZESCHATTEN", cardOrder));
-		
+		//int[] cardOrder2 = new int[order.size()];
+		//for(int i = 0; i < order.size(); i++)
+		//	cardOrder2[i] = order.get(i);
+		//System.out.println(ListUtil.toString(cardOrder2));
+	int[] cardOrder = createCardOrder("TEST");
+		//System.out.println(ListUtil.toString(cardOrder, 1));
+		timer.restart();
+	//int[] cardOrder = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
+		//System.out.println(ListUtil.toString(cardOrder, 1));
+		//for(int i = 0; i < 10; i++) {
+		//	cardOrder = nextCardOrder(cardOrder);
+			//System.out.println(ListUtil.toString(cardOrder, 1));
+		//}
+		System.out.println(ListUtil.toString(cardOrder, 1));
+		String	 plainText = new String(decode("YRXIRTHPNGJIFXZSP".toCharArray(), cardOrder));
+		System.out.println(plainText);
+		//	}
+		//	System.out.println(new String());
+		timer.displayTime();
 		//System.out.println("");
 		//for(int i = 0; i < 250; i++) {
 		//	keyStream = nextKeyStream(keyStream);
@@ -106,7 +120,7 @@ public class Solitaire {
 		//		System.out.println(Arrays.toString(keyStream));
 		//}
 		
-			timer.displayTime();
+			//timer.displayTime();
 		//System.out.println(Arrays.toString(ArrayHelper.rangeInt(1, 53)));
 		//System.out.println(new String(encode("REPORTONTHELOSSOFTHEKOHINOORLIGHTBEAMWEAPONSFACILITYINUTTARPRADESHTHELOSSOFTHEKOHINOORLIGHTBEAMWEAPONSFACILITYINUTTARPRADESHISAMINORDISRUPTIONINOURPLANSTOREESTABLISHTHEREICHINDEEDGIVENTHEDEATHSOFTHEINCOMPETENTLETZTERANDHERZFEUERINTHEINITIALBLASTITCOULDBESEENASAGOLDENOPPORTUNITYTOREFOCUSOURAMBITIONSONALTERNATIVEWEAPONSSYSTEMSWHICHOFFERGREATERPOTENTIALAPROPOSALOFTHISKINDFORMSTHEMAINANDFINALRECOMMENDATIONOFTHISREPORTTHEDESTRUCTIONOFTHEFACILITYAPPEARSTOHAVEBEENACHIEVEDBYTHECOMBINEDEFFORTSOFTHEENEMYAGENTSKNOWNASKHOLICHARLIEANDHARRYWEHAVEBEENUNABLETOIDENTIFYTHEIRBODIESINTHEWRECKAGEASLOCALINVESTIGATORSHAVEHAMPEREDOURACCESSTOTHESITEOURPREVIOUSGOODRELATIONSWITHTHELOCALOFFICIALSHAVEBEENSERIOUSLYDAMAGEDBYTHEIRBELIEFTHATWEARETOBLAMEFORTHEACCIDENTITISEXTREMELYFORTUNATETHATWEHAVEBEENABLETOCONVINCETHEMTHATITWASINDEEDANACCIDENTINRETROSPECTITMAYHAVEBEENANERRORINOURINITIALDEALINGSWITHTHEMTOTRYTOCONVINCETHEMTHATTHEINCIDENTWASCAUSEDBYINADEQUATEWORKBYPOORLOCALCONTRACTORSTHECONSIDERABLEDAMAGETOTHEFACILITYANDSOMEWHATLESSERDAMAGETOLOCALPROPERTYWASCAUSEDBYTHEDESTRUCTIONOFCONTROLVALVESINTHEFACILITYTHERESULTINGFLOODINTHELABORATORYSECTIONOFTHEFACILITYDESTROYEDRECORDSANDEQUIPMENTBUTTHESOUNDBAFFLESWEHADBUILTCAUGHTMUCHOFTHEFLOWANDITWASDIRECTEDINTOTHELOWERWATERSINTHISWEWERELUCKYMANYOFOUROWNAGENTSANDALLOFTHELOCALCITIZENSESCAPEDDEATHONTHEOTHERHANDWITHMUCHOFTHEFACILITYSURVIVINGWEHAVEHADTOWORKHARDTOCONCEALITSTRUENATUREFROMTHELOCALSANDHAVINGLOSTTHESUPPORTOFTHECULTOFTHEKOHINOORTHISHASBEENANEXPENSIVETASKITISUNLIKELYTHATWEWILLBEABLETOREESTABLISHABASEINTHISREGIONOFMORECONCERNWENOTETHATINDIANINTELLIGENCEAPPEARSTOHAVEBEENTRACKINGOURENEMIESANDTHISMAYHAVELEDTOTHEMINFILTRATINGOUROWNOPERATIONHEREININDIAITWOULDBEPRUDENTTOMOVEOURMAINCENTREOFOPERATIONSANDWEBELIEVETHATSOUTHAMERICAWOULDPROVIDEAMORECONVENIENTLOCATIONTHELOSSOFTHELIGHTBEAMWEAPONSRESEARCHISDISAPPOINTINGTHOUGHITISCLEARTHATTHISISSTILLATAVERYEARLYSTAGEOFDEVELOPMENTANDWEDONOTRECOMMENDFURTHERINVESTMENTATTHISTIMEWEBELIEVETHATIFSALINENSURVIVEDTHENHEWILLSURFACEAGAINSHORTLYANDITWOULDBEBESTTOKEEPAWATCHONHISLABORATORIESWEMAYFINDAUSEFORHIMORHISTECHNOLOGYWHOKNOWSWHATTHISSTRANGELASERMAYDOINTHEMEANTIMEWEWOULDSUGGESTKEEPINGANEYEONPROFSAMUELCOHENOFTHERANDCORPORATIONHEISBELIEVEDTOBEWORKINGONTHEEFFECTSOFRADIATIONANDMAYHAVEBEENINVOLVEDINTHEMANHATTANPROJECTITMAYBETIMETOREVIVEDIEALCHEMISTENFORTHEHONOUROFTHEREICHSCHWARZESCHATTEN", cardOrder)));
 		System.out.println(new String(decode("PIZQEJBLGDXTCMQLHLNMMGIQVOPUXEIKLMEOMBKJMEUQYHRXVVOEURXJYVVSLZWEGKCULSKNAYMSTBGZFYYVRIKBWLXJNSEOPJRFTGHHNSUIZRNLPWQZIWVWJHYPPPYIOELJPQJGOQMUVEBMBMHLNAFPQCWLNWKOYTHPWVNUYDTJSTXBKAPTTKHNMAMRIEPBWOFMKXYFAGYCEJBITEUYWPUCTGHWZKROIWMZWSGRTWRFZQKAVYQWCPHJHZAUFFXUYMUBJBSSKGFFMPQLTWVWFIMSWKKZOWXACWGZEVGEMDFCMRBSFPOPIGCPAVVWPPFQSJVSLSJCBPAYLDOJDXKBEWSTRGDYZBPOYCASAGZEZYJQEQSVSMIFPVAJIDKNEOOJZOVHJOCAMQCMFBCPRZCTYSYQYBYHFJGPUTMZKRFQCPDQSDQOUXTEDQLCHUYKPQQPIJHEDDGYDTIIVTBUEKIRLGCNRTJMVMFRUEDURLRIIWFQRCUXCXNKCXUZZHBGUCWCJTHFENMDLCHBELCYPHEXLVUZSLGCJGIPRIBLDGATKCGHLYJLUSGWDXUTYCNRYHIRRXSIBTJBODYZFGCLCPOSIVNEJHKYIMGYZPQHGARUFMMVFZXMFYAWBCVFTCOCQHTZUPWBHJKABGTIVKFDLSRDOTRZEOLOUJLFZOYCSWXVXLDBFJOPINVCQTTTDHHJRPAWZBIINSEOZTTINLKESGBFXBAXYDIZXCXGXGLXDELJVJZPEWLHVPLOCNACCABSZSACXWKUGPRDHDTNCUAJYZBWDXDDCYQYOLVBOZWSEMNRDNJNDAMGKMWAJLVOQRAMONSDUYCRSNGPDPUASGTE".toCharArray(), new int[] {53,52,51,50,49,48,47,46,45,44,43,42,41,40,39,38,37,36,35,34,33,32,31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0})));
@@ -115,97 +129,194 @@ public class Solitaire {
 	
 	}
 	
+	public static void iteratePortaAutokey(int[] cardOrder, int length) {
+		iteratePortaAutokey(ArrayHelper.range(0, 54), cardOrder, length, 0, "");
+	}
+	
+	public static int[] real = ArrayHelper.range(0, 54);
+	private static void iteratePortaAutokey(int[] start, int[] targetOrder, int no, int time, String key) {
+		for(char i = 'A'; i <= 'Z'; i += 1) {
+			String backup = key;
+			backup =  i + backup;
+			
+			if(time + 1 >= no) {
+				continue;
+			}
+			int[] lastOrder = start;
+			start = createCardOrder("" + i, start);
+
+			if(Arrays.equals(start, targetOrder)) {
+				System.out.println("Found key: " + backup);
+			}
+			iteratePortaAutokey(start, targetOrder, no, time + 1, backup);
+			start = lastOrder;
+			
+
+		}
+	}
+	
 	public static boolean isJoker(int card) {
 		return card == JOKER_A || card == JOKER_B;
 	}
+
+	public static int[] nextCardOrder(int[] oldCardOrder) {
+		int[] cardOrder = Arrays.copyOf(oldCardOrder, oldCardOrder.length);
+		
+		int jA, jB, jT;
+		
+		//TODO What happens when joker A wraps round
+		jT = ArrayHelper.indexOf(cardOrder, JOKER_A);
+		if(jT < 53) {
+			jA = jT + 1;
+			cardOrder[jT] = cardOrder[jA];
+		}
+		else {
+			for(jA = 53; jA > 1; jA--)
+				cardOrder[jA] = cardOrder[jA - 1];
+			jA = 0;
+		}
+		cardOrder[jA] = JOKER_A;
+
+
+		//Move Joker B 2 to right
+		jB = ArrayHelper.indexOf(cardOrder, JOKER_B);
+		if(jB < 52) {
+			jT = jB + 1;
+			cardOrder[jB] = cardOrder[jT];
+			if (jA == jT)
+				jA = jB;
+			jB = jT + 1;
+			cardOrder[jT] = cardOrder[jB];
+			if (jA == jB)
+				jA = jT;
+		}
+		else {
+			jT = jB;
+			jB = jB - 51;
+			for(; jT > jB; jT--)
+			{
+				cardOrder[jT] = cardOrder[jT - 1];
+				if (jA == jT - 1)
+					jA = jT;
+			}
+		}
+		cardOrder[jB] = JOKER_B;
+		//Triple cut the pack at the 2 Jokers
+		int[] temp = new int[54];
+				
+		if (jA > jB) {
+			jT = jA;
+			jA = jB;
+			jB = jT;
+		}
+		temp[53] = cardOrder[jB++];
+		jT = 0;
+		while(jB < 54)
+			temp[jT++] = cardOrder[jB++];
+			
+		jB = jA;
+		while (cardOrder[jB] != temp[53])
+			temp[jT++] = cardOrder[jB++];
+
+		temp[jT++] = temp[53];
+		
+		jB = 0;
+		while (jB < jA)
+			temp[jT++] = cardOrder[jB++];
 	
-	public static int keyStreamNumber;
+				
+				
+		jB = temp[53];
+		if(!isJoker(jB)) {
+				
+			jB += 1;
+			jA = 0;
+			for (jT = jB; jT < 53; jT++)
+				cardOrder[jA++] = temp[jT];
+			for (jT = 0; jT < jB + 1; jT++)
+				cardOrder[jA++] = temp[jT];
+					
+			cardOrder[53] = temp[53];
+		}
+		else
+			cardOrder = temp;
+		
+		return cardOrder;
+	}
 	
-	public static int[] nextKeyStream(int[] oldCardOrder) {
+	public static int[] previousCardOrder(int[] oldCardOrder) {
 		int deckSize = oldCardOrder.length;
 		int[] cardOrder = Arrays.copyOf(oldCardOrder, oldCardOrder.length);
 		
-		while(true) {
-			int jA = ArrayHelper.indexOf(cardOrder, JOKER_A);
-			int jokerANewIndex = (jA + 1) % deckSize;
-			cardOrder[jA] = cardOrder[jokerANewIndex];
-			cardOrder[jokerANewIndex] = JOKER_A;
-	
-			//Move Joker B 2 to right
-			int jokerBIndex = ArrayHelper.indexOf(cardOrder, JOKER_B);
-			if(jokerBIndex + 1 <= deckSize - 2) {
-				cardOrder[jokerBIndex] = cardOrder[jokerBIndex + 1];
-				cardOrder[jokerBIndex + 1] = cardOrder[jokerBIndex + 2];
-				cardOrder[jokerBIndex + 2] = JOKER_B;
-				
-				if(jokerANewIndex > jokerBIndex && jokerANewIndex <= jokerBIndex + 2)
-					jokerANewIndex--;
-
-				jokerBIndex += 2;
-
-				
-			}
-			else {
-				int fromEnd = deckSize - jokerBIndex;
-				cardOrder = jokerBWrap(cardOrder, deckSize, jokerBIndex, fromEnd);
-
-				if(jokerANewIndex >= 3 - fromEnd && jokerANewIndex < jokerBIndex)
-					jokerANewIndex++;
-				
-				if(fromEnd == 1)
-					jokerBIndex = 2;
-				else
-					jokerBIndex = 1;
-			}
+		int bottomCard = cardOrder[deckSize - 1];
+		
+		if(!isJoker(bottomCard))
+			cardOrder = countCut(cardOrder, deckSize, (deckSize - 1) - (bottomCard + 1) - 1);
+		
+		int jokerAIndexFinal = ArrayHelper.indexOf(cardOrder, JOKER_A);
+		int jokerBIndexFinal = ArrayHelper.indexOf(cardOrder, JOKER_B);
 			
-			//Triple cut the pack at the 2 Jokers
-			int jokerAIndexFinal = jokerANewIndex;
-			int jokerBIndexFinal = jokerBIndex;
-			
-			int minJoker = Math.min(jokerAIndexFinal, jokerBIndexFinal);
-			int maxJoker = Math.max(jokerAIndexFinal, jokerBIndexFinal);
-			
-			cardOrder = tripleCut(cardOrder, deckSize, minJoker, maxJoker);
-	
-			int bottomCard = cardOrder[deckSize - 1];
-			
-			if(!isJoker(bottomCard))
-				cardOrder = countCut(cardOrder, deckSize, bottomCard);
-			
-			int topCard = cardOrder[0];
-			
-			if(!isJoker(topCard))
-				keyStreamNumber = cardOrder[topCard + 1];
-			else 
-				keyStreamNumber = cardOrder[deckSize - 1];
-
-			if(!isJoker(keyStreamNumber))
-				break;
+		int minJoker = Math.min(jokerAIndexFinal, jokerBIndexFinal);
+		int maxJoker = Math.max(jokerAIndexFinal, jokerBIndexFinal);
+		
+		cardOrder = tripleCut(cardOrder, deckSize, minJoker, maxJoker);
+		
+		int jokerBIndex = ArrayHelper.indexOf(cardOrder, JOKER_B);
+		
+		if(jokerBIndex == 0) {
+			//System.out.println("EERRRRORR JOKER B IN POS 1");
 		}
+		else if(jokerBIndex > 2) {
+			cardOrder[jokerBIndex] = cardOrder[jokerBIndex - 1];
+			cardOrder[jokerBIndex - 1] = cardOrder[jokerBIndex - 2];
+			cardOrder[jokerBIndex - 2] = JOKER_B;
+		}
+		else {
+			cardOrder = jokerBWrapInverse(cardOrder, deckSize, jokerBIndex);
+		}
+		int jA = ArrayHelper.indexOf(cardOrder, JOKER_A);
+		int jokerANewIndex = (jA + deckSize - 1) % deckSize;
+		cardOrder[jA] = cardOrder[jokerANewIndex];
+		cardOrder[jokerANewIndex] = JOKER_A;
+		
 		return cardOrder;
+	}
+	
+	public static int[] jokerBWrapInverse(int[] cardOrder, int deckSize, int jokerBIndex) {
+		int[] c = new int[deckSize];
+		 if(jokerBIndex == 2) {
+			// System.out.println("s" + ListUtil.toString(cardOrder, 1));
+				System.arraycopy(cardOrder, 0, c, 0, jokerBIndex);
+				//System.out.println(ListUtil.toString(c, 1));
+				System.arraycopy(cardOrder, jokerBIndex + 1, c, jokerBIndex, deckSize - jokerBIndex - 1);
+				System.arraycopy(cardOrder, jokerBIndex, c, deckSize - 1, 1);
+				//System.out.println("2" + ListUtil.toString(c, 1));
+		 }
+		 else {
+			//System.out.println(ListUtil.toString(cardOrder, 1));
+			System.arraycopy(cardOrder, 0, c, 0, jokerBIndex);
+			//System.out.println(ListUtil.toString(c, 1));
+			System.arraycopy(cardOrder, jokerBIndex + 1, c, jokerBIndex, deckSize - jokerBIndex - 2);
+			System.arraycopy(cardOrder, jokerBIndex, c, deckSize - jokerBIndex - 1, 1);
+			System.arraycopy(cardOrder, deckSize - jokerBIndex, c, deckSize - jokerBIndex, jokerBIndex == 2 ? 0 : 1);
+			//System.out.println(ListUtil.toString(c, 1));
+		 }
+		return c;
 	}
 	
 	public static int[] jokerBWrap(int[] cardOrder, int deckSize, int jokerBIndex, int fromEnd) {
 		int[] c = new int[deckSize];
 		int fromStart = 3 - fromEnd;
 		if(fromEnd == 2) {
-			//System.out.println("Start " + Arrays.toString(cardOrder));
-			System.arraycopy(cardOrder, 0, c, 0, fromStart);
-			//System.out.println(Arrays.toString(c));
+			System.arraycopy(cardOrder, 0, c, 0, fromStart);;
 			System.arraycopy(cardOrder, jokerBIndex, c, fromStart, 1);
-			//System.out.println(Arrays.toString(c));
 			System.arraycopy(cardOrder, fromStart, c, fromStart + 1, deckSize - 3);
 			System.arraycopy(cardOrder, deckSize - 1, c, deckSize - 1, fromEnd - 1);
-			//System.out.println(Arrays.toString(c));
 		}
 		else {
-			//System.out.println("Start " + Arrays.toString(cardOrder));
 			System.arraycopy(cardOrder, 0, c, 0, fromStart);
-			//System.out.println(Arrays.toString(c));
 			System.arraycopy(cardOrder, jokerBIndex, c, fromStart, 1);
-			//System.out.println(Arrays.toString(c));
 			System.arraycopy(cardOrder, fromStart, c, fromStart + 1, deckSize - 3);
-			//System.out.println(Arrays.toString(c));
 		}
 		return c;
 	}
@@ -234,44 +345,15 @@ public class Solitaire {
 	}
 	
 	public static int[] createCardOrder(String key) {
-		int[] cardOrder = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
+		return createCardOrder(key, ArrayHelper.range(0, 54));
+	}
+	
+	public static int[] createCardOrder(String key, int[] startingOrder) {
+		int[] cardOrder = startingOrder;
 		int deckSize = cardOrder.length;
 		
 		for(int i = 0; i < key.length(); i++) {
-			int jA = ArrayHelper.indexOf(cardOrder, JOKER_A);
-			int jokerANewIndex = (jA + 1) % deckSize;
-			cardOrder[jA] = cardOrder[jokerANewIndex];
-			cardOrder[jokerANewIndex] = JOKER_A;
-		
-			//Move Joker B 2 to right
-			int jokerBIndex = ArrayHelper.indexOf(cardOrder, JOKER_B);
-			if(jokerBIndex + 1 <= deckSize - 2) {
-				cardOrder[jokerBIndex] = cardOrder[jokerBIndex + 1];
-				cardOrder[jokerBIndex + 1] = cardOrder[jokerBIndex + 2];
-				cardOrder[jokerBIndex + 2] = JOKER_B;
-				jokerBIndex += 2;
-			}
-			else {
-				int fromEnd = deckSize - jokerBIndex;
-				cardOrder = jokerBWrap(cardOrder, deckSize, jokerBIndex, fromEnd);
-				if(fromEnd == 1)
-					jokerBIndex = 2;
-				else
-					jokerBIndex = 1;
-			}
-				
-			//Triple cut the pack at the 2 Jokers
-			int jokerAIndexFinal =  ArrayHelper.indexOf(cardOrder, JOKER_A);
-			int jokerBIndexFinal = jokerBIndex;//ArrayHelper.indexOf(cardOrder, JOKER_B);
-				
-			int minJoker = Math.min(jokerAIndexFinal, jokerBIndexFinal);
-			int maxJoker = Math.max(jokerAIndexFinal, jokerBIndexFinal);
-				
-			cardOrder = tripleCut(cardOrder, deckSize, minJoker, maxJoker);
-			int bottomCard = cardOrder[deckSize - 1];
-				
-			if(!isJoker(bottomCard))
-				cardOrder = countCut(cardOrder, deckSize, bottomCard);
+			cardOrder = nextCardOrder(cardOrder);
 
 			cardOrder = countCut(cardOrder, deckSize, key.charAt(i) - 'A');
 		}
@@ -280,14 +362,11 @@ public class Solitaire {
 	}
 	
 	public static String encode(String plainText, int[] cardOrder) {
-		int[] keyStream = new int[plainText.length()];
-		int keyStreamIndex = 0;
+		String cipherText = "";
+		int index = 0;
 		
-		
-		while(keyStreamIndex < keyStream.length) {
-			//Move Joker A 1 to right
-			
-			cardOrder = nextKeyStream(cardOrder);
+		while(index < plainText.length()) {
+			cardOrder = nextCardOrder(cardOrder);
 			
 			int topCard = cardOrder[0];
 			int keyStreamNumber;
@@ -298,48 +377,53 @@ public class Solitaire {
 				keyStreamNumber = cardOrder[cardOrder.length - 1];
 
 			
-			if(!isJoker(keyStreamNumber))
-				keyStream[keyStreamIndex++] = keyStreamNumber;
-
+			if(isJoker(keyStreamNumber))
+				continue;
+			
+			cipherText += (char)(((plainText.charAt(index) - 'A') + (keyStreamNumber + 1)) % 26 + 'A');
+			index += 1;
 		}
-		
-		String cipherText = "";
-		
-		//String key = "";
-		for(int i = 0; i < keyStream.length; i++)  {
-			//key += (char)((keyStream[i]) % 26 + 'A');
-			cipherText += (char)(((plainText.charAt(i) - 'A') + (keyStream[i] + 1)) % 26 + 'A');
-		}
-		//System.out.println(key);
-		
 
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, int[] cardOrder) {
-		//int[] keyStream = new int[cipherText.length];
-		char[] plainText = new char[cipherText.length];
-		int keyStreamIndex = 0;
+	public static char[] decode(char[] cipherText, List<Integer> keyStream) {
+		char[] plainText = new char[keyStream.size()];
+		int index = 0;
 		
-		
-		for(int i = 0; i < cipherText.length; i++)  {
-			//Move Joker A 1 to right
-			
-			cardOrder = nextKeyStream(cardOrder);
-			plainText[i] = (char)((52 + (cipherText[i] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
-			//keyStream[keyStreamIndex++] = keyStreamNumber;
-			
+		for(int keyStreamNumber : keyStream) {
 
+			
+			plainText[index] = (char)(MathHelper.mod(52 + (cipherText[index] - 'A') - (keyStreamNumber + 1), 26) + 'A');
+			index += 1;
 		}
 
-		//char[] plainText = new char[cipherText.length];
+		return plainText;
+	}
+	
+	public static char[] decode(char[] cipherText, int[] cardOrder) {
+		char[] plainText = new char[cipherText.length];
+		int index = 0;
 		
-		//String key = "";
-		//for(int i = 0; i < keyStream.length; i++)  {
-			//key += (char)((keyStream[i]) % 26 + 'A');
-		//	plainText[i] = (char)((52 + (cipherText[i] - 'A') - (keyStream[i] + 1)) % 26 + 'A');
-		//}
-		//System.out.println(key);
+		while(index < cipherText.length) {
+
+			cardOrder = nextCardOrder(cardOrder);
+			
+			int topCard = cardOrder[0];
+			int keyStreamNumber;
+			//System.out.println("Top card" + topCard);
+			if(!isJoker(topCard))
+				keyStreamNumber = cardOrder[topCard + 1];
+			else 
+				keyStreamNumber = cardOrder[cardOrder.length - 1];
+			
+			//System.out.println(keyStreamNumber);
+			if(isJoker(keyStreamNumber))
+				continue;
+			
+			plainText[index] = (char)((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
+			index += 1;
+		}
 
 		return plainText;
 	}

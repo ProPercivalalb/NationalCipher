@@ -107,10 +107,12 @@ import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.Threads;
+import javalibrary.util.ListUtil;
 import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.ProgressiveKey;
+import nationalcipher.cipher.Solitaire;
 import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
@@ -2541,7 +2543,8 @@ public class UINew extends JFrame {
     private class SolitaireAction implements ActionListener {
     	
     	private JDialog dialog;
-    	private JBarChart barChart;
+    	private JTextField passKeyStartingOrder;
+    	private int[] cardOrder;
     	
     	public SolitaireAction() {
     		this.dialog = new JDialog();
@@ -2554,10 +2557,10 @@ public class UINew extends JFrame {
     		
     		JPanel panel = new JPanel();
 	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	        
-	        this.barChart = new JBarChart();
-	       
-			panel.add(this.barChart);
+	        this.cardOrder = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
+	
+	    	passKeyStartingOrder = new JTextField("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53");
+			panel.add(this.passKeyStartingOrder);
 			//this.barChart.repaint();
     		this.dialog.add(panel);
     	}
@@ -2565,28 +2568,8 @@ public class UINew extends JFrame {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		
-    		this.barChart.resetAll();
-	        HashMap<Character, Double> map = new HashMap<Character, Double>();
-			
-	        for(char a = 'A'; a <= 'Z'; a++) {
-	        	map.put(a, 0.0D);
-	        }
-			for(char a = 'A'; a <= 'Z'; a++) {
-				for(char b = 'A'; b <= 'Z'; b++) {
-					char finalChar = (char) (((a - 'A') + (b - 'A') + 1) % 26 + 'A');
-	
-					//System.out.println((Languages.english.getFrequencyOfLetter(b) / 100.0D) * (1/26) * 1000);
-					map.put(finalChar, map.get(finalChar) + (Languages.english.getFrequencyOfLetter(b) / 100.0D) * (0.035));
-				}
-			}
-			
-			for(char a = 'A'; a <= 'Z'; a++) {
-				System.out.println(a + " "  + map.get(a));
-				this.barChart.values.add(new ChartData("" + a, (map.get(a) - 0.035) * 100000 - 1));
-			}
-			
-			this.barChart.repaint();
+    		this.cardOrder = Solitaire.nextCardOrder(this.cardOrder);
+    		output.println(ListUtil.toString(cardOrder, 1));
 		}
     	
     }
