@@ -387,8 +387,8 @@ public class Solitaire {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, List<Integer> keyStream) {
-		char[] plainText = new char[keyStream.size()];
+	public static char[] decodeWithKeyStream(char[] cipherText, int[] keyStream) {
+		char[] plainText = new char[keyStream.length];
 		int index = 0;
 		
 		for(int keyStreamNumber : keyStream) {

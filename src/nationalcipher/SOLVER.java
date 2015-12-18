@@ -46,7 +46,9 @@ public class SOLVER {
 		
 		
 		Timer timer = new Timer();
-		options(startOrder, ListUtil.toList(unknowns), 5, 0, new ArrayList<Integer>());
+		int times = 5;
+		
+		options(startOrder, ListUtil.toList(unknowns), times, 0, new int[times]);
 		timer.displayTime();
 		System.out.println("Iterations: " + iteration);
 		
@@ -54,11 +56,11 @@ public class SOLVER {
 	
 	public static int iteration = 0;
 	
-	public static void options(int[] lastOrder, ArrayList<Integer> unknowns, int times, int count, ArrayList<Integer> keyStream) throws Exception {
+	public static void options(int[] lastOrder, ArrayList<Integer> unknowns, int times, int count, int[] keyStream) throws Exception {
 		if(times <= count) {
 			iteration++;
 			//System.out.println(keyStream + " " + new String(Solitaire.decode(FINAL_TEXT, keyStream)));
-			char[] chars = Solitaire.decode(FINAL_TEXT, keyStream);
+			char[] chars = Solitaire.decodeWithKeyStream(FINAL_TEXT, keyStream);
 			Solution last = new Solution(chars, Languages.english);
 			if(bestSolution.score < last.score) {
 				bestSolution = last;
@@ -137,11 +139,8 @@ public class SOLVER {
 		while (jB < jA)
 			tmp[jT++] = cardOrder[jB++];
 	
-				
-				
 		jB = tmp[53];
 		if(jB < 0) {
-			
 			for(int unknown : unknowns) {
 
 				jA = 0;
@@ -176,8 +175,7 @@ public class SOLVER {
 		//System.out.println(ListUtil.toString(cardOrder, 1));
 	}
 		
-	public static void insideOrder(int[] cardOrder, ArrayList<Integer> unknowns, int times, int count, ArrayList<Integer> keyStream) throws Exception {
-		//System.out.println(ListUtil.toString(cardOrder, 1));
+	public static void insideOrder(int[] cardOrder, ArrayList<Integer> unknowns, int times, int count, int[] keyStream) throws Exception {
 		int possible;
 		
 		int firstCard = cardOrder[0];
@@ -191,36 +189,27 @@ public class SOLVER {
 					possible = cardOrder[unknown + 1];
 			
 				if(Solitaire.isJoker(possible)) {
-	
-					//int[] temp = Arrays.copyOf(cardOrder, cardOrder.length);
 					cardOrder[0] = unknown;
-
 					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count, keyStream);
-					
 				}
 				else if(possible < 0) {
 					for(int unknown2 : unknowns)  {
 						if(unknown2 != unknown) {
-
-							//int[] temp = Arrays.copyOf(cardOrder, cardOrder.length);
 							cardOrder[0] = unknown;
 							int last = cardOrder[unknown + 1];
 							cardOrder[unknown + 1] = unknown2;
-							ArrayList<Integer> newKeyStream = (ArrayList<Integer>)keyStream.clone();
-							newKeyStream.add(unknown2);
+
+							keyStream[count] = unknown2;
 							
-							options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown, unknown2), times, count + 1, newKeyStream);
+							options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown, unknown2), times, count + 1, keyStream);
 							cardOrder[unknown + 1] = last;
 						}
 					}
 				}
 				else {
-					//int[] temp = Arrays.copyOf(cardOrder, cardOrder.length);
 					cardOrder[0] = unknown;
-		
-					ArrayList<Integer> newKeyStream = (ArrayList<Integer>)keyStream.clone();
-					newKeyStream.add(possible);
-					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count + 1, newKeyStream);
+					keyStream[count] = possible;
+					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count + 1, keyStream);
 				}
 			}
 		}
@@ -230,30 +219,23 @@ public class SOLVER {
 			else
 				possible = cardOrder[firstCard + 1];
 	
-			if(Solitaire.isJoker(possible)) {
+			if(Solitaire.isJoker(possible))
 				options(cardOrder, unknowns, times, count, keyStream);
-		
-			}
 			else if(possible < 0) {
 				for(int unknown2 : unknowns) {
-					//int[] temp = Arrays.copyOf(cardOrder, cardOrder.length);
 	
 					int last = cardOrder[firstCard + 1];
 					cardOrder[firstCard + 1] = unknown2;
 				
-					ArrayList<Integer> newKeyStream = (ArrayList<Integer>)keyStream.clone();
-					newKeyStream.add(unknown2);
+					keyStream[count] = unknown2;
 					
-					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown2), times, count + 1, newKeyStream);
+					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown2), times, count + 1, keyStream);
 					cardOrder[firstCard + 1] = last;
-	
 				}
 			}
 			else {
-				ArrayList<Integer> newKeyStream = (ArrayList<Integer>)keyStream.clone();
-				newKeyStream.add(possible);
-				
-				options(cardOrder, (ArrayList<Integer>)unknowns.clone(), times, count + 1, newKeyStream);
+				keyStream[count] = possible;
+				options(cardOrder, unknowns, times, count + 1, keyStream);
 			}
 		}
 	}
