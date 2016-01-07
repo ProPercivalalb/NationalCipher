@@ -5,20 +5,24 @@ import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.cipher.permentate.PermentateArray;
+import javalibrary.cipher.stats.WordSplit;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.math.ArrayHelper;
+import javalibrary.math.Statistics;
+import javalibrary.streams.FileReader;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.Solitaire;
+import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.stats.StatCalculator;
 
 public class SOLVER {
 
-	public static final int JOKER_A = 52;
-	public static final int JOKER_B = 53;
 	public static char[] FINAL_TEXT = "IUTWMVVHVRORNXZZAGPPJSLVPFDLVZMEVGJIVYDZPNAPKQXCIZLGRZWNNCSVKPQTMLKPQNWPGOAYVAPQIPQWRMIXPBTCCEGWHLOZQRFYZGHEJCFETFRULYBLUDNHNYGBEKBKSNXYMRCTHNLXHKHKDFCBBWGVJQBLIESQAJWVLZQTLLASRESDVJMRTBJDOVOAJPQQIVYZHFAFQBHGMVOSDEXBYHKSPYSQLDFRZFYJHEDWPZMVBDCRIYALMMVQWJHVIPDUCKFVZBXMDQVBMXOKODOGYEBWLACFMUVQNSQRKMMNWZBEOOUEXIYDJWUJICKRFQLCESIKHCJQRUFPRRGYHSTZNWOSPAZULTCZPRSOYVETXLLAQMJMVUSOPLCEWYLJUADSJGTLOHOXRHSPZGLADFFAHORATZOBMRVVFDWANXPGUNQGLIHGTRMWBJMFTALCCPZGVLCSINPBUWOVPYXUQUZKTGLTVRZLIRRFNWUULJIVFMEVFIPUNCMDUZAGRHDACDPFKTHTKDKOGUSPYENXTPQUROUZTWCMIGPCKLYWZGUWJRLVKNKQKGPDQNABIRLPVKHOMWXWCQTLGWHXBJFYGIVIWWJXWAVUCOFKJUMZKXKKOEGOETLRAKQVMGKOABGIXQLQMBJYBJUOIZRWHKZCDSMNHMWTRSDBSRULECERARYGFDPERECYGULSJCJWVMLNRZXKQRTTSZWJUVSUXLGKMQPHJWAUBUEJXKYAXCEBLGJHTNKTNZSGYLOFUZUTLNYBHBKGKSCDWIYUXXFYJPNTAFKBGCNLJVGTKDCNBHUSAZRBWSXKICXDISPIRYEOIVXZAWAZIFPGAUYDQSWYCSIQDENTCTAONTOBCIVFYPVPDEMUHDPNTSUOSWVMLXECSHCMHESCGWSUSTAYHKUMOXUFEANTUHNDZHZFLRSHCZBASXPPMCNWMSJTANASBRPHDWJUCTTGMHNTTPIGTVJWWNFUWEOZMCIQMDZDJGLKSSYOXIBGIHPZOMNYBORFNCBTNUHQDOPUOFCCLDFUHIPMKCZKCZVZNMFLWOKIZFKINWQNROAZYLCTMUZYUGOUIMEQSQQAAIQVYQRSPZPUXUNBAORFDDASVMADOGRNPBPKNXGXQOKSEHEAJNZNMQIUMPLHWUFWLEOBKPIASZALJPZQUIKJSGKPGEGMPFBUNHOFKXTSCJMTYBUJEBYNNEVQHKNTIUJBJEEUSQOINRDAZUQMEWEELBLBSGUGXDXLWTUEODCKZYXJUODPPGBSPLAKHPKUZYVWGXMVXEAENQYBPKSDJMTZIBEYMTOFWCVOYZLJSKXGBKAHDTZAMZSFPGPYFFWRBHLNXOAXOITZVFBEXAKVYPAYTIRZMRKIYZRKIQNSDOINPTWMACVOJCXWCOXCEAJBQULUYWQLRERSUIIQTBASGUMAORADTIWOIDHEWLYZBADGFMHHWXNQCZKFTBVJRSYMKGTMLRGNHPUZYOVAOGTVHKHHEQBKTHJYBCUONPEUPDPJMLEOZILYNABGMPEEVJHKADCUEHMNEFWJURTJKTBKZSMTKYPCRVGFPHEIDVFSVNFUMSYAXJAVGMDSZRMHMQVSUEKUWFZFRYOROKWORNQUNJXBHNZAYXWWBEISHIQBOJAAYEKWMGJLGHFDRKBEJTQUQKVRHNJGFHARSOXBRZHKTJFJFNRXQZQRMFKNXRWLVCZBZSFQAOCLPZSGIOTMXTQHBHVYVRYIUSKFXFPKNSQITSRMYGRYXWRFQMBBMJTYOCDTTW".toCharArray();
 	//public static char[] FINAL_TEXT = "AGXJESSFKMMJMHXZGJWBCPCVXEBNDKUQOCED".toCharArray();
-	
+	public static int[] FINAL_INT = new int[FINAL_TEXT.length];
 	
 	public static Solution bestSolution = new Solution(new char[0], Double.NEGATIVE_INFINITY);
 	
@@ -26,41 +30,39 @@ public class SOLVER {
 	
 	public static void main(String[] args) throws Exception {
 		Languages.english.loadNGramData();
+		WordSplit.loadFile();
+		String text = WordSplit.splitTextWithPattern("EYESONLYRUMOURSOFASOURCEINBERLINWITHACCESSTOTHERATLINESSOURCESEEMSTOGOBYNAMEOFREICHSDOKTORRUSSIANINTERCEPTSSUGGESTHASBEENSEENINVICINITYOFUSEMBASSYNOTCLEARHOWTOMAKEDIRECTCONTACTALSONOTCLEARWHYOURUSFRIENDSAREKEEPINGTHISTOTHEMSELVESDETAILEDINFOABOUTRATILINESHARDTOOBTAINBUTHIGHVALUECOULDLEADTOARRESTOFMAJORTARGETSOFNUREMBERGINVESTIGATIONSVITALWEREACHREICHSDOKTORATEARLIESTOPPORTUNITYDISCREETENQUIRIESINFRENCHANDUSSECTORSONLYREQUESTFUNDSFORFURTHERINVESTIGATION".toCharArray());
+		System.out.println(text);
+		WordSplit.getPatternFromWord("CLASSIFICATION");
+		/**
+		List<String> list = FileReader.compileTextFromResource("/nationalcipherold/plainText.txt");
+
+		List<Double> values = new ArrayList<Double>();
 		
+		for(String line : list) {
+			if(line.isEmpty() || line.startsWith("#")) continue;
+			
+			String plainText = line;
+			
+			for(int i = 0; i < 10; ++i) {
+				
+				IRandEncrypter randEncrypt = RandomEncrypter.getFromName("Bifid");
+				String cipherText = randEncrypt.randomlyEncrypt(plainText);
+				values.add(StatCalculator.calculateMaxBifidDiagraphicIC(cipherText, 3, 15));
+			}
+		}
+
+	    Statistics stats = new Statistics(values);
 		
-		
-		int[] startOrder = new int[] {39,35,47,4,5,42,17,52,20,13,53,16,30,40,38,34,43,14,41,7,27,44,1,6,33,15,54,36,18,24,3,9,51,37,23,0,0,0,0,0,0,0,0,25,0,0,0,0,0,0,32,0,0,0};
-		for(int i = 0; i < startOrder.length; i++) 
-			startOrder[i] = startOrder[i] - 1;
-		System.out.println(ListUtil.toString(startOrder));
-		System.out.println(new String(Solitaire.decode(FINAL_TEXT, startOrder)));
-		
-		//int[] endOrder = new int[] {47,31,-16,28,-17,46,3,4,41,16,51,19,12,23,13,6,-2,-3,1,33,38,52,14,35,17,37,-6,34,40,36,22,24,-10,9,42,29,7,-14,8,50,2,26,43,0,5,32,11,53,48,-9,21,15,39,25};
-		//for(int i = 0; i < endOrder.length; i++) 
-		//	endOrder[i] = endOrder[i] - 1;
-		
-		//for(int i = 0; i < 10; i++) {
-		//	endOrder = Solitaire.previousCardOrder(endOrder);
-		//	System.out.println(ListUtil.toCardString(endOrder, 0));
-		//}
-		
-		
-		Timer timer = new Timer();
-		int times = 5;
-		
-		options(startOrder, ListUtil.toList(unknowns), times, 0, new int[times]);
-		timer.displayTime();
-		System.out.println("Iterations: " + iteration);
-		
+		System.out.println("Mean: " + stats.getMean());
+		System.out.println("SD: " + stats.getStandardDeviation());**/
 	}
-	
-	public static int iteration = 0;
-	
-	public static void options(int[] lastOrder, ArrayList<Integer> unknowns, int times, int count, int[] keyStream) throws Exception {
+
+	public static void options(int[] lastOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
 		if(times <= count) {
-			iteration++;
+			//iteration++;
 			//System.out.println(keyStream + " " + new String(Solitaire.decode(FINAL_TEXT, keyStream)));
-			char[] chars = Solitaire.decodeWithKeyStream(FINAL_TEXT, keyStream);
+			char[] chars = Solitaire.decodeWithKeyStream(FINAL_INT, keyStream);
 			Solution last = new Solution(chars, Languages.english);
 			if(bestSolution.score < last.score) {
 				bestSolution = last;
@@ -76,12 +78,12 @@ public class SOLVER {
 			
 			return;
 		}
-		int[] cardOrder = Arrays.copyOf(lastOrder, lastOrder.length);
+		int[] cardOrder = Arrays.copyOf(lastOrder, Solitaire.TOTAL_CARDS);
 		
 		int jA, jB, jT;
 		
 		//TODO What happens when joker A wraps round
-		jT = ArrayHelper.indexOf(cardOrder, JOKER_A);
+		jT = ArrayHelper.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
 			cardOrder[jT] = cardOrder[jA];
@@ -91,11 +93,11 @@ public class SOLVER {
 				cardOrder[jA] = cardOrder[jA - 1];
 			jA = 0;
 		}
-		cardOrder[jA] = JOKER_A;
+		cardOrder[jA] = Solitaire.JOKER_A;
 
 
 		//Move Joker B 2 to right
-		jB = ArrayHelper.indexOf(cardOrder, JOKER_B);
+		jB = ArrayHelper.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];
@@ -115,7 +117,7 @@ public class SOLVER {
 					jA = jT;
 			}
 		}
-		cardOrder[jB] = JOKER_B;
+		cardOrder[jB] = Solitaire.JOKER_B;
 		//Triple cut the pack at the 2 Jokers
 		int[] tmp = new int[54];
 				
@@ -167,7 +169,7 @@ public class SOLVER {
 				cardOrder[53] = tmp[53];
 			}
 			else
-				cardOrder = Arrays.copyOf(tmp, tmp.length);
+				cardOrder = tmp;
 			
 			insideOrder(cardOrder, unknowns, times, count, keyStream);
 		}
@@ -175,7 +177,7 @@ public class SOLVER {
 		//System.out.println(ListUtil.toString(cardOrder, 1));
 	}
 		
-	public static void insideOrder(int[] cardOrder, ArrayList<Integer> unknowns, int times, int count, int[] keyStream) throws Exception {
+	public static void insideOrder(int[] cardOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
 		int possible;
 		
 		int firstCard = cardOrder[0];
@@ -183,11 +185,13 @@ public class SOLVER {
 		
 		if(firstCard < 0) {
 			for(int unknown : unknowns) {
-				if(Solitaire.isJoker(unknown))
-					possible = cardOrder[cardOrder.length - 1];
-				else
-					possible = cardOrder[unknown + 1];
-			
+				
+				if(unknown == Solitaire.JOKER_B)
+					unknown = Solitaire.JOKER_A;
+		
+				int possibleIndex = unknown + 1;
+				possible = cardOrder[possibleIndex];
+				
 				if(Solitaire.isJoker(possible)) {
 					cardOrder[0] = unknown;
 					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count, keyStream);
@@ -196,13 +200,13 @@ public class SOLVER {
 					for(int unknown2 : unknowns)  {
 						if(unknown2 != unknown) {
 							cardOrder[0] = unknown;
-							int last = cardOrder[unknown + 1];
-							cardOrder[unknown + 1] = unknown2;
+							int last = cardOrder[possibleIndex];
+							cardOrder[possibleIndex] = unknown2;
 
 							keyStream[count] = unknown2;
 							
 							options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown, unknown2), times, count + 1, keyStream);
-							cardOrder[unknown + 1] = last;
+							cardOrder[possibleIndex] = last;
 						}
 					}
 				}
@@ -214,23 +218,24 @@ public class SOLVER {
 			}
 		}
 		else {
-			if(Solitaire.isJoker(firstCard))
-				possible = cardOrder[cardOrder.length - 1];
-			else
-				possible = cardOrder[firstCard + 1];
+			if(firstCard == Solitaire.JOKER_B)
+				firstCard = Solitaire.JOKER_A;
+			
+			int possibleIndex = firstCard + 1;
+			possible = cardOrder[possibleIndex];
 	
 			if(Solitaire.isJoker(possible))
 				options(cardOrder, unknowns, times, count, keyStream);
 			else if(possible < 0) {
 				for(int unknown2 : unknowns) {
 	
-					int last = cardOrder[firstCard + 1];
-					cardOrder[firstCard + 1] = unknown2;
+					int last = cardOrder[possibleIndex];
+					cardOrder[possibleIndex] = unknown2;
 				
 					keyStream[count] = unknown2;
 					
 					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown2), times, count + 1, keyStream);
-					cardOrder[firstCard + 1] = last;
+					cardOrder[possibleIndex] = last;
 				}
 			}
 			else {
@@ -263,93 +268,5 @@ public class SOLVER {
 		        arr[pos] = h;
 		    	arr[i] = j;
 		    }
-	}
-	
-	public static int[] nextCardOrder(int[] oldCardOrder) throws Exception {
-		int[] cardOrder = Arrays.copyOf(oldCardOrder, oldCardOrder.length);
-		
-		int jA, jB, jT;
-		
-		//TODO What happens when joker A wraps round
-		jT = ArrayHelper.indexOf(cardOrder, JOKER_A);
-		if(jT < 53) {
-			jA = jT + 1;
-			cardOrder[jT] = cardOrder[jA];
-		}
-		else {
-			for(jA = 53; jA > 1; jA--)
-				cardOrder[jA] = cardOrder[jA - 1];
-			jA = 0;
-		}
-		cardOrder[jA] = JOKER_A;
-
-
-		//Move Joker B 2 to right
-		jB = ArrayHelper.indexOf(cardOrder, JOKER_B);
-		if(jB < 52) {
-			jT = jB + 1;
-			cardOrder[jB] = cardOrder[jT];
-			if (jA == jT)
-				jA = jB;
-			jB = jT + 1;
-			cardOrder[jT] = cardOrder[jB];
-			if (jA == jB)
-				jA = jT;
-		}
-		else {
-			jT = jB;
-			jB = jB - 51;
-			for(; jT > jB; jT--)
-			{
-				cardOrder[jT] = cardOrder[jT - 1];
-				if (jA == jT - 1)
-					jA = jT;
-			}
-		}
-		cardOrder[jB] = JOKER_B;
-		//Triple cut the pack at the 2 Jokers
-		int[] tmp = new int[54];
-				
-		if (jA > jB) {
-			jT = jA;
-			jA = jB;
-			jB = jT;
-		}
-		tmp[53] = cardOrder[jB++];
-		jT = 0;
-		while(jB < 54)
-			tmp[jT++] = cardOrder[jB++];
-			
-		jB = jA;
-		while (cardOrder[jB] != tmp[53])
-			tmp[jT++] = cardOrder[jB++];
-
-		tmp[jT++] = tmp[53];
-		
-		jB = 0;
-		while (jB < jA)
-			tmp[jT++] = cardOrder[jB++];
-	
-				
-				
-		jB = tmp[53];
-		if(jB < 0) {
-			throw new Exception("JB NEGATIVE");
-		}
-		if(!Solitaire.isJoker(jB)) {
-				
-			jB += 1;
-			jA = 0;
-			for (jT = jB; jT < 53; jT++)
-				cardOrder[jA++] = tmp[jT];
-			for (jT = 0; jT < jB + 1; jT++)
-				cardOrder[jA++] = tmp[jT];
-					
-			cardOrder[53] = tmp[53];
-		}
-		else
-			cardOrder = tmp;
-		
-		return cardOrder;
 	}
 }

@@ -3,6 +3,7 @@ package nationalcipher;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ public class Settings {
 	public ButtonGroup keywordCreationGroup;
 	public List<Double> simulatedAnnealing;
 	
+	private List<LoadElement> loadElements;
 	private Gson gson;
 	
 	public Settings() {
@@ -33,6 +35,7 @@ public class Settings {
 		this.keywordCreation = 0;
 		this.simulatedAnnealing = Arrays.asList(20.0D, 0.1D, 500.0D);
 		
+		this.loadElements = new ArrayList<LoadElement>();
 		this.gson = new Gson();
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
@@ -54,9 +57,6 @@ public class Settings {
 				}
 	        }
 		}, "SAVE-THREAD").start();
-		
-		
-		this.readFromFile();
 	}
 	
 	public ILanguage getLanguage() {
@@ -92,6 +92,10 @@ public class Settings {
 			map.put("language", this.language.getName());
 			map.put("keyword_creation", this.keywordCreation);
 			map.put("simulated_annealing", this.simulatedAnnealing);
+			
+			for(LoadElement loadElement : this.loadElements)
+				loadElement.write(map);
+			
 		    writer.append(gson.toJson(map));
 		    writer.close();
 		}
@@ -100,7 +104,7 @@ public class Settings {
 		}
 	}
 		
-	private void readFromFile() {
+	public void readFromFile() {
 		try {
 			File myFile = new File(OSIdentifier.getMyDataFolder("nationalcipher"), "savedata.txt");
 			String input = StringTransformer.joinWith(FileReader.compileTextFromFile(myFile), "");
@@ -128,10 +132,16 @@ public class Settings {
 				this.simulatedAnnealing = simulatedAnnealing;
 			}
 			
+			for(LoadElement loadElement : this.loadElements)
+				loadElement.read(map);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void addLoadElement(LoadElement loadElement) {
+		this.loadElements.add(loadElement);
+	}
+	
 }

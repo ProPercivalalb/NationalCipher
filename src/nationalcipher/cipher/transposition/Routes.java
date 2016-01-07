@@ -8,11 +8,15 @@ import java.util.Random;
 
 import javalibrary.math.ArrayHelper;
 import javalibrary.math.MathHelper;
+import nationalcipher.cipher.transposition.route.RouteTwist;
+import nationalcipher.cipher.transposition.route.RouteWriteAcross;
+import nationalcipher.cipher.transposition.route.RouteWriteDown;
+
 
 public class Routes {
 
 	//MUST BE BEFORE
-	private static List<RouteCipherType> ROUTES = new ArrayList<RouteCipherType>();
+	public static List<RouteCipherType> ROUTES = new ArrayList<RouteCipherType>();
 	
 	public static List<RouteCipherType> getRoutes() {
 		return Routes.ROUTES;
@@ -280,34 +284,16 @@ public class Routes {
 	
 	public static RouteCipherRandom RANDOM = new RouteCipherRandom("Totally random.");
 	
+	public static RouteWriteAcross ACROSS = new RouteWriteAcross("Written across.");
+	
+	public static RouteWriteDown DOWN  = new RouteWriteDown("Written down.");
+	
 	public static OtherLetterCycleRoute OTHER_LETTER = new OtherLetterCycleRoute("Other letter route.");
 	
-	/***            route cipher interfaces/classes                   ***/
+	public static RouteTwist TWIST = new RouteTwist(1);
 	
-	public static abstract class RouteCipherType {
-		
-		private String description;
-		
-		public RouteCipherType() {
-			this("No description");
-		}
-		
-		public RouteCipherType(String description) {
-			this(description, true);
-		}
-		
-		public RouteCipherType(String description, boolean add) {
-			this.description = description;
-			if(add)
-				Routes.ROUTES.add(this);
-		}
-		
-		public String getDescription() {
-			return this.description;
-		}
-		
-		public abstract List<Integer> createPattern(int width, int height, int totalSize);
-	}
+	/***            route cipher interfaces/classes                   ***/
+
 	
 	public static abstract class RouteCipherSpiral extends RouteCipherType {
 		

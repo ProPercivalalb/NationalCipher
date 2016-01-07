@@ -11,6 +11,14 @@ public class RandomEncrypter {
 
 	public static List<IRandEncrypter> ciphers = new ArrayList<IRandEncrypter>();
 	
+	public static IRandEncrypter getFromName(String name) {
+		for(IRandEncrypter randEncrypt : ciphers)
+			if(randEncrypt.getClass().getSimpleName().equals(name))
+				return randEncrypt;
+		
+		return null;
+	}
+	
 	static {
 		ciphers.add(new ADFGX());
 		ciphers.add(new Affine());

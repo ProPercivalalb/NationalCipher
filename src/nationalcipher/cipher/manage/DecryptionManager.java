@@ -3,7 +3,9 @@ package nationalcipher.cipher.manage;
 import java.util.ArrayList;
 import java.util.List;
 
-import nationalcipher.SolitaireNewDecrypt;
+import nationalcipher.LoadElement;
+import nationalcipher.MainNew;
+import nationalcipher.Settings;
 import nationalcipher.cipher.decrypt.ADFGXDecrypt;
 import nationalcipher.cipher.decrypt.AMSCODecrypt;
 import nationalcipher.cipher.decrypt.AffineDecrypt;
@@ -77,63 +79,69 @@ public class DecryptionManager {
 		return names;
 	}
 	
-	static {
-		ciphers.add(new AffineDecrypt());
-		ciphers.add(new CaesarDecrypt());
-		ciphers.add(new SubstitutionDecrypt());
-		ciphers.add(new GeneralPeriodDecrypt());
-		ciphers.add(new VigenereDecrypt());
-		ciphers.add(new VigenereAutoKeyDecrypt());
-		ciphers.add(new VigenereProgressiveKeyDecrypt());
-		ciphers.add(new VigenereSlidefairDecrypt());
-		ciphers.add(new RunningKeyDecrypt());
-		ciphers.add(new BeaufortDecrypt());
-		ciphers.add(new BeaufortAutokeyDecrypt());
-		ciphers.add(new BeaufortProgressiveKeyDecrypt());
-		ciphers.add(new BeaufortSlidefairDecrypt());
-		ciphers.add(new VariantDecrypt());
-		ciphers.add(new VariantAutokeyDecrypt());
-		ciphers.add(new VariantProgressiveKeyDecrypt());
-		ciphers.add(new VariantSlidefairDecrypt());
-		ciphers.add(new PortaDecrypt());
-		ciphers.add(new PortaAutokeyDecrypt());
-		ciphers.add(new PortaProgressiveKeyDecrypt());
-		ciphers.add(new PortaxDecrypt());
-		ciphers.add(new TwoSquareDecrypt());
-		ciphers.add(new TriSquareDecrypt());
-		ciphers.add(new FourSquareDecrypt());
-		ciphers.add(new BazeriesDecrypt());
+	public static void registerCipher(Object decrypt, Settings settings) {
+		if(decrypt instanceof IDecrypt)
+			ciphers.add((IDecrypt)decrypt);
+		if(decrypt instanceof LoadElement)
+			settings.addLoadElement((LoadElement)decrypt);
+	}
+	
+	public static void loadCiphers(Settings settings) {
+		registerCipher(new AffineDecrypt(), settings);
+		registerCipher(new CaesarDecrypt(), settings);
+		registerCipher(new SubstitutionDecrypt(), settings);
+		registerCipher(new GeneralPeriodDecrypt(), settings);
+		registerCipher(new VigenereDecrypt(), settings);
+		registerCipher(new VigenereAutoKeyDecrypt(), settings);
+		registerCipher(new VigenereProgressiveKeyDecrypt(), settings);
+		registerCipher(new VigenereSlidefairDecrypt(), settings);
+		registerCipher(new RunningKeyDecrypt(), settings);
+		registerCipher(new BeaufortDecrypt(), settings);
+		registerCipher(new BeaufortAutokeyDecrypt(), settings);
+		registerCipher(new BeaufortProgressiveKeyDecrypt(), settings);
+		registerCipher(new BeaufortSlidefairDecrypt(), settings);
+		registerCipher(new VariantDecrypt(), settings);
+		registerCipher(new VariantAutokeyDecrypt(), settings);
+		registerCipher(new VariantProgressiveKeyDecrypt(), settings);
+		registerCipher(new VariantSlidefairDecrypt(), settings);
+		registerCipher(new PortaDecrypt(), settings);
+		registerCipher(new PortaAutokeyDecrypt(), settings);
+		registerCipher(new PortaProgressiveKeyDecrypt(), settings);
+		registerCipher(new PortaxDecrypt(), settings);
+		registerCipher(new TwoSquareDecrypt(), settings);
+		registerCipher(new TriSquareDecrypt(), settings);
+		registerCipher(new FourSquareDecrypt(), settings);
+		registerCipher(new BazeriesDecrypt(), settings);
 		
-		ciphers.add(new GeneralTransposition());
-		ciphers.add(new SingleTranspostion());
-		ciphers.add(new DoubleTranspostionDecrypt());
-		ciphers.add(new MyszkowskiDecrypt());
-		ciphers.add(new RouteDecrypt());
-		ciphers.add(new RailFenceDecrypt());
-		ciphers.add(new ReddefenceDecrypt());
-		ciphers.add(new AMSCODecrypt());
-		ciphers.add(new CadenusDecrypt());
-		ciphers.add(new PhillipsDecrypt());
+		registerCipher(new GeneralTransposition(), settings);
+		registerCipher(new SingleTranspostion(), settings);
+		registerCipher(new DoubleTranspostionDecrypt(), settings);
+		registerCipher(new MyszkowskiDecrypt(), settings);
+		registerCipher(new RouteDecrypt(), settings);
+		registerCipher(new RailFenceDecrypt(), settings);
+		registerCipher(new ReddefenceDecrypt(), settings);
+		registerCipher(new AMSCODecrypt(), settings);
+		registerCipher(new CadenusDecrypt(), settings);
+		registerCipher(new PhillipsDecrypt(), settings);
 		
-		ciphers.add(new BifidDecrypt());
-		ciphers.add(new ConjugatedBifidDecrypt());
-		ciphers.add(new TrifidDecrypt());
-		ciphers.add(new DigrafidDecrypt());
-		ciphers.add(new PlayfairDecrypt());
-		ciphers.add(new SeriatedPlayfairDecrypt());
-		ciphers.add(new HillDecrypt());
-		ciphers.add(new ADFGXDecrypt());
-		ciphers.add(new QuagmireIDecrypt());
+		registerCipher(new BifidDecrypt(), settings);
+		registerCipher(new ConjugatedBifidDecrypt(), settings);
+		registerCipher(new TrifidDecrypt(), settings);
+		registerCipher(new DigrafidDecrypt(), settings);
+		registerCipher(new PlayfairDecrypt(), settings);
+		registerCipher(new SeriatedPlayfairDecrypt(), settings);
+		registerCipher(new HillDecrypt(), settings);
+		registerCipher(new ADFGXDecrypt(), settings);
+		registerCipher(new QuagmireIDecrypt(), settings);
 		
-		ciphers.add(new NihilistSubstitutionDecrypt());
-		ciphers.add(new NihilistTranspositionDecrypt());
-		ciphers.add(new HomophonicDecrypt());
+		registerCipher(new NihilistSubstitutionDecrypt(), settings);
+		registerCipher(new NihilistTranspositionDecrypt(), settings);
+		registerCipher(new HomophonicDecrypt(), settings);
 		
-		ciphers.add(new FractionatedMorseDecrypt());
-		ciphers.add(new MorbitDecrypt());
-		ciphers.add(new PolluxDecrypt());
-		ciphers.add(new SolitaireDecrypt());
-		ciphers.add(new SolitaireNewDecrypt());
-		//ciphers.add(new CheckerboardDecrypt());
+		registerCipher(new FractionatedMorseDecrypt(), settings);
+		registerCipher(new MorbitDecrypt(), settings);
+		registerCipher(new PolluxDecrypt(), settings);
+		registerCipher(new SolitaireDecrypt(), settings);
+		//registerCipher(new CheckerboardDecrypt(), settings);
 	}
 }

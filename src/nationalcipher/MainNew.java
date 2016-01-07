@@ -8,6 +8,8 @@ import javax.swing.UIManager;
 
 public class MainNew {
 	
+	public static UINew ui;
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -18,7 +20,8 @@ public class MainNew {
                     Logger.getLogger(MainNew.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                new UINew().setVisible(true);
+                ui = new UINew();
+                ui.setVisible(true);
             }
         });
 	}

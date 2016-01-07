@@ -19,7 +19,7 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.InternalDecryption;
-import nationalcipher.cipher.transposition.Routes.RouteCipherType;
+
 
 public class RouteDecrypt implements IDecrypt {
 
@@ -46,7 +46,6 @@ public class RouteDecrypt implements IDecrypt {
 			String bestText = "";
 			
 			progress.addMaxValue((factors.size() - 2) * (int)Math.pow(Routes.getRoutes().size(), 2));
-			RouteCipherType across = RouteWritten.ACROSS;
 			for(Integer factor : factors) {
 				if(factor == 1 || factor == text.length()) continue;
 				int totalSize = text.length();

@@ -1,5 +1,6 @@
 package nationalcipher;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -96,6 +97,7 @@ import javalibrary.math.Units.Time;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.string.ValueFormat;
+import javalibrary.swing.ButtonUtil;
 import javalibrary.swing.ComponentMover;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
@@ -113,6 +115,7 @@ import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.ProgressiveKey;
 import nationalcipher.cipher.Solitaire;
+import nationalcipher.cipher.Solitaire.SoiltaireAttack;
 import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
@@ -146,6 +149,9 @@ public class UINew extends JFrame {
     	this.dialogs = new ArrayList<JDialog>();
     	this.lastStates = new ArrayList<JDialog>();
     	
+    	DecryptionManager.loadCiphers(this.settings);
+    	this.settings.readFromFile();
+    	
         initComponents();
         finishComponents();
         loadDataFiles();
@@ -171,9 +177,9 @@ public class UINew extends JFrame {
     	        public void actionPerformed(ActionEvent event) {
     	        	listDialog.setBackground(Color.red);
     	        	BufferedImage image = new BufferedImage(listDialog.getContentPane().getWidth(), listDialog.getContentPane().getHeight(), BufferedImage.TYPE_INT_RGB);
-    	        	listDialog.getContentPane().paint(image.getGraphics()); // alternately use .printAll(..)
+    	        	listDialog.getContentPane().paint(image.getGraphics());
     	          //  JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(image)));
-    	        	SimpleDateFormat sdf = new     SimpleDateFormat("yyyy-M-dd_hh.mm.ss");
+    	        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd_hh.mm.ss");
     	            String dateTime = sdf.format(Calendar.getInstance().getTime());
     	            try {
     	            	ImageIO.write(image, "png", new File(OSIdentifier.getMyDataFolder("nationalcipher/screenshots"), "screenshot" + dateTime + ".png"));
@@ -189,37 +195,27 @@ public class UINew extends JFrame {
 
     public void loadDataFiles() {
     	final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents((JComponent)getContentPane(), menuBar);
-        final JProgressBar loadBar = new JProgressBar(0, Languages.languages.size() + 3);
-        loadBar.setStringPainted(true);
-        loadBar.setPreferredSize(new Dimension(500, 60));
-		
-        Object[] options = {"Cancel"};
-
-		JOptionPane optionPane = new JOptionPane(loadBar, JOptionPane.PLAIN_MESSAGE, JOptionPane.CANCEL_OPTION, null, options, options[0]);
-		final JDialog dialog = optionPane.createDialog(this, "Loading...");
-		dialog.setModal(false);
-		dialog.setVisible(true);
-		dialog.setLocationRelativeTo(this);
-		
+ 
+    	this.progressBar.setMaximum(Languages.languages.size() + 3);
 		//Loading
 		Threads.runTask(new Runnable() {
 			@Override
 			public void run() {
-				dialog.setTitle("Loading... TranverseTree");
+				output.println("Loading data files\n	TranverseTree");
 				TraverseTree.onLoad();
-				loadBar.setValue(loadBar.getValue() + 1);
-				dialog.setTitle("Loading... Dictinary");
+				progressBar.setValue(progressBar.getValue() + 1);
+				output.println("	Dictinary");
 				Dictionary.onLoad();
-				loadBar.setValue(loadBar.getValue() + 1);
-				dialog.setTitle("Loading... Word statitics");
+				progressBar.setValue(progressBar.getValue() + 1);
+				output.println("	Word statitics");
 				WordSplit.loadFile();
-				loadBar.setValue(loadBar.getValue() + 1);
+				progressBar.setValue(progressBar.getValue() + 1);
 				
 				
 				for(ILanguage language : Languages.languages) {
-					dialog.setTitle("Loading... Lang(" + language.getName() + ")");
+					output.println("	Lang(" + language.getName() + ")");
 					language.loadNGramData();
-					loadBar.setValue(loadBar.getValue() + 1);
+					progressBar.setValue(progressBar.getValue() + 1);
 				}
 				
 				  
@@ -238,7 +234,8 @@ public class UINew extends JFrame {
 				}
 				
 				SwingHelper.rewindAllChildComponents(stateMap);
-				dialog.dispose();
+				progressBar.setValue(0);
+				output.clear();
 			}
 		});
 		
@@ -303,6 +300,7 @@ public class UINew extends JFrame {
         this.menuItemCopySolution = new JMenuItem();
         this.menuItemShowTopSolutions = new JMenuItem();
         this.menuItemBinary = new JMenuItem();
+        this.menuItemASCII = new JMenuItem();
         this.menuItemTools = new JMenu();
         this.menuItemNGram = new JMenuItem();
         this.menuItemLetterFrequency = new JMenuItem();
@@ -510,6 +508,12 @@ public class UINew extends JFrame {
         this.menuItemBinary.addActionListener(new BinaryConvertAction());
         this.menuItemBinary.setEnabled(false);
         this.menuItemEdit.add(this.menuItemBinary);
+        
+        
+        this.menuItemASCII.setText("ASCII to Text");
+        this.menuItemASCII.setIcon(ImageUtil.createImageIcon("/image/page_white_text.png", "ASCII Convert"));
+        this.menuItemASCII.addActionListener(new ASCIIConvertAction());
+        this.menuItemEdit.add(this.menuItemASCII);
         
         this.menuBar.add(this.menuItemEdit);
 
@@ -770,6 +774,7 @@ public class UINew extends JFrame {
 				statText += "\n 0-9: " + StringTransformer.countDigitChars(inputText);
 				statText += "\n ___: " + StringTransformer.countSpacesChars(inputText);
 				statText += "\n *?!: " + StringTransformer.countOtherChars(inputText);
+				statText += "\n Unique Characters: " + StringTransformer.countUniqueChars(inputText);
 				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, settings.language);
 				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, settings.language);
 				statTextArea.setText(statText);
@@ -1085,10 +1090,21 @@ public class UINew extends JFrame {
 		}
     }
     
+    public class ASCIIConvertAction implements ActionListener {
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		String binaryText = inputTextArea.getText();
+			
+			//inputTextArea.setText(cipherText);
+		}
+    }
+    
     public class WordSplitAction implements ActionListener {
     	
     	private JDialog dialog;
     	private JTextArea textOutput;
+    	private JButton copyText;
     	
     	public WordSplitAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -1106,20 +1122,33 @@ public class UINew extends JFrame {
     		this.dialog.setTitle("Word Split");
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
+
     		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
     		this.dialog.setFocusableWindowState(false);
-    		this.dialog.setMinimumSize(new Dimension(500, 200));
+    		this.dialog.setMinimumSize(new Dimension(800, 300));
     		
     		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 	        
 	        this.textOutput = new JTextArea();
 	        this.textOutput.setLineWrap(true);
 
 	        JScrollPane scrollPane = new JScrollPane(this.textOutput);
-	
+	        
 	        panel.add(scrollPane);
+	        
+	        
+	        this.copyText = new JButton("Copy");
+	    	this.copyText.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					StringSelection selection = new StringSelection(textOutput.getText());
+					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+				}
+	    		
+	    	});
+	    	panel.add(this.copyText, BorderLayout.CENTER);
 	        
     		this.dialog.add(panel);
     		
@@ -1137,7 +1166,6 @@ public class UINew extends JFrame {
     	public void updateDialog() {
     		String split = WordSplit.splitText(inputTextArea.getText().replaceAll(" ", ""));
     		textOutput.setText(split);
-    		output.println(split);
     		textOutput.revalidate();
     	}
     }
@@ -2337,8 +2365,8 @@ public class UINew extends JFrame {
 	        panel.add(this.chart);
 	         
 	        this.chart2 = new JBarChart(new ChartList());
-	        this.chart2.setHasBarText(false);
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        //this.chart2.setHasBarText(false);
+	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Trigraphic Phi Test"));
 	        panel.add(this.chart2);
 	        
     		this.dialog.add(panel);
@@ -2424,7 +2452,7 @@ public class UINew extends JFrame {
 			    	if(period == 2) continue;
 			    	
 			        double score = StatCalculator.calculateTrifidDiagraphicIC(text, period);
-			        this.chart2.values.add(new ChartData("Period: " + period, score));
+			        this.chart2.values.add(new ChartData("" + period, score));
 			        if(bestIC < score)
 			        	bestPeriod = period;
 			        
@@ -2470,12 +2498,12 @@ public class UINew extends JFrame {
     		JPanel panel = new JPanel();
 	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 	          
-	        this.chart = new JBarChart(new ChartList());
+	        this.chart = new JBarChart();
 	        this.chart.setHasBarText(false);
 	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Kappa IoC Calculation"));
 	        panel.add(this.chart);
 	        
-	        this.chart2 = new JBarChart(new ChartList());
+	        this.chart2 = new JBarChart();
 	        this.chart2.setHasBarText(false);
 	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Average IoC Calculation"));
 	        panel.add(this.chart2);
@@ -2540,38 +2568,235 @@ public class UINew extends JFrame {
     	}
     }
     
-    private class SolitaireAction implements ActionListener {
+    private class SolitaireAction implements ActionListener, LoadElement {
     	
     	private JDialog dialog;
     	private JTextField passKeyStartingOrder;
+    	private JButton copyOrder;
     	private int[] cardOrder;
+    	private List<String> order;
     	
     	public SolitaireAction() {
     		this.dialog = new JDialog();
     		this.dialog.setTitle("Solitaire Cipher");
     		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
     		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/playing_card.png")));
-    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		this.dialog.setMinimumSize(new Dimension(900, 600));
+    		this.dialog.setFocusableWindowState(false);
+    		
+    		this.order = new ArrayList<String>();
     		
     		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	        this.cardOrder = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
+    		panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 	
-	    	passKeyStartingOrder = new JTextField("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53");
-			panel.add(this.passKeyStartingOrder);
-			//this.barChart.repaint();
+			
+			
+			String[] suits = new String[] {"clubs", "diamonds", "hearts", "spades"};
+			String[] cards = new String[] {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+			final JPanel[] suitPanels = new JPanel[suits.length];
+			for(int s = 0; s < suits.length; s++) {
+				suitPanels[s] = new JPanel();
+				suitPanels[s].setLayout(new BoxLayout(suitPanels[s], BoxLayout.X_AXIS));
+				panel.add(suitPanels[s]);
+			}
+			
+			final List<JButton> buttons = new ArrayList<JButton>();
+			
+			for(int s = 0; s < suits.length; s++) {
+				for(int c = 0; c < cards.length; c++) {
+					final int s2 = s;
+					final int id = s * cards.length + c;
+					JButton button = new JButton();
+					button.setFocusPainted(false);
+					final ImageIcon imageIcon = ImageUtil.createScaledImageIcon("/image/cards/" + cards[c] + "_of_" + suits[s] + ".png", 1D / 8D);
+					ButtonUtil.setButtonSizeToIconSize(button, imageIcon);
+					button.setIcon(imageIcon);
+					button.setDisabledIcon(imageIcon);
+					button.addActionListener(new ActionListener() {
+
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							JButton button = (JButton)e.getSource();
+							if(button.getIcon() == null) {
+								button.setIcon(imageIcon);
+								order.remove("" + id);
+							}
+							else {
+								button.setIcon(null);
+								order.add("" + id);
+							}
+							passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+							suitPanels[s2].repaint();
+						}
+					});
+					
+					buttons.add(button);
+					suitPanels[s].add(button);
+				}
+			}
+			
+			JButton button = new JButton();
+			button.setFocusPainted(false);
+			final ImageIcon imageIcon = ImageUtil.createScaledImageIcon("/image/cards/black_joker.png", 1D / 8D);
+			ButtonUtil.setButtonSizeToIconSize(button, imageIcon);
+			button.setIcon(imageIcon);
+			button.setDisabledIcon(imageIcon);
+			button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JButton button = (JButton)e.getSource();
+					if(button.getIcon() == null) {
+						button.setIcon(imageIcon);
+						order.remove("52");
+					}
+					else {
+						button.setIcon(null);
+						order.add("52");
+					}
+					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					suitPanels[0].repaint();
+				}
+			});
+			buttons.add(button);
+			suitPanels[0].add(button);
+			
+			button = new JButton();
+			button.setFocusPainted(false);
+			final ImageIcon imageIcon2 = ImageUtil.createScaledImageIcon("/image/cards/red_joker.png", 1D / 8D);
+			ButtonUtil.setButtonSizeToIconSize(button, imageIcon2);
+			button.setIcon(imageIcon2);
+			button.setDisabledIcon(imageIcon2);
+			button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JButton button = (JButton)e.getSource();
+					if(button.getIcon() == null) {
+						button.setIcon(imageIcon2);
+						order.remove("53");
+					}
+					else {
+						button.setIcon(null);
+						order.add("53");
+					}
+					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					suitPanels[0].repaint();
+				}
+			});
+			buttons.add(button);
+			suitPanels[1].add(button);
+			
+			button = new JButton("Blank");
+			button.setFocusPainted(false);
+			button.setBackground(Color.black);
+			ButtonUtil.setButtonSizeToIconSize(button, imageIcon);
+			button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					order.add("*");
+	
+					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					suitPanels[0].repaint();
+				}
+			});
+			suitPanels[2].add(button);
+			
+			button = new JButton("Start");
+			button.setFocusPainted(false);
+			button.setBackground(Color.black);
+			ButtonUtil.setButtonSizeToIconSize(button, imageIcon);
+			button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					order.clear();
+					for(JButton but : buttons) {
+						but.setIcon(but.getDisabledIcon());
+					}
+					
+					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					suitPanels[0].repaint();
+				}
+			});
+			suitPanels[3].add(button);
+		
+	        this.cardOrder = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
+	    	
+	    	passKeyStartingOrder = new JTextField("");
+	    	passKeyStartingOrder.setMinimumSize(new Dimension(882, 0));
+	    	passKeyStartingOrder.setPreferredSize(new Dimension(882, 20));
+	    	panel.add(this.passKeyStartingOrder);
+			
+			
+	    	this.copyOrder = new JButton("Copy");
+	    	this.copyOrder.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					StringSelection selection = new StringSelection(passKeyStartingOrder.getText());
+					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+				}
+	    		
+	    	});
+	    	panel.add(this.copyOrder);
+	    	
     		this.dialog.add(panel);
+    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		this.cardOrder = Solitaire.nextCardOrder(this.cardOrder);
-    		output.println(ListUtil.toString(cardOrder, 1));
+     		addDialog(this.dialog);
+    		//this.cardOrder = Solitaire.nextCardOrder(this.cardOrder);
 		}
+
+		@Override
+		public void write(HashMap<String, Object> map) {
+			
+		}
+
+		@Override
+		public void read(HashMap<String, Object> map) {
+			
+		}
+    }
+    
+    private class SoiltaireStartAttack implements SoiltaireAttack {
+
+    	public Solution bestSolution;
+    	public int[] intText;
     	
+    	private SoiltaireStartAttack(String cipherText) {
+    		this.bestSolution = new Solution();
+    		this.intText = new int[cipherText.length()];
+    		for(int i = 0; i < cipherText.length(); i++)
+    			this.intText[i] = cipherText.charAt(i) - 'A';
+    	}
+    	
+		@Override
+		public void tryKeyStream(int[] keyStream, int[] lastOrder) {
+			char[] chars = Solitaire.decodeWithKeyStream(this.intText, keyStream);
+			Solution last = new Solution(chars, settings.getLanguage());
+			
+			if(this.bestSolution.score < last.score) {
+				this.bestSolution = last;
+			
+				int[] order = lastOrder;
+				//for(int i = 0; i < times; i++) {
+				//	order = Solitaire.previousCardOrder(order);
+				//}
+				
+				this.bestSolution.setKeyString(ListUtil.toCardString2(order, 0));
+				output.println("%s", this.bestSolution);
+			}
+			
+		}
     }
     
     private class IdentifyAction implements ActionListener {
@@ -2579,7 +2804,7 @@ public class UINew extends JFrame {
     	private JDialog dialog;
     	private JPanel cipherInfoPanel;
     	private JPanel cipherScorePanel;
-    	private  JScrollPane scrollPane;
+    	private JScrollPane scrollPane;
     	
     	public IdentifyAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -2915,8 +3140,8 @@ public class UINew extends JFrame {
     			Object[] options = {"Yes", "Cancel"};
     			
     			Image img = ImageUtil.createImageIcon("/image/error.png", "Error").getImage() ;  
-    			   Image newimg = img.getScaledInstance( 40, 40,  java.awt.Image.SCALE_SMOOTH ) ;  
-    			   ImageIcon icon = new ImageIcon( newimg );
+    			Image newimg = img.getScaledInstance( 40, 40,  java.awt.Image.SCALE_SMOOTH ) ;  
+    			ImageIcon icon = new ImageIcon(newimg);
     			
     			int n = JOptionPane.showOptionDialog(UINew.this,
     					"This text doesn't seem to be English\nDo you wish to continue?",
@@ -2929,8 +3154,6 @@ public class UINew extends JFrame {
     			
     			if(n != JOptionPane.YES_OPTION)
     				return;
-    			
-    		//	int result = JOptionPane.showOptionDialog(UINew.this, "This text seems to not be English\n\nDo you wish to continue?", "Dialog", JOptionPane.ERROR_MESSAGE);
     		}
     		
     		if(!text.isEmpty()) {
@@ -3073,6 +3296,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemCopySolution;
     private JMenuItem menuItemShowTopSolutions;
     private JMenuItem menuItemBinary;
+    private JMenuItem menuItemASCII;
     private JMenu menuItemTools; 
     private JMenuItem menuItemLetterFrequency;
     private JMenuItem menuItemNGram;

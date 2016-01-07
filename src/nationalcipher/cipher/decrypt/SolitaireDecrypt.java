@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -29,6 +30,7 @@ import javalibrary.swing.ProgressValue;
 import javalibrary.util.ListUtil;
 import nationalcipher.DeckParse;
 import nationalcipher.KeyPanel;
+import nationalcipher.LoadElement;
 import nationalcipher.Settings;
 import nationalcipher.UINew;
 import nationalcipher.cipher.Columnar;
@@ -49,7 +51,7 @@ import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
-public class SolitaireDecrypt implements IDecrypt {
+public class SolitaireDecrypt implements IDecrypt, LoadElement {
 
 	@Override
 	public String getName() {
@@ -230,5 +232,25 @@ public class SolitaireDecrypt implements IDecrypt {
 	public void onTermination() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void write(HashMap<String, Object> map) {
+		map.put("solitaire_range", rangeBox.getText());
+		map.put("solitaire_passkey", passKeyStartingOrder.getText());
+		map.put("solitaire_chartodecode", charactersToDecode.getText());
+		map.put("solitaire_knownkey", passKeyIterateOrder.getText());
+	}
+
+	@Override
+	public void read(HashMap<String, Object> map) {
+		if(map.containsKey("solitaire_range"))
+			rangeBox.setText((String)map.get("solitaire_range"));
+		if(map.containsKey("solitaire_passkey"))
+			passKeyStartingOrder.setText((String)map.get("solitaire_passkey"));
+		if(map.containsKey("solitaire_chartodecode"))
+			charactersToDecode.setText((String)map.get("solitaire_chartodecode"));
+		if(map.containsKey("solitaire_knownkey"))
+			passKeyIterateOrder.setText((String)map.get("solitaire_knownkey"));
 	}
 }

@@ -3,8 +3,6 @@ package nationalcipher.cipher.transposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import nationalcipher.cipher.transposition.Routes.RouteCipherType;
-
 public class OtherLetterCycleRoute extends RouteCipherType {
 
 	public OtherLetterCycleRoute(String description) {
@@ -21,7 +19,7 @@ public class OtherLetterCycleRoute extends RouteCipherType {
 			grid.add(i);
 		for(int i = totalSize % 2; i < totalSize; i += 2)
 			grid.add(i);
-		System.out.println(grid);
+		
 		return grid;
 	}
 }

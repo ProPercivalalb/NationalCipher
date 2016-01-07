@@ -19,6 +19,10 @@ public class Solution implements Comparable<Solution> {
 		this.keyString = "UNKNOWN";
 	}
 	
+	public Solution() {
+		this(new char[0], Double.NEGATIVE_INFINITY);
+	}
+	
 	public Solution(char[] text, ILanguage language) {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
 	}
