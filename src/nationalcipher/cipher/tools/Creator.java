@@ -1,6 +1,6 @@
 package nationalcipher.cipher.tools;
 
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.math.matrics.Matrix;
 
 public class Creator {
@@ -106,7 +106,7 @@ public class Creator {
 	}
 	
 	public static void iterateRedefence(RedefenceKey task, int rows) {
-		iterateRedefence(task, ArrayHelper.range(0, rows), 0);
+		iterateRedefence(task, ArrayUtil.range(0, rows), 0);
 	}
 	
 	private static void iterateRedefence(RedefenceKey task, int[] arr, int pos) {
@@ -130,7 +130,7 @@ public class Creator {
 	}
 	
 	public static void iterateAMSCO(AMSCOKey task, int keyLength) {
-		iterateAMSCO(task, ArrayHelper.range(0, keyLength), keyLength, 0);
+		iterateAMSCO(task, ArrayUtil.range(0, keyLength), keyLength, 0);
 	}
 	
 	private static void iterateAMSCO(AMSCOKey task, int[] arr, int length, int pos) {
@@ -280,7 +280,7 @@ public class Creator {
 	
 	
 	public static void iterateNihilistTransposition(NihilistTranspositionKey task, int length, int blockLength) {
-		iterateNihilistTransposition(task, ArrayHelper.range(0, length), 0, blockLength);
+		iterateNihilistTransposition(task, ArrayUtil.range(0, length), 0, blockLength);
 	}
 	
 	private static void iterateNihilistTransposition(NihilistTranspositionKey task, int[] arr, int pos, int blockLength) {

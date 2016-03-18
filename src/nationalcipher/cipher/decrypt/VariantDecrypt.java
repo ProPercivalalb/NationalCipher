@@ -20,8 +20,6 @@ import nationalcipher.Settings;
 import nationalcipher.UINew;
 import nationalcipher.cipher.Caesar;
 import nationalcipher.cipher.Variant;
-import nationalcipher.cipher.Vigenere;
-import nationalcipher.cipher.decrypt.VigenereDecrypt.VigenereTask;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
@@ -29,7 +27,6 @@ import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.VigereneKey;
 
 public class VariantDecrypt implements IDecrypt {
 

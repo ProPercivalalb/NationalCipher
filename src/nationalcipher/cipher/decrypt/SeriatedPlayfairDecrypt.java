@@ -1,11 +1,9 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -22,11 +20,11 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.PlayfairKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.PlayfairKey;
 
 public class SeriatedPlayfairDecrypt implements IDecrypt {
 

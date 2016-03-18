@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,17 +22,15 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Beaufort;
 import nationalcipher.cipher.Porta;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.InternalDecryption;
+import nationalcipher.cipher.tools.Creator.PortaKey;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.PortaKey;
 
 public class PortaDecrypt implements IDecrypt {
 

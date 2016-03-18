@@ -1,8 +1,5 @@
 package nationalcipher.cipher.transposition.route;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nationalcipher.cipher.transposition.RouteCipherType;
 
 public class RouteWriteAcross extends RouteCipherType {
@@ -12,10 +9,12 @@ public class RouteWriteAcross extends RouteCipherType {
 	}
 
 	@Override
-	public List<Integer> createPattern(int width, int height, int totalSize) {
-		ArrayList<Integer> grid = new ArrayList<Integer>();
+	public int[] createPattern(int width, int height, int totalSize) {
+		int[] grid = new int[totalSize];
+		int index = 0;
+		
 		for(int i = 0; i < totalSize; i++)
-			grid.add(i);
+			grid[index++] = i;
 
 		return grid;
 	}

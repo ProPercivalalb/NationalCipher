@@ -80,6 +80,6 @@ public class Trifid implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createFullKeyWithHash(), RandomUtil.pickRandomInt(3, 15));
+		return encode(plainText, KeyGeneration.createLongKey27(), RandomUtil.pickRandomInt(3, 15));
 	}
 }

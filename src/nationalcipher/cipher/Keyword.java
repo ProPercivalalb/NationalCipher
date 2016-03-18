@@ -11,7 +11,8 @@ public class Keyword implements IRandEncrypter {
 		String cipherText = "";
 		
 		for(char ch : charArray)
-			cipherText += keyword.charAt(ch - 'A');
+			if(ch >= 'A' && ch <= 'Z')
+				cipherText += keyword.charAt(ch - 'A');
 		
 		return cipherText;
 	}
@@ -28,6 +29,6 @@ public class Keyword implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createFullKey());
+		return encode(plainText, KeyGeneration.createLongKey26());
 	}
 }

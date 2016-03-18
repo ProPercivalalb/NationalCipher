@@ -1,8 +1,6 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
@@ -10,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -26,16 +23,14 @@ import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.PortaProgressiveKey;
-import nationalcipher.cipher.VigenereAutokey;
-import nationalcipher.cipher.VigenereProgressiveKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
 
 public class PortaProgressiveKeyDecrypt implements IDecrypt {
 

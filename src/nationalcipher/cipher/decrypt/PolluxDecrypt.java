@@ -19,9 +19,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.PolluxKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
-import nationalcipher.cipher.tools.Creator.PolluxKey;
 
 public class PolluxDecrypt implements IDecrypt {
 

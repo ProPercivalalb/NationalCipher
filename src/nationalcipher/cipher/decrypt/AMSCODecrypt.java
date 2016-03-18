@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -18,19 +17,16 @@ import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.UINew;
 import nationalcipher.cipher.AMSCO;
-import nationalcipher.cipher.Columnar;
-import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.InternalDecryption;
+import nationalcipher.cipher.tools.Creator.AMSCOKey;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.AMSCOKey;
 
 public class AMSCODecrypt implements IDecrypt {
 

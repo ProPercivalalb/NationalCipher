@@ -1,10 +1,7 @@
 package nationalcipher.cipher;
 
-import java.util.Arrays;
-
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
-import nationalcipher.cipher.tools.KeyGeneration;
 
 public class RunningKey implements IRandEncrypter {
 
@@ -21,7 +18,7 @@ public class RunningKey implements IRandEncrypter {
 	}
 	
 	public static char[] decode(char[] cipherText, String key) {
-		return ArrayHelper.concat(key.toCharArray(), Vigenere.decode(cipherText, key));
+		return ArrayUtil.concat(key.toCharArray(), Vigenere.decode(cipherText, key));
 	}
 
 	@Override

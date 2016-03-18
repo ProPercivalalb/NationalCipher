@@ -25,6 +25,6 @@ public class Beaufort implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKey(2, 15));
+		return encode(plainText, KeyGeneration.createShortKey26(2, 15));
 	}
 }

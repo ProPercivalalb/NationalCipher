@@ -15,7 +15,6 @@ import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.UINew;
 import nationalcipher.cipher.QuagmireI;
-import nationalcipher.cipher.TwoSquare;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
@@ -76,7 +75,7 @@ public class QuagmireIDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey1 = KeySquareManipulation.generateRandKey();
-			this.bestMaximaKey2 = KeyGeneration.createKey(this.period, this.period);
+			this.bestMaximaKey2 = KeyGeneration.createShortKey26(this.period);
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
 			return new Solution(QuagmireI.decode(text, this.bestMaximaKey1, this.bestMaximaKey2), this.settings.getLanguage()).setKeyString("%s %s", this.lastKey1, this.lastKey2);

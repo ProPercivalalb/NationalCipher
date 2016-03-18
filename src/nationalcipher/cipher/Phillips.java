@@ -84,6 +84,6 @@ public class Phillips implements IRandEncrypter {
 		boolean second = RandomUtil.pickBoolean();
 		if(!first)
 			second = true;
-		return encode(plainText, KeyGeneration.createKeySquare5x5(), first, second);
+		return encode(plainText, KeyGeneration.createLongKey25(), first, second);
 	}
 }

@@ -1,41 +1,24 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.math.ArrayHelper;
-import javalibrary.math.MathHelper;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.UINew;
-import nationalcipher.cipher.Columnar;
-import nationalcipher.cipher.ColumnarRow;
-import nationalcipher.cipher.Redefence;
-import nationalcipher.cipher.VariantAutokey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.Creator.RedefenceKey;
-import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.InternalDecryption;
-import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;

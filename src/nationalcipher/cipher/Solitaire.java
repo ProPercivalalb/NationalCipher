@@ -1,21 +1,13 @@
 package nationalcipher.cipher;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
-import javalibrary.cipher.permentate.PermentateArray;
-import javalibrary.cipher.permentate.Permentations;
-import javalibrary.language.Languages;
-import javalibrary.lib.Timer;
-import javalibrary.math.ArrayHelper;
-import javalibrary.math.MathHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.util.ListUtil;
-import nationalcipher.cipher.tools.Creator.PortaAutoKey;
+import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.tools.KeyGeneration;
 
-public class Solitaire {
+public class Solitaire implements IRandEncrypter {
 	
 	public static final int JOKER_A = 52;
 	public static final int JOKER_B = 53;
@@ -36,8 +28,8 @@ public class Solitaire {
 		
 		public Deck(int[] cards) {
 			this.cards = cards;
-			this.jA = ArrayHelper.indexOf(this.cards, Solitaire.TOTAL_CARDS, JOKER_A);
-			this.jB = ArrayHelper.indexOf(this.cards, Solitaire.TOTAL_CARDS, JOKER_B);
+			this.jA = ArrayUtil.indexOf(this.cards, Solitaire.TOTAL_CARDS, JOKER_A);
+			this.jB = ArrayUtil.indexOf(this.cards, Solitaire.TOTAL_CARDS, JOKER_B);
 		}
 	}
 
@@ -47,7 +39,7 @@ public class Solitaire {
 		int jA, jB, jT;
 		
 		//TODO What happens when joker A wraps round
-		jT = ArrayHelper.indexOf(cardOrder, TOTAL_CARDS, JOKER_A);
+		jT = ArrayUtil.indexOf(cardOrder, TOTAL_CARDS, JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
 			cardOrder[jT] = cardOrder[jA];
@@ -60,7 +52,7 @@ public class Solitaire {
 		cardOrder[jA] = JOKER_A;
 
 		//Move Joker B 2 to right
-		jB = ArrayHelper.indexOf(cardOrder, TOTAL_CARDS, JOKER_B);
+		jB = ArrayUtil.indexOf(cardOrder, TOTAL_CARDS, JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];
@@ -146,7 +138,7 @@ public class Solitaire {
 	}
 	
 	public static int[] createCardOrder(String key) {
-		return createCardOrder(key, ArrayHelper.range(0, 54));
+		return createCardOrder(key, ArrayUtil.range(0, 54));
 	}
 	
 	public static int[] createCardOrder(String key, int[] startingOrder) {
@@ -178,7 +170,7 @@ public class Solitaire {
 		int jA, jB, jT;
 		
 		//TODO What happens when joker A wraps round
-		jT = ArrayHelper.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
+		jT = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
 			cardOrder[jT] = cardOrder[jA];
@@ -192,7 +184,7 @@ public class Solitaire {
 
 
 		//Move Joker B 2 to right
-		jB = ArrayHelper.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
+		jB = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];
@@ -425,5 +417,10 @@ public class Solitaire {
 		}
 
 		return plainText;
+	}
+
+	@Override
+	public String randomlyEncrypt(String plainText) {
+		return encode(plainText, KeyGeneration.createOrder(54));
 	}
 }

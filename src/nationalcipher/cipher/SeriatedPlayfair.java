@@ -125,6 +125,6 @@ public class SeriatedPlayfair implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKeySquare5x5(), RandomUtil.pickRandomInt(2, 15));
+		return encode(plainText, KeyGeneration.createLongKey25(), RandomUtil.pickRandomInt(2, 15));
 	}
 }

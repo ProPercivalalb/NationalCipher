@@ -1,6 +1,5 @@
 package nationalcipher.cipher.transposition;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,13 +7,10 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.fitness.TextFitness;
 import javalibrary.math.MathHelper;
-import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Vigenere;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

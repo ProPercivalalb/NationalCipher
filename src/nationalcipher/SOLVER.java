@@ -1,22 +1,34 @@
 package nationalcipher;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.cipher.stats.WordSplit;
 import javalibrary.language.Languages;
-import javalibrary.lib.Timer;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
+import javalibrary.string.StringTransformer;
 import javalibrary.util.ListUtil;
+import nationalcipher.cipher.Columnar;
 import nationalcipher.cipher.Solitaire;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SOLVER {
 
@@ -30,11 +42,23 @@ public class SOLVER {
 	
 	public static void main(String[] args) throws Exception {
 		Languages.english.loadNGramData();
-		WordSplit.loadFile();
-		String text = WordSplit.splitTextWithPattern("EYESONLYRUMOURSOFASOURCEINBERLINWITHACCESSTOTHERATLINESSOURCESEEMSTOGOBYNAMEOFREICHSDOKTORRUSSIANINTERCEPTSSUGGESTHASBEENSEENINVICINITYOFUSEMBASSYNOTCLEARHOWTOMAKEDIRECTCONTACTALSONOTCLEARWHYOURUSFRIENDSAREKEEPINGTHISTOTHEMSELVESDETAILEDINFOABOUTRATILINESHARDTOOBTAINBUTHIGHVALUECOULDLEADTOARRESTOFMAJORTARGETSOFNUREMBERGINVESTIGATIONSVITALWEREACHREICHSDOKTORATEARLIESTOPPORTUNITYDISCREETENQUIRIESINFRENCHANDUSSECTORSONLYREQUESTFUNDSFORFURTHERINVESTIGATION".toCharArray());
-		System.out.println(text);
-		WordSplit.getPatternFromWord("CLASSIFICATION");
-		/**
+		List<List<Object>> num_dev = CipherStatistics.getResultsFromStats("AFCAEUOTTACTHRIOLETCSERTHSHTRAHKYORPFRGEOADPPJNGLTERNEFEOFIORTSDDOEEUMSCRUERNFETLAAFSTWIENTRVOONERHUAHRAVEREETSVSIELHLOSTDOALOYAESMNNDIGNNRHOHHTSNAOILNCNSSICREANNEEIIIERWTANESRVOGIEIYWSSDGPVOIAISAOAEOAEDRNITRNXEIGRPSSHADHDTOIPAATEXENNESAGROBTLESRNROIRYPBGEDCLLIWALALEENIGRRNWYRLIMLPSTOLEFTRDMUARIEEEIIAOLNEWSAOHRTLSTOBETNSLVFIVDOVTPOAEEISCIOHIPSEVEEDTEWFARNHEBLEAOTOHTTTEPNCKAONHWETMVYPRREONNASGDEDOEEEOAAMTCICTTIFNADRESRTSEROSETRHCICTPSAAEHLDHSFXSOAOTCTBBSOEIRNSADLYTRRUNRCEPTTHREUHNKTACECEELRWNIREEEAESEEEIDISOGCEOMNRTEJHAGABSENITLWTRNBMIELSARETESRNGSNHEBIOSDIENAFLEISAHOCIFEVMFATANATRNIAGNHATNMIBNIUFENRTOTTRNYPAIDYIEGDNMERHHIOTRETCESSEILDRBCEPRIGAESOADLTAHIEVEBRCENLEVASADNNTHNEITEIISAHUHHUAMONEFYHLONWHAEEEEOSNEEYANEISETOGYITERLIHTCMIOIRARFDOETNIHTNEHIIKAMRDMNADANAODSESEIYCLSIANTAOLTCIYMIDENTTHLTNDXTTTMASBLEAEETLISIRTWTURPFAILTEAOEFEISIIIYISIKVTWISPRBSINELPHRMOHIAGNLSLVITODAISDPNYDDCAAOTAHCEHTUEIRREDAECTOSNRHVNAODOIKOETCINENEURRISDCOURAGLVIMMUPPDITEANDITMAAIAIELEONNREEDAODBOIUMELROTNTTTGITNRLRIENNIKLYSOGSTCIFYPIPVIDVSSMNCEIASIITSNNEATITOMRHBNHNIDPRLREPOYNALSNVSDOSANESITFAENLTGODATTEEAISICROOTMSMFHAUENIRSGHYNWEINTEGODIILEEDTARNOSRCAAENDTCUTTFDRBEHTMFITOORDRUIAOYAANOEELDOINHUSGITEAORIECEVEMNTRATMTFPEUCUTAHAMTNEWONICDEEMRPAOLITOAFESOOSSPFNLNEEOOTACHLLIRSSXSOFPDFTFRNPRAEEAYLONAHAUTNTCNTCBAWLONEFTOATECVOWDLWVNNEEDTIIOIGTEGMTAHEEATEFAAEPRRCROSHEERRPALEDIENGIDRREOUHVESUROYTNSOSINUIUIOFPRDA");
+		 
+	    
+	    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
+	    	@Override
+	        public int compare(List<Object> c1, List<Object> c2) {
+	        	double diff = (double)c1.get(1) - (double)c2.get(1);
+	        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
+	        }
+	    };
+
+	    Collections.sort(num_dev, comparator);
+	  
+	    for(int i = 0; i < num_dev.size(); i++) {
+	    	System.out.println(num_dev.get(i).get(0) + " " + num_dev.get(i).get(1));
+	    }
+
 		List<String> list = FileReader.compileTextFromResource("/nationalcipherold/plainText.txt");
 
 		List<Double> values = new ArrayList<Double>();
@@ -44,18 +68,17 @@ public class SOLVER {
 			
 			String plainText = line;
 			
-			for(int i = 0; i < 10; ++i) {
+			for(int i = 0; i < 200; ++i) {
 				
-				IRandEncrypter randEncrypt = RandomEncrypter.getFromName("Bifid");
+				IRandEncrypter randEncrypt = RandomEncrypter.getFromName("Vigenere");
 				String cipherText = randEncrypt.randomlyEncrypt(plainText);
-				values.add(StatCalculator.calculateMaxBifidDiagraphicIC(cipherText, 3, 15));
+				values.add(StatCalculator.calculateMaxIC(cipherText, 1, 15));
 			}
 		}
 
 	    Statistics stats = new Statistics(values);
 		
-		System.out.println("Mean: " + stats.getMean());
-		System.out.println("SD: " + stats.getStandardDeviation());**/
+		System.out.println(" " + String.format("%.25f", stats.getMean()) + ", " + String.format("%.25f", stats.getStandardDeviation()));
 	}
 
 	public static void options(int[] lastOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
@@ -83,7 +106,7 @@ public class SOLVER {
 		int jA, jB, jT;
 		
 		//TODO What happens when joker A wraps round
-		jT = ArrayHelper.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
+		jT = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
 			cardOrder[jT] = cardOrder[jA];
@@ -97,7 +120,7 @@ public class SOLVER {
 
 
 		//Move Joker B 2 to right
-		jB = ArrayHelper.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
+		jB = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];

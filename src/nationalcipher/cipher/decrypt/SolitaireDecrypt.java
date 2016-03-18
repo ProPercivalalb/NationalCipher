@@ -1,15 +1,11 @@
 package nationalcipher.cipher.decrypt;
 
 import java.awt.Dimension;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -21,10 +17,8 @@ import javalibrary.Output;
 import javalibrary.dict.Dictionary;
 import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
-import javalibrary.lib.OSIdentifier;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.math.MathHelper;
-import javalibrary.string.StringTransformer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.ListUtil;
@@ -32,23 +26,15 @@ import nationalcipher.DeckParse;
 import nationalcipher.KeyPanel;
 import nationalcipher.LoadElement;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
-import nationalcipher.cipher.Columnar;
-import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.Solitaire;
-import nationalcipher.cipher.Vigenere;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
-import nationalcipher.cipher.tools.Creator.RedefenceKey;
 import nationalcipher.cipher.tools.Creator.VigereneKey;
 import nationalcipher.cipher.tools.InternalDecryption;
-import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class SolitaireDecrypt implements IDecrypt, LoadElement {
@@ -71,7 +57,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 		
 		output.println("Suggested fitness looking for: " + TextFitness.getEstimatedFitness(charDecode, settings.getLanguage()));
 		
-		final SolitaireTask task = new SolitaireTask(ArrayHelper.copyOfRange(text.toCharArray(), 0, charDecode), settings, keyPanel, output, progress);
+		final SolitaireTask task = new SolitaireTask(ArrayUtil.copyOfRange(text.toCharArray(), 0, charDecode), settings, keyPanel, output, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			DeckParse deck = new DeckParse(this.passKeyIterateOrder.getText());
@@ -240,6 +226,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 		map.put("solitaire_passkey", passKeyStartingOrder.getText());
 		map.put("solitaire_chartodecode", charactersToDecode.getText());
 		map.put("solitaire_knownkey", passKeyIterateOrder.getText());
+		map.put("direction", directionOption.getSelectedItem().equals("Forwards"));
 	}
 
 	@Override
@@ -252,5 +239,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 			charactersToDecode.setText((String)map.get("solitaire_chartodecode"));
 		if(map.containsKey("solitaire_knownkey"))
 			passKeyIterateOrder.setText((String)map.get("solitaire_knownkey"));
+		if(map.containsKey("direction"))
+			directionOption.setSelectedIndex((Boolean)map.get("direction") ? 0 : 1);
 	}
 }

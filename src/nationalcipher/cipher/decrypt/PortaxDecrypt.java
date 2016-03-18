@@ -1,19 +1,13 @@
 package nationalcipher.cipher.decrypt;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
@@ -23,18 +17,14 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Beaufort;
-import nationalcipher.cipher.Porta;
 import nationalcipher.cipher.Portax;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.InternalDecryption;
-import nationalcipher.cipher.tools.KeySearch;
-import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.tools.Creator.PortaKey;
+import nationalcipher.cipher.tools.KeySearch;
+import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class PortaxDecrypt implements IDecrypt {
 

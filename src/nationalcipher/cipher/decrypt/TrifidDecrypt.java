@@ -1,12 +1,10 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Dimension;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -22,11 +20,11 @@ import nationalcipher.cipher.Trifid;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.tools.Creator.BifidKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.BifidKey;
 
 public class TrifidDecrypt implements IDecrypt {
 

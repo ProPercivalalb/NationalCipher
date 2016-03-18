@@ -2,9 +2,7 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
-import javalibrary.math.MathHelper;
 import javalibrary.string.StringTransformer;
-import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -82,6 +80,6 @@ public class Portax implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKey(2, 15));
+		return encode(plainText, KeyGeneration.createShortKey26(2, 15));
 	}
 }

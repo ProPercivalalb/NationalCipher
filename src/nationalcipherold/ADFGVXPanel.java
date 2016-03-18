@@ -15,7 +15,7 @@ import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.cipher.permentate.Permentations;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
@@ -52,7 +52,7 @@ public class ADFGVXPanel implements IStatisticsPanel {
 		Figure figure = new Figure(inputText, language);
 		
 		for(int length = 2; length <= 6; length++)
-			Permentations.permutate(figure, ArrayHelper.range(0, length));
+			Permentations.permutate(figure, ArrayUtil.range(0, length));
 		
 		String s = "";
 		

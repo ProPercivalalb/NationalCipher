@@ -4,34 +4,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.fitness.ChiSquared;
-import javalibrary.language.ILanguage;
 import javalibrary.string.StringTransformer;
-import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.UINew;
-import nationalcipher.cipher.Caesar;
 import nationalcipher.cipher.RunningKey;
-import nationalcipher.cipher.TwoSquare;
-import nationalcipher.cipher.Vigenere;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.tools.KeySearch;
-import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
-import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.tools.Creator.VigereneKey;
+import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.SimulatedAnnealing;
 
 public class RunningKeyDecrypt implements IDecrypt {
 

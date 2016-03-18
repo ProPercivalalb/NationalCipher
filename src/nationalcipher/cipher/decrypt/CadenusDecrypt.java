@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.math.MathHelper;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
@@ -18,8 +18,8 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.Creator.CadenusKey;
+import nationalcipher.cipher.tools.InternalDecryption;
 
 public class CadenusDecrypt implements IDecrypt {
 
@@ -113,7 +113,7 @@ public class CadenusDecrypt implements IDecrypt {
 		public void onIteration(String key, int textLength) {
 			char[] plainText = new char[0];
 			for(int i = 0; i < this.text.length / textLength; i++)
-				plainText = ArrayHelper.concat(plainText, Cadenus.decode(ArrayHelper.copyOfRange(this.text, i * textLength, textLength), key));
+				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.text, i * textLength, textLength), key));
 
 			this.lastSolution = new Solution(plainText, this.settings.getLanguage()).setKeyString(key);
 			

@@ -24,10 +24,10 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.tools.Creator.VigereneKey;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.VigereneKey;
 
 public class VigenereDecrypt implements IDecrypt {
 

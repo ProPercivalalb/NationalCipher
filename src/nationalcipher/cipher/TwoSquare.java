@@ -58,6 +58,6 @@ public class TwoSquare implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKeySquare5x5(), KeyGeneration.createKeySquare5x5());
+		return encode(plainText, KeyGeneration.createLongKey25(), KeyGeneration.createLongKey25());
 	}
 }

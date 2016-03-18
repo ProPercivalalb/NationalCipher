@@ -17,8 +17,8 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.Creator.MyszkowskiKey;
+import nationalcipher.cipher.tools.InternalDecryption;
 
 public class MyszkowskiDecrypt implements IDecrypt {
 

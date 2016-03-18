@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Dimension;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
@@ -21,10 +20,10 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
 
 public class BeaufortAutokeyDecrypt implements IDecrypt {
 

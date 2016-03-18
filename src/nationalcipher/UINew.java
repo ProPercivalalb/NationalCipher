@@ -14,13 +14,11 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -66,7 +64,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.MenuSelectionManager;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
@@ -89,7 +86,7 @@ import javalibrary.language.Languages;
 import javalibrary.lib.OSIdentifier;
 import javalibrary.lib.Timer;
 import javalibrary.listener.CustomMouseListener;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.math.MathHelper;
 import javalibrary.math.Rounder;
 import javalibrary.math.Statistics;
@@ -98,7 +95,6 @@ import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.string.ValueFormat;
 import javalibrary.swing.ButtonUtil;
-import javalibrary.swing.ComponentMover;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
@@ -301,6 +297,7 @@ public class UINew extends JFrame {
         this.menuItemShowTopSolutions = new JMenuItem();
         this.menuItemBinary = new JMenuItem();
         this.menuItemASCII = new JMenuItem();
+        this.menuItemShuffle = new JMenuItem();
         this.menuItemTools = new JMenu();
         this.menuItemNGram = new JMenuItem();
         this.menuItemLetterFrequency = new JMenuItem();
@@ -509,11 +506,15 @@ public class UINew extends JFrame {
         this.menuItemBinary.setEnabled(false);
         this.menuItemEdit.add(this.menuItemBinary);
         
-        
         this.menuItemASCII.setText("ASCII to Text");
         this.menuItemASCII.setIcon(ImageUtil.createImageIcon("/image/page_white_text.png", "ASCII Convert"));
         this.menuItemASCII.addActionListener(new ASCIIConvertAction());
         this.menuItemEdit.add(this.menuItemASCII);
+        
+        this.menuItemShuffle.setText("Shuffle Text");
+        this.menuItemShuffle.setIcon(ImageUtil.createImageIcon("/image/page_white_text.png", "ASCII Convert"));
+        this.menuItemShuffle.addActionListener(new ShuffleTextAction());
+        this.menuItemEdit.add(this.menuItemShuffle);
         
         this.menuBar.add(this.menuItemEdit);
 
@@ -1099,6 +1100,17 @@ public class UINew extends JFrame {
 			//inputTextArea.setText(cipherText);
 		}
     }
+
+    public class ShuffleTextAction implements ActionListener {
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		String binaryText = inputTextArea.getText();
+    		char[] chars = binaryText.toCharArray();
+    		ArrayUtil.shuffle(chars);
+    		inputTextArea.setText(new String(chars));	
+		}
+    }
     
     public class WordSplitAction implements ActionListener {
     	
@@ -1420,7 +1432,7 @@ public class UINew extends JFrame {
     			Figure figure = new Figure(text.toCharArray(), settings.getLanguage());
     			
     			for(int length = 2; length <= 6; length++)
-    				Permentations.permutate(figure, ArrayHelper.range(0, length));
+    				Permentations.permutate(figure, ArrayUtil.range(0, length));
     			
     			String s = "";
     			
@@ -3297,6 +3309,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemShowTopSolutions;
     private JMenuItem menuItemBinary;
     private JMenuItem menuItemASCII;
+    private JMenuItem menuItemShuffle;
     private JMenu menuItemTools; 
     private JMenuItem menuItemLetterFrequency;
     private JMenuItem menuItemNGram;

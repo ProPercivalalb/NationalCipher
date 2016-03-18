@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nationalcipher.LoadElement;
-import nationalcipher.MainNew;
 import nationalcipher.Settings;
 import nationalcipher.cipher.decrypt.ADFGXDecrypt;
 import nationalcipher.cipher.decrypt.AMSCODecrypt;
 import nationalcipher.cipher.decrypt.AffineDecrypt;
+import nationalcipher.cipher.decrypt.AnagrammerDecrypt;
 import nationalcipher.cipher.decrypt.BazeriesDecrypt;
 import nationalcipher.cipher.decrypt.BeaufortAutokeyDecrypt;
 import nationalcipher.cipher.decrypt.BeaufortDecrypt;
@@ -87,6 +87,7 @@ public class DecryptionManager {
 	}
 	
 	public static void loadCiphers(Settings settings) {
+		registerCipher(new AnagrammerDecrypt(), settings);
 		registerCipher(new AffineDecrypt(), settings);
 		registerCipher(new CaesarDecrypt(), settings);
 		registerCipher(new SubstitutionDecrypt(), settings);

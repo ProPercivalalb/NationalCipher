@@ -1,15 +1,10 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.BoxLayout;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -20,16 +15,14 @@ import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.VariantSlidefair;
-import nationalcipher.cipher.VigenereAutokey;
-import nationalcipher.cipher.VigenereSlidefair;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
 
 public class VariantSlidefairDecrypt implements IDecrypt {
 

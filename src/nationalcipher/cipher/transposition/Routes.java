@@ -6,8 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.math.MathHelper;
+import javalibrary.util.ListUtil;
 import nationalcipher.cipher.transposition.route.RouteTwist;
 import nationalcipher.cipher.transposition.route.RouteWriteAcross;
 import nationalcipher.cipher.transposition.route.RouteWriteDown;
@@ -305,7 +306,7 @@ public class Routes {
 		public abstract boolean isClockwise();
 		
 		@Override
-		public List<Integer> createPattern(int width, int height, int totalSize) {
+		public int[] createPattern(int width, int height, int totalSize) {
 			ArrayList<Integer> grid = new ArrayList<Integer>();
 			
 			int[] details = this.getStartDetails(width, height, totalSize);
@@ -327,7 +328,7 @@ public class Routes {
 			    y += dy;
 			}
 			
-			return grid;
+			return ListUtil.toArray(grid);
 		}
 	}
 	
@@ -341,8 +342,10 @@ public class Routes {
 		public abstract boolean isLeftToRight();
 		
 		@Override
-		public List<Integer> createPattern(int width, int height, int totalSize) {
-			ArrayList<Integer> grid = new ArrayList<Integer>();
+		public int[] createPattern(int width, int height, int totalSize) {
+			int[] grid = new int[totalSize];
+			
+			int index = 0;
 			
 			int[] details = this.getStartDetails(width, height, totalSize);
 			int startY = details[0];
@@ -352,7 +355,7 @@ public class Routes {
 			for(int x = 0; x < width; x++) {
 				int nx = leftToRight ? x : width - x - 1;
 				for(int y = 0; y < height; y++)
-					grid.add((startY + dir * y) * width + nx);
+					grid[index++] = (startY + dir * y) * width + nx;
 				
 				dir *= -1;
 				startY = MathHelper.mod(startY + dir, height);
@@ -372,18 +375,19 @@ public class Routes {
 		public abstract boolean isTopToBottom();
 		
 		@Override
-		public List<Integer> createPattern(int width, int height, int totalSize) {
-			ArrayList<Integer> grid = new ArrayList<Integer>();
+		public int[] createPattern(int width, int height, int totalSize) {
+			int[] grid = new int[totalSize];
 			
 			int[] details = this.getStartDetails(width, height, totalSize);
 			int startX = details[0];
 			int dir = details[1];
 			boolean topToBottom = this.isTopToBottom();
+			int index = 0;
 			
 			for(int y = 0; y < height; y++) {
 				int ny = topToBottom ? y : height - y - 1;
 				for(int x = 0; x < width; x++)
-					grid.add(ny * width + (startX + dir * x));
+					grid[index++] = ny * width + (startX + dir * x);
 				
 				dir *= -1;
 				startX = MathHelper.mod(startX + dir, width);
@@ -403,17 +407,18 @@ public class Routes {
 		public abstract int[] getDirVector();		
 		
 		@Override
-		public List<Integer> createPattern(int width, int height, int totalSize) {
-			ArrayList<Integer> grid = new ArrayList<Integer>();
+		public int[] createPattern(int width, int height, int totalSize) {
+			int[] grid = new int[totalSize];
 			
 			int[] dirVec = this.getDirVector();
+			int index = 0;
 			
 			for(int pos = 0; pos < height + width - 1; pos++) {
 				int[] npos = this.calculateNewPos(pos, height, width, totalSize);
 				int nx = npos[0], ny = npos[1];
 				
 				while(nx >= 0 && nx < width && ny >= 0 && ny < height) {
-					grid.add(ny * width + nx);
+					grid[index++] = ny * width + nx;
 					nx += dirVec[0];
 					ny += dirVec[1];
 				}
@@ -430,8 +435,8 @@ public class Routes {
 		}
 		
 		@Override
-		public List<Integer> createPattern(int width, int height, int totalSize) {
-			ArrayList<Integer> grid = new ArrayList<Integer>();
+		public int[] createPattern(int width, int height, int totalSize) {
+			int[] grid = new int[totalSize];
 			
 			
 			return grid;
@@ -445,11 +450,11 @@ public class Routes {
 		}
 		
 		@Override
-		public List<Integer> createPattern(int width, int height, int totalSize) {
-			List<Integer> grid = Arrays.asList(ArrayHelper.rangeInt(0, width * height));
+		public int[] createPattern(int width, int height, int totalSize) {
+			List<Integer> grid = Arrays.asList(ArrayUtil.rangeInt(0, width * height));
 			Collections.shuffle(grid, new Random(System.currentTimeMillis()));
 			
-			return grid;
+			return ListUtil.toArray(grid);
 		}
 	}
 }

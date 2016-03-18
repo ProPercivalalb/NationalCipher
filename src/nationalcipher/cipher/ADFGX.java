@@ -21,6 +21,6 @@ public class ADFGX implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		int[] o =KeyGeneration.createOrder(RandomUtil.pickRandomInt(2, 7));
 		System.out.println(Arrays.toString(o));
-		return encode(plainText, KeyGeneration.createKeySquare5x5(), o);
+		return encode(plainText, KeyGeneration.createLongKey25(), o);
 	}
 }

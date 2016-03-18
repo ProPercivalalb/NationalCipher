@@ -18,6 +18,6 @@ public class PortaProgressiveKey implements IRandEncrypter {
 	
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKey(2, 15), RandomUtil.pickBoolean(), RandomUtil.pickRandomInt(1, 20), RandomUtil.pickRandomInt(1, 25));
+		return encode(plainText, KeyGeneration.createShortKey26(2, 15), RandomUtil.pickBoolean(), RandomUtil.pickRandomInt(1, 20), RandomUtil.pickRandomInt(1, 25));
 	}
 }

@@ -20,11 +20,11 @@ import nationalcipher.cipher.Bifid;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.tools.Creator.BifidKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.BifidKey;
 
 public class BifidDecrypt implements IDecrypt {
 

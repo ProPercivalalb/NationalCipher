@@ -1,8 +1,5 @@
 package nationalcipher.cipher.transposition.route;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javalibrary.math.MathHelper;
 import nationalcipher.cipher.transposition.RouteCipherType;
 
@@ -16,13 +13,14 @@ public class RouteTwist extends RouteCipherType {
 	}
 
 	@Override
-	public List<Integer> createPattern(int width, int height, int totalSize) {
-		ArrayList<Integer> grid = new ArrayList<Integer>();
+	public int[] createPattern(int width, int height, int totalSize) {
+		int[] grid = new int[totalSize];
+		int index = 0;
 		
 		for(int h = 0; h < height; h++) {
 			int cut = MathHelper.mod(width - h * this.twistSize, width);
 			for(int w = 0; w < width; w++)
-				grid.add(h * width + (cut + w) % width);
+				grid[index++] = h * width + (cut + w) % width;
 		}
 		
 		return grid;

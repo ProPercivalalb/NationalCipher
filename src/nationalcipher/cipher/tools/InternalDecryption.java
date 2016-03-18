@@ -1,9 +1,5 @@
 package nationalcipher.cipher.tools;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;

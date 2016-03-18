@@ -9,7 +9,6 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.dict.Dictionary;
 import javalibrary.fitness.ChiSquared;
 import javalibrary.language.ILanguage;
 import javalibrary.string.StringTransformer;
@@ -23,13 +22,11 @@ import nationalcipher.cipher.Keyword;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.SubstitutionKey;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class GeneralPeriodDecrypt implements IDecrypt {
 

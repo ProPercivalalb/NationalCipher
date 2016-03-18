@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import nationalcipher.cipher.Nicodemus;
 import nationalcipher.cipher.stats.StatCalculator;
 
@@ -43,7 +43,7 @@ public class Other {
 	}
 	
 	private static double calculateNicodemusIC(String text, int rowsPerBlock, int period) {
-		String[] ct = ArrayHelper.fill("", period);
+		String[] ct = ArrayUtil.fill("", period);
 		
 		int blockSize = period * rowsPerBlock;
 		int totalBlocks = (int)Math.floor(text.length() / blockSize);

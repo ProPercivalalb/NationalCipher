@@ -73,7 +73,7 @@ import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.Threads;
 import javalibrary.util.MapHelper;
 import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.stats.StatisticType;
+import nationalcipher.cipher.stats.types.StatisticType;
 
 /**
  * @author Alex Barter (10AS)

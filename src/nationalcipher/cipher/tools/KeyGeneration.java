@@ -1,133 +1,103 @@
 package nationalcipher.cipher.tools;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
+import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 
 public class KeyGeneration {
 
+	private static char[] allPolluxChars = "X.-".toCharArray();
+	
 	private static char[] all27Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
 	private static char[] all26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	private static char[] all25Chars = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
 	
-	private static int pickRandomLength(int minLength, int maxLength) {
-		return RandomUtil.pickRandomInt(maxLength - minLength + 1) + minLength;
-	}
-	
-	public static String createKey(int minLength, int maxLength) {
-		int length = pickRandomLength(minLength, maxLength);
-		
-		String key = "";
+	public static String createShortKey26(int length) {
+		char[] key = new char[length];
 		
 		for(int i = 0; i < length; i++)
-			key += RandomUtil.pickRandomChar(all26Chars);
+			key[i] = RandomUtil.pickRandomChar(all26Chars);
 		
-		return key;
+		return new String(key);
 	}
 	
+	public static String createLongKey25() {
+		return createLongKeyUniversal(all25Chars);
+	}
+	
+	public static String createLongKey26() {
+		return createLongKeyUniversal(all26Chars);
+	}
+	
+	public static String createLongKey27() {
+		return createLongKeyUniversal(all27Chars);
+	}
+	
+	private static String createLongKeyUniversal(char[] charList) {
+		List<Character> characters = ListUtil.toList(charList);
+		
+		char[] key = new char[characters.size()];
+		for(int i = 0; i < key.length; i++) {
+			char rC = RandomUtil.pickRandomElement(characters);
+			key[i] = rC;
+			characters.remove((Character)rC);
+		}
 
+		return new String(key);
+	}
+	
 	public static int[] createOrder(int length) {
-		int[] array = ArrayHelper.range(0, length);
+		int[] order = ArrayUtil.range(0, length);
 
-		List<Integer> key2 = new ArrayList<Integer>();
-		for(int ch : array) {
-			key2.add(ch);
-		}
+		ArrayUtil.shuffle(order);
 		
-		Collections.shuffle(key2);
-		
-		int[] key3 = new int[key2.size()];
-		
-		int index = 0;
-		for(int ch : key2)
-			key3[index++] = ch;
-		return key3;
+		return order;
 	}
 	
-	public static List<Integer> createListOrder(int length) {
-		int[] array = ArrayHelper.range(0, length);
-
-		List<Integer> key2 = new ArrayList<Integer>();
-		for(int ch : array) {
-			key2.add(ch);
-		}
-		
-		Collections.shuffle(key2);
-
-		return key2;
+	public static List<Integer> createOrderList(int length) {
+		return ListUtil.toList(createOrder(length));
 	}
 	
-	public static String createKeySquare5x5() {
-		String keySquare = "";
-		
-		while(keySquare.length() != 25) {
-			char ch = (char)((int)Math.floor(26 * Math.random()) + 'A');
-			if(ch != 'J' && !keySquare.contains("" + ch))
-				keySquare += ch;
-		}
-		
-		return keySquare;
-	}
-
-	public static String createFullKey() {
-		List<Character> characters = new ArrayList<Character>();
-		for(char character : all26Chars)
-			characters.add(character);
-		
-		String key = "";
-		while(!characters.isEmpty()) {
-			char rC = RandomUtil.pickRandomElement(characters);
-			key += rC;
-			characters.remove((Character)rC);
-		}
-
-		return key;
-	}
 	
-	public static String createFullKeyWithHash() {
-		List<Character> characters = new ArrayList<Character>();
-		for(char character : all27Chars)
-			characters.add(character);
-		
-		String key = "";
-		while(!characters.isEmpty()) {
-			char rC = RandomUtil.pickRandomElement(characters);
-			key += rC;
-			characters.remove((Character)rC);
-		}
-
-		return key;
-	}
-
 	public static char[] createPolluxKey() {
-		List<Character> characters = new ArrayList<Character>(Arrays.asList('X', '.', '-'));
-		String key = "";
-		while(!characters.isEmpty()) {
+		List<Character> characters = ListUtil.toList(allPolluxChars);
+		
+		char[] key = new char[10];
+		int i = 0;
+		
+		for(; i < characters.size(); i++) {
 			char rC = RandomUtil.pickRandomElement(characters);
-			key += rC;
+			key[i] = rC;
 			characters.remove((Character)rC);
 		}
-		char[] r = new char[] {'X', '.', '-'};
-		for(int i = 0; i < 7; i++) {
-			key += RandomUtil.pickRandomChar(r);
-		}
-		List<Character> key2 = new ArrayList<Character>();
-		for(char ch : key.toCharArray()) {
-			key2.add(ch);
-		}
 		
-		Collections.shuffle(key2);
+		for(; i < key.length; i++)
+			key[i] = RandomUtil.pickRandomChar(allPolluxChars);
 		
-		char[] key3 = new char[key2.size()];
+		ArrayUtil.shuffle(key);
 		
-		int index = 0;
-		for(char ch : key2)
-			key3[index++] = ch;
-		return key3;
+		return key;
 	}
+
+	
+	
+	
+	// Random key length generator
+	
+	
+	public static String createShortKey26(int minLength, int maxLength) {
+		int length = RandomUtil.pickRandomInt(minLength, maxLength);
+		
+		return createShortKey26(length);
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }

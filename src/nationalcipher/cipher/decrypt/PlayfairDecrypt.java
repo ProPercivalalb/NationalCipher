@@ -17,9 +17,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.PlayfairKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
-import nationalcipher.cipher.tools.Creator.PlayfairKey;
 
 public class PlayfairDecrypt implements IDecrypt {
 

@@ -1,10 +1,8 @@
 package nationalcipher.cipher.transposition;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javalibrary.math.MathHelper;
-import javalibrary.string.StringTransformer;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 
@@ -17,17 +15,17 @@ public class RouteTransposition implements IRandEncrypter {
 	public static String encode(String plainText, int columns, int rows, RouteCipherType writtenOn, RouteCipherType readOff) {
 
 		//Create pattern
-		List<Integer> gridWrite = writtenOn.getPattern(columns, rows, plainText.length());
-		List<Integer> gridRead = readOff.getPattern(columns, rows, plainText.length());
+		int[] gridWrite = writtenOn.getPattern(columns, rows, plainText.length());
+		int[] gridRead = readOff.getPattern(columns, rows, plainText.length());
 				
 		//Reads across the grid
 		char[] gridString = new char[plainText.length()];
 		for(int i = 0; i < plainText.length(); i++)
-			gridString[gridWrite.get(i)] = plainText.charAt(i);
+			gridString[gridWrite[i]] = plainText.charAt(i);
 		
 		char[] gridString2 = new char[plainText.length()];
 		for(int i = 0; i < plainText.length(); i++)
-			gridString2[i] = gridString[gridRead.get(i)];
+			gridString2[i] = gridString[gridRead[i]];
 		
 		return new String(gridString2);
 	}
@@ -37,16 +35,16 @@ public class RouteTransposition implements IRandEncrypter {
 		int length = cipherText.length;
 		
 		//Create pattern
-		List<Integer> gridWrite = writtenOn.getPattern(columns, rows, length);
-		List<Integer> gridRead = readOff.getPattern(columns, rows, length);
+		int[] gridWrite = writtenOn.getPattern(columns, rows, length);
+		int[] gridRead = readOff.getPattern(columns, rows, length);
 
 		char[] gridString = new char[length];
 		for(int i = 0; i < length; i++)
-			gridString[gridRead.get(i)] = cipherText[i];
+			gridString[gridRead[i]] = cipherText[i];
 				
 		char[] gridString2 = new char[length];
 		for(int i = 0; i < length; i++)
-			gridString2[i] = gridString[gridWrite.get(i)];
+			gridString2[i] = gridString[gridWrite[i]];
 		
 		return gridString2;
 	}

@@ -11,6 +11,9 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class Playfair implements IRandEncrypter {
 
 	public static String encode(String plainText, String keysquare) {
+		if(plainText.length() % 2 == 1)
+			plainText += 'X';
+		
 	    String cipherText = "";
 	    
 	    for(int i = 0; i < plainText.length(); i += 2){
@@ -84,7 +87,7 @@ public class Playfair implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKeySquare5x5());
+		return encode(plainText, KeyGeneration.createLongKey25());
 	}
 	
 }

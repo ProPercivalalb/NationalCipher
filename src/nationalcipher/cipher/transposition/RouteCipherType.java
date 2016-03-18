@@ -7,7 +7,7 @@ import java.util.List;
 public abstract class RouteCipherType {
 	
 	private String description;
-	public HashMap<List<Integer>, List<Integer>> cache = new HashMap<List<Integer>, List<Integer>>();
+	public HashMap<List<Integer>, int[]> cache = new HashMap<List<Integer>, int[]>();
 	
 	public RouteCipherType() {
 		this("No description");
@@ -35,7 +35,7 @@ public abstract class RouteCipherType {
 		return true;
 	}
 	
-	public final List<Integer> getPattern(int width, int height, int totalSize) {
+	public final int[] getPattern(int width, int height, int totalSize) {
 		if(!this.canCache())
 			return createPattern(width, height, totalSize);
 		
@@ -43,11 +43,11 @@ public abstract class RouteCipherType {
 		if(this.cache.containsKey(key))
 			return this.cache.get(key);
 		
-		List<Integer> grid = createPattern(width, height, totalSize);
+		int[] grid = createPattern(width, height, totalSize);
 		this.cache.put(key, grid);
 		
 		return grid;
 	}
 	
-	public abstract List<Integer> createPattern(int width, int height, int totalSize);
+	public abstract int[] createPattern(int width, int height, int totalSize);
 }

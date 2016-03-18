@@ -20,8 +20,6 @@ import nationalcipher.Settings;
 import nationalcipher.UINew;
 import nationalcipher.cipher.Beaufort;
 import nationalcipher.cipher.Caesar;
-import nationalcipher.cipher.Variant;
-import nationalcipher.cipher.decrypt.VigenereDecrypt.VigenereTask;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

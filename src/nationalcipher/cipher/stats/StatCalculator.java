@@ -8,9 +8,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javalibrary.language.ILanguage;
-import javalibrary.math.ArrayHelper;
+import javalibrary.math.ArrayUtil;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
+import nationalcipher.cipher.stats.types.StatisticType;
 
 /**
  * @author Alex Barter (10AS)
@@ -93,7 +94,7 @@ public class StatCalculator {
 	    for(int period = minPeriod; period <= maxPeriod; ++period)
 	    	maxKappa = Math.max(maxKappa, calculateKappaIC(text, period));
 	    
-	    return maxKappa * 1000.0D;
+	    return maxKappa;
 	}
 	
 	public static double calculateMinKappaIC(String text, int minPeriod, int maxPeriod) {
@@ -102,7 +103,7 @@ public class StatCalculator {
 	    for(int period = minPeriod; period <= maxPeriod; ++period)
 	    	minKappa = Math.min(minKappa, calculateKappaIC(text, period));
 	    
-	    return minKappa * 1000.0D;
+	    return minKappa;
 	}
 	
 	public static int calculateBestKappaIC(String text, int minPeriod, int maxPeriod, ILanguage language) {
@@ -213,6 +214,21 @@ public class StatCalculator {
 			sum += theatricalDiagram.get(diagram) * (theatricalDiagram.get(diagram) - 1);
 		
 		return 27 * 27 * 2700 * sum / (count * (count - 1));
+	}
+	
+
+	public static double calculateMaxTrifidDiagraphicIC(String text, int minPeriod, int maxPeriod) {
+		if(containsDigit(text))
+			return 0.0D;
+		
+		double bestIC = 0;
+	    for(int period = minPeriod; period <= maxPeriod; period++){
+	    	if(period == 1) continue;
+	    	
+	        bestIC = Math.max(bestIC, calculateTrifidDiagraphicIC(text, period));
+	    }
+	    
+	    return bestIC;
 	}
 	
 	public static double calculateMaxBifidDiagraphicIC(String text, int minPeriod, int maxPeriod) {
@@ -924,17 +940,18 @@ public class StatCalculator {
 		
 		int best_score = 0;
         for(int period = 4; period <= 8; period++){
-            if (text.length() % period != 0) 
+            if(text.length() % period != 0) 
             	continue;
             
             if (3 * period * period > text.length()) 
             	break;
             
             int result = swagTest(text, period);
-            
+            System.out.println(period + " " + result);
             if (result > best_score)
                 best_score = result;
         }
+
         
         return best_score;
 	}
@@ -943,7 +960,7 @@ public class StatCalculator {
 
 		int numb_columns = text.length() / period;
 	        
-	    int[] row_order = ArrayHelper.range(0, period);
+	    int[] row_order = ArrayUtil.range(0, period);
 	    int[][] swag_array = new int[period][numb_columns];
 	    int index = 0, i = 0;
 	        
@@ -1114,32 +1131,6 @@ public class StatCalculator {
 	    return false;
 	}
 	
-	public static List<List<Object>> getResultsFromStats(HashMap<StatisticType, Double> cipherInfo) {
-		List<List<Object>> num_dev = new ArrayList<List<Object>>();
-		
-		for(String cipherName : CipherStatistics.getOtherCipherStatistics().keySet()) {
-			double x = 0.0D;
-			List<StatisticRange> statistics = CipherStatistics.getOtherCipherStatistics().get(cipherName);
-			if(statistics == null) continue;
-			
-			for(StatisticRange defaultStatistic : statistics) {
-				StatisticType type = defaultStatistic.type;
-				if(!cipherInfo.containsKey(type)) continue;
-				
-				double average = defaultStatistic.value;
-				double standardDeviation = defaultStatistic.standardDeviation;
-				if(standardDeviation == 0.0D) standardDeviation += 0.001D;
-
-				x += Math.abs((cipherInfo.get(type) - average) / standardDeviation);
-			}
-			List<Object> t = new ArrayList<Object>();
-			t.add(cipherName);
-			t.add(x);
-			num_dev.add(t);
-		}
-		
-		return num_dev;
-	}
 
 	static int[][] logdi = new int[][] {
 			{4,7,8,7,4,6,7,5,7,3,6,8,7,9,3,7,3,9,8,9,6,7,6,5,7,4},

@@ -6,6 +6,9 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class FourSquare implements IRandEncrypter {
 
 	public static String encode(String plainText, String keysquare1, String keysquare2) {
+		if(plainText.length() % 2 == 1)
+			plainText += 'X';
+		
 	    String cipherText = "";
 	    
 	    String shortAlpha = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
@@ -53,6 +56,6 @@ public class FourSquare implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKeySquare5x5(), KeyGeneration.createKeySquare5x5());
+		return encode(plainText, KeyGeneration.createLongKey25(), KeyGeneration.createLongKey25());
 	}
 }

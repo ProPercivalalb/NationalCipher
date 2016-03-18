@@ -2,7 +2,6 @@ package nationalcipher.cipher;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javalibrary.math.MathHelper;
 import javalibrary.util.RandomUtil;
@@ -67,6 +66,6 @@ public class Homophonic implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createKey(4, 4));
+		return encode(plainText, KeyGeneration.createShortKey26(4));
 	}
 }

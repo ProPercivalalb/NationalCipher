@@ -3,7 +3,6 @@ package nationalcipher.cipher;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.matrics.Matrix;
-import nationalcipher.cipher.manage.IRandEncrypter;
 
 /**
  * @author Alex Barter (10AS)

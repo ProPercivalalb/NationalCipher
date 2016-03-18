@@ -7,25 +7,20 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.dict.Dictionary;
-import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.UINew;
 import nationalcipher.cipher.ADFGX;
-import nationalcipher.cipher.Bifid;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.tools.Creator.BifidKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.tools.Creator.BifidKey;
 
 public class ADFGXDecrypt implements IDecrypt {
 

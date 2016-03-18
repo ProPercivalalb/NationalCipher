@@ -17,9 +17,9 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.SubstitutionKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
-import nationalcipher.cipher.tools.Creator.SubstitutionKey;
 
 public class SubstitutionDecrypt implements IDecrypt {
 
