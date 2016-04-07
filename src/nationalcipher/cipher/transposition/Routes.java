@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import javalibrary.math.ArrayUtil;
 import javalibrary.math.MathHelper;
+import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.transposition.route.RouteTwist;
 import nationalcipher.cipher.transposition.route.RouteWriteAcross;

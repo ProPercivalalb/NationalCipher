@@ -3,7 +3,7 @@ package nationalcipher.cipher;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
-import javalibrary.math.ArrayUtil;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.KeyGeneration;

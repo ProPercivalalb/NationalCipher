@@ -1,7 +1,7 @@
 package nationalcipher.cipher.tools;
 
-import javalibrary.math.ArrayUtil;
 import javalibrary.math.matrics.Matrix;
+import javalibrary.util.ArrayUtil;
 
 public class Creator {
 
@@ -19,6 +19,10 @@ public class Creator {
 	
 	public static interface BifidKey {
 		public void onIteration(String keysquare);
+	}
+	
+	public static interface SwagmanKey {
+		public void onIteration(int[][] key);
 	}
 	
 	public static interface SubstitutionKey {
@@ -334,5 +338,27 @@ public class Creator {
 			}
 	}
 
+	public static void iterateSwagman(SwagmanKey task, int length) {
+		iterateSwagman(task, ArrayUtil.range(0, length), length, 0, 0, new int[length][length]);
+	}
 
+	private static void iterateSwagman(SwagmanKey task, int[] arr, int length, int pos, int row, int[][] finalKey) {
+		if(row == length)
+			task.onIteration(finalKey);
+		else if(length - pos == 1) {
+			finalKey[row] = arr;
+			iterateSwagman(task, ArrayUtil.range(0, length), length, 0, row + 1, finalKey);
+		}
+		else
+		    for(int i = pos; i < length; i++) {
+		        int h = arr[pos];
+		        int j = arr[i];
+		        arr[pos] = j;
+		        arr[i] = h;
+		            
+		        iterateSwagman(task, arr, length, pos + 1, row, finalKey);
+		        arr[pos] = h;
+		    	arr[i] = j;
+		    }
+	}
 }

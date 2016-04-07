@@ -1,8 +1,9 @@
 package nationalcipher.cipher.tools;
 
+import java.util.Arrays;
 import java.util.List;
 
-import javalibrary.math.ArrayUtil;
+import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 
@@ -61,6 +62,8 @@ public class KeyGeneration {
 	}
 	
 	
+	//Specific key generators
+	
 	public static char[] createPolluxKey() {
 		List<Character> characters = ListUtil.toList(allPolluxChars);
 		
@@ -82,7 +85,59 @@ public class KeyGeneration {
 	}
 
 	
+	public static int[] createSwagmanKey(int size) {
+		while(true) {
+			try {
+				int[] key = new int[size * size];
+				Arrays.fill(key, -1);
+				
+				for(int r = 0; r < size; r++) {
+					for(int c = 0; c < size; c++) {
+						if(key[r * size + c] != -1) continue;
+						List<Integer> validOptions = ListUtil.range(0, size - 1);
+						
+						for(int nR = 0; nR < size; nR++)
+							validOptions.remove((Integer)key[nR * size + c]);
+						
+						for(int nC = 0; nC < size; nC++)
+							validOptions.remove((Integer)key[r * size + nC]);
+						
+						key[r * size + c] = RandomUtil.pickRandomElement(validOptions);
+						
+						fillInKnowns(key, size);
+					}
+				}
+				
+				return key;
+			}
+			catch(Exception e) {
+				
+			}
+		}
+	}
 	
+	private static int[] fillInKnowns(int[] key, int size) {
+		for(int r = 0; r < size; r++) {
+			for(int c = 0; c < size; c++) {
+				if(key[r * size + c] != -1) continue;
+				
+				List<Integer> validOptions = ListUtil.range(0, size - 1);
+				
+				for(int nR = 0; nR < size; nR++)
+					validOptions.remove((Integer)key[nR * size + c]);
+				
+				for(int nC = 0; nC < size; nC++)
+					validOptions.remove((Integer)key[r * size + nC]);
+				
+				if(validOptions.size() == 1)
+					key[r * size + c] = validOptions.get(0);
+				
+				
+			}
+		}
+		
+		return key;
+	}
 	
 	// Random key length generator
 	

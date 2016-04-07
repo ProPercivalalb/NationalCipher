@@ -5,7 +5,7 @@ import java.util.Arrays;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
-import javalibrary.math.ArrayUtil;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.Nicodemus;
 import nationalcipher.cipher.stats.StatCalculator;
 

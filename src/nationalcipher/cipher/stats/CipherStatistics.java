@@ -91,7 +91,18 @@ public class CipherStatistics {
 			solitaire.add(new StatisticMaxNicodemus3to15(40.0047256854201400000000000, 2.5816919104277085000000000));
 			solitaire.add(new StatisticMaxTrifid3to15(233.8118871177359000000000000, 159.8055294692080700000000000));
 			
-			
+			List<StatisticType> swagman = createOrGetList("Swagman");
+			swagman.add(new StatisticIC(0.06581, 0.0027616));
+			swagman.add(new StatisticMaxIC(0.0680448798964384000000000, 0.0030385628437166593000000));
+			swagman.add(new StatisticKappaIC(0.0783036801378834800000000, 0.0070504724095257500000000));
+			swagman.add(new StatisticDiagrahpicIC(0.0045579676570128810000000, 0.0005104388233688664000000));
+			swagman.add(new StatisticEvenDiagrahpicIC(0.0043783760638541960000000, 0.0004604790901511278500000));
+			swagman.add(new StatisticLongRepeat(12.1786457684977110000000000, 1.3282465483966868000000000));
+			swagman.add(new StatisticPercentageOddRepeats(47.0241304347826060000000000, 4.5797519438332180000000000));
+			swagman.add(new StatisticNormalOrder(69.8844202898550700000000000, 29.2737289484617600000000000));
+			swagman.add(new StatisticMaxBifid3to15(339.8914879313608000000000000, 65.0130912307681700000000000));
+			swagman.add(new StatisticMaxNicodemus3to15(67.0952068842552500000000000, 8.6820672665165700000000000));
+			swagman.add(new StatisticMaxTrifid3to15(1151.3435874362190000000000000, 476.9147087108571000000000000));
 			
 			/**
 			normalEnglish.add(new StatisticRange(StatisticType.MAX_IOC, 73.0D, 11.0D));

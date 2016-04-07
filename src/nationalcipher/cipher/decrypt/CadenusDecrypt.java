@@ -8,9 +8,9 @@ import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
-import javalibrary.math.ArrayUtil;
 import javalibrary.math.MathHelper;
 import javalibrary.swing.ProgressValue;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Cadenus;

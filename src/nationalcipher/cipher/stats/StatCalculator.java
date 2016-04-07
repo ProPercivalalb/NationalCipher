@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javalibrary.language.ILanguage;
-import javalibrary.math.ArrayUtil;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.stats.types.StatisticType;
 
 /**

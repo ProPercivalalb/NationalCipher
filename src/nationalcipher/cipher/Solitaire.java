@@ -2,7 +2,7 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
-import javalibrary.math.ArrayUtil;
+import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;

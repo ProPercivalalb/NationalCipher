@@ -33,6 +33,7 @@ import nationalcipher.cipher.RailFence;
 import nationalcipher.cipher.RunningKey;
 import nationalcipher.cipher.SeriatedPlayfair;
 import nationalcipher.cipher.Solitaire;
+import nationalcipher.cipher.Swagman;
 import nationalcipher.cipher.TriSquare;
 import nationalcipher.cipher.Trifid;
 import nationalcipher.cipher.TwoSquare;
@@ -91,6 +92,7 @@ public class RandomEncrypter {
 		ciphers.add(new RunningKey());
 		ciphers.add(new SeriatedPlayfair());
 		ciphers.add(new Solitaire());
+		ciphers.add(new Swagman());
 		ciphers.add(new Trifid());
 		ciphers.add(new TwoSquare());
 		ciphers.add(new TriSquare());

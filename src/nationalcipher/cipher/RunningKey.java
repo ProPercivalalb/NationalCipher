@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.ArrayUtil;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 
 public class RunningKey implements IRandEncrypter {

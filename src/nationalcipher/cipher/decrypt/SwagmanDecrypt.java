@@ -4,27 +4,34 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
 import javalibrary.math.MathHelper;
+import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Redefence;
+import nationalcipher.cipher.Swagman;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.RedefenceKey;
+import nationalcipher.cipher.tools.Creator.SwagmanKey;
 import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.SettingParse;
+import nationalcipher.cipher.tools.SubOptionPanel;
 
-public class ReddefenceDecrypt implements IDecrypt {
+public class SwagmanDecrypt implements IDecrypt {
 
 	@Override
 	public String getName() {
-		return "Redefence";
+		return "Swagman";
 	}
 
 	@Override
@@ -34,18 +41,13 @@ public class ReddefenceDecrypt implements IDecrypt {
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		RedefenceTask task = new RedefenceTask(text.toCharArray(), settings, keyPanel, output, progress);
+		SwagmanTask task = new SwagmanTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			
-			int minKeyLength = 2;
-			int maxKeyLength = 7;
-			
-			for(int keyLength = minKeyLength; keyLength <= maxKeyLength; ++keyLength)
-				progress.addMaxValue(MathHelper.factorialBig(keyLength));
-			
-			for(int keyLength = minKeyLength; keyLength <= maxKeyLength; ++keyLength)
-				Creator.iterateRedefence(task, keyLength);
+			progress.addMaxValue(10000);
+			for(int keyLength = 3; keyLength <= 3; ++keyLength)
+				Creator.iterateSwagman(task, keyLength);
 			
 			output.println(task.getBestSolution());
 		}
@@ -54,20 +56,30 @@ public class ReddefenceDecrypt implements IDecrypt {
 		}	
 	}
 	
+	private JTextField rangeBox = new JTextField("3");
+	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		
+
+		JLabel range = new JLabel("Key Dimensions:");
+		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
+			
+		panel.add(new SubOptionPanel(range, this.rangeBox));
+
 	}
 	
-	public class RedefenceTask extends InternalDecryption implements RedefenceKey {
+	public class SwagmanTask extends InternalDecryption implements SwagmanKey {
 		
-		public RedefenceTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public int keyDimensions;
+		
+		public SwagmanTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
+			this.keyDimensions = SettingParse.getInteger(rangeBox);
 		}
 
 		@Override
-		public void onIteration(int[] order) {
-			this.lastSolution = new Solution(Redefence.decode(this.text, order), this.settings.getLanguage()).setKeyString(Arrays.toString(order));
+		public void onIteration(int[][] key) {
+			this.lastSolution = new Solution(Swagman.decode(this.text, this.keyDimensions, key), this.settings.getLanguage());//.setKeyString(Arrays.toString(order));
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -82,7 +94,6 @@ public class ReddefenceDecrypt implements IDecrypt {
 
 	@Override
 	public void onTermination() {
-		// TODO Auto-generated method stub
 		
 	}
 }

@@ -45,6 +45,7 @@ import nationalcipher.cipher.decrypt.SeriatedPlayfairDecrypt;
 import nationalcipher.cipher.decrypt.SingleTranspostion;
 import nationalcipher.cipher.decrypt.SolitaireDecrypt;
 import nationalcipher.cipher.decrypt.SubstitutionDecrypt;
+import nationalcipher.cipher.decrypt.SwagmanDecrypt;
 import nationalcipher.cipher.decrypt.TriSquareDecrypt;
 import nationalcipher.cipher.decrypt.TrifidDecrypt;
 import nationalcipher.cipher.decrypt.TwoSquareDecrypt;
@@ -124,6 +125,7 @@ public class DecryptionManager {
 		registerCipher(new AMSCODecrypt(), settings);
 		registerCipher(new CadenusDecrypt(), settings);
 		registerCipher(new PhillipsDecrypt(), settings);
+		registerCipher(new SwagmanDecrypt(), settings);
 		
 		registerCipher(new BifidDecrypt(), settings);
 		registerCipher(new ConjugatedBifidDecrypt(), settings);
