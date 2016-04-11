@@ -78,7 +78,7 @@ public class SwagmanDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public void onIteration(int[][] key) {
+		public void onIteration(int[] key) {
 			this.lastSolution = new Solution(Swagman.decode(this.text, this.keyDimensions, key), this.settings.getLanguage());//.setKeyString(Arrays.toString(order));
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {

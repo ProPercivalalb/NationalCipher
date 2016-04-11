@@ -19,7 +19,7 @@ public class Main {
 		//RouteCipher.decode("EJXCTEDECDAEWRIORFEONALEVSE");
 		//RouteCipher.decode("EOEFROIRWEADCEDETCXJNALEVSE");
 		//RouteCipher.decode("WEADERISCEVOREDELFEATCNOEJX");
-		RouteTransposition.decode("XJCENTOAEELDFEERVCOSDIEAREW");
+		//RouteTransposition.decode("XJCENTOAEELDFEERVCOSDIEAREW");
 		
 		
 		instance = new NationalCipher();

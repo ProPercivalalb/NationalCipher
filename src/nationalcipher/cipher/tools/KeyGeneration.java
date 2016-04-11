@@ -87,7 +87,7 @@ public class KeyGeneration {
 	
 	public static int[] createSwagmanKey(int size) {
 		while(true) {
-			try {
+		
 				int[] key = new int[size * size];
 				Arrays.fill(key, -1);
 				
@@ -101,7 +101,8 @@ public class KeyGeneration {
 						
 						for(int nC = 0; nC < size; nC++)
 							validOptions.remove((Integer)key[r * size + nC]);
-						
+
+
 						key[r * size + c] = RandomUtil.pickRandomElement(validOptions);
 						
 						fillInKnowns(key, size);
@@ -109,30 +110,33 @@ public class KeyGeneration {
 				}
 				
 				return key;
-			}
-			catch(Exception e) {
-				
-			}
+	
 		}
 	}
 	
 	private static int[] fillInKnowns(int[] key, int size) {
-		for(int r = 0; r < size; r++) {
-			for(int c = 0; c < size; c++) {
-				if(key[r * size + c] != -1) continue;
-				
-				List<Integer> validOptions = ListUtil.range(0, size - 1);
-				
-				for(int nR = 0; nR < size; nR++)
-					validOptions.remove((Integer)key[nR * size + c]);
-				
-				for(int nC = 0; nC < size; nC++)
-					validOptions.remove((Integer)key[r * size + nC]);
-				
-				if(validOptions.size() == 1)
-					key[r * size + c] = validOptions.get(0);
-				
-				
+		boolean update = true;
+		while(update) {
+			update = false;
+			for(int r = 0; r < size; r++) {
+				for(int c = 0; c < size; c++) {
+					if(key[r * size + c] != -1) continue;
+					
+					List<Integer> validOptions = ListUtil.range(0, size - 1);
+					
+					for(int nR = 0; nR < size; nR++)
+						validOptions.remove((Integer)key[nR * size + c]);
+					
+					for(int nC = 0; nC < size; nC++)
+						validOptions.remove((Integer)key[r * size + nC]);
+					
+					if(validOptions.size() == 1) {
+						key[r * size + c] = validOptions.get(0);
+						update = true;
+					}
+					
+					
+				}
 			}
 		}
 		

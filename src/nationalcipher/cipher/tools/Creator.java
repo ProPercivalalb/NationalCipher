@@ -22,7 +22,7 @@ public class Creator {
 	}
 	
 	public static interface SwagmanKey {
-		public void onIteration(int[][] key);
+		public void onIteration(int[] key);
 	}
 	
 	public static interface SubstitutionKey {
@@ -343,8 +343,8 @@ public class Creator {
 	}
 
 	private static void iterateSwagman(SwagmanKey task, int[] arr, int length, int pos, int row, int[][] finalKey) {
-		if(row == length)
-			task.onIteration(finalKey);
+		if(row == length) {}
+			
 		else if(length - pos == 1) {
 			finalKey[row] = arr;
 			iterateSwagman(task, ArrayUtil.range(0, length), length, 0, row + 1, finalKey);

@@ -191,7 +191,8 @@ public class UINew extends JFrame {
 
     public void loadDataFiles() {
     	final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents((JComponent)getContentPane(), menuBar);
- 
+    	
+    	
     	this.progressBar.setMaximum(Languages.languages.size() + 3);
 		//Loading
 		Threads.runTask(new Runnable() {

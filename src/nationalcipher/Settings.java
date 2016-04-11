@@ -110,7 +110,8 @@ public class Settings {
 			String input = StringTransformer.joinWith(FileReader.compileTextFromFile(myFile), "");
 				
 			HashMap<String, Object> map = gson.fromJson(input, new TypeToken<HashMap<String, Object>>(){}.getType());
-
+			
+			if(map == null) return;
 			//READ
 			if(map.containsKey("language")) {
 				String langKey = (String)map.get("language");

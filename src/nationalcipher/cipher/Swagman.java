@@ -22,7 +22,7 @@ public class Swagman implements IRandEncrypter {
 			//System.out.println(decoded);
 			if(!decoded.equals(orignal))
 				System.out.println("FAILED");
-			Thread.sleep(200);
+			//Thread.sleep(200);
 		}
 	}
 	
