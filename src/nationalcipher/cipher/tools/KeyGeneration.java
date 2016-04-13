@@ -15,12 +15,25 @@ public class KeyGeneration {
 	private static char[] all26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	private static char[] all25Chars = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
 	
-	public static String createShortKey26(int length) {
+	public static String createNoRepeatingShortKey26(int length) {
 		char[] key = new char[length];
 		
 		for(int i = 0; i < length; i++)
 			key[i] = RandomUtil.pickRandomChar(all26Chars);
 		
+		return new String(key);
+	}
+	
+	public static String createShortKey26(int length) {
+		List<Character> characters = ListUtil.toList(all26Chars);
+		
+		char[] key = new char[length];
+		
+		for(int i = 0; i < length; i++) {
+			key[i] = RandomUtil.pickRandomElement(characters);
+			characters.remove((Character)key[i]);
+		}
+			
 		return new String(key);
 	}
 	

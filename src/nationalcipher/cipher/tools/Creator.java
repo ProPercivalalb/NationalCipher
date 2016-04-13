@@ -361,4 +361,25 @@ public class Creator {
 		    	arr[i] = j;
 		    }
 	}
+	
+	public static void iteratePerodicGromark(CadenusKey task, int length, int textLength) {
+		iteratePerodicGromark(task, new char[] {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V', 'W', 'X','Y','Z'}, length, 0, "", textLength);
+	}
+	
+	private static void iteratePerodicGromark(CadenusKey task, char[] characters, int no, int time, String key, int textLength) {
+		for(char character : characters) {
+			String backup = key;
+			if(key.contains("" + character))
+				continue;
+			
+			backup += character;
+			
+			if(time + 1 >= no) {
+				task.onIteration(backup, textLength);
+				continue;
+			}
+			
+			iterateCadenus(task, characters, no, time + 1, backup, textLength);
+		}
+	}
 }

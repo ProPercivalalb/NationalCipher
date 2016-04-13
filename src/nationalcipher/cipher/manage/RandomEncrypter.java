@@ -21,6 +21,7 @@ import nationalcipher.cipher.Keyword;
 import nationalcipher.cipher.Morbit;
 import nationalcipher.cipher.Myszkowski;
 import nationalcipher.cipher.NihilistSubstitution;
+import nationalcipher.cipher.PeriodicGromark;
 import nationalcipher.cipher.Phillips;
 import nationalcipher.cipher.Playfair;
 import nationalcipher.cipher.Pollux;
@@ -79,6 +80,7 @@ public class RandomEncrypter {
 		ciphers.add(new Morbit());
 		ciphers.add(new Myszkowski());
 		ciphers.add(new NihilistSubstitution());
+		ciphers.add(new PeriodicGromark());
 		ciphers.add(new Phillips());
 		ciphers.add(new Playfair());
 		ciphers.add(new Pollux());

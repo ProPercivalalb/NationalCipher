@@ -30,6 +30,7 @@ import nationalcipher.cipher.decrypt.MorbitDecrypt;
 import nationalcipher.cipher.decrypt.MyszkowskiDecrypt;
 import nationalcipher.cipher.decrypt.NihilistSubstitutionDecrypt;
 import nationalcipher.cipher.decrypt.NihilistTranspositionDecrypt;
+import nationalcipher.cipher.decrypt.PeriodicGromarkDecrypt;
 import nationalcipher.cipher.decrypt.PhillipsDecrypt;
 import nationalcipher.cipher.decrypt.PlayfairDecrypt;
 import nationalcipher.cipher.decrypt.PolluxDecrypt;
@@ -114,6 +115,7 @@ public class DecryptionManager {
 		registerCipher(new TriSquareDecrypt(), settings);
 		registerCipher(new FourSquareDecrypt(), settings);
 		registerCipher(new BazeriesDecrypt(), settings);
+		registerCipher(new PeriodicGromarkDecrypt(), settings);
 		
 		registerCipher(new GeneralTransposition(), settings);
 		registerCipher(new SingleTranspostion(), settings);

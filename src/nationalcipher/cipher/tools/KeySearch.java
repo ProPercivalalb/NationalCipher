@@ -50,6 +50,11 @@ public abstract class KeySearch extends InternalDecryption {
 		}
 	}
 
+	//TODO
+	public boolean duplicateLetters() {
+		return true;
+	}
+	
 	public int alphaIncrease() {
 		return 1;
 	}
