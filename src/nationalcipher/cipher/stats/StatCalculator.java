@@ -1,6 +1,5 @@
 package nationalcipher.cipher.stats;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +10,6 @@ import javalibrary.language.ILanguage;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.stats.types.StatisticType;
 
 /**
  * @author Alex Barter (10AS)

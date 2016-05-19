@@ -5,9 +5,7 @@ import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
-import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.Creator.MyszkowskiKey;
 
 public class Enigma implements IRandEncrypter {
 

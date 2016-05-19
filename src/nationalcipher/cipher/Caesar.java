@@ -1,6 +1,10 @@
 package nationalcipher.cipher;
 
+import java.util.stream.IntStream;
+
+import javalibrary.lib.Timer;
 import javalibrary.math.MathHelper;
+import javalibrary.math.Units.Time;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 
@@ -25,11 +29,58 @@ public class Caesar implements IRandEncrypter {
 		return cipherText;
 	}
 	
+	public static void main(String[] args) {
+		String s = "TESTINGTHEEFFECTIVENESSOFBYTEANDINTANDCHARARRAYS";
+		int len = s.length();
+		int no = 100000;
+	
+			char[] charArray = s.toCharArray();
+
+		double total = 0.0D;
+		Timer t = new Timer();
+		for(int j = 0; j < 100; j++) {
+			for(int i = 0; i < no; i++)
+			ConjugatedBifid.decode(charArray, "ABCDEFGHIKLMNOPQRSTUVWXYZ", "ABCDEFGHIKLMNOPQRSTUVWXYZ", 2);
+			total += t.getTimeRunning(Time.MILLISECOND);
+			//t.displayTime();
+			t.restart();
+		}
+		
+		System.out.println("Average: " + (total / 100.0D));
+		
+		
+
+		//for(int i = 0; i < no; i++)
+		//	decode(charArray, 6);
+		
+		
+		//t.displayTime();
+		//t.restart();
+	}
+	
 	public static char[] decode(char[] cipherText, int shift) {
 		char[] plainText = new char[cipherText.length];
 		
 		for(int i = 0; i < cipherText.length; i++)
 			plainText[i] = (char)((26 + cipherText[i] - shift - 'A') % 26 + 'A');
+		
+		return plainText;
+	}
+	
+	public static byte[] decode(byte[] cipherText, int len, int shift) {
+		//byte[] plainText = new byte[cipherText.length];
+		
+		for(int i = 0; i < len; i++)
+			cipherText[i] = (byte)((26 + cipherText[i] - shift - 65) % 26 + 65);
+		
+		return cipherText;
+	}
+	
+	public static int[] decode(int[] cipherText, int shift) {
+		int[] plainText = new int[cipherText.length];
+		
+		for(int i = 0; i < cipherText.length; i++)
+			plainText[i] = ((26 + cipherText[i] - shift - 'A') % 26 + 'A');
 		
 		return plainText;
 	}

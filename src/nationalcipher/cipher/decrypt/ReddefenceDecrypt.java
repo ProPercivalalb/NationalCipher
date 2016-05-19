@@ -18,7 +18,6 @@ import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.RedefenceKey;
 import nationalcipher.cipher.tools.InternalDecryption;
-import nationalcipher.cipher.tools.SettingParse;
 
 public class ReddefenceDecrypt implements IDecrypt {
 

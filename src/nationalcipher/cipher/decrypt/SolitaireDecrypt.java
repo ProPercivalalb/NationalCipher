@@ -202,7 +202,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 				index += 1;
 				
 				if(index > 3) {
-					score += TextFitness.scoreWord(new String(plainText, index - 4, 4), quadgramData);
+					score += TextFitness.scoreWord(plainText, index - 4, quadgramData);
 					if(score < bestScore)
 						break;
 				}

@@ -111,7 +111,7 @@ import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.ProgressiveKey;
 import nationalcipher.cipher.Solitaire;
-import nationalcipher.cipher.Solitaire.SoiltaireAttack;
+import nationalcipher.cipher.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
@@ -2780,7 +2780,7 @@ public class UINew extends JFrame {
 		}
     }
     
-    private class SoiltaireStartAttack implements SoiltaireAttack {
+    private class SoiltaireStartAttack implements SolitaireAttack {
 
     	public Solution bestSolution;
     	public int[] intText;
@@ -2809,6 +2809,11 @@ public class UINew extends JFrame {
 				output.println("%s", this.bestSolution);
 			}
 			
+		}
+
+		@Override
+		public int getSubBranches() {
+			return this.intText.length;
 		}
     }
     

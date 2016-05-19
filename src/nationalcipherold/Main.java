@@ -3,7 +3,6 @@ package nationalcipherold;
 import javax.swing.UIManager;
 
 import javalibrary.swing.FontUtil;
-import nationalcipher.cipher.transposition.RouteTransposition;
 
 /**
  * @author Alex Barter (10AS)

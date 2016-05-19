@@ -8,9 +8,6 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import javalibrary.lib.OSIdentifier;
 
 public class SaveHandler {

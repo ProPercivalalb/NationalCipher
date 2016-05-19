@@ -5,7 +5,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import nationalcipher.cipher.stats.types.*;
+import nationalcipher.cipher.stats.types.StatisticDiagrahpicIC;
+import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
+import nationalcipher.cipher.stats.types.StatisticEvenDiagrahpicIC;
+import nationalcipher.cipher.stats.types.StatisticIC;
+import nationalcipher.cipher.stats.types.StatisticKappaIC;
+import nationalcipher.cipher.stats.types.StatisticLongRepeat;
+import nationalcipher.cipher.stats.types.StatisticMaxBifid3to15;
+import nationalcipher.cipher.stats.types.StatisticMaxIC;
+import nationalcipher.cipher.stats.types.StatisticMaxNicodemus3to15;
+import nationalcipher.cipher.stats.types.StatisticMaxTrifid3to15;
+import nationalcipher.cipher.stats.types.StatisticNormalOrder;
+import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
+import nationalcipher.cipher.stats.types.StatisticTextLengthMultiple;
+import nationalcipher.cipher.stats.types.StatisticType;
 
 public class CipherStatistics {
 

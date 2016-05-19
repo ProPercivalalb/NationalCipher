@@ -10,18 +10,15 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Redefence;
 import nationalcipher.cipher.Swagman;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.Creator.RedefenceKey;
 import nationalcipher.cipher.tools.Creator.SwagmanKey;
 import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.SettingParse;

@@ -1,7 +1,5 @@
 package nationalcipher.cipher;
 
-import java.util.Arrays;
-
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;

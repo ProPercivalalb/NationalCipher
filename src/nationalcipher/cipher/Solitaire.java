@@ -156,11 +156,30 @@ public class Solitaire implements IRandEncrypter {
 	
 	
 	
-	public static interface SoiltaireAttack {
+	public static interface SolitaireAttack {
 		public void tryKeyStream(int[] keyStream, int[] lastOrder);
+		
+		public int getSubBranches();
 	}
 	
-	public static void options(SoiltaireAttack attack, int[] lastOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
+	/**
+	 * Timings for n lengths of text
+	 * 4 chars ~ 0.2s
+	 * 5 chars ~ 1s
+	 * 6 chars ~ 10s
+	 * 7 chars ~ 30s
+	 * 8 chars ~ 160s
+	 * 
+	 * @param attack
+	 * @param deck
+	 * @param unknowns
+	 * @throws Exception
+	 */
+	public static void specialAttack(SolitaireAttack attack, int[] deck, int[] unknowns) {
+		options(attack, deck, unknowns, attack.getSubBranches(), 0, new int[attack.getSubBranches()]);
+	}
+	
+	public static void options(SolitaireAttack attack, int[] lastOrder, int[] unknowns, int times, int count, int[] keyStream) {
 		if(times <= count) {
 			attack.tryKeyStream(keyStream, lastOrder);
 			return;
@@ -169,7 +188,7 @@ public class Solitaire implements IRandEncrypter {
 		
 		int jA, jB, jT;
 		
-		//TODO What happens when joker A wraps round
+		//Moves joker A (Black) 1 to right and handles wrap
 		jT = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
@@ -183,16 +202,16 @@ public class Solitaire implements IRandEncrypter {
 		cardOrder[jA] = Solitaire.JOKER_A;
 
 
-		//Move Joker B 2 to right
+		//Moves joker B (Red) 2 to right  and handles wrap
 		jB = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];
-			if (jA == jT)
+			if(jA == jT)
 				jA = jB;
 			jB = jT + 1;
 			cardOrder[jT] = cardOrder[jB];
-			if (jA == jB)
+			if(jA == jB)
 				jA = jT;
 		}
 		else {
@@ -205,9 +224,10 @@ public class Solitaire implements IRandEncrypter {
 			}
 		}
 		cardOrder[jB] = Solitaire.JOKER_B;
+		
+		//TODO Create branches if jokers are unknown
 		//Triple cut the pack at the 2 Jokers
 		int[] tmp = new int[54];
-				
 		if (jA > jB) {
 			jT = jA;
 			jA = jB;
@@ -217,43 +237,49 @@ public class Solitaire implements IRandEncrypter {
 		jT = 0;
 		while(jB < 54)
 			tmp[jT++] = cardOrder[jB++];
-			
 		jB = jA;
-		while (cardOrder[jB] != tmp[53])
+		while(cardOrder[jB] != tmp[53])
 			tmp[jT++] = cardOrder[jB++];
-
 		tmp[jT++] = tmp[53];
-		
 		jB = 0;
-		while (jB < jA)
+		while(jB < jA)
 			tmp[jT++] = cardOrder[jB++];
-	
-		jB = tmp[53];
-		if(jB < 0) {
-			for(int unknown : unknowns) {
+		
 
-				jA = 0;
-				for(jT = unknown + 1; jT < 53; jT++)
-					cardOrder[jA++] = tmp[jT];
-				for(jT = 0; jT < unknown + 2; jT++)
-					cardOrder[jA++] = tmp[jT];
+		jB = tmp[53];	//Examines last card for count-cut
+		if(jB < 0) {	//Card is an unknown so create branches
+			for(int uI1 = 0; uI1 < unknowns.length; uI1++) {
+				int unknown = unknowns[uI1];
+				if(unknown < 0) continue;
+
+				if(!Solitaire.isJoker(unknown)) {
 					
-				cardOrder[53] = unknown;
-	
-				insideOrder(attack, cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count, keyStream);
+					//Count-cut with branched unknown card
+					jA = 0;
+					for(jT = unknown + 1; jT < 53; jT++)
+						cardOrder[jA++] = tmp[jT];
+					for(jT = 0; jT < unknown + 2; jT++)
+						cardOrder[jA++] = tmp[jT];
+					cardOrder[53] = unknown;
+				}
+				else
+					cardOrder = tmp;
+				
+				unknowns[uI1] = -1;
+				insideOrder(attack, cardOrder, unknowns, times, count, keyStream);
+				unknowns[uI1] = unknown;
 			}
 		}
 		else {
 			if(!Solitaire.isJoker(jB)) {
-					
-				jB += 1;
+				
+				//Count-cut as normal
 				jA = 0;
-				for (jT = jB; jT < 53; jT++)
+				for (jT = jB + 1; jT < 53; jT++)
 					cardOrder[jA++] = tmp[jT];
-				for (jT = 0; jT < jB + 1; jT++)
+				for (jT = 0; jT < jB + 2; jT++)
 					cardOrder[jA++] = tmp[jT];
-						
-				cardOrder[53] = tmp[53];
+				cardOrder[53] = jB;
 			}
 			else
 				cardOrder = tmp;
@@ -262,14 +288,17 @@ public class Solitaire implements IRandEncrypter {
 		}
 	}
 		
-	public static void insideOrder(SoiltaireAttack attack, int[] cardOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
+	public static void insideOrder(SolitaireAttack attack, int[] cardOrder, int[] unknowns, int times, int count, int[] keyStream) {
 		int possible;
 		
+		//Examines first card to test
 		int firstCard = cardOrder[0];
 		
-		
 		if(firstCard < 0) {
-			for(int unknown : unknowns) {
+			for(int uI1 = 0; uI1 < unknowns.length; uI1++) {
+				int unknown = unknowns[uI1];
+				if(unknown < 0) continue;
+				
 				
 				if(unknown == Solitaire.JOKER_B)
 					unknown = Solitaire.JOKER_A;
@@ -277,29 +306,37 @@ public class Solitaire implements IRandEncrypter {
 				int possibleIndex = unknown + 1;
 				possible = cardOrder[possibleIndex];
 				
+				unknowns[uI1] = -1;
 				if(Solitaire.isJoker(possible)) {
 					cardOrder[0] = unknown;
-					options(attack, cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count, keyStream);
+
+					options(attack, cardOrder, unknowns, times, count, keyStream);
+
 				}
 				else if(possible < 0) {
-					for(int unknown2 : unknowns)  {
-						if(unknown2 != unknown) {
+					for(int uI2 = 0; uI2 < unknowns.length; uI2++) {
+						int streamUnknown = unknowns[uI2];
+						if(streamUnknown < 0) continue;
+						if(streamUnknown != unknown) {
 							cardOrder[0] = unknown;
 							int last = cardOrder[possibleIndex];
-							cardOrder[possibleIndex] = unknown2;
+							cardOrder[possibleIndex] = streamUnknown;
 
-							keyStream[count] = unknown2;
+							keyStream[count] = streamUnknown;
 							
-							options(attack, cardOrder, ListUtil.removeFromCopy(unknowns, unknown, unknown2), times, count + 1, keyStream);
+							unknowns[uI2] = -1;
+							options(attack, cardOrder, unknowns, times, count + 1, keyStream);
 							cardOrder[possibleIndex] = last;
+							unknowns[uI2] = streamUnknown;
 						}
 					}
 				}
 				else {
 					cardOrder[0] = unknown;
 					keyStream[count] = possible;
-					options(attack, cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count + 1, keyStream);
+					options(attack, cardOrder, unknowns, times, count + 1, keyStream);
 				}
+				unknowns[uI1] = unknown;
 			}
 		}
 		else {
@@ -312,15 +349,19 @@ public class Solitaire implements IRandEncrypter {
 			if(Solitaire.isJoker(possible))
 				options(attack, cardOrder, unknowns, times, count, keyStream);
 			else if(possible < 0) {
-				for(int unknown2 : unknowns) {
+				for(int uI2 = 0; uI2 < unknowns.length; uI2++) {
+					int streamUnknown = unknowns[uI2];
+					if(streamUnknown < 0) continue;
 	
 					int last = cardOrder[possibleIndex];
-					cardOrder[possibleIndex] = unknown2;
+					cardOrder[possibleIndex] = streamUnknown;
 				
-					keyStream[count] = unknown2;
+					keyStream[count] = streamUnknown;
 					
-					options(attack, cardOrder, ListUtil.removeFromCopy(unknowns, unknown2), times, count + 1, keyStream);
+					unknowns[uI2] = -1;
+					options(attack, cardOrder, unknowns, times, count + 1, keyStream);
 					cardOrder[possibleIndex] = last;
+					unknowns[uI2] = streamUnknown;
 				}
 			}
 			else {
@@ -379,8 +420,17 @@ public class Solitaire implements IRandEncrypter {
 	}
 	
 	public static char[] decodeWithKeyStream(int[] cipherText, int[] keyStream) {
-		char[] plainText = new char[keyStream.length];
-		int index = 0;
+		return decodeWithKeyStream(cipherText, 0, keyStream);
+	}
+	
+	public static char[] decodeWithKeyStream(int[] cipherText, int startingIndex, int[] keyStream) {
+		char[] plainText = new char[cipherText.length];
+		int index = startingIndex;
+		
+
+		
+		for(int i = 0; i < index; i++)
+			plainText[i] = (char)(cipherText[i] + 'A');
 		
 		for(int keyStreamNumber : keyStream) {
 
@@ -393,8 +443,15 @@ public class Solitaire implements IRandEncrypter {
 	}
 	
 	public static char[] decode(char[] cipherText, int[] cardOrder) {
+		return decode(cipherText, 0, cardOrder);
+	}
+	
+	public static char[] decode(char[] cipherText, int startingIndex, int[] cardOrder) {
 		char[] plainText = new char[cipherText.length];
-		int index = 0;
+		int index = startingIndex;
+		
+		for(int i = 0; i < index; i++)
+			plainText[i] = cipherText[i];
 		
 		while(index < cipherText.length) {
 

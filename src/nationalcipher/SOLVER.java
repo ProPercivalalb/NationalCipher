@@ -1,33 +1,32 @@
 package nationalcipher;
 
-import java.awt.Dimension;
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import javalibrary.cipher.permentate.PermentateArray;
-import javalibrary.cipher.stats.WordSplit;
+import javalibrary.fitness.NGramData;
+import javalibrary.fitness.TextFitness;
+import javalibrary.language.English;
+import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
+import javalibrary.lib.Timer;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
-import nationalcipher.cipher.Columnar;
+import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.Solitaire;
+import nationalcipher.cipher.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.tools.Creator;
+import nationalcipher.cipher.tools.Creator.AMSCOKey;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SOLVER {
@@ -38,10 +37,12 @@ public class SOLVER {
 	
 	public static Solution bestSolution = new Solution(new char[0], Double.NEGATIVE_INFINITY);
 	
+	public static int[] deck2016 = new int[] {38,34,46,3,4,41,16,51,19,12,52,15,29,39,37,33,42,13,40,6,26,43,0,5,32,14,53,35,17,23,2,8,50,36,22,-1,-1,-1,-1,-1,-1,-1,-1,24,-1,-1,-1,-1,-1,-1,31,-1,28,-1};
 	public static int[] unknowns = new int[] {1, 7, 9, 10, 11, 18, 20, 21, 25, 27, 30, 44, 45, 47, 48, 49};
 	
 	public static void main(String[] args) throws Exception {
 		Languages.english.loadNGramData();
+		/**
 		List<List<Object>> num_dev = CipherStatistics.getResultsFromStats("SENDCAOMRDIONBITNSCISAGTBWLTEAEAOREDIFASRMVYPEOIAALFUIRODLOCARTNJOUANECNIMTPSOAHIKSAT");
 		 
 	    
@@ -78,194 +79,183 @@ public class SOLVER {
 
 	    Statistics stats = new Statistics(values);
 		
-		System.out.println(" " + String.format("%.25f", stats.getMean()) + ", " + String.format("%.25f", stats.getStandardDeviation()));
+		System.out.println(" " + String.format("%.25f", stats.getMean()) + ", " + String.format("%.25f", stats.getStandardDeviation()));**/
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	//	System.out.println(new String(Solitaire.decode("IUTWMVVHVRORNXZZAGP".toCharArray(), new int[] {38,34,46,3,4,41,16,51,19,12,52,15,29,39,37,33,42,13,40,6,26,43,0,5,32,14,53,35,17,23,2,8,50,36,22,45,20,9,11,18,25,48,44,24,27,1,21,7,30,47,31,10,28,49})));
+		//public static int[] unknowns =                                                 new int[] {1, 7, 9, 10, 11, 18, 20, 21, 25, 27, 30, 44, 45, 47, 48, 49};
+		
+		int[] orderDeck = KeyGeneration.createOrder(54);
+		
+		String ci = Solitaire.encode("DEARMARKTHANKSFORTHELATESTREPORTFROMTHEONSITETEAMITSHOWSTHATTHESHIPBOARDGPSSYSTEMWASCOMPLETELYSCRAMBLEDSOWEARENOTGOINGTOBEABLETOTRACEHERMOVEMENTSFROMTHATDOWEHAVEANYODDTRACESFROMONSHORERADARTHATGIVEAHINTOFWHERESHEMIGHTHAVEBEENTHECOMMENTINTHELASTMESSAGETHATTHEPIRATESCOMPLETEDTHESURVEYEVENTHOUGHTHEYHADMOVEDSOUTHTOAVOIDDETECTIONSHOULDHAVETOLDMETHATTHESURVEYWASNOTGEOGRAPHICATFIRSTITHOUGHTITMIGHTHAVEBEENREFERRINGTOATELECOMSSURVEYSINCEYOUMENTIONEDTHELONGAERIALBUTACTUALLYTHEATTACHEDMESSAGEISVERYREVEALINGSTILLNOTSUREWHATTHESURVEYWASFORTHOUGHANDHOWTHATISCONNECTEDTOTHEMISSINGSUPERSTRUCTURECANYOUGETMEANYPICTURESHARRY", orderDeck);
+		for(int i = 0; i < 16; i++)
+			orderDeck[RandomUtil.pickRandomInt(54)] = -1;
+	
+		Timer timer = new Timer();
+		String cipherText = "IUTWMVVHVRORNXZZAGPPJSLVPFDLVZMEVGJIVYDZPNAPK";
+	
+		recursive(cipherText, new char[0], 7, 0, new DeckParse(deck2016));
+		
+			
+		timer.recordTime();
+
+		Statistics stats = timer.getRecordedTimesStats();
+		
+		System.out.println(stats);
 	}
-
-	public static void options(int[] lastOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
-		if(times <= count) {
-			//iteration++;
-			//System.out.println(keyStream + " " + new String(Solitaire.decode(FINAL_TEXT, keyStream)));
-			char[] chars = Solitaire.decodeWithKeyStream(FINAL_INT, keyStream);
-			Solution last = new Solution(chars, Languages.english);
-			if(bestSolution.score < last.score) {
-				bestSolution = last;
-			
-				int[] order = lastOrder;
-				//for(int i = 0; i < times; i++) {
-				//	order = Solitaire.previousCardOrder(order);
-				//}
-				
-				bestSolution.setKeyString(ListUtil.toCardString2(order, 0));
-				System.out.println(bestSolution.toString());
-			}
-			
-			return;
-		}
-		int[] cardOrder = Arrays.copyOf(lastOrder, Solitaire.TOTAL_CARDS);
-		
-		int jA, jB, jT;
-		
-		//TODO What happens when joker A wraps round
-		jT = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
-		if(jT < 53) {
-			jA = jT + 1;
-			cardOrder[jT] = cardOrder[jA];
-		}
-		else {
-			for(jA = 53; jA > 1; jA--)
-				cardOrder[jA] = cardOrder[jA - 1];
-			jA = 0;
-		}
-		cardOrder[jA] = Solitaire.JOKER_A;
-
-
-		//Move Joker B 2 to right
-		jB = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
-		if(jB < 52) {
-			jT = jB + 1;
-			cardOrder[jB] = cardOrder[jT];
-			if (jA == jT)
-				jA = jB;
-			jB = jT + 1;
-			cardOrder[jT] = cardOrder[jB];
-			if (jA == jB)
-				jA = jT;
-		}
-		else {
-			jT = jB;
-			jB = jB - 51;
-			for(; jT > jB; jT--) {
-				cardOrder[jT] = cardOrder[jT - 1];
-				if (jA == jT - 1)
-					jA = jT;
-			}
-		}
-		cardOrder[jB] = Solitaire.JOKER_B;
-		//Triple cut the pack at the 2 Jokers
-		int[] tmp = new int[54];
-				
-		if (jA > jB) {
-			jT = jA;
-			jA = jB;
-			jB = jT;
-		}
-		tmp[53] = cardOrder[jB++];
-		jT = 0;
-		while(jB < 54)
-			tmp[jT++] = cardOrder[jB++];
-			
-		jB = jA;
-		while (cardOrder[jB] != tmp[53])
-			tmp[jT++] = cardOrder[jB++];
-
-		tmp[jT++] = tmp[53];
-		
-		jB = 0;
-		while (jB < jA)
-			tmp[jT++] = cardOrder[jB++];
 	
-		jB = tmp[53];
-		if(jB < 0) {
-			for(int unknown : unknowns) {
-
-				jA = 0;
-				for(jT = unknown + 1; jT < 53; jT++)
-					cardOrder[jA++] = tmp[jT];
-				for(jT = 0; jT < unknown + 2; jT++)
-					cardOrder[jA++] = tmp[jT];
-					
-				cardOrder[53] = unknown;
-	
-				insideOrder(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count, keyStream);
-			}
-		}
-		else {
-			if(!Solitaire.isJoker(jB)) {
-					
-				jB += 1;
-				jA = 0;
-				for (jT = jB; jT < 53; jT++)
-					cardOrder[jA++] = tmp[jT];
-				for (jT = 0; jT < jB + 1; jT++)
-					cardOrder[jA++] = tmp[jT];
-						
-				cardOrder[53] = tmp[53];
-			}
-			else
-				cardOrder = tmp;
+	public static void recursive(String cipherText, char[] prefix, int n, int offset, DeckParse startingDeck) {
+		System.out.println("Starting unknowns: " + startingDeck.countUnknowns());
+		List<Solution> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, 5);
+		
+		
+		SolitaireSolution task = new SolitaireSolution(cipherText.substring(offset + n, cipherText.length()).toCharArray(), offset + n);
+		System.out.println("Solutions: " + solutions.size());
+		for(Solution solution : solutions) {
+			DeckParse deck = new DeckParse(solution.keyString);
+			task.incompleteOrder = deck.order;
+			task.emptyIndex = deck.emptyIndex;
+			System.out.println(deck);
 			
-			insideOrder(cardOrder, unknowns, times, count, keyStream);
-		}
-
-		//System.out.println(ListUtil.toString(cardOrder, 1));
-	}
-		
-	public static void insideOrder(int[] cardOrder, int[] unknowns, int times, int count, int[] keyStream) throws Exception {
-		int possible;
-		
-		int firstCard = cardOrder[0];
-		
-		
-		if(firstCard < 0) {
-			for(int unknown : unknowns) {
-				
-				if(unknown == Solitaire.JOKER_B)
-					unknown = Solitaire.JOKER_A;
-		
-				int possibleIndex = unknown + 1;
-				possible = cardOrder[possibleIndex];
-				
-				if(Solitaire.isJoker(possible)) {
-					cardOrder[0] = unknown;
-					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count, keyStream);
-				}
-				else if(possible < 0) {
-					for(int unknown2 : unknowns)  {
-						if(unknown2 != unknown) {
-							cardOrder[0] = unknown;
-							int last = cardOrder[possibleIndex];
-							cardOrder[possibleIndex] = unknown2;
-
-							keyStream[count] = unknown2;
-							
-							options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown, unknown2), times, count + 1, keyStream);
-							cardOrder[possibleIndex] = last;
-						}
-					}
-				}
-				else {
-					cardOrder[0] = unknown;
-					keyStream[count] = possible;
-					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown), times, count + 1, keyStream);
-				}
-			}
-		}
-		else {
-			if(firstCard == Solitaire.JOKER_B)
-				firstCard = Solitaire.JOKER_A;
-			
-			int possibleIndex = firstCard + 1;
-			possible = cardOrder[possibleIndex];
-	
-			if(Solitaire.isJoker(possible))
-				options(cardOrder, unknowns, times, count, keyStream);
-			else if(possible < 0) {
-				for(int unknown2 : unknowns) {
-	
-					int last = cardOrder[possibleIndex];
-					cardOrder[possibleIndex] = unknown2;
-				
-					keyStream[count] = unknown2;
-					
-					options(cardOrder, ListUtil.removeFromCopy(unknowns, unknown2), times, count + 1, keyStream);
-					cardOrder[possibleIndex] = last;
-				}
+			if(deck.countUnknowns() > 11) {
+				recursive(cipherText, solution.text, 7, offset + n, deck);
 			}
 			else {
-				keyStream[count] = possible;
-				options(cardOrder, unknowns, times, count + 1, keyStream);
+				for(int k = 0; k < n + offset; k++)
+					task.text[k] = solution.text[k];
+				Timer timer2 = new Timer();
+				Creator.iterateAMSCO(task, deck.unknownCards);
+				timer2.displayTime();
 			}
 		}
+	}
+	
+	private static class SoiltaireStartAttack implements SolitaireAttack {
+
+    	public Solution bestSolution;
+    	public List<Solution> solutions;
+    	public int[] intText;
+    	
+    	private SoiltaireStartAttack(String cipherText) {
+    		this.bestSolution = new Solution();
+    		this.solutions = new ArrayList<Solution>();
+    		this.intText = new int[cipherText.length()];
+    		for(int i = 0; i < cipherText.length(); i++)
+    			this.intText[i] = cipherText.charAt(i) - 'A';
+    	}
+   
+		@Override
+		public void tryKeyStream(int[] keyStream, int[] lastOrder) {
+			
+			char[] chars = Solitaire.decodeWithKeyStream(this.intText, keyStream);
+
+			Solution last = new Solution(chars, Languages.english);
+			
+			if(last.score > this.intText.length * -2) {
+				last.setKeyString(ListUtil.toCardString(lastOrder, 0));
+				this.solutions.add(last);
+			}
+			
+			if(this.bestSolution.score < last.score) {
+				this.bestSolution = last;
+
+				
+				
+				this.bestSolution.setKeyString(ListUtil.toCardString(lastOrder, 0));
+				
+				System.out.println(this.bestSolution);
+			}
+			
+		}
+
+		@Override
+		public int getSubBranches() {
+			return this.intText.length;
+		}
+    }
+
+	public static class SolitaireSolution implements AMSCOKey {
+		
+		public char[] text;
+		public int startingLength;
+		public int[] incompleteOrder;
+		public int[] emptyIndex;
+		public Solution lastSolution, bestSolution;
+		
+		public SolitaireSolution(char[] text, int startingLength) {
+			this.bestSolution = new Solution();
+			this.text = ArrayUtil.concat(new char[startingLength], text);
+			this.startingLength = startingLength;
+		}
+		
+		@Override
+		public void onIteration(int[] order) {
+			for(int i = 0; i < this.emptyIndex.length; i++)
+				this.incompleteOrder[this.emptyIndex[i]] = order[i];
+			
+			this.lastSolution = new Solution(Solitaire.decode(this.text, this.startingLength, this.incompleteOrder), Languages.english);
+			
+			if(this.lastSolution.score > this.bestSolution.score) {
+				this.bestSolution = this.lastSolution;
+				this.bestSolution.setKeyString(ListUtil.toString(this.incompleteOrder, 1));
+				System.out.println(this.bestSolution);
+			}
+		}
+/**
+		public double score = 0.0D;
+		
+		public char[] decode(char[] cipherText, int[] cardOrder, double bestScore, NGramData quadgramData) {
+			this.score = 0;
+			
+			int length = cipherText.length;
+			char[] plainText = new char[length];
+			
+			int index = 0;
+			
+			while(index < length) {
+
+				cardOrder = Solitaire.nextCardOrder(cardOrder);
+				
+				int topCard = cardOrder[0];
+				int keyStreamNumber;
+				
+				if(topCard == Solitaire.JOKER_B)
+					topCard = Solitaire.JOKER_A;
+				keyStreamNumber = cardOrder[topCard + 1];
+
+				
+				if(Solitaire.isJoker(keyStreamNumber))
+					continue;
+				
+				plainText[index] = (char)((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
+				index += 1;
+				
+				if(index > 3) {
+					score += TextFitness.scoreWord(plainText, index - 4, quadgramData);
+					if(score < bestScore)
+						break;
+				}
+			}
+		
+			return plainText;
+		}	**/
 	}
 	
 	
