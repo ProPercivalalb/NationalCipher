@@ -2,16 +2,12 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
+import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class AMSCO implements IRandEncrypter {
-
-	public static void main(String[] args) {
-		System.out.println(encode("MARKITOLDMYGRANDMAALLABOUTTHETEMPESTCONSPIRACYDIDYOUKNOWSHEUSEDTOWORKINTHESECURITYSERVICESSHESAIDSHEHADNEVERHEARDOFITBUTSHEHASAFRIENDSHECALLEDHARRYPROBABLYNOTHISREALNAMEWHOISSTILLONTHEEDGESOFTHATCOMMUNITYANDSHERECKONEDHEMIGHTBEABLETOHELPSHEALSOASKEDSOMEPEOPLEATHEROLDPLACETOKEEPANEYEOUTFORUSANDWATCHFORANYTHINGUNUSUALTHEYTOOKMYCOMPUTERINFORANALYSISTOSEEIFTHEYCOULDFINDANYMOREINFOABOUTTHEHACKERINTHEMEANTIMEIHAVEBEENWORKINGMOREONTHETURINGPAPERSANDREADINGSOMEOLDNEWSPAPERSTRYINGTOPICKUPANYTRAILLEFTBYTEMPESTIFIGUREDISHOULDLOOKFORBIGSHIFTSINSTOCKPRICESMOVEDBYHISTORICEVENTSBUTTHEREAREQUITEAFEWOFTHOSEASYOUMIGHTEXPECTBUTTHENITHOUGHTSOMEMOREABOUTTURINGSREMARKSCONCERNINGTHEIRUSEOFINTELLIGENCEANDBEGANTOWONDERWHATHEMEANTWHENHESAIDTHEYINVENTEDTHEIROWNDISTRIBUTIONNETWORKSMUGGLINGSECRETSACROSSTHEWORLDINMUSICMANUSCRIPTSUSINGSTEGANOGRAPHYSTEGANOGRAPHYISTHEARTOFHIDINGAMESSAGESOIFIGURETHEENCRYPTIONWASDISGUISEDBUTITWASTHEWORDSMUGGLEDTHATGOTMEWHATWOULDBETHEBESTWAYTOHIDETHEMUSICMANUSCRIPTSEEMSRISKYTOMEGRANDMACHARLIEREMEMBEREDACASEINNEWYORKINTHEFIFTIESWHENAGAMBLINGSYNDICATETRIEDTODISGUISEAPORTACIPHERINMUSICALNOTATIONBUTGOTCAUGHTWHENACOPWHOPLAYEDPIANONOTICEDHOWODDTHEMUSICLOOKEDIFIGUREDTHATTEMPESTARETOOCLEVERTORISKTHATBUTGRANDMAREMINDEDMEABOUTTHESTORYTHEPURLOINEDLETTERREMEMBERWHATDUPINSAIDPERHAPSTHEMYSTERYISALITTLETOOPLAINITHINKIMAYKNOWHOWTHEYDIDITMORELATERCHARLIE", true, new int[] {3, 1, 0, 4, 2}));
-		System.out.println(new String(decode("HETEAMTTOWIMONNSEJNDTOSEBRERRHOOISSMIURNORISHIROR".toCharArray(), true, new int[] {6,3,4,5,2,1,0})));
-	}
 	
 	public static String encode(String plainText, boolean first, String key) {
 		int[] order = new int[key.length()];
@@ -50,7 +46,7 @@ public class AMSCO implements IRandEncrypter {
 		return read;
 	}
 	
-	public static String decode(String cipherText, boolean reversed, String keyword) {
+	public static String decode(String cipherText, char[] plainText, boolean reversed, String keyword) {
 		keyword = keyword.toUpperCase();
 		int[] order = new int[keyword.length()];
 		
@@ -63,11 +59,10 @@ public class AMSCO implements IRandEncrypter {
 			}
 		}
 		
-		return new String(decode(cipherText.toCharArray(), reversed, order));
+		return new String(decode(cipherText.toCharArray(), plainText, reversed, order));
 	}
 	
-	public static char[] decode(char[] cipherText, boolean first, int[] order) {
-		char[] plainText = new char[cipherText.length];
+	public static char[] decode(char[] cipherText, char[] plainText, boolean first, int[] order) {
 		int period = order.length;
 		
 		
@@ -99,7 +94,7 @@ public class AMSCO implements IRandEncrypter {
 
 		int index = 0;
 		
-		String[] grid = new String[period];
+		char[][] grid = new char[period][];
 		
 		for(int column = 0; column < period; column++) {
 			int realColumn = reversedOrder[column];
@@ -113,7 +108,7 @@ public class AMSCO implements IRandEncrypter {
 			if(left > 0)
 				length += isDoubleLetter ? 1 : Math.min(2, left);
 
-			grid[realColumn] = new String(cipherText, index, length);
+			grid[realColumn] = ArrayUtil.copyOfRange(cipherText, index, length);
 			index += length;
 		}
 		
@@ -126,8 +121,8 @@ public class AMSCO implements IRandEncrypter {
 				int number = (column + row) % 2 == (first ? 0 : 1) ? 2 : 1;
 				
 				for(int i = 0; i < number; i++) {
-					if(indexTracker[column] + i >= grid[column].length()) break;
-					plainText[textIndex] = grid[column].charAt(indexTracker[column] + i);
+					if(indexTracker[column] + i >= grid[column].length) break;
+					plainText[textIndex] = grid[column][indexTracker[column] + i];
 					textIndex++;
 				}
 				

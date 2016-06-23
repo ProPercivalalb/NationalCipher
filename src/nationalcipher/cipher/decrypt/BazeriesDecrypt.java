@@ -70,11 +70,11 @@ public class BazeriesDecrypt implements IDecrypt {
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.output.println("Fitness: %f, No: %d, Plaintext: %s", this.bestSolution.score, no, new String(this.bestSolution.text));	
+				this.output.println("Fitness: %f, No: %d, Plaintext: %s", this.bestSolution.score, no, new String(this.bestSolution.getText()));	
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 	}

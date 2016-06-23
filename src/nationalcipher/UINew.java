@@ -98,7 +98,6 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
 import javalibrary.swing.MenuScroller;
-import javalibrary.swing.ProgressValue;
 import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
@@ -231,6 +230,7 @@ public class UINew extends JFrame {
 				}
 				
 				SwingHelper.rewindAllChildComponents(stateMap);
+		
 				progressBar.setValue(0);
 				output.clear();
 			}
@@ -330,6 +330,7 @@ public class UINew extends JFrame {
 		this.menuItemKeywordReverse = new JCheckBoxMenuItem();
 		this.menuItemSimulatedAnnealing = new JMenu();
         this.menuItemSAPreset = new JMenu();
+        this.menuItemUpdateProgress = new JCheckBoxMenuItem();
         
 		this.setLayout(new GridBagLayout());
 
@@ -434,7 +435,7 @@ public class UINew extends JFrame {
 	    this.add(this.inputPanel, LayoutUtil.createConstraints(0, 1, 1, 0.2));
 	    
 	    
-	    this.keyPanel = new KeyPanel();
+	    this.keyPanel = new KeyPanel(this.settings);
 
 	    this.add(this.keyPanel, LayoutUtil.createConstraints(0, 2, 0, 0));
 	    
@@ -456,7 +457,8 @@ public class UINew extends JFrame {
 		this.progressBar.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent event) {
-				progressBar.setString(Rounder.round(progressBar.getPercentComplete() * 100, 1) + "%");
+				if(settings.updateProgress())
+					progressBar.setString(Rounder.round(progressBar.getPercentComplete() * 100, 1) + "%");
 			}
 	    });
 		this.add(this.progressBar, LayoutUtil.createConstraints(0, 4, 1, 0.01));
@@ -746,6 +748,13 @@ public class UINew extends JFrame {
 		this.menuItemSimulatedAnnealing.add(this.menuItemSAPreset);
 		
 		this.menuItemSettings.add(this.menuItemSimulatedAnnealing);
+		this.menuItemSettings.addSeparator();
+		
+		this.menuItemUpdateProgress.setText("Update Progress");
+		this.menuItemUpdateProgress.setSelected(this.settings.updateProgress());
+		this.keyPanel.setIterationUnsed();
+		this.menuItemUpdateProgress.addActionListener(new UpdateProgressAction(this.menuItemUpdateProgress));
+		this.menuItemSettings.add(this.menuItemUpdateProgress);
 		
 		
         this.menuBar.add(this.menuItemSettings);
@@ -867,7 +876,7 @@ public class UINew extends JFrame {
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
 					
 					try {
-						force.attemptDecrypt(text, settings, method, output, keyPanel, new ProgressValue(1000, progressBar));
+						force.attemptDecrypt(text, settings, method, output, keyPanel, new ProgressValueNC(1000, progressBar, settings));
 					}
 					catch(Exception e) {
 						output.println(e.toString());
@@ -3275,6 +3284,31 @@ public class UINew extends JFrame {
 		}
     }
     
+    public class UpdateProgressAction implements ActionListener {
+
+    	public JCheckBoxMenuItem checkBox;
+    	
+    	public UpdateProgressAction(JCheckBoxMenuItem checkBox) {
+    		this.checkBox = checkBox;
+    	}
+    	
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			if(checkBox.isSelected()) {
+				settings.updateProgressBars = true;
+				progressBar.setString("0.0%");
+			}
+			else {
+				progressBar.setValue(0);
+				progressBar.setString("Inactive");
+				settings.updateProgressBars = false;
+			}
+
+			keyPanel.setIterationUnsed();
+		}
+    	
+    }
+    
     public String getInputText() {
     	return this.inputTextArea.getText();
     }
@@ -3345,6 +3379,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemKeywordNormal;
     private JMenuItem menuItemKeywordHalf;
     private JMenuItem menuItemKeywordReverse;
-    public JMenu menuItemSimulatedAnnealing;
-    public JMenu menuItemSAPreset;
+    private JMenu menuItemSimulatedAnnealing;
+    private JMenu menuItemSAPreset;
+    private JCheckBoxMenuItem menuItemUpdateProgress;
 }

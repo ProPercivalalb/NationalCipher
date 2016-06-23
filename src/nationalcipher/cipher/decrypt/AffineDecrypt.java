@@ -46,7 +46,7 @@ public class AffineDecrypt implements IDecrypt {
 			
 			Creator.iterateAffine(task);
 			
-			output.println(new String(task.bestSolution.text));
+			output.println(new String(task.bestSolution.getText()));
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			Map<String, Integer> chars = StringAnalyzer.getEmbeddedStrings(text, 1, 1);
@@ -107,7 +107,7 @@ public class AffineDecrypt implements IDecrypt {
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 	}

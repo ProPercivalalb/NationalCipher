@@ -26,6 +26,7 @@ public class Settings {
 	public int keywordCreation;
 	public ButtonGroup keywordCreationGroup;
 	public List<Double> simulatedAnnealing;
+	public boolean updateProgressBars;
 	
 	private List<LoadElement> loadElements;
 	private Gson gson;
@@ -34,6 +35,7 @@ public class Settings {
 		this.language = Languages.english;
 		this.keywordCreation = 0;
 		this.simulatedAnnealing = Arrays.asList(20.0D, 0.1D, 500.0D);
+		this.updateProgressBars = true;
 		
 		this.loadElements = new ArrayList<LoadElement>();
 		this.gson = new Gson();
@@ -78,6 +80,10 @@ public class Settings {
 	public int getSACount() {
 		return this.simulatedAnnealing.get(2).intValue();
 	}
+	
+	public boolean updateProgress() {
+		return this.updateProgressBars;
+	}
 		
 		
 	private void writeToFile() {
@@ -92,6 +98,7 @@ public class Settings {
 			map.put("language", this.language.getName());
 			map.put("keyword_creation", this.keywordCreation);
 			map.put("simulated_annealing", this.simulatedAnnealing);
+			map.put("update_progress_bars", this.updateProgressBars);
 			
 			for(LoadElement loadElement : this.loadElements)
 				loadElement.write(map);
@@ -131,6 +138,10 @@ public class Settings {
 			if(map.containsKey("simulated_annealing")) {
 				List<Double> simulatedAnnealing = ((List<Double>)map.get("simulated_annealing"));
 				this.simulatedAnnealing = simulatedAnnealing;
+			}
+			
+			if(map.containsKey("update_progress_bars")) {
+				this.updateProgressBars = (boolean)map.get("update_progress_bars");
 			}
 			
 			for(LoadElement loadElement : this.loadElements)

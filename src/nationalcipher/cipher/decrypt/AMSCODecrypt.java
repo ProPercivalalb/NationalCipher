@@ -103,29 +103,32 @@ public class AMSCODecrypt implements IDecrypt {
 			
 		@Override
 		public void onIteration(int[] order) {
-			this.lastSolution = new Solution(AMSCO.decode(this.text, this.first, order), this.settings.getLanguage()).setKeyString(Arrays.toString(order));
+			this.lastSolution = new Solution(AMSCO.decode(this.text, this.outputText, this.first, order), this.settings.getLanguage(), this.bestSolution.score);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.lastSolution.setKeyString(Arrays.toString(order));
+				this.lastSolution.copyTextInstance();
+				
 				this.bestSolution = this.lastSolution;
 				this.output.println("%s", this.bestSolution);
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
-			progress.increase();
+			this.keyPanel.updateIteration(this.iteration++);
+			this.progress.increase();
 		}
 		
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey1 = KeyGeneration.createOrder(this.length);
-			return new Solution(AMSCO.decode(this.text, this.first, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.bestMaximaKey1));
+			return new Solution(AMSCO.decode(this.text, this.outputText, this.first, this.bestMaximaKey1), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
 
-			return new Solution(AMSCO.decode(this.text, this.first, this.lastKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.lastKey1));
+			return new Solution(AMSCO.decode(this.text, this.outputText, this.first, this.lastKey1), this.settings.getLanguage(), this.bestSolution.score);
 		}
 
 		@Override
@@ -135,6 +138,8 @@ public class AMSCODecrypt implements IDecrypt {
 
 		@Override
 		public void solutionFound() {
+			this.bestSolution.setKeyString(Arrays.toString(this.bestMaximaKey1));
+			this.bestSolution.copyTextInstance();
 			this.bestKey1 = this.bestMaximaKey1;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
 			this.keyPanel.key.setText(this.bestSolution.keyString);
@@ -143,13 +148,13 @@ public class AMSCODecrypt implements IDecrypt {
 		@Override
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
 		public boolean endIteration() {
 			this.output.println("%s", this.bestSolution);
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return false;
 		}
@@ -157,7 +162,6 @@ public class AMSCODecrypt implements IDecrypt {
 
 	@Override
 	public void onTermination() {
-		// TODO Auto-generated method stub
 		
 	}
 

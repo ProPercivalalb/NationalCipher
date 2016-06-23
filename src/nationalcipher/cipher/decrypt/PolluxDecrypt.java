@@ -92,7 +92,7 @@ public class PolluxDecrypt implements IDecrypt {
 			}
 			
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
@@ -122,13 +122,13 @@ public class PolluxDecrypt implements IDecrypt {
 		@Override
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
 		public boolean endIteration() {
 			this.output.println("%s", this.bestSolution);
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return false;
 		}

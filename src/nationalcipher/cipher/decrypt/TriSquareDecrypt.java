@@ -104,13 +104,13 @@ public class TriSquareDecrypt implements IDecrypt {
 		@Override
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey1 + " " + this.bestKey2 + " " + this.bestKey3, new String(this.bestSolution.text));
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey1 + " " + this.bestKey2 + " " + this.bestKey3, new String(this.bestSolution.getText()));
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return false;
 		}

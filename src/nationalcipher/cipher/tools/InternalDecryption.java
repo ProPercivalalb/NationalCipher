@@ -13,6 +13,7 @@ public class InternalDecryption {
 	public int iteration;
 	
 	public char[] text;
+	public char[] outputText;
 	public Settings settings;
 	public KeyPanel keyPanel;	
 	public Output output;
@@ -20,6 +21,7 @@ public class InternalDecryption {
 	
 	public InternalDecryption(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 		this.text = text;
+		this.outputText = new char[this.getOutputTextLength(text.length)];
 		this.settings = settings;
 		this.keyPanel = keyPanel;
 		this.output = output;
@@ -27,6 +29,10 @@ public class InternalDecryption {
 		
 		this.iteration = 1;
 		this.bestSolution = new Solution(null, Double.NEGATIVE_INFINITY);
+	}
+	
+	public int getOutputTextLength(int inputLength) {
+		return inputLength;
 	}
 	
 	public void addSolution(Solution solution) {
@@ -43,6 +49,6 @@ public class InternalDecryption {
 	}
 	
 	public String getBestSolution() {
-		return new String(this.bestSolution.text);
+		return new String(this.bestSolution.getText());
 	}
 }

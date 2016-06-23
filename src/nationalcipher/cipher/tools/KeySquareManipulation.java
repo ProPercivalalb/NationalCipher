@@ -67,8 +67,8 @@ public class KeySquareManipulation {
 	}
 	
 	public static int[] exchangeOrder(int[] order){
-	    int i = rand.nextInt(order.length);
-	    int j = rand.nextInt(order.length);
+	    int i = RandomUtil.pickRandomInt(order.length);
+	    int j = RandomUtil.pickRandomInt(order.length);
 	    int temp = order[i];
 	    order[i] = order[j];
 	    order[j] = temp;
@@ -136,6 +136,25 @@ public class KeySquareManipulation {
 	        chars[k * 5 + j] = temp;
 	    }
 	    return new String(chars);
+	}
+	
+	public static String modifyKey(String keySquare){
+		char[] chars = keySquare.toCharArray();
+		int k, j;
+	    int i = rand.nextInt(100) % 50;
+	    switch(i){
+	        case 0: return swap2rows(keySquare);
+	        case 1: return swap2cols(keySquare);      
+	        //Reverse the keySquare
+	        case 2: for(k = 0; k < 25; k++) 
+	        			chars[k] = keySquare.charAt(24-k);
+	        		return new String(chars);
+	        case 3: for(k = 0; k < 5; k++) for(j = 0; j < 5; j++) chars[k*5 + j] = keySquare.charAt((4-k)*5+j); // swap rows up-down
+	        		return new String(chars);
+	        case 4: for(k = 0; k < 5; k++) for(j = 0; j < 5; j++) chars[j*5 + k] = keySquare.charAt((4-j)*5+k); // swap cols left-right
+	        		return new String(chars);
+	        default: return exchange2letters(keySquare);
+	    }
 	}
 	
 	public static String modifyKey(String keySquare){

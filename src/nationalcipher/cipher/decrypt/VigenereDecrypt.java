@@ -123,7 +123,7 @@ public class VigenereDecrypt implements IDecrypt {
 				this.bestSolution = this.lastSolution;
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 			
 		}
@@ -141,7 +141,7 @@ public class VigenereDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration() {
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 	}
 

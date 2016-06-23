@@ -94,7 +94,7 @@ public class HillDecrypt implements IDecrypt {
 				return;
 			}
 			finally {
-				this.keyPanel.iterations.setText("" + this.iteration++);
+				this.keyPanel.updateIteration(this.iteration++);
 				this.progress.increase();
 			}
 		}

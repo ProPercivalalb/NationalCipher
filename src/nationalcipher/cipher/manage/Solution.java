@@ -5,17 +5,19 @@ import java.util.Arrays;
 import javalibrary.cipher.stats.WordSplit;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
+import javalibrary.util.ArrayUtil;
 
 public class Solution implements Comparable<Solution> {
 	
-	public final char[] text;
+	private char[] text;
 	public final double score;
 	public String keyString;
+	public static final String UNKNOWN_KEY = "UNKNOWN";
 	
 	public Solution(char[] text, double score) {
 		this.text = text;
 		this.score = score;
-		this.keyString = "UNKNOWN";
+		this.keyString = UNKNOWN_KEY;
 	}
 	
 	public Solution() {
@@ -30,20 +32,17 @@ public class Solution implements Comparable<Solution> {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language, currentLowest));
 	}
 	
-	public Solution(char[] text) {
-		WordSplit.splitText(text);
-		this.text = text;
-		this.score = WordSplit.lastScore;
-		this.keyString = "UNKNOWN";
-	}
-	
 	public Solution setKeyString(String keyString) {
 		this.keyString = keyString;
 		return this;
 	}
 	
 	public Solution setKeyString(String keyString, Object... args) {
-		this.keyString = String.format(keyString, args);
+		return this.setKeyString(String.format(keyString, args));
+	}
+	
+	public Solution copyTextInstance() {
+		this.text = ArrayUtil.copyOfRange(this.text, 0, this.text.length);
 		return this;
 	}
 
@@ -67,7 +66,7 @@ public class Solution implements Comparable<Solution> {
 	    if(this.getClass() != obj.getClass())
 	    	return false;
 	    Solution other = (Solution)obj;
-	    if(!Arrays.equals(this.text, other.text))
+	    if(!Arrays.equals(this.getText(), other.getText()))
 	    	return false;
 	    return true;
 		
@@ -76,5 +75,9 @@ public class Solution implements Comparable<Solution> {
 	@Override
 	public String toString() {
 		return String.format("Fitness: %f, Key: %s, Plaintext: %s", this.score, this.keyString, new String(this.text));
+	}
+
+	public char[] getText() {
+		return this.text;
 	}
 }

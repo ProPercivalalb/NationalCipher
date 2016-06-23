@@ -46,12 +46,11 @@ public class Playfair implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static String decode(String cipherText, String keysquare) {
-		return new String(decode(cipherText.toCharArray(), keysquare));
+	public static String decode(String cipherText, char[] plainText, String keysquare) {
+		return new String(decode(cipherText.toCharArray(), plainText, keysquare));
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare) {
-	    char[] plainText = new char[cipherText.length];
+	public static char[] decode(char[] cipherText, char[] plainText, String keysquare) {
 	    
 	    for(int i = 0; i < cipherText.length; i += 2){
 	        char a = cipherText[i];

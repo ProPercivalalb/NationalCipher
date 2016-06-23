@@ -118,12 +118,12 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 		
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.text));
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.getText()));
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return true;
 		}
@@ -202,12 +202,12 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 		
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.text));
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.getText()));
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return true;
 		}

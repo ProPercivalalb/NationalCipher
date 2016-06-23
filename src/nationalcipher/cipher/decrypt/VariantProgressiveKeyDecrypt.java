@@ -119,7 +119,7 @@ public class VariantProgressiveKeyDecrypt implements IDecrypt {
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 
@@ -136,7 +136,7 @@ public class VariantProgressiveKeyDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration() {
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 	}
 

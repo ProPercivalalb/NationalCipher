@@ -10,12 +10,14 @@ import javax.swing.JTextField;
 import nationalcipher.cipher.manage.Solution;
 
 public class KeyPanel extends JPanel {
-
+	
+	public Settings settings;
 	public JTextField fitness;
 	public JTextField key;
-	public JTextField iterations;
+	private JTextField iterations;
 	
-	public KeyPanel() {
+	public KeyPanel(Settings settings) {
+		this.settings = settings;
 		this.fitness = new JTextField();
 		this.key = new JTextField();
 		this.iterations = new JTextField();
@@ -35,10 +37,22 @@ public class KeyPanel extends JPanel {
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 	}
+	
+	public void updateIteration(int n) {
+		if(settings.updateProgress())
+			this.iterations.setText(String.valueOf(n));
+	}
+	
+	public void setIterationUnsed() {
+		if(!settings.updateProgress())
+			this.iterations.setText("-------------");
+		else
+			this.iterations.setText("");
+	}
 
 	public void updateSolution(Solution solution) {
 		this.fitness.setText("" + solution.score);
 		this.key.setText(solution.keyString);
-		UINew.BEST_SOULTION = solution.text;
+		UINew.BEST_SOULTION = solution.getText();
 	}
 }

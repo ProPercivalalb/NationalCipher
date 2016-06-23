@@ -154,7 +154,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 				this.keyPanel.updateSolution(this.bestSolution);
 				this.output.println("%s", this.bestSolution);
 			}
-			//this.keyPanel.iterations.setText("" + this.iteration++);
+			//this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 

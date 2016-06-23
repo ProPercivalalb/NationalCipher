@@ -98,7 +98,7 @@ public class SubstitutionDecrypt implements IDecrypt {
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 
@@ -129,13 +129,13 @@ public class SubstitutionDecrypt implements IDecrypt {
 		@Override
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.text));
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.getText()));
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return false;
 		}

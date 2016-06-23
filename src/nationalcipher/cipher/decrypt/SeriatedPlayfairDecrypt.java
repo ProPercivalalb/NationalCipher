@@ -20,7 +20,6 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.Creator.PlayfairKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
@@ -42,12 +41,7 @@ public class SeriatedPlayfairDecrypt implements IDecrypt {
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		PlayfairTask task = new PlayfairTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
-		if(method == DecryptionMethod.BRUTE_FORCE) {
-			Creator.iteratePlayfair(task);
-			
-			output.println(task.getBestSolution());
-		}
-		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
+		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
 			task.run();
@@ -92,7 +86,7 @@ public class SeriatedPlayfairDecrypt implements IDecrypt {
 		dialog.add(panel);
 	}
 	
-	public class PlayfairTask extends SimulatedAnnealing implements PlayfairKey {
+	public class PlayfairTask extends SimulatedAnnealing {
 
 		public int period;
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
@@ -102,7 +96,6 @@ public class SeriatedPlayfairDecrypt implements IDecrypt {
 			this.period = SettingParse.getInteger(rangeBox);
 		}
 
-		@Override
 		public void onIteration(String keysquare) {
 			this.lastSolution = new Solution(SeriatedPlayfair.decode(this.text, keysquare, this.period), this.settings.getLanguage()).setKeyString(keysquare);
 			
@@ -112,7 +105,7 @@ public class SeriatedPlayfairDecrypt implements IDecrypt {
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 
@@ -143,13 +136,13 @@ public class SeriatedPlayfairDecrypt implements IDecrypt {
 		@Override
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
 		public boolean endIteration() {
 			this.output.println("%s", this.bestSolution);	
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return false;
 		}

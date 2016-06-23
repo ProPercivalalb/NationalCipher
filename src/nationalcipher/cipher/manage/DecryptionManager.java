@@ -8,7 +8,6 @@ import nationalcipher.Settings;
 import nationalcipher.cipher.decrypt.ADFGXDecrypt;
 import nationalcipher.cipher.decrypt.AMSCODecrypt;
 import nationalcipher.cipher.decrypt.AffineDecrypt;
-import nationalcipher.cipher.decrypt.AnagrammerDecrypt;
 import nationalcipher.cipher.decrypt.BazeriesDecrypt;
 import nationalcipher.cipher.decrypt.BeaufortAutokeyDecrypt;
 import nationalcipher.cipher.decrypt.BeaufortDecrypt;
@@ -23,7 +22,6 @@ import nationalcipher.cipher.decrypt.DoubleTranspostionDecrypt;
 import nationalcipher.cipher.decrypt.FourSquareDecrypt;
 import nationalcipher.cipher.decrypt.FractionatedMorseDecrypt;
 import nationalcipher.cipher.decrypt.GeneralPeriodDecrypt;
-import nationalcipher.cipher.decrypt.GeneralTransposition;
 import nationalcipher.cipher.decrypt.HillDecrypt;
 import nationalcipher.cipher.decrypt.HomophonicDecrypt;
 import nationalcipher.cipher.decrypt.MorbitDecrypt;
@@ -89,7 +87,6 @@ public class DecryptionManager {
 	}
 	
 	public static void loadCiphers(Settings settings) {
-		registerCipher(new AnagrammerDecrypt(), settings);
 		registerCipher(new AffineDecrypt(), settings);
 		registerCipher(new CaesarDecrypt(), settings);
 		registerCipher(new SubstitutionDecrypt(), settings);
@@ -116,8 +113,7 @@ public class DecryptionManager {
 		registerCipher(new FourSquareDecrypt(), settings);
 		registerCipher(new BazeriesDecrypt(), settings);
 		registerCipher(new PeriodicGromarkDecrypt(), settings);
-		
-		registerCipher(new GeneralTransposition(), settings);
+
 		registerCipher(new SingleTranspostion(), settings);
 		registerCipher(new DoubleTranspostionDecrypt(), settings);
 		registerCipher(new MyszkowskiDecrypt(), settings);

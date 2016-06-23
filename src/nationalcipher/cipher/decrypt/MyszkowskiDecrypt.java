@@ -73,13 +73,13 @@ public class MyszkowskiDecrypt implements IDecrypt {
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.output.println("Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, key, new String(this.bestSolution.text));	
+				this.output.println("Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, key, new String(this.bestSolution.getText()));	
 				this.keyPanel.fitness.setText("" + this.bestSolution.score);
 				this.keyPanel.key.setText(key);
-				UINew.BEST_SOULTION = this.bestSolution.text;
+				UINew.BEST_SOULTION = this.bestSolution.getText();
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 	}

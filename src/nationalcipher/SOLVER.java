@@ -135,11 +135,11 @@ public class SOLVER {
 			System.out.println(deck);
 			
 			if(deck.countUnknowns() > 11) {
-				recursive(cipherText, solution.text, 7, offset + n, deck);
+				recursive(cipherText, solution.getText(), 7, offset + n, deck);
 			}
 			else {
 				for(int k = 0; k < n + offset; k++)
-					task.text[k] = solution.text[k];
+					task.text[k] = solution.getText()[k];
 				Timer timer2 = new Timer();
 				Creator.iterateAMSCO(task, deck.unknownCards);
 				timer2.displayTime();

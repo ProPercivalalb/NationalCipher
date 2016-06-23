@@ -133,7 +133,7 @@ public class BeaufortDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration() {
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 	}
 

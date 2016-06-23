@@ -17,7 +17,6 @@ import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.Creator.PlayfairKey;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 
@@ -37,12 +36,7 @@ public class PlayfairDecrypt implements IDecrypt {
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		PlayfairTask task = new PlayfairTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
-		if(method == DecryptionMethod.BRUTE_FORCE) {
-			Creator.iteratePlayfair(task);
-			
-			output.println(task.getBestSolution());
-		}
-		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
+		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
 			task.run();
@@ -81,38 +75,40 @@ public class PlayfairDecrypt implements IDecrypt {
 		
 	}
 	
-	public static class PlayfairTask extends SimulatedAnnealing implements PlayfairKey {
+	public static class PlayfairTask extends SimulatedAnnealing {
 
 		public String bestKey = "", bestMaximaKey = "", lastKey = "";
 		
 		public PlayfairTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 		}
-
-		@Override
+		
 		public void onIteration(String keysquare) {
-			this.lastSolution = new Solution(Playfair.decode(this.text, keysquare), this.settings.getLanguage()).setKeyString(keysquare);
+			this.lastSolution = new Solution(Playfair.decode(this.text, this.outputText, keysquare), this.settings.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.lastSolution.setKeyString(keysquare);
+				this.lastSolution.copyTextInstance();
+				
 				this.bestSolution = this.lastSolution;
 				this.output.println("%s", this.bestSolution);	
 				this.keyPanel.updateSolution(this.bestSolution);
 			}
 			
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 			this.progress.increase();
 		}
 
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(Playfair.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
+			return new Solution(Playfair.decode(this.text, this.outputText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Playfair.decode(this.text, this.lastKey), this.settings.getLanguage());
+			return new Solution(Playfair.decode(this.text, this.outputText, this.lastKey), this.settings.getLanguage(), this.bestSolution.score);
 		}
 
 		@Override
@@ -122,6 +118,8 @@ public class PlayfairDecrypt implements IDecrypt {
 
 		@Override
 		public void solutionFound() {
+			this.bestSolution.setKeyString(this.bestMaximaKey);
+			this.bestSolution.copyTextInstance();
 			this.bestKey = this.bestMaximaKey;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
 			this.keyPanel.key.setText(this.bestKey);
@@ -130,15 +128,15 @@ public class PlayfairDecrypt implements IDecrypt {
 		@Override
 		public void onIteration() {
 			this.progress.increase();
-			this.keyPanel.iterations.setText("" + this.iteration++);
+			this.keyPanel.updateIteration(this.iteration++);
 		}
 
 		@Override
 		public boolean endIteration() {
-			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.text));
-			UINew.BEST_SOULTION = this.bestSolution.text;
+			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.getText()));
+			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
-			return false;
+			return true;
 		}
 	}
 
