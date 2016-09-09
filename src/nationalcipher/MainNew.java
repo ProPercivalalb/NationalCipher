@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import nationalcipher.ui.UINew;
+
 public class MainNew {
 	
 	public static UINew ui;

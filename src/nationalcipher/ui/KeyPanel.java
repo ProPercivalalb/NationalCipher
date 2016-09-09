@@ -1,4 +1,4 @@
-package nationalcipher;
+package nationalcipher.ui;
 
 import java.awt.Dimension;
 
@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import nationalcipher.Settings;
 import nationalcipher.cipher.manage.Solution;
 
 public class KeyPanel extends JPanel {

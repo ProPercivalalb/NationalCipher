@@ -2,10 +2,10 @@ package nationalcipher.cipher.tools;
 
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class InternalDecryption {
 

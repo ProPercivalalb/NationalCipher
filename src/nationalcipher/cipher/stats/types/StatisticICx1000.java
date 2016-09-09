@@ -2,15 +2,15 @@ package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.stats.StatCalculator;
 
-public class StatisticDiagrahpicIC extends StatisticBaseNumber {
+public class StatisticICx1000 extends StatisticBaseNumber {
 
-	public StatisticDiagrahpicIC(double value, double sD) {
+	public StatisticICx1000(double value, double sD) {
 		super(value, sD);
 	}
 
 	@Override
 	public double getValue(String text) {
-		return StatCalculator.calculateDiagrahpicIC(text);
+		return StatCalculator.calculateIC(text) * 1000;
 	}
 
 }

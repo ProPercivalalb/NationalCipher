@@ -1,4 +1,4 @@
-package nationalcipher;
+package nationalcipher.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -107,16 +108,20 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
+import nationalcipher.LoadElement;
+import nationalcipher.Settings;
 import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.ProgressiveKey;
 import nationalcipher.cipher.Solitaire;
 import nationalcipher.cipher.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
 
 /**
@@ -2241,26 +2246,9 @@ public class UINew extends JFrame {
 			this.chart.resetAll();
 	
 			String text = getInputTextOnlyAlpha();
-			if(!text.isEmpty() && text.length() % 2 == 0) {
-				for(int period = 2; period <= 40; period++) {
-					boolean valid = true;
-
-					for(int i = 0; i < text.length() && valid; i += period * 2) {
-						int min = Math.min(period, (text.length() - i) / 2);
-
-						for(int j = 0; j < min; j++) {
-							char a = text.charAt(i + j);
-							char b = text.charAt(i + j + min);
-							if(a == b) {
-								valid = false;
-								break;
-							}
-						}
-					}
-	
-					this.chart.values.add(new ChartData("Period: " + period, valid ? 1 : 0));
-			    }
-			}
+			if(!text.isEmpty() && text.length() % 2 == 0)
+				for(int period = 2; period <= 40; period++)
+					this.chart.values.add(new ChartData("Period: " + period, StatCalculator.calculateSeriatedPlayfair(text, period) ? 1 : 0));
     		
     		this.chart.repaint();
     	}
@@ -2897,6 +2885,7 @@ public class UINew extends JFrame {
     			
     			Object[] statValues = new Object[38];
 			    
+			    //Numerical values
 			    statValues[0] = StatCalculator.calculateIC(text) * 1000.0D;
 				statValues[1] = StatCalculator.calculateMaxIC(text, 1, 15) * 1000.0D;
 				statValues[2] = StatCalculator.calculateMaxKappaIC(text, 1, 15);
@@ -2904,8 +2893,23 @@ public class UINew extends JFrame {
 				statValues[4] = StatCalculator.calculateEvenDiagrahpicIC(text) * 10000;
 				statValues[5] = StatCalculator.calculateLR(text);
 				statValues[6] = StatCalculator.calculateROD(text);
-				statValues[7] = StatCalculator.calculateLDI(text);
+				statValues[7] = PolyalphabeticIdentifier.calculateLDI(text);
 				statValues[8] = StatCalculator.calculateSDD(text);
+			    statValues[22] = PolyalphabeticIdentifier.calculateALDI(text);
+				statValues[23] = PolyalphabeticIdentifier.calculateBeaufortLDI(text);
+				statValues[24] = PolyalphabeticIdentifier.calculatePortaLDI(text);
+				statValues[25] = PolyalphabeticIdentifier.calculateSLDI(text);
+				statValues[26] = PolyalphabeticIdentifier.calculateVigenereLDI(text);
+				statValues[27] = StatCalculator.calculateNormalOrder(text, settings.getLanguage());
+				statValues[28] = PolyalphabeticIdentifier.calculateRDI(text);
+				statValues[29] = PolyalphabeticIdentifier.calculatePTX(text);
+				statValues[30] = StatCalculator.calculateMaxNicodemusIC(text, 3, 15);
+				statValues[31] = StatCalculator.calculatePHIC(text);
+			    statValues[33] = StatCalculator.calculateMaxBifidDiagraphicIC(text, 3, 15);
+				statValues[34] = StatCalculator.calculateCDD(text);
+				statValues[35] = StatCalculator.calculateSSTD(text);
+				statValues[36] = StatCalculator.calculateMPIC(text);
+			    
 			    
 				statValues[9] = "CIPHER";
 			    
@@ -2923,22 +2927,10 @@ public class UINew extends JFrame {
 				statValues[21] = StatCalculator.calculateDBL(text);
 				
 				
-				statValues[22] = StatCalculator.calculateALDI(text);
-				statValues[23] = StatCalculator.calculateBLDI(text);
-				statValues[24] = StatCalculator.calculatePLDI(text);
-				statValues[25] = StatCalculator.calculateSLDI(text);
-				statValues[26] = StatCalculator.calculateVLDI(text);
-				statValues[27] = StatCalculator.calculateNormalOrder(text, settings.getLanguage());
-				statValues[28] = StatCalculator.calculateRDI(text);
-				statValues[29] = StatCalculator.calculatePTX(text);
-				statValues[30] = StatCalculator.calculateMaxNicodemusIC(text, 3, 15);
-				statValues[31] = StatCalculator.calculatePHIC(text);
+	
 				statValues[32] = StatCalculator.calculateHAS0(text);
-				statValues[33] = StatCalculator.calculateMaxBifidDiagraphicIC(text, 3, 15);
-				statValues[34] = StatCalculator.calculateCDD(text);
-				statValues[35] = StatCalculator.calculateSSTD(text);
-				statValues[36] = StatCalculator.calculateMPIC(text);
-				statValues[37] = StatCalculator.calculateSeriatedPlayfair(text);
+		
+				statValues[37] = StatCalculator.calculateSeriatedPlayfair(text, 3, 10);
 			    
 				Map<String, Integer> answers = new HashMap<String, Integer>();
 				
@@ -2951,7 +2943,28 @@ public class UINew extends JFrame {
 				JLabel cipherScoreLabel = new JLabel("" + answers);
 		    	cipherScoreLabel.setFont(cipherScoreLabel.getFont().deriveFont(20F));
 		    	this.cipherScorePanel.add(cipherScoreLabel);
+	
 				System.out.println(answers);
+				
+				List<List<Object>> num_dev = CipherStatistics.getResultsFromStats(text);
+				 
+			    
+			    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
+			    	@Override
+			        public int compare(List<Object> c1, List<Object> c2) {
+			        	double diff = (double)c1.get(1) - (double)c2.get(1);
+			        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
+			        }
+			    };
+
+			    Collections.sort(num_dev, comparator);
+		    	JLabel cipherScoreLabel2 = new JLabel("" + num_dev);
+		    	cipherScoreLabel2.setFont(cipherScoreLabel2.getFont().deriveFont(20F));
+		    	this.cipherScorePanel.add(cipherScoreLabel2);
+			    
+			    for(int i = 0; i < num_dev.size(); i++) {
+			    	System.out.println(num_dev.get(i).get(0) + " " + num_dev.get(i).get(1));
+			    }
     			
     			/**
 	    		HashMap<StatisticType, Double> currentData = new HashMap<StatisticType, Double>();
@@ -3064,25 +3077,25 @@ public class UINew extends JFrame {
     		    outputText += "\n EDI: " + StatCalculator.calculateEvenDiagrahpicIC(text) * 10000;
     		    outputText += "\n LR: " + StatCalculator.calculateLR(text);
     		    outputText += "\n ROD: " + StatCalculator.calculateROD(text);
-    		    outputText += "\n LDI: " + StatCalculator.calculateLDI(text);
+    		    outputText += "\n LDI: " + PolyalphabeticIdentifier.calculateLDI(text);
     		    outputText += "\n SDD: " + StatCalculator.calculateSDD(text);
 
-    		    outputText += "\n A_LDI: " + StatCalculator.calculateALDI(text);
-    		    outputText += "\n B_LDI: " + StatCalculator.calculateBLDI(text);
-    		    outputText += "\n P_LDI: " + StatCalculator.calculatePLDI(text);
-    		    outputText += "\n S_LDI: " + StatCalculator.calculateSLDI(text);
-    		    outputText += "\n V_LDI: " + StatCalculator.calculateVLDI(text);
+    		    outputText += "\n A_LDI: " + PolyalphabeticIdentifier.calculateALDI(text);
+    		    outputText += "\n B_LDI: " + PolyalphabeticIdentifier.calculateBeaufortLDI(text);
+    		    outputText += "\n P_LDI: " + PolyalphabeticIdentifier.calculatePortaLDI(text);
+    		    outputText += "\n S_LDI: " + PolyalphabeticIdentifier.calculateSLDI(text);
+    		    outputText += "\n V_LDI: " + PolyalphabeticIdentifier.calculateVigenereLDI(text);
     		    
     		    outputText += "\n NOMOR: " + StatCalculator.calculateNormalOrder(text, settings.getLanguage());
-    		    outputText += "\n RDI: " + StatCalculator.calculateRDI(text);
-    		    outputText += "\n PTX: " + StatCalculator.calculatePTX(text);
+    		    outputText += "\n RDI: " + PolyalphabeticIdentifier.calculateRDI(text);
+    		    outputText += "\n PTX: " + PolyalphabeticIdentifier.calculatePTX(text);
     		    outputText += "\n NIC: " +  StatCalculator.calculateMaxNicodemusIC(text, 3, 15);
     		    outputText += "\n PHIC: " + StatCalculator.calculatePHIC(text);
     		    outputText += "\n BDI: " +  StatCalculator.calculateMaxBifidDiagraphicIC(text, 3, 15);
     		    outputText += "\n CDD: " +  StatCalculator.calculateCDD(text);
     		    outputText += "\n SSTD: " +  StatCalculator.calculateSSTD(text);
     		    outputText += "\n MPIC: " + StatCalculator.calculateMPIC(text);
-    		    outputText += "\n SERP: " + StatCalculator.calculateSeriatedPlayfair(text);
+    		    outputText += "\n SERP: " + StatCalculator.calculateSeriatedPlayfair(text, 3, 10);
     		    
     		    
     		    outputText += "\n DIV_2: " + StatCalculator.isLengthDivisible2(text);

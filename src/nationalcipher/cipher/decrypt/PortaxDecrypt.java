@@ -15,7 +15,6 @@ import javalibrary.Output;
 import javalibrary.math.MathHelper;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Portax;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -23,6 +22,7 @@ import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.PortaKey;
+import nationalcipher.ui.KeyPanel;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SubOptionPanel;
 

@@ -11,7 +11,6 @@ import javalibrary.dict.Dictionary;
 import javalibrary.math.MathHelper;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Cadenus;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -19,6 +18,7 @@ import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.CadenusKey;
+import nationalcipher.ui.KeyPanel;
 import nationalcipher.cipher.tools.InternalDecryption;
 
 public class CadenusDecrypt implements IDecrypt {

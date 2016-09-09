@@ -3,9 +3,9 @@ package nationalcipher.cipher.tools;
 import javalibrary.Output;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.ui.KeyPanel;
 
 public abstract class KeySearch extends InternalDecryption {
 

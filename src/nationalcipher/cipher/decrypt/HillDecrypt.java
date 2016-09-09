@@ -12,7 +12,6 @@ import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Hill;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -20,6 +19,7 @@ import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.HillKey;
+import nationalcipher.ui.KeyPanel;
 import nationalcipher.cipher.tools.InternalDecryption;
 
 public class HillDecrypt implements IDecrypt {

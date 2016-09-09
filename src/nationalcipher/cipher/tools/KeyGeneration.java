@@ -3,6 +3,7 @@ package nationalcipher.cipher.tools;
 import java.util.Arrays;
 import java.util.List;
 
+import javalibrary.math.matrics.Matrix;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
@@ -15,7 +16,7 @@ public class KeyGeneration {
 	private static char[] all26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	private static char[] all25Chars = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
 	
-	public static String createNoRepeatingShortKey26(int length) {
+	public static String createRepeatingShortKey26(int length) {
 		char[] key = new char[length];
 		
 		for(int i = 0; i < length; i++)
@@ -68,6 +69,14 @@ public class KeyGeneration {
 		ArrayUtil.shuffle(order);
 		
 		return order;
+	}
+	
+	public static Matrix createMatrix(int size, int limit) {
+		Matrix matrix = new Matrix(size, size);
+		for(int i = 0; i < matrix.data.length; i++)
+			matrix.data[i] = RandomUtil.pickRandomInt(limit);
+		
+		return matrix;
 	}
 	
 	public static List<Integer> createOrderList(int length) {

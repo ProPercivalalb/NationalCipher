@@ -9,9 +9,7 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
 import nationalcipher.cipher.Playfair;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
@@ -19,6 +17,8 @@ import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class PlayfairDecrypt implements IDecrypt {
 
@@ -136,7 +136,7 @@ public class PlayfairDecrypt implements IDecrypt {
 			this.output.println("Best Fitness: %f, Key: %s, Plaintext: %s", this.bestSolution.score, this.bestKey, new String(this.bestSolution.getText()));
 			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
-			return true;
+			return false;
 		}
 	}
 

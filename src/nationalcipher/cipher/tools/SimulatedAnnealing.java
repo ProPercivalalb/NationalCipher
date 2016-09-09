@@ -3,9 +3,9 @@ package nationalcipher.cipher.tools;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.ui.KeyPanel;
 
 public abstract class SimulatedAnnealing extends InternalDecryption {
 

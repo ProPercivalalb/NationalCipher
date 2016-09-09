@@ -15,9 +15,7 @@ import javalibrary.string.StringTransformer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
 import nationalcipher.cipher.Keyword;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
@@ -27,6 +25,8 @@ import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class GeneralPeriodDecrypt implements IDecrypt {
 

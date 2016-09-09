@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JLabel;
 
 import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.fitness.NGramData;
@@ -13,13 +17,19 @@ import javalibrary.language.English;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
+import javalibrary.math.MathHelper;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
+import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
+import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.Solitaire;
+import nationalcipher.cipher.*;
 import nationalcipher.cipher.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.decrypt.solitaire.DeckParse;
+import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
+import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
@@ -42,8 +52,46 @@ public class SOLVER {
 	
 	public static void main(String[] args) throws Exception {
 		Languages.english.loadNGramData();
-		/**
-		List<List<Object>> num_dev = CipherStatistics.getResultsFromStats("SENDCAOMRDIONBITNSCISAGTBWLTEAEAOREDIFASRMVYPEOIAALFUIRODLOCARTNJOUANECNIMTPSOAHIKSAT");
+		IRandEncrypter randomEncrypt = RandomUtil.pickRandomElement(new PortaAutokey());//, new TwoSquare(), new FourSquare(), new Trifid(), new Bazeries(), new Enigma(), new Porta(), new Bifid(), new Affine(), new Keyword(), new Playfair(), new AMSCO(), new Vigenere(), new Solitaire(), new Hill());
+		
+		String cipherText = randomEncrypt.randomlyEncrypt(RandomUtil.pickRandomElement(FileReader.compileTextFromResource("/plainText.txt", true)));
+		System.out.println(cipherText);
+		System.out.println(randomEncrypt.getClass().getName());
+		int key = (int)Math.floor(('T'    - 'A') / 2);
+		int plainChar = 'W'    - 'A';
+        if(plainChar < 13) {
+        	plainChar += key;
+            if(plainChar < 13)
+            	plainChar += 13;
+        }
+        else {
+        	plainChar -= key;
+            if(plainChar > 12)
+            	plainChar -= 13;
+        }
+		System.out.println("1 " + (char)(plainChar + 'A'));
+		
+        key = (int)Math.floor(('T'    - 'A') / 2);
+		plainChar = 'W'    - 'A';
+        if(plainChar < 13) {
+        	plainChar += 13;
+        	plainChar += key;
+        	if(plainChar > 25)
+        		plainChar -= 13;
+        }
+        else {
+        	plainChar -= 13;
+        	plainChar -= key;
+        	if(plainChar < 0)
+        		plainChar += 13;
+        }
+        System.out.println("2 " + (char)(plainChar + 'A'));
+   
+		
+		
+	    System.out.println(PortaAutokey.decode("SYNNJSCVRNRLAHUTUKUCVRYRLANY".toCharArray(), "FORTIFICATION", false));
+	    
+		List<List<Object>> num_dev = CipherStatistics.getResultsFromStats(cipherText);
 		 
 	    
 	    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
@@ -55,31 +103,103 @@ public class SOLVER {
 	    };
 
 	    Collections.sort(num_dev, comparator);
-	  
+    
 	    for(int i = 0; i < num_dev.size(); i++) {
-	    	System.out.println(num_dev.get(i).get(0) + " " + num_dev.get(i).get(1));
+	    	
+	    	int l = ((String)num_dev.get(i).get(0)).length();
+	    	System.out.println(num_dev.get(i).get(0) + StringTransformer.repeat(" ", 30 - l) + num_dev.get(i).get(1));
 	    }
 
-		List<String> list = FileReader.compileTextFromResource("/nationalcipherold/plainText.txt");
+	
+	 	for(String s : new String[] {"PortaAutokey"})
+	 		CipherStatistics.compileStatsForCipher(RandomEncrypter.getFromName(s));
+	
+	    
+	    
+	    
+	    
+	    
+/**
+	    HashMap<String, Double> mapping = new HashMap<String, Double>();
 
-		List<Double> values = new ArrayList<Double>();
+		double total = 0.0D;
 		
-		for(String line : list) {
-			if(line.isEmpty() || line.startsWith("#")) continue;
-			
-			String plainText = line;
-			
-			for(int i = 0; i < 200; ++i) {
-				
-				IRandEncrypter randEncrypt = RandomEncrypter.getFromName("Swagman");
-				String cipherText = randEncrypt.randomlyEncrypt(plainText);
-				values.add(StatCalculator.calculateMaxTrifidDiagraphicIC(cipherText, 3, 15));
+		   HashMap<String, Double> mapping2 = new HashMap<String, Double>();
+		List<String> list2 = FileReader.compileTextFromResource("/resources/data/bigram_count.txt", true);
+		for(String line : list2) {
+			String[] str = line.split("% ");
+			for(String data : str) {
+				String[] s = data.split(" ");
+				//System.out.println(data);
+				mapping2.put(s[0], Double.valueOf(s[1]));
 			}
+
+		}
+		List<Map.Entry<String, Double>> entries = new ArrayList<Map.Entry<String, Double>>(mapping2.entrySet());
+		Collections.sort(entries, new Comparator<Map.Entry<String, Double>>() {
+			  public int compare(
+			      Map.Entry<String, Double> entry1, Map.Entry<String, Double> entry2) {
+			    return entry2.getValue().compareTo(entry1.getValue());
+			  }
+			});
+		for(Map.Entry<String, Double> en : entries) {
+			//System.out.println(en.getKey() + " " + String.format("%.3f", en.getValue()));
+		}
+			//System.out.println(entries);
+		
+		
+		List<String> list = FileReader.compileTextFromResource("/resources/data/bigram_count.txt");
+
+		for(String line : list) {
+			String[] str = line.split(" ");
+					
+			if(str.length < 2) continue;
+					
+	
+			mapping.put(str[0], Double.valueOf(str[1]));
 		}
 
-	    Statistics stats = new Statistics(values);
+		for(String gram : mapping.keySet()) {
+			double count = mapping.get(gram);
+			double log = Math.log(count);
+
+			if(count == 0)
+				mapping.put(gram, 0.0D);
+			else
+				mapping.put(gram, log);
+		}
 		
-		System.out.println(" " + String.format("%.25f", stats.getMean()) + ", " + String.format("%.25f", stats.getStandardDeviation()));**/
+		double smallest = MathHelper.findSmallestDouble(mapping.values());
+		
+		for(String gram : mapping.keySet()) {
+			if(mapping.get(gram) != 0)
+			mapping.put(gram, -smallest + mapping.get(gram));
+		}
+		
+		for(char a = 'A'; a <= 'Z'; a++) {
+			String s1 = "";
+			for(char b = 'A'; b <= 'Z'; b++) {
+				String s = a + "" + b;
+				if(mapping.containsKey(s))
+					s1 += String.format("%.1f", mapping.get(s)) + ", ";
+				else
+					s1 += "0, ";
+			}
+			System.out.println(s1);
+		}
+		
+		for(String text1 : FileReader.compileTextFromResource("/plainText.txt", true)) {
+		String text = text1;
+			double score = 0;
+			for(int i = 0; i < text.length() - 1; i++)
+				if(Character.isLetter(text.charAt(i)) && Character.isLetter(text.charAt(i + 1)))
+					score += mapping.get(text.substring(i, i + 2));
+			
+		System.out.println("Diff " + (((score * 100 / (text.length() - 1)) / StatCalculator.calculateLDI(text) * 100)));
+	    //System.out.println("LDI " + StatCalculator.calculateLDI(text));
+		Thread.sleep(1000);
+		}**/
+	
 		
 		
 		
@@ -97,7 +217,7 @@ public class SOLVER {
 		
 		
 		
-		
+		/**
 		
 	//	System.out.println(new String(Solitaire.decode("IUTWMVVHVRORNXZZAGP".toCharArray(), new int[] {38,34,46,3,4,41,16,51,19,12,52,15,29,39,37,33,42,13,40,6,26,43,0,5,32,14,53,35,17,23,2,8,50,36,22,45,20,9,11,18,25,48,44,24,27,1,21,7,30,47,31,10,28,49})));
 		//public static int[] unknowns =                                                 new int[] {1, 7, 9, 10, 11, 18, 20, 21, 25, 27, 30, 44, 45, 47, 48, 49};
@@ -118,7 +238,7 @@ public class SOLVER {
 
 		Statistics stats = timer.getRecordedTimesStats();
 		
-		System.out.println(stats);
+		System.out.println(stats);**/
 	}
 	
 	public static void recursive(String cipherText, char[] prefix, int n, int offset, DeckParse startingDeck) {

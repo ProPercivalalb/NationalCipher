@@ -11,6 +11,36 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class Playfair implements IRandEncrypter {
 
 	public static String encode(String plainText, String keysquare) {
+
+		plainText = plainText.replaceAll("J", "I");
+		do {
+			boolean valid = true;
+
+			for(int i = 0; i < plainText.length() && valid; i += 2) {
+
+				char a = plainText.charAt(i);
+				if(!(i + 1 < plainText.length())) {
+					plainText += 'X';
+					break;
+				}
+					
+				char b = plainText.charAt(i + 1);
+				if(a == b) {
+					char nullChar = 'X';
+					if(a == 'X')
+						nullChar = 'Q';
+					plainText = plainText.substring(0, i + 1) + nullChar + plainText.substring(i + 1, plainText.length());
+					valid = false;
+					break;
+				}
+			}
+			
+			if(valid)
+				break;
+		}
+		while(true);
+		
+		
 		if(plainText.length() % 2 == 1)
 			plainText += 'X';
 		

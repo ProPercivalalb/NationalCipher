@@ -8,13 +8,13 @@ import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Bazeries;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.BazeriesKey;
+import nationalcipher.ui.KeyPanel;
 import nationalcipher.cipher.tools.InternalDecryption;
 
 public class BazeriesDecrypt implements IDecrypt {

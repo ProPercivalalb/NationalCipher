@@ -12,8 +12,11 @@ public abstract class StatisticBaseNumber extends StatisticType {
 		
 	@Override
 	public double quantifyType(String text) {
-
 		return Math.abs((this.getValue(text) - this.value)) / this.sD;
+	}
+	
+	public double quantifyType(double value) {
+		return Math.abs((value - this.value)) / this.sD;
 	}
 	
 	public abstract double getValue(String text);

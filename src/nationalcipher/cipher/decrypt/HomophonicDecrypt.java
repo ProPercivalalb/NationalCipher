@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Homophonic;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -17,6 +16,7 @@ import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.HomophonicKey;
+import nationalcipher.ui.KeyPanel;
 import nationalcipher.cipher.tools.InternalDecryption;
 
 public class HomophonicDecrypt implements IDecrypt {

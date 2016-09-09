@@ -9,14 +9,14 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
 import nationalcipher.cipher.RunningKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.VigereneKey;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 

@@ -5,12 +5,15 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class TwoSquare implements IRandEncrypter {
 
-	public static String encode(String cipherText, String keysquare1, String keysquare2) {
-	    String plainText = "";
+	public static String encode(String plainText, String keysquare1, String keysquare2) {
+		if(plainText.length() % 2 == 1)
+			plainText += 'X';
+		
+	    String cipherText = "";
 	    
-	    for(int i = 0; i < cipherText.length(); i += 2){
-	        char a = cipherText.charAt(i);
-	        char b = cipherText.charAt(i + 1);
+	    for(int i = 0; i < plainText.length(); i += 2){
+	        char a = plainText.charAt(i);
+	        char b = plainText.charAt(i + 1);
 	        int aIndex = keysquare1.indexOf(a);
 	        int bIndex = keysquare2.indexOf(b);
 	        int aRow = (int)Math.floor(aIndex / 5);
@@ -19,14 +22,14 @@ public class TwoSquare implements IRandEncrypter {
 	        int bCol = bIndex % 5;
 	        
 	        if(aRow == bRow)
-	        	plainText += "" + b + "" + a;
+	        	cipherText += "" + b + "" + a;
 	        else {
-		        plainText += keysquare2.charAt(5 * aRow + bCol);
-	 	        plainText += keysquare1.charAt(5 * bRow + aCol);
+		        cipherText += keysquare2.charAt(5 * aRow + bCol);
+	 	        cipherText += keysquare1.charAt(5 * bRow + aCol);
 	        }
 	    }
 	   
-	    return plainText;
+	    return cipherText;
 	}
 	
 	public static char[] decode(char[] cipherText, String keysquare1, String keysquare2) {

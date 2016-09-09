@@ -9,15 +9,15 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
 import nationalcipher.cipher.Keyword;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.SubstitutionKey;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SimulatedAnnealing;
 

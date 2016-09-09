@@ -1,8 +1,9 @@
-package nationalcipher;
+package nationalcipher.ui;
 
 import javax.swing.JProgressBar;
 
 import javalibrary.swing.ProgressValue;
+import nationalcipher.Settings;
 
 public class ProgressValueNC extends ProgressValue {
 

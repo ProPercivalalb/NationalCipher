@@ -11,7 +11,7 @@ public class Trifid implements IRandEncrypter {
 	}
 	
 	public static String encode(String plainText, String keysquares, int period) {
-		System.out.println("trifid: " + period);
+		//System.out.println("trifid: " + period);
 		int[] numberText = new int[plainText.length() * 3];
 		for(int i = 0; i < plainText.length(); i++) {
 			

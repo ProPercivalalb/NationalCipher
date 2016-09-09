@@ -1,4 +1,4 @@
-package nationalcipher;
+package nationalcipher.cipher.decrypt.solitaire;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -10,7 +10,6 @@ import javalibrary.Output;
 import javalibrary.math.MathHelper;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
 import nationalcipher.cipher.NihilistTransposition;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -18,6 +17,7 @@ import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.NihilistTranspositionKey;
+import nationalcipher.ui.KeyPanel;
 import nationalcipher.cipher.tools.InternalDecryption;
 
 public class NihilistTranspositionDecrypt implements IDecrypt {

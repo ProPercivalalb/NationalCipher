@@ -1,5 +1,7 @@
 package nationalcipher.cipher;
 
+import java.util.Arrays;
+
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -29,7 +31,7 @@ public class Bifid implements IRandEncrypter {
 		}
 		
 		String cipherText = "";
-	    
+		
 		for(int i = 0; i < digits.length; i += 2) {
 		    int row = digits[i];
 		    int column = digits[i + 1];
@@ -45,6 +47,6 @@ public class Bifid implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createLongKey25(), RandomUtil.pickRandomInt(2, 15));
+		return encode(plainText, KeyGeneration.createLongKey25(), RandomUtil.pickRandomElement(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
 	}
 }

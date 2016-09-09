@@ -15,9 +15,7 @@ import javalibrary.language.ILanguage;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
-import nationalcipher.UINew;
 import nationalcipher.cipher.Beaufort;
 import nationalcipher.cipher.Caesar;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -27,6 +25,8 @@ import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class BeaufortDecrypt implements IDecrypt {
 

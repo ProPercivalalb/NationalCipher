@@ -20,7 +20,7 @@ public class AMSCO implements IRandEncrypter {
 	}
 	
 	public static String encode(String plainText, boolean first, int[] order) {
-		System.out.println(Arrays.toString(order));
+		
 		String[] columns = new String[order.length];
 		Arrays.fill(columns, "");
 		int index = 0;

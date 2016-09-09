@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.KeyPanel;
 import nationalcipher.Settings;
+import nationalcipher.ui.KeyPanel;
 
 public interface IDecrypt {
 
