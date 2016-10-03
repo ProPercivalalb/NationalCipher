@@ -57,40 +57,43 @@ public class SOLVER {
 		String cipherText = randomEncrypt.randomlyEncrypt(RandomUtil.pickRandomElement(FileReader.compileTextFromResource("/plainText.txt", true)));
 		System.out.println(cipherText);
 		System.out.println(randomEncrypt.getClass().getName());
-		int key = (int)Math.floor(('T'    - 'A') / 2);
-		int plainChar = 'W'    - 'A';
-        if(plainChar < 13) {
-        	plainChar += key;
-            if(plainChar < 13)
-            	plainChar += 13;
-        }
-        else {
-        	plainChar -= key;
-            if(plainChar > 12)
-            	plainChar -= 13;
-        }
-		System.out.println("1 " + (char)(plainChar + 'A'));
 		
-        key = (int)Math.floor(('T'    - 'A') / 2);
-		plainChar = 'W'    - 'A';
-        if(plainChar < 13) {
-        	plainChar += 13;
-        	plainChar += key;
-        	if(plainChar > 25)
-        		plainChar -= 13;
-        }
-        else {
-        	plainChar -= 13;
-        	plainChar -= key;
-        	if(plainChar < 0)
-        		plainChar += 13;
-        }
-        System.out.println("2 " + (char)(plainChar + 'A'));
-   
 		
 		
 	    System.out.println(PortaAutokey.decode("SYNNJSCVRNRLAHUTUKUCVRYRLANY".toCharArray(), "FORTIFICATION", false));
+	    for(IRandEncrypter k : RandomEncrypter.ciphers) {
+		    System.out.println(k.getClass().getSimpleName() + " --------------------");
+	    List<Double> data3 = new ArrayList<Double>();
+	    for(int i = 0; i < 2000; i++) {
+		    String cipherText2 = k.randomlyEncrypt(RandomUtil.pickRandomElement(FileReader.compileTextFromResource("/plainText.txt", true)));
+		    double stats = StatCalculator.pairs(cipherText2);
+		    	data3.add(stats);
+		    }
+	    Statistics s3 = new Statistics(data3);
+	    System.out.println(String.format("%.2f", (double)s3.getMean()) + " " +String.format("%.2f", (double)s3.getStandardDeviation()));
+	    //System.out.println("--------------------");
+	    }
+	    /**
+	    List<Double> data = new ArrayList<Double>();
+	    for(int i = 0; i < 2000; i++) {
+	    String cipherText2 = new Caesar().randomlyEncrypt(RandomUtil.pickRandomElement(FileReader.compileTextFromResource("/plainText.txt", true)));
+	    Statistics stats = StatCalculator.averageDifferenceinCharacter(cipherText2);
+	    	data.add(stats.getMean());
+	    }
+	    Statistics s = new Statistics(data);
+	    System.out.println(s.getMean() + " " +s.getStandardDeviation());
+	    System.out.println("--------------------");
 	    
+	    List<Double> data2 = new ArrayList<Double>();
+	    for(int i = 0; i < 2000; i++) {
+		    String cipherText2 = new Keyword().randomlyEncrypt(RandomUtil.pickRandomElement(FileReader.compileTextFromResource("/plainText.txt", true)));
+		    Statistics stats = StatCalculator.averageDifferenceinCharacter(cipherText2);
+		    data2.add(stats.getMean());
+		    }
+	    Statistics s2 = new Statistics(data2);
+	    System.out.println(s2.getMean() + " " +s2.getStandardDeviation());
+	    System.out.println("--------------------");
+	   
 		List<List<Object>> num_dev = CipherStatistics.getResultsFromStats(cipherText);
 		 
 	    
@@ -113,7 +116,7 @@ public class SOLVER {
 	
 	 	for(String s : new String[] {"PortaAutokey"})
 	 		CipherStatistics.compileStatsForCipher(RandomEncrypter.getFromName(s));
-	
+	**/
 	    
 	    
 	    

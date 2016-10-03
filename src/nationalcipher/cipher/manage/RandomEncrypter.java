@@ -97,7 +97,7 @@ public class RandomEncrypter {
 		ciphers.add(new RunningKey());
 		ciphers.add(new SeriatedPlayfair());
 		ciphers.add(new Solitaire());
-		ciphers.add(new Swagman());
+		//TODO ciphers.add(new Swagman());
 		ciphers.add(new Trifid());
 		ciphers.add(new TwoSquare());
 		ciphers.add(new TriSquare());

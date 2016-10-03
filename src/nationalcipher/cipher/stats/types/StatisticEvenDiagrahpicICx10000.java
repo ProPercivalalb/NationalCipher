@@ -1,16 +1,16 @@
 package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticEvenDiagrahpicICx10000 extends StatisticBaseNumber {
+public class StatisticEvenDiagrahpicICx10000 extends TextStatistic {
 
-	public StatisticEvenDiagrahpicICx10000(double value, double sD) {
-		super(value, sD);
+	public StatisticEvenDiagrahpicICx10000(String text) {
+		super(text);
 	}
 
 	@Override
-	public double getValue(String text) {
-		return StatCalculator.calculateEvenDiagrahpicIC(text) * 10000;
+	public void calculateStatistic() {
+		this.value = StatCalculator.calculateEvenDiagrahpicIC(this.text) * 10000;
 	}
-
 }

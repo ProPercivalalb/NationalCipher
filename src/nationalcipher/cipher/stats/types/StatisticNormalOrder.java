@@ -2,16 +2,16 @@ package nationalcipher.cipher.stats.types;
 
 import javalibrary.language.Languages;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticNormalOrder extends StatisticBaseNumber {
+public class StatisticNormalOrder extends TextStatistic {
 
-	public StatisticNormalOrder(double value, double sD) {
-		super(value, sD);
+	public StatisticNormalOrder(String text) {
+		super(text);
 	}
 
 	@Override
-	public double getValue(String text) {
-		return StatCalculator.calculateNormalOrder(text, Languages.english);
+	public void calculateStatistic() {
+		this.value = StatCalculator.calculateNormalOrder(text, Languages.english);
 	}
-
 }

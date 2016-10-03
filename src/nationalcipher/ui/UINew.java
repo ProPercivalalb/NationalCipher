@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -64,6 +65,7 @@ import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -74,6 +76,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import javalibrary.Output;
 import javalibrary.cipher.permentate.PermentateArray;
@@ -123,6 +126,7 @@ import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.StatisticHandler;
 
 /**
  *
@@ -197,7 +201,7 @@ public class UINew extends JFrame {
     	final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents((JComponent)getContentPane(), menuBar);
     	
     	
-    	this.progressBar.setMaximum(Languages.languages.size() + 3);
+    	this.progressBar.setMaximum(Languages.languages.size() + 4);
 		//Loading
 		Threads.runTask(new Runnable() {
 			@Override
@@ -219,6 +223,8 @@ public class UINew extends JFrame {
 					progressBar.setValue(progressBar.getValue() + 1);
 				}
 				
+				StatisticHandler.registerStatistics();
+				progressBar.setValue(progressBar.getValue() + 1);
 				  
 				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(TraverseTree.class.getResourceAsStream("/javalibrary/cipher/stats/trigraph.txt")));
 
@@ -2820,6 +2826,9 @@ public class UINew extends JFrame {
     	private JPanel cipherInfoPanel;
     	private JPanel cipherScorePanel;
     	private JScrollPane scrollPane;
+    	private JTree tree;
+    	private DefaultMutableTreeNode top;
+    	private JScrollPane treeView;
     	
     	public IdentifyAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -2859,7 +2868,15 @@ public class UINew extends JFrame {
 		    this.cipherScorePanel.setLayout(new BoxLayout(this.cipherScorePanel, BoxLayout.Y_AXIS));
 		    basePanel.add(this.cipherScorePanel);
 		    
-		    
+			this.top = new DefaultMutableTreeNode("The Java Series");
+			//createNodes(top);
+			this.tree = new JTree(this.top);
+			this.tree.putClientProperty("JTree.lineStyle", "None");
+			this.tree.setFont(this.tree.getFont().deriveFont(20F));
+			this.tree.setRowHeight((int) (this.tree.getFont().getSize() * 1.2F));
+			
+		 //treeView = new JScrollPane(this.tree);
+			//panel.add(treeView);
 		    panel.add(scrollPane);
 	         
     		this.dialog.add(panel);
@@ -2878,11 +2895,13 @@ public class UINew extends JFrame {
     	public void updateDialog() {
     		this.cipherInfoPanel.removeAll();
     		this.cipherScorePanel.removeAll();
+    		this.top.removeAllChildren();
     		
     		String text = getInputText();
     		
     		if(!text.isEmpty()) {
     			
+    			/**
     			Object[] statValues = new Object[38];
 			    
 			    //Numerical values
@@ -2895,7 +2914,7 @@ public class UINew extends JFrame {
 				statValues[6] = StatCalculator.calculateROD(text);
 				statValues[7] = PolyalphabeticIdentifier.calculateLDI(text);
 				statValues[8] = StatCalculator.calculateSDD(text);
-			    statValues[22] = PolyalphabeticIdentifier.calculateALDI(text);
+			    statValues[22] = PolyalphabeticIdentifier.calculateAutokeyPortaLDI(text);
 				statValues[23] = PolyalphabeticIdentifier.calculateBeaufortLDI(text);
 				statValues[24] = PolyalphabeticIdentifier.calculatePortaLDI(text);
 				statValues[25] = PolyalphabeticIdentifier.calculateSLDI(text);
@@ -2945,8 +2964,10 @@ public class UINew extends JFrame {
 		    	this.cipherScorePanel.add(cipherScoreLabel);
 	
 				System.out.println(answers);
-				
-				List<List<Object>> num_dev = CipherStatistics.getResultsFromStats(text);
+				**/
+    			
+    		
+				List<List<Object>> num_dev = StatisticHandler.orderCipherProbibitly(text);
 				 
 			    
 			    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
@@ -2958,38 +2979,8 @@ public class UINew extends JFrame {
 			    };
 
 			    Collections.sort(num_dev, comparator);
-		    	JLabel cipherScoreLabel2 = new JLabel("" + num_dev);
-		    	cipherScoreLabel2.setFont(cipherScoreLabel2.getFont().deriveFont(20F));
-		    	this.cipherScorePanel.add(cipherScoreLabel2);
+		
 			    
-			    for(int i = 0; i < num_dev.size(); i++) {
-			    	System.out.println(num_dev.get(i).get(0) + " " + num_dev.get(i).get(1));
-			    }
-    			
-    			/**
-	    		HashMap<StatisticType, Double> currentData = new HashMap<StatisticType, Double>();
-			    
-			    currentData.put(StatisticType.INDEX_OF_COINCIDENCE, StatCalculator.calculateIC(text) * 1000.0D);
-			    currentData.put(StatisticType.MAX_IOC, StatCalculator.calculateMaxIC(text, 1, 15) * 1000.0D);
-			    currentData.put(StatisticType.MAX_KAPPA, StatCalculator.calculateMaxKappaIC(text, 1, 15));
-			    currentData.put(StatisticType.DIGRAPHIC_IOC, StatCalculator.calculateDiagrahpicIC(text) * 10000.0D);
-			    currentData.put(StatisticType.EVEN_DIGRAPHIC_IOC, StatCalculator.calculateEvenDiagrahpicIC(text) * 10000);
-			    currentData.put(StatisticType.LONG_REPEAT_3, StatCalculator.calculateLR(text));
-			    currentData.put(StatisticType.LONG_REPEAT_ODD, StatCalculator.calculateROD(text));
-			    currentData.put(StatisticType.LOG_DIGRAPH, StatCalculator.calculateLDI(text));
-			    currentData.put(StatisticType.SINGLE_LETTER_DIGRAPH, StatCalculator.calculateSDD(text));
-	    		
-	    		List<List<Object>> num_dev = StatCalculator.getResultsFromStats(currentData);
-			    
-			    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
-			    	@Override
-			        public int compare(List<Object> c1, List<Object> c2) {
-			        	double diff = (double)c1.get(1) - (double)c2.get(1);
-			        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
-			        }
-			    };
-	
-			    Collections.sort(num_dev, comparator);
 			    
 			    JLabel titleLabel = new JLabel("Cipher");
 			    titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
@@ -3005,10 +2996,11 @@ public class UINew extends JFrame {
 			    	this.cipherInfoPanel.add(cipherInfoLabel);
 			    	
 			    	
-			    	JLabel cipherScoreLabel = new JLabel("" + Rounder.round((double)num_dev.get(i).get(1), 2));
+			    	JLabel cipherScoreLabel = new JLabel(String.format("%.2f", (double)num_dev.get(i).get(1), 2));
 			    	cipherScoreLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
 			    	this.cipherScorePanel.add(cipherScoreLabel);
-			    }**/
+			    }
+    			
     		}
     		this.cipherInfoPanel.revalidate();
     	}
@@ -3080,7 +3072,7 @@ public class UINew extends JFrame {
     		    outputText += "\n LDI: " + PolyalphabeticIdentifier.calculateLDI(text);
     		    outputText += "\n SDD: " + StatCalculator.calculateSDD(text);
 
-    		    outputText += "\n A_LDI: " + PolyalphabeticIdentifier.calculateALDI(text);
+    		    outputText += "\n A_LDI: " + PolyalphabeticIdentifier.calculateAutokeyPortaLDI(text);
     		    outputText += "\n B_LDI: " + PolyalphabeticIdentifier.calculateBeaufortLDI(text);
     		    outputText += "\n P_LDI: " + PolyalphabeticIdentifier.calculatePortaLDI(text);
     		    outputText += "\n S_LDI: " + PolyalphabeticIdentifier.calculateSLDI(text);

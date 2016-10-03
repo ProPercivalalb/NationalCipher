@@ -1,16 +1,16 @@
 package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticLongRepeat extends StatisticBaseNumber {
+public class StatisticLongRepeat extends TextStatistic {
 
-	public StatisticLongRepeat(double value, double sD) {
-		super(value, sD);
+	public StatisticLongRepeat(String text) {
+		super(text);
 	}
 
 	@Override
-	public double getValue(String text) {
-		return StatCalculator.calculateLR(text);
+	public void calculateStatistic() {
+		this.value = StatCalculator.calculateLR(this.text);
 	}
-
 }

@@ -1,16 +1,16 @@
 package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticMaxNicodemus3to15 extends StatisticBaseNumber {
+public class StatisticMaxNicodemus3to15 extends TextStatistic {
 
-	public StatisticMaxNicodemus3to15(double value, double sD) {
-		super(value, sD);
+	public StatisticMaxNicodemus3to15(String text) {
+		super(text);
 	}
 
 	@Override
-	public double getValue(String text) {
-		return StatCalculator.calculateMaxNicodemusIC(text, 3, 15);
+	public void calculateStatistic() {
+		this.value = StatCalculator.calculateMaxNicodemusIC(this.text, 3, 15);
 	}
-
 }

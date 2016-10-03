@@ -1,16 +1,16 @@
 package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticDoubleLetter extends StatisticBaseBoolean {
-
-	public StatisticDoubleLetter(boolean doubleLetter) {
-		super(doubleLetter);
+public class StatisticDoubleLetter extends TextStatistic {
+	
+	public StatisticDoubleLetter(String text) {
+		super(text);
 	}
 
 	@Override
-	public boolean getOutcome(String text) {
-		return StatCalculator.calculateDBL(text);
+	public void calculateStatistic() {
+		this.value = StatCalculator.calculateDBL(this.text) ? 1 : 0;
 	}
-
 }

@@ -1,16 +1,16 @@
 package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticLogDigraphPorta extends StatisticBaseNumber {
+public class StatisticLogDigraphPorta extends TextStatistic {
 
-	public StatisticLogDigraphPorta(double value, double sD) {
-		super(value, sD);
+	public StatisticLogDigraphPorta(String text) {
+		super(text);
 	}
 
 	@Override
-	public double getValue(String text) {
-		return PolyalphabeticIdentifier.calculatePortaLDI(text);
+	public void calculateStatistic() {
+		this.value = PolyalphabeticIdentifier.calculatePortaLDI(this.text);
 	}
-
 }

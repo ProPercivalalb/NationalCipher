@@ -1,17 +1,21 @@
 package nationalcipher.cipher.stats.types;
 
-public class StatisticTextLengthMultiple extends StatisticBaseBoolean {
+import nationalcipher.cipher.stats.DataHolder;
+import nationalcipher.cipher.stats.TextStatistic;
 
-	public int multiple;
-	
-	public StatisticTextLengthMultiple(int multiple) {
-		super(true);
-		this.multiple = multiple;
+public class StatisticTextLengthMultiple extends TextStatistic {
+
+	public StatisticTextLengthMultiple(String text) {
+		super(text);
 	}
 
 	@Override
-	public boolean getOutcome(String text) {
-		return text.length() % this.multiple == 0;
+	public void calculateStatistic() {
+		this.value = this.text.length();
 	}
-
+	
+	@Override
+	public double quantify(DataHolder data) {
+		return this.value % data.value == 0 ? 0 : 1000;
+	}
 }

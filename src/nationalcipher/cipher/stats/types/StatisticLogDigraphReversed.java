@@ -1,16 +1,16 @@
 package nationalcipher.cipher.stats.types;
 
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
+import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticLogDigraphReversed extends StatisticBaseNumber {
+public class StatisticLogDigraphReversed extends TextStatistic {
 
-	public StatisticLogDigraphReversed(double value, double sD) {
-		super(value, sD);
+	public StatisticLogDigraphReversed(String text) {
+		super(text);
 	}
 
 	@Override
-	public double getValue(String text) {
-		return PolyalphabeticIdentifier.calculateRDI(text);
+	public void calculateStatistic() {
+		this.value = PolyalphabeticIdentifier.calculateRDI(this.text);
 	}
-
 }
