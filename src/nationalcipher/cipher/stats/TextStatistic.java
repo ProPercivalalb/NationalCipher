@@ -7,7 +7,6 @@ public abstract class TextStatistic {
 	
 	public TextStatistic(String text) {
 		this.text = text;
-		this.calculateStatistic();
 	}
 	
 	public abstract void calculateStatistic();

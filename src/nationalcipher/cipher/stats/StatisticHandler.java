@@ -7,7 +7,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import javalibrary.math.Statistics;
+import javalibrary.streams.FileReader;
 import javalibrary.string.StringTransformer;
+import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter2to40;
@@ -78,6 +81,7 @@ public class StatisticHandler {
 		try {
 			for(String id : map.keySet()) {
 				TextStatistic stat = map.get(id).getConstructor(String.class).newInstance(text);
+				stat.calculateStatistic();
 				stats.put(id, stat);
 			}
 		}
@@ -86,6 +90,51 @@ public class StatisticHandler {
 		}
 		
 		return stats;
+	}
+	
+	public static void calculateStatPrint(IRandEncrypter randEncrypt, Class<? extends TextStatistic> textStatistic) {
+		List<String> list = FileReader.compileTextFromResource("/plainText.txt", true);
+		
+		List<Double> values = new ArrayList<Double>();
+		TextStatistic test = null;
+		try {
+			test = textStatistic.getConstructor(String.class).newInstance("");
+		} 
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		for(String line : list) {
+			String plainText = line;
+			
+			
+			
+			for(int i = 0; i < 20; i++) {
+				test.text = randEncrypt.randomlyEncrypt(plainText);
+				//System.out.println(test.text);
+				test.calculateStatistic();
+				try {
+					values.add(test.value);
+				} 
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	    Statistics stats = new Statistics(values);
+	    
+	    String name = randEncrypt.getClass().getSimpleName();
+		String variableName = "";
+	    if(!Character.isJavaIdentifierStart(name.charAt(0)))
+	    	variableName += "_";
+	    for (char c : name.toCharArray())
+	        if(!Character.isJavaIdentifierPart(c))
+	        	variableName += "_";
+	        else
+	        	variableName += c;
+
+		System.out.println(variableName + ".put(" + textStatistic.getSimpleName() + ", new DataHolder(" + String.format("%.2f", stats.getMean()) + ", " + String.format("%.2f", stats.getStandardDeviation()) + ")); //Min: " + String.format("%.2f", stats.getMin()) + " Max: " + String.format("%.2f", stats.getMax()));
 	}
 	
 	public static void registerStatistics() {
@@ -113,7 +162,6 @@ public class StatisticHandler {
 		registerStatistic(StatisticsRef.TRIFID_MAX_3to15, StatisticMaxTrifid3to15.class);
 		registerStatistic(StatisticsRef.NORMAL_ORDER, StatisticNormalOrder.class);
 		registerStatistic(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, StatisticPercentageOddRepeats.class);
-		registerStatistic(StatisticsRef.CONCECUTIVE_VALUE_DIFFERENCE, StatisticConcecutiveValueDifference.class);
 		
 		//Boolean statitics
 		registerStatistic(StatisticsRef.DOUBLE_LETTER_EVEN, StatisticDoubleLetter.class);

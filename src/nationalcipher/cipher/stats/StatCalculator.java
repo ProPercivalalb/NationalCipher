@@ -817,38 +817,6 @@ public class StatCalculator {
  		return false;
 	}
 
-	public static Statistics averageDifferenceinCharacter(String text) {
-		
-		List<Integer> data = new ArrayList<Integer>();
-		
-		for(int i = 0; i < text.length() - 1; i++) {
-			int a = text.charAt(i) - 'A';
-			int b = text.charAt(i + 1) - 'A';
-			
-			if(a > b)
-				data.add(26-(a - b));
-			else
-				data.add(b - a);
-		}
-		
-		return new Statistics(data);
-	}
-	
-	public static double pairs(String text) {
-		
-		int numberOfRepeat = 0;
-		for(int i = 0; i < text.length() - 1; i++) {
-			char a = text.charAt(i);
-			char b = text.charAt(i + 1);
-			
-			if(a ==b )
-				numberOfRepeat += 1;
-			
-		}
-		
-		return (double)numberOfRepeat / (text.length() - 1) * 100;
-	}
-
 	static int[][] sdd = new int[][] {
 			{0,3,4,2,0,0,1,0,0,0,4,5,2,6,0,2,0,4,4,3,0,6,0,0,3,5},
 			{0,0,0,0,6,0,0,0,0,9,0,7,0,0,0,0,0,0,0,0,7,0,0,0,7,0},

@@ -16,111 +16,6 @@ public class CipherStatistics {
 
 	private static HashMap<String, HashMap<String, DataHolder>> map;
 	
-	/**
-	public static List<List<Object>> getResultsFromStats(String text) {
-		List<List<Object>> num_dev = new ArrayList<List<Object>>();
-		
-		HashMap<String, HashMap<String, DataHolder>> statistic = CipherStatistics.getOtherCipherStatistics();
-		HashMap<StatisticType, Double> values = new HashMap<StatisticType, Double>();
-		
-		
-		for(String cipherName : statistic.keySet()) {
-			double total = 0.0D;
-			HashMap<String, DataHolder> statistics = statistic.get(cipherName);
-			if(statistics == null) continue;
-			
-			
-			for(StatisticType type : statistics) 
-				if(type instanceof StatisticBaseNumber) {
-					if(values.containsKey(type))
-						total += (StatisticBaseNumber)type).quantifyType(values.get(type));
-					else {
-						double value = type.quantifyType(text);
-						values.put(type, value);
-						total += value;
-					}
-						
-				}
-					
-				else
-					total += type.quantifyType(text);
-			
-			
-			num_dev.put(new ArrayList<Object>(Arrays.asList(cipherName, total)));
-		}
-		
-		return num_dev;
-	}
-	
-
-	public static void compileStatsForCipher(IRandEncrypter randEncrypt) {
-		List<String> list = FileReader.compileTextFromResource("/plainText.txt", true);
-
-		List<StatisticBaseNumber> statTypes = new ArrayList<StatisticBaseNumber>();
-		/**statTypes.put(StatisticsRef.IC_x1000, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.IC_MAX_x1000, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.LONG_REPEAT, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.NORMAL_ORDER, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.BIFID_MAX_0, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(200, 0));
-		statTypes.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(200, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_REVERSED, new DataHolder(200, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(10, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(10, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_VARIANT, new DataHolder(10, 0));
-	//	statTypes.put(StatisticsRef.LOG_DIAGRAPH_PORTA, new DataHolder(10, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_AUTOKEY_BEAUFORT, new DataHolder(30, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_AUTOKEY_PORTA, new DataHolder(3, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_AUTOKEY_VARIANT, new DataHolder(30, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_AUTOKEY_VIGENERE, new DataHolder(30, 0));
-		//statTypes.put(StatisticsRef.LOG_DIAGRAPH_SLIDEFAIR, new DataHolder(30, 0));
-	   // statTypes.put(StatisticsRef.LOG_DIAGRAPH_PORTAX, new DataHolder(30, 0));
-		
-		String name = randEncrypt.getClass().getSimpleName();
-		String variableName = "";
-	    if(!Character.isJavaIdentifierStart(name.charAt(0)))
-	    	variableName += "_";
-	    for (char c : name.toCharArray())
-	        if(!Character.isJavaIdentifierPart(c))
-	        	variableName += "_";
-	        else
-	        	variableName += c;
-
-		
-		
-		System.out.println("HashMap<String, DataHolder> " + variableName + " = createOrGetList(\""  + name + "\");");
-		
-		HashMap<StatisticBaseNumber, Double> precalculatedValues = new HashMap<StatisticBaseNumber, Double>();
-		for(StatisticBaseNumber type : statTypes) {
-			List<Double> values = new ArrayList<Double>();
-			
-			for(String line : list) {
-				String plainText = line;
-				
-				for(int i = 0; i < type.value; ++i) {
-					
-				//	System.out.println("en");
-					String text = randEncrypt.randomlyEncrypt(plainText);
-					//if(precalculatedValues.containsKey(type))
-					//	precalculatedValues.get(type);
-					double value = type.getValue(text);
-					values.add(value);
-				}
-			}
-	
-		    Statistics stats = new Statistics(values);
-			
-			System.out.println(variableName + ".put(new " + type.getClass().getSimpleName() + "(" + String.format("%.2f", stats.getMean()) + ", " + String.format("%.2f", stats.getStandardDeviation()) + "));");
-		}
-		System.out.println("\nComplete!");
-	}**/
-	
 	public static HashMap<String, HashMap<String, DataHolder>> getOtherCipherStatistics() {
 		if(map == null) {
 			map = new HashMap<String, HashMap<String, DataHolder>>();
@@ -132,13 +27,13 @@ public class CipherStatistics {
 			substitution.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(80.63, 8.91));
 			substitution.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(76.80, 6.70));
 			substitution.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(77.11, 7.21));
-			substitution.put(StatisticsRef.LONG_REPEAT, new DataHolder(23.965610058575958, 2.0102777216085546));
-			substitution.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.65217391304348, 1.5680328944763842));
-			substitution.put(StatisticsRef.NORMAL_ORDER, new DataHolder(225.3223188405797000000000000, 27.9080248261220500000000000));
+			substitution.put(StatisticsRef.LONG_REPEAT, new DataHolder(23.97, 2.01));
+			substitution.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.65, 1.57));
+			substitution.put(StatisticsRef.NORMAL_ORDER, new DataHolder(225.32, 27.91));
 			substitution.put(StatisticsRef.BIFID_MAX_0, new DataHolder(271.18, 26.95));
-			substitution.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(474.1241846046231, 76.0084566498733));
-			substitution.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(66.01746637747263, 8.475323689459344));
-			substitution.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(3739.0927263340480000000000000, 1076.8573199253747000000000000));
+			substitution.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(474.12, 76.01));
+			substitution.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(66.02, 8.48));
+			substitution.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(3739.10, 1076.86));
 			substitution.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(428.49, 60.44));
 			substitution.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(581.67, 24.57));
 			substitution.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(582.17, 25.37));
@@ -168,12 +63,12 @@ public class CipherStatistics {
 			vigenere.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(68.97, 9.57));
 			vigenere.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(25.09, 8.09));
 			vigenere.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(31.01, 15.38));
-			vigenere.put(StatisticsRef.LONG_REPEAT, new DataHolder(10.5212546335566250000000000, 2.9517345341344905000000000));
-			vigenere.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(39.8347101449275340000000000, 11.5407782805919010000000000));
-			vigenere.put(StatisticsRef.NORMAL_ORDER, new DataHolder(224.0864492753623300000000000, 32.9728235330279060000000000));
-			vigenere.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(175.7798110435920000000000000, 58.2320049919340550000000000));
-			vigenere.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(45.7087715971444300000000000, 3.5810771476970964000000000));
-			vigenere.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(1184.3713387205507000000000000, 907.8437292675648000000000000));
+			vigenere.put(StatisticsRef.LONG_REPEAT, new DataHolder(10.52, 2.95));
+			vigenere.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(39.83, 11.540));
+			vigenere.put(StatisticsRef.NORMAL_ORDER, new DataHolder(224.09, 32.97));
+			vigenere.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(175.78, 58.23));
+			vigenere.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(45.71, 3.58));
+			vigenere.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(1184.37, 907.84));
 			vigenere.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(427.54, 25.46));
 			vigenere.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(576.21, 23.67));
 			vigenere.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(759.40, 6.53));
@@ -185,13 +80,13 @@ public class CipherStatistics {
 			playfair.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(63.49, 7.51));
 			playfair.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(40.38, 3.86));
 			playfair.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(76.99, 7.24));
-			playfair.put(StatisticsRef.LONG_REPEAT, new DataHolder(13.2216252474114190000000000, 1.2690694983027242000000000));
-			playfair.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(30.8497826086956500000000000, 3.7339181673248363000000000));
-			playfair.put(StatisticsRef.NORMAL_ORDER, new DataHolder(233.4631159420290000000000000, 32.8259322483317000000000000));
+			playfair.put(StatisticsRef.LONG_REPEAT, new DataHolder(13.22, 1.27));
+			playfair.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(30.85, 3.73));
+			playfair.put(StatisticsRef.NORMAL_ORDER, new DataHolder(233.45, 32.83));
 			playfair.put(StatisticsRef.BIFID_MAX_0, new DataHolder(158.46, 22.42));
-			playfair.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(253.8848368274454700000000000, 28.3074790701134380000000000));
-			playfair.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(52.4302649136329800000000000, 3.3217549175988060000000000));
-			playfair.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(1210.2630829565220000000000000, 364.5870986315568400000000000));
+			playfair.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(253.88, 28.31));
+			playfair.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(52.43, 3.32));
+			playfair.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(1210.26, 364.59));
 			playfair.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(449.98, 42.78));
 			playfair.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(557.48, 27.85));
 			playfair.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(557.91, 27.09));
@@ -225,13 +120,13 @@ public class CipherStatistics {
 			solitaire.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(40.03, 1.68));
 			solitaire.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(14.79, 0.87));
 			solitaire.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(14.78, 1.63));
-			solitaire.put(StatisticsRef.LONG_REPEAT, new DataHolder(5.1354845549403230000000000, 0.8892331387414816000000000));
-			solitaire.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.6165217391304340000000000, 2.9584395740484672000000000));
-			solitaire.put(StatisticsRef.NORMAL_ORDER, new DataHolder(222.4618840579710200000000000, 29.7462382849075200000000000));
+			solitaire.put(StatisticsRef.LONG_REPEAT, new DataHolder(5.14, 0.89));
+			solitaire.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.62, 2.96));
+			solitaire.put(StatisticsRef.NORMAL_ORDER, new DataHolder(222.46, 29.75));
 			solitaire.put(StatisticsRef.BIFID_MAX_0, new DataHolder(92.37, 10.50));
-			solitaire.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(105.2713415046132200000000000, 13.8776832252436170000000000));
-			solitaire.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(40.0047256854201400000000000, 2.5816919104277085000000000));
-			solitaire.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(233.8118871177359000000000000, 159.8055294692080700000000000));
+			solitaire.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(105.27, 13.88));
+			solitaire.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(40.00, 2.58));
+			solitaire.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(233.81, 159.81));
 			solitaire.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(427.60, 12.22));
 			solitaire.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(531.78, 32.80));
 			solitaire.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(531.75, 33.00));
@@ -243,12 +138,12 @@ public class CipherStatistics {
 			swagman.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(78.30, 7.05));
 			swagman.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(45.58, 5.10));
 			swagman.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(43.78, 4.60));
-			swagman.put(StatisticsRef.LONG_REPEAT, new DataHolder(12.1786457684977110000000000, 1.3282465483966868000000000));
-			swagman.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(47.0241304347826060000000000, 4.5797519438332180000000000));
-			swagman.put(StatisticsRef.NORMAL_ORDER, new DataHolder(69.8844202898550700000000000, 29.2737289484617600000000000));
-			swagman.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(339.8914879313608000000000000, 65.0130912307681700000000000));
-			swagman.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(67.0952068842552500000000000, 8.6820672665165700000000000));
-			swagman.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(1151.3435874362190000000000000, 476.9147087108571000000000000));
+			swagman.put(StatisticsRef.LONG_REPEAT, new DataHolder(12.18, 1.33));
+			swagman.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(47.02, 4.58));
+			swagman.put(StatisticsRef.NORMAL_ORDER, new DataHolder(69.88, 29.27));
+			swagman.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(339.89, 65.01));
+			swagman.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(67.10, 8.68));
+			swagman.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(1151.34, 476.91));
 			
 			HashMap<String, DataHolder> hill = createOrGetList("Hill");
 			hill.put(StatisticsRef.IC_x1000, new DataHolder(41.93, 2.51));
@@ -256,13 +151,13 @@ public class CipherStatistics {
 			hill.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(56.35, 8.57));
 			hill.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(32.82, 3.04));
 			hill.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(76.90, 7.25));
-			hill.put(StatisticsRef.LONG_REPEAT, new DataHolder(11.0574608954837430000000000, 1.5954853220975898000000000));
-			hill.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(21.8755072463768130000000000, 3.4266022534824447000000000));
-			hill.put(StatisticsRef.NORMAL_ORDER, new DataHolder(215.5181159420290000000000000, 30.2644808686260550000000000));
+			hill.put(StatisticsRef.LONG_REPEAT, new DataHolder(11.06, 1.60));
+			hill.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(21.88, 3.43));
+			hill.put(StatisticsRef.NORMAL_ORDER, new DataHolder(215.52, 30.26));
 			hill.put(StatisticsRef.BIFID_MAX_0, new DataHolder(111.79, 19.61));
-			hill.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(206.0340229309999500000000000, 23.6102261329829060000000000));
-			hill.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(43.6375430128524700000000000, 3.0024386382334796000000000));
-			hill.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(949.5763054281967000000000000, 343.3313308706509600000000000));
+			hill.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(206.03, 23.61));
+			hill.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(43.64, 3.00));
+			hill.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(949.58, 343.33));
 			hill.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(435.79, 26.22));
 			hill.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(548.25, 30.74));
 			hill.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(548.33, 30.53));
@@ -274,13 +169,13 @@ public class CipherStatistics {
 			amsco.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(80.85, 7.47));
 			amsco.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(46.67, 4.14));
 			amsco.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(46.68, 4.95));
-			amsco.put(StatisticsRef.LONG_REPEAT, new DataHolder(12.3952488616742400000000000, 1.2195949387679033000000000));
-			amsco.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.5107246376811600000000000, 1.7129179433636794000000000));
-			amsco.put(StatisticsRef.NORMAL_ORDER, new DataHolder(72.5507246376811600000000000, 30.1082762139631600000000000));
+			amsco.put(StatisticsRef.LONG_REPEAT, new DataHolder(12.36, 1.22));
+			amsco.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.51, 1.71));
+			amsco.put(StatisticsRef.NORMAL_ORDER, new DataHolder(72.55, 30.11));
 			amsco.put(StatisticsRef.BIFID_MAX_0, new DataHolder(277.92, 31.40));
-			amsco.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(307.4907450238189000000000000, 48.8208789511897700000000000));
-			amsco.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(66.8789890086337500000000000, 8.6858174374260350000000000));
-			amsco.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(930.3247217946657000000000000, 328.8778481774621000000000000));
+			amsco.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(307.49, 48.82));
+			amsco.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(66.88, 8.69));
+			amsco.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(930.32, 328.88));
 			amsco.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(691.99, 7.79));
 			amsco.put(StatisticsRef.LOG_DIAGRAPH_BEAUFORT, new DataHolder(579.08, 25.30));
 			amsco.put(StatisticsRef.LOG_DIAGRAPH_VIGENERE, new DataHolder(693.02, 7.01));
@@ -313,13 +208,13 @@ public class CipherStatistics {
 			bifid0.put(StatisticsRef.IC_KAPPA_x1000, new DataHolder(64.95, 8.69));
 			bifid0.put(StatisticsRef.DIAGRAPHIC_IC_x10000, new DataHolder(24.30, 3.34));
 			bifid0.put(StatisticsRef.DIAGRAPHIC_EVEN_IC_x10000, new DataHolder(24.70, 3.98));
-			bifid0.put(StatisticsRef.LONG_REPEAT, new DataHolder(8.6437355142257400000000000, 1.3075777375681608000000000));
-			bifid0.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.1687681159420300000000000, 2.6366692188094520000000000));
-			bifid0.put(StatisticsRef.NORMAL_ORDER, new DataHolder(195.6653623188405800000000000, 27.7081302398854880000000000));
-			bifid0.put(StatisticsRef.BIFID_MAX_0, new DataHolder(375.0180671883381400000000000, 86.8684127654248400000000000));
-			bifid0.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(158.1277213763352400000000000, 24.5793739964456200000000000));
-			bifid0.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(47.3077039774720100000000000, 3.7183913405654010000000000));
-			bifid0.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(507.1672628980072700000000000, 266.0493779362677000000000000));
+			bifid0.put(StatisticsRef.LONG_REPEAT, new DataHolder(8.64, 1.31));
+			bifid0.put(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.17, 2.64));
+			bifid0.put(StatisticsRef.NORMAL_ORDER, new DataHolder(195.67, 27.71));
+			bifid0.put(StatisticsRef.BIFID_MAX_0, new DataHolder(375.02, 86.87));
+			bifid0.put(StatisticsRef.BIFID_MAX_3to15, new DataHolder(158.13, 24.58));
+			bifid0.put(StatisticsRef.NICODEMUS_MAX_3to15, new DataHolder(47.31, 3.72));
+			bifid0.put(StatisticsRef.TRIFID_MAX_3to15, new DataHolder(507.17, 266.05));
 			bifid0.put(StatisticsRef.LOG_DIAGRAPH, new DataHolder(485.04, 29.57));
 			
 			HashMap<String, DataHolder> porta = createOrGetList("Porta");
@@ -584,6 +479,10 @@ public class CipherStatistics {
 			beaufortSlidefair.put(StatisticsRef.LOG_DIAGRAPH_PORTA, new DataHolder(542.33, 25.24));
 			beaufortSlidefair.put(StatisticsRef.LOG_DIAGRAPH_SLIDEFAIR, new DataHolder(747.08, 8.51));
 			beaufortSlidefair.put(StatisticsRef.LOG_DIAGRAPH_PORTAX, new DataHolder(431.79, 23.68));
+			
+			HashMap<String, DataHolder> cadenus = createOrGetList("Cadenus");
+			cadenus.put(StatisticsRef.IC_x1000, new DataHolder(66.01, 2.71)); //66.21, 15.74 if has 'x's to make multiple of 25
+			cadenus.put(StatisticsRef.TEXT_LENGTH_MULTIPLE, new DataHolder(25));
 			
 			/**
 			normalEnglish.put(new StatisticRange(StatisticType.MAX_IOC, 73.0D, 11.0D));

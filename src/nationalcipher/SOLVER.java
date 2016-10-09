@@ -35,6 +35,8 @@ import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.stats.StatisticHandler;
+import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -61,18 +63,9 @@ public class SOLVER {
 		
 		
 	    System.out.println(PortaAutokey.decode("SYNNJSCVRNRLAHUTUKUCVRYRLANY".toCharArray(), "FORTIFICATION", false));
-	    for(IRandEncrypter k : RandomEncrypter.ciphers) {
-		    System.out.println(k.getClass().getSimpleName() + " --------------------");
-	    List<Double> data3 = new ArrayList<Double>();
-	    for(int i = 0; i < 2000; i++) {
-		    String cipherText2 = k.randomlyEncrypt(RandomUtil.pickRandomElement(FileReader.compileTextFromResource("/plainText.txt", true)));
-		    double stats = StatCalculator.pairs(cipherText2);
-		    	data3.add(stats);
-		    }
-	    Statistics s3 = new Statistics(data3);
-	    System.out.println(String.format("%.2f", (double)s3.getMean()) + " " +String.format("%.2f", (double)s3.getStandardDeviation()));
-	    //System.out.println("--------------------");
-	    }
+	    StatisticHandler.registerStatistics();
+	    for(Class<? extends TextStatistic> clz :StatisticHandler.map.values()) 
+	    	StatisticHandler.calculateStatPrint(new Cadenus(), clz);
 	    /**
 	    List<Double> data = new ArrayList<Double>();
 	    for(int i = 0; i < 2000; i++) {

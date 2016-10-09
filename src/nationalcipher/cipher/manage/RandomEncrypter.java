@@ -12,6 +12,7 @@ import nationalcipher.cipher.BeaufortAutokey;
 import nationalcipher.cipher.BeaufortProgressiveKey;
 import nationalcipher.cipher.BeaufortSlidefair;
 import nationalcipher.cipher.Bifid;
+import nationalcipher.cipher.Cadenus;
 import nationalcipher.cipher.Caesar;
 import nationalcipher.cipher.ConjugatedBifid;
 import nationalcipher.cipher.Enigma;
@@ -72,6 +73,7 @@ public class RandomEncrypter {
 		ciphers.add(new BeaufortSlidefair());
 		ciphers.add(new Bifid());
 		ciphers.add(new Caesar());
+		ciphers.add(new Cadenus());
 		ciphers.add(new Bazeries());
 		ciphers.add(new ConjugatedBifid());
 		ciphers.add(new Enigma());

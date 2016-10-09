@@ -26,7 +26,7 @@ public class StatisticsRef {
 	public static final String NICODEMUS_MAX_3to15 = "nicodemus_max_3to15";
 	public static final String TRIFID_MAX_3to15 = "trifid_max_3to15";
 	public static final String NORMAL_ORDER = "normal_order";
-	public static final String CONCECUTIVE_VALUE_DIFFERENCE = "concencutive_value_difference";
+	public static final String CONCECUTIVE_VALUE_DIFFERENCE = "c";
 	
 	public static final String DOUBLE_LETTER_EVEN = "double_letter_even";
 	public static final String DOUBLE_LETTER_EVEN_2to40 = "double_letter_even_2to40";

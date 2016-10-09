@@ -1303,6 +1303,7 @@ public class UINew extends JFrame {
     	private JDialog dialog;
     	private JBarChart chart;
     	private JComboBox<String> comboBox;
+    	private JComboBox<String> comboBoxOverlap;
     	
     	public NGramFrequencyAction() {
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
@@ -1345,6 +1346,17 @@ public class UINew extends JFrame {
 			    }       
 			});
 	        panel.add(this.comboBox);
+	        this.comboBoxOverlap = new JComboBox<String>(new String[] {"Overlap", "n-Apart"});
+	        this.comboBoxOverlap.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+	        this.comboBoxOverlap.addItemListener(new ItemListener() {
+				@Override
+			    public void itemStateChanged(ItemEvent event) {
+					if(event.getStateChange() == ItemEvent.SELECTED) {
+						updateDialog();
+			       }
+			    }       
+			});
+	        panel.add(this.comboBoxOverlap);
 	        
     		this.dialog.add(panel);
     		
@@ -1374,8 +1386,13 @@ public class UINew extends JFrame {
 	      			minlength = Integer.valueOf(label);
 	      			maxlength = minlength;
 	      		}
-    			
-	    		Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(text, minlength, maxlength, true);
+	      		
+	      		boolean overlap = true;
+	      		String labelOverlap = (String)this.comboBoxOverlap.getSelectedItem();
+    			if(!labelOverlap.equals("Overlap"))
+    				overlap = false;
+	      		
+	    		Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(text, minlength, maxlength, overlap);
 				
 	    		List<String> asendingOrder = new ArrayList<String>(counts.keySet());
 				Collections.sort(asendingOrder, new StringAnalyzer.SortStringInteger(counts));
