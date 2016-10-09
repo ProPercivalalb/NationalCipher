@@ -7,7 +7,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
@@ -38,12 +38,12 @@ public class NihilistTranspositionDecrypt implements IDecrypt {
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			
-			List<Integer> factors = MathHelper.getSquareFactors(text.length());
+			List<Integer> factors = MathUtil.getSquareFactors(text.length());
 			factors.remove((Integer)1);
 			output.println("" + factors);
 			
 			for(int keyLength = 4; keyLength <= 4; ++keyLength)
-				progress.addMaxValue(MathHelper.factorialBig(keyLength));
+				progress.addMaxValue(MathUtil.factorialBig(keyLength));
 			
 			if(!factors.isEmpty()) {
 				

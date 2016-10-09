@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -11,7 +11,7 @@ public class VariantAutokey implements IRandEncrypter {
 		String cipherText = "";
 		
 		for(int index = 0; index < plainText.length(); index++)
-			cipherText += (char)(MathHelper.mod(plainText.charAt(index) - autoKey.charAt(index), 26) + 'A');
+			cipherText += (char)(MathUtil.mod(plainText.charAt(index) - autoKey.charAt(index), 26) + 'A');
 		
 		return cipherText;
 	}

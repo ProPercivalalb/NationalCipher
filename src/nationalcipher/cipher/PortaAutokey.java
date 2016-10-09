@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -20,7 +20,7 @@ public class PortaAutokey implements IRandEncrypter {
 			String row = "";
 			
 			for(int j = 0; j < 13; j++)
-				row += (char)(MathHelper.mod(j + (shiftRight ? -1 : 1) * rowNo, 13) + 'N');
+				row += (char)(MathUtil.mod(j + (shiftRight ? -1 : 1) * rowNo, 13) + 'N');
 			
 			int inGrid = row.indexOf(cipherText[pos]);
 			if(inGrid >= 0)

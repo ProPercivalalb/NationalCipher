@@ -2,7 +2,7 @@ package nationalcipher.cipher;
 
 import java.math.BigInteger;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 
@@ -14,7 +14,7 @@ public class Affine implements IRandEncrypter {
 		
 		String tempAlphabet = "";
 		for(int i = 'A'; i <= 'Z'; ++i)
-			tempAlphabet += (char)('A' + MathHelper.wrap(a * (i - 'A') + b, 0, 26));
+			tempAlphabet += (char)('A' + MathUtil.wrap(a * (i - 'A') + b, 0, 26));
 		
 		for(char ch : plainText.toCharArray()) {
 				
@@ -35,7 +35,7 @@ public class Affine implements IRandEncrypter {
 		
 		//Runs through all the characters from the array
 		for(int i = 0; i < cipherText.length; i++)
-			plainText[i] = (char) (MathHelper.mod(multiplicativeInverse * (cipherText[i] - 'A' - b), 26) + 'A');
+			plainText[i] = (char) (MathUtil.mod(multiplicativeInverse * (cipherText[i] - 'A' - b), 26) + 'A');
 
 		return plainText;
 	}

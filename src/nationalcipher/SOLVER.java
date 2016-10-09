@@ -17,7 +17,7 @@ import javalibrary.language.English;
 import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringTransformer;

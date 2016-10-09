@@ -3,7 +3,7 @@ package nationalcipher.cipher;
 import java.util.stream.IntStream;
 
 import javalibrary.lib.Timer;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
@@ -21,7 +21,7 @@ public class Caesar implements IRandEncrypter {
 			if(!Character.isAlphabetic(ch))
 				cipherText += ch;
 			else {
-				char newLetter = (char)(MathHelper.wrap(shift + ch - 'A', 0, 26) + 'A');
+				char newLetter = (char)(MathUtil.wrap(shift + ch - 'A', 0, 26) + 'A');
 				cipherText += newLetter;
 			}
 		}

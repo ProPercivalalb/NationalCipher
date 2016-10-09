@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
@@ -54,7 +54,7 @@ public class SingleTranspostion implements IDecrypt {
 	
 			
 			for(int keyLength = minLength; keyLength <= maxLength; ++keyLength)
-				progress.addMaxValue(MathHelper.factorialBig(keyLength));
+				progress.addMaxValue(MathUtil.factorialBig(keyLength));
 			
 			for(int keyLength = minLength; keyLength <= maxLength; ++keyLength)
 				Creator.iterateRedefence(task, keyLength);

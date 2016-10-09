@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 import javalibrary.Output;
 import javalibrary.dict.Dictionary;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.Settings;
@@ -38,7 +38,7 @@ public class CadenusDecrypt implements IDecrypt {
 		CadenusTask task = new CadenusTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			List<Integer> factors = MathHelper.getFactors(text.length() / 25);			
+			List<Integer> factors = MathUtil.getFactors(text.length() / 25);			
 			output.println("" + factors);
 			progress.addMaxValue(1000);
 			
@@ -59,7 +59,7 @@ public class CadenusDecrypt implements IDecrypt {
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
 			progress.addMaxValue(Dictionary.words.size());
-			List<Integer> factors = MathHelper.getFactors(text.length() / 25);			
+			List<Integer> factors = MathUtil.getFactors(text.length() / 25);			
 			output.println("" + factors);
 			progress.addMaxValue(1000);
 			

@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 
 public class ProgressiveKey {
 
@@ -9,7 +9,7 @@ public class ProgressiveKey {
 
 		for(int index = 0; index < encodedText.length(); index++) {
 			int progression = (int)(index / period) * progressiveKey;
-			cipherText += (char)(MathHelper.mod((encodedText.charAt(index) - 'A' + progression), 26) + 'A');
+			cipherText += (char)(MathUtil.mod((encodedText.charAt(index) - 'A' + progression), 26) + 'A');
 		}
 		
 		return cipherText;

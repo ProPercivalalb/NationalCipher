@@ -3,7 +3,7 @@ package nationalcipher.cipher;
 import java.util.ArrayList;
 import java.util.List;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -21,7 +21,7 @@ public class Homophonic implements IRandEncrypter {
 			if(charIndex >= 9) charIndex--;
 			
 			for(int no = 0; no < 25; no++) {
-				String n = "" + (i * 25 + MathHelper.mod(no - charIndex, 25) + 1) % 100;
+				String n = "" + (i * 25 + MathUtil.mod(no - charIndex, 25) + 1) % 100;
 				if(n.length() < 2) n = "0" + n;
 				rows.add(n);
 			}
@@ -49,7 +49,7 @@ public class Homophonic implements IRandEncrypter {
 			if(c >= 8) c--;
 			
 			for(int no = 0; no < 25; no++) {
-				String n = "" + (i * 25 + MathHelper.mod(no - c, 25) + 1) % 100;
+				String n = "" + (i * 25 + MathUtil.mod(no - c, 25) + 1) % 100;
 				if(n.length() < 2) n = "0" + n;
 				rows.add(n);
 			}

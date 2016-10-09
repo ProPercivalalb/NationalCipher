@@ -1,7 +1,7 @@
 package nationalcipher.cipher;
 
 import javalibrary.lib.Timer;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
@@ -91,7 +91,7 @@ public class PeriodicGromark implements IRandEncrypter {
 		
 		for(int i = 0; i < cipherText.length; i++) {
 			int keyIndex = (int)(Math.floor(i / inOrd.length) % inOrd.length);
-			plainText[i] = (char)(MathHelper.mod(transposedKey.indexOf(cipherText[i]) - transposedKey.indexOf(key.charAt(keyIndex)) - numericKey[i], 26) + 'A');
+			plainText[i] = (char)(MathUtil.mod(transposedKey.indexOf(cipherText[i]) - transposedKey.indexOf(key.charAt(keyIndex)) - numericKey[i], 26) + 'A');
 		}
 		
 		return plainText;

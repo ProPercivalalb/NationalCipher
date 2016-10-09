@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.transposition.route.RouteTwist;
@@ -358,7 +358,7 @@ public class Routes {
 					grid[index++] = (startY + dir * y) * width + nx;
 				
 				dir *= -1;
-				startY = MathHelper.mod(startY + dir, height);
+				startY = MathUtil.mod(startY + dir, height);
 			}
 			
 			return grid;
@@ -390,7 +390,7 @@ public class Routes {
 					grid[index++] = ny * width + (startX + dir * x);
 				
 				dir *= -1;
-				startX = MathHelper.mod(startX + dir, width);
+				startX = MathUtil.mod(startX + dir, width);
 			}
 			
 			return grid;

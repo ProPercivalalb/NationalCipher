@@ -90,7 +90,7 @@ import javalibrary.language.Languages;
 import javalibrary.lib.OSIdentifier;
 import javalibrary.lib.Timer;
 import javalibrary.listener.CustomMouseListener;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.math.Rounder;
 import javalibrary.math.Statistics;
 import javalibrary.math.Units.Time;
@@ -789,7 +789,7 @@ public class UINew extends JFrame {
 				String inputText = event.getDocument().getText(0, event.getDocument().getLength());
 				String statText = "";
 				
-				List<Integer> factors = MathHelper.getFactors(inputText.length());
+				List<Integer> factors = MathUtil.getFactors(inputText.length());
 				Collections.sort(factors);
 				statText +=  "Length: " + inputText.length() + " " + factors;
 				statText += "\n A-Z: " + StringTransformer.countLetterChars(inputText);
@@ -3113,7 +3113,7 @@ public class UINew extends JFrame {
     		    outputText += "\n DIV_25: " + StatCalculator.isLengthDivisible25(text);
     		    outputText += "\n DIV_4_15: " + StatCalculator.isLengthDivisible4_15(text);
     		    outputText += "\n DIV_4_30: " + StatCalculator.isLengthDivisible4_30(text);
-    		    List<Integer> factors =  MathHelper.getFactors(length);
+    		    List<Integer> factors =  MathUtil.getFactors(length);
     		    Collections.sort(factors);
     		    outputText += "\n DIV_N: " + factors;
     		    outputText += "\n PSQ: " + StatCalculator.isLengthPerfectSquare(text);

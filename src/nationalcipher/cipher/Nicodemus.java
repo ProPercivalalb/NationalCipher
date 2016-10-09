@@ -2,7 +2,7 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -29,7 +29,7 @@ public class Nicodemus implements IRandEncrypter {
 			for(int i = 0; i < keyword.length(); i++) 
 				for(int j = start_row; j < end_row; j++)
 					if(j * keyword.length() + order[i] < plainText.length())
-						cipherText += (char)(MathHelper.mod(plainText.charAt(j * keyword.length() + order[i]) + keyword.charAt(order[i]), 26) + 'A');
+						cipherText += (char)(MathUtil.mod(plainText.charAt(j * keyword.length() + order[i]) + keyword.charAt(order[i]), 26) + 'A');
 
 			start_row = end_row;
 		}
@@ -54,7 +54,7 @@ public class Nicodemus implements IRandEncrypter {
 			for(int j = 0; j < blockSize; j++) {
 				int place = order[(int)Math.floor(j / 5)];
 				char c = cipherText.charAt(i * blockSize + j);
-				text[i * blockSize + (j % 5) * keyword.length() + place] = (char)(MathHelper.mod(c - keyword.charAt(place), 26) + 'A');
+				text[i * blockSize + (j % 5) * keyword.length() + place] = (char)(MathUtil.mod(c - keyword.charAt(place), 26) + 'A');
 			}
 		}
 		
@@ -72,7 +72,7 @@ public class Nicodemus implements IRandEncrypter {
 			for(int j = 0; j < total; j++) {
 				int place = order[i];
 				char c = cipherText.charAt(charactersDone + index + j);
-				text[charactersDone + j * keyword.length() + place] = (char)(MathHelper.mod(c - keyword.charAt(place), 26) + 'A');
+				text[charactersDone + j * keyword.length() + place] = (char)(MathUtil.mod(c - keyword.charAt(place), 26) + 'A');
 			}
 			
 			index += total;

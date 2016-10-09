@@ -2,7 +2,7 @@ package nationalcipher.cipher.transposition;
 
 import java.util.List;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 
@@ -51,7 +51,7 @@ public class RouteTransposition implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		List<Integer> factors = MathHelper.getFactors(plainText.length());
+		List<Integer> factors = MathUtil.getFactors(plainText.length());
 		factors.remove((Integer)1);
 		factors.remove((Integer)plainText.length());
 		int factor = RandomUtil.pickRandomElement(factors);

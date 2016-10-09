@@ -12,7 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
@@ -42,7 +42,7 @@ public class PortaxDecrypt implements IDecrypt {
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
 		PortaTask task = new PortaTask(text.toCharArray(), settings, keyPanel, output, progress);
 		
-		List<Integer> factors = MathHelper.getFactors(text.length() / 2);
+		List<Integer> factors = MathUtil.getFactors(text.length() / 2);
 		output.println("Factors: %s", factors);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {

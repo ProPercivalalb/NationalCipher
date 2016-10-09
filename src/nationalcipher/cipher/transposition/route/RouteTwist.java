@@ -1,6 +1,6 @@
 package nationalcipher.cipher.transposition.route;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import nationalcipher.cipher.transposition.RouteCipherType;
 
 public class RouteTwist extends RouteCipherType {
@@ -18,7 +18,7 @@ public class RouteTwist extends RouteCipherType {
 		int index = 0;
 		
 		for(int h = 0; h < height; h++) {
-			int cut = MathHelper.mod(width - h * this.twistSize, width);
+			int cut = MathUtil.mod(width - h * this.twistSize, width);
 			for(int w = 0; w < width; w++)
 				grid[index++] = h * width + (cut + w) % width;
 		}

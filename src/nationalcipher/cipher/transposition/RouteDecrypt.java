@@ -7,7 +7,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -34,7 +34,7 @@ public class RouteDecrypt implements IDecrypt {
 		TranspositionTask task = new TranspositionTask(text.toCharArray(), settings, output, keyPanel, progress);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			List<Integer> factors = MathHelper.getFactors(text.length());
+			List<Integer> factors = MathUtil.getFactors(text.length());
 			
 			output.println("Factors - " + factors);
 			

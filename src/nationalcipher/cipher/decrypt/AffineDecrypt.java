@@ -11,7 +11,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
@@ -62,15 +62,15 @@ public class AffineDecrypt implements IDecrypt {
 			
 			output.println("(x) %da + b = %d mod 26", (language1 - 'A'), (sorted1 - 'A'));
 			output.println("(y) %da + b = %d mod 26", (language0 - 'A'), (sorted0 - 'A'));
-			int aCoff = MathHelper.mod(language1 - language0, 26);
-			int answer = MathHelper.mod(sorted1 - sorted0, 26);
+			int aCoff = MathUtil.mod(language1 - language0, 26);
+			int answer = MathUtil.mod(sorted1 - sorted0, 26);
 			output.println("(x)-(y) = %da = %d mod 26", aCoff, answer);
 			
 			
 			int inverse = BigInteger.valueOf(aCoff).modInverse(BigInteger.valueOf(26)).intValue();
 			int a = (answer * inverse) % 26;
 			output.println("a = %d", a);
-			int b = MathHelper.mod((sorted0 - 'A') - a * (language0 - 'A'), 26);
+			int b = MathUtil.mod((sorted0 - 'A') - a * (language0 - 'A'), 26);
 			output.println("b = %d", b);
 			char[] plainText = Affine.decode(text.toCharArray(), a, b);
 			output.println(new String(plainText));

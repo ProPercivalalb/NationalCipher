@@ -7,7 +7,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Redefence;
@@ -41,7 +41,7 @@ public class ReddefenceDecrypt implements IDecrypt {
 			int maxKeyLength = 7;
 			
 			for(int keyLength = minKeyLength; keyLength <= maxKeyLength; ++keyLength)
-				progress.addMaxValue(MathHelper.factorialBig(keyLength));
+				progress.addMaxValue(MathUtil.factorialBig(keyLength));
 			
 			for(int keyLength = minKeyLength; keyLength <= maxKeyLength; ++keyLength)
 				Creator.iterateRedefence(task, keyLength);

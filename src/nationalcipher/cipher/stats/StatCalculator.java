@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javalibrary.language.ILanguage;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringAnalyzer;

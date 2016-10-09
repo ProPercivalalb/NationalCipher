@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -11,7 +11,7 @@ public class BeaufortAutokey implements IRandEncrypter {
 		String cipherText = "";
 		
 		for(int index = 0; index < plainText.length(); index++)
-			cipherText += (char)(MathHelper.mod(autoKey.charAt(index) - plainText.charAt(index), 26) + 'A');
+			cipherText += (char)(MathUtil.mod(autoKey.charAt(index) - plainText.charAt(index), 26) + 'A');
 		
 		return cipherText;
 	}

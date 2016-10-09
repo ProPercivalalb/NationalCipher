@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
@@ -98,7 +98,7 @@ public class PortaDecrypt implements IDecrypt {
 		for(int i = 0; i < 13; i++) {
 			text += "\n" + (char)(i * 2 + 'A') + "-"  +  (char)(i * 2 + 1 + 'A') + "  ";
 			for(int j = 0; j < 13; j++)
-				text += (char)(MathHelper.mod(j + (shiftRight ? -1 : 1) * i, 13) + 'N') + "|";
+				text += (char)(MathUtil.mod(j + (shiftRight ? -1 : 1) * i, 13) + 'N') + "|";
 		}
 		area.setText(text);
 		
@@ -111,7 +111,7 @@ public class PortaDecrypt implements IDecrypt {
 				for(int i = 0; i < 13; i++) {
 					text += "\n" + (char)(i * 2 + 'A') + "-"  +  (char)(i * 2 + 1 + 'A') + "  ";
 					for(int j = 0; j < 13; j++)
-						text += (char)(MathHelper.mod(j + (shiftRight ? -1 : 1) * i, 13) + 'N') + "|";
+						text += (char)(MathUtil.mod(j + (shiftRight ? -1 : 1) * i, 13) + 'N') + "|";
 				}
 				area.setText(text);
 			}

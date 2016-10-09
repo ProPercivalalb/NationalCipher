@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -18,7 +18,7 @@ public class VigenereProgressiveKey implements IRandEncrypter {
 
 		for(int index = 0; index < plainText.length(); index++) {
 			int progression = (int)Math.floor(index / period) * progressiveKey;
-			cipherText += (char)(MathHelper.mod(plainText.charAt(index) + progression + keyword.charAt(index % keyword.length()), 26) + 'A');
+			cipherText += (char)(MathUtil.mod(plainText.charAt(index) + progression + keyword.charAt(index % keyword.length()), 26) + 'A');
 		}
 		
 		return cipherText;
@@ -29,7 +29,7 @@ public class VigenereProgressiveKey implements IRandEncrypter {
 
 		for(int index = 0; index < cipherText.length; index++) {
 			int progression = (int)Math.floor(index / period) * progressiveKey;
-			plainText[index] = (char)(MathHelper.mod(cipherText[index] - progression - keyword.charAt(index % keyword.length()), 26) + 'A');
+			plainText[index] = (char)(MathUtil.mod(cipherText[index] - progression - keyword.charAt(index % keyword.length()), 26) + 'A');
 		}
 		
 		return plainText;

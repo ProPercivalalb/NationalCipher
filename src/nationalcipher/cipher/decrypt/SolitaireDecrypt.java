@@ -17,7 +17,7 @@ import javalibrary.Output;
 import javalibrary.dict.Dictionary;
 import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
@@ -65,7 +65,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 			output.println("Deck Size: %d", deck.order.length);
 			output.println("Current known order: " + ListUtil.toString(deck.order));
 			output.println("Current known order: " + ListUtil.toString(deck.order, 1));
-			output.println("No of unknowns (%d), permutations - %s", deck.countUnknowns(), MathHelper.factorialBig(deck.countUnknowns()));
+			output.println("No of unknowns (%d), permutations - %s", deck.countUnknowns(), MathUtil.factorialBig(deck.countUnknowns()));
 			
 			if(deck.isDeckComplete()) {
 				output.print("Decrypting...\n%s", Solitaire.decode(text.toCharArray(), deck.order));
@@ -77,7 +77,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 				
 				output.println("Left: %s", Arrays.toString(deck.unknownCards));
 		
-				progress.addMaxValue(MathHelper.factorialBig(deck.countUnknowns()));
+				progress.addMaxValue(MathUtil.factorialBig(deck.countUnknowns()));
 	
 				Creator.iterateAMSCO(task, deck.unknownCards);
 

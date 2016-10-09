@@ -1,6 +1,6 @@
 package nationalcipher.cipher;
 
-import javalibrary.math.MathHelper;
+import javalibrary.math.MathUtil;
 import nationalcipher.cipher.manage.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -59,12 +59,12 @@ public class Playfair implements IRandEncrypter {
 	        char c, d;
 	        
 	        if(row1 == row2) {
-	        	c = keysquare.charAt(row1 * 5 + MathHelper.mod(col1 + 1, 5));
-	        	d = keysquare.charAt(row2 * 5 + MathHelper.mod(col2 + 1, 5));
+	        	c = keysquare.charAt(row1 * 5 + MathUtil.mod(col1 + 1, 5));
+	        	d = keysquare.charAt(row2 * 5 + MathUtil.mod(col2 + 1, 5));
 	        }
 	        else if(col1 == col2) {
-	        	c = keysquare.charAt(MathHelper.mod(row1 + 1, 5) * 5 + col1);
-	        	d = keysquare.charAt(MathHelper.mod(row2 + 1, 5) * 5 + col2);
+	        	c = keysquare.charAt(MathUtil.mod(row1 + 1, 5) * 5 + col1);
+	        	d = keysquare.charAt(MathUtil.mod(row2 + 1, 5) * 5 + col2);
 	        }
 	        else {
 	            c = keysquare.charAt(row1 * 5 + col2);
@@ -95,12 +95,12 @@ public class Playfair implements IRandEncrypter {
 	        char c, d;
 	        
 	        if(row1 == row2) {
-	        	c = keysquare.charAt(row1 * 5 + MathHelper.mod(col1 - 1, 5));
-	        	d = keysquare.charAt(row2 * 5 + MathHelper.mod(col2 - 1, 5));
+	        	c = keysquare.charAt(row1 * 5 + MathUtil.mod(col1 - 1, 5));
+	        	d = keysquare.charAt(row2 * 5 + MathUtil.mod(col2 - 1, 5));
 	        }
 	        else if(col1 == col2) {
-	        	c = keysquare.charAt(MathHelper.mod(row1 - 1, 5) * 5 + col1);
-	        	d = keysquare.charAt(MathHelper.mod(row2 - 1, 5) * 5 + col2);
+	        	c = keysquare.charAt(MathUtil.mod(row1 - 1, 5) * 5 + col1);
+	        	d = keysquare.charAt(MathUtil.mod(row2 - 1, 5) * 5 + col2);
 	        }
 	        else {
 	            c = keysquare.charAt(row1 * 5 + col2);
