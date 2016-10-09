@@ -25,7 +25,7 @@ public class Hill implements IRandEncrypter {
 	
 	public static char[] decode(char[] cipherText, Matrix keyMatrix) throws MatrixNotSquareException, MatrixNoInverse { 
 	    Matrix inverseMatrix = keyMatrix.inverseMod(26);
-		
+
 		int size = inverseMatrix.squareSize();
 	    char[] plainText = new char[cipherText.length]; 
 	    for(int i = 0; i < cipherText.length; i += size){
@@ -82,7 +82,7 @@ public class Hill implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		do {
 			try {
-				return encode(plainText, KeyGeneration.createMatrix(RandomUtil.pickRandomInt(2, 2), 26));
+				return encode(plainText, KeyGeneration.createMatrix(RandomUtil.pickRandomInt(2, 3), 26));
 			}
 			catch(MatrixNoInverse noInverse) {
 				
