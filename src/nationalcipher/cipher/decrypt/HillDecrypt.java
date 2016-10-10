@@ -26,6 +26,7 @@ import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.ObjectTracker;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Affine;
 import nationalcipher.cipher.Hill;
@@ -126,9 +127,6 @@ public class HillDecrypt implements IDecrypt {
 	
 	public static String[][] generateTrigraphPattern(String... commonTrigraph) {
 		int amount = (int)Math.pow(commonTrigraph.length, 3);
-		//for(int i = 1; i < 3; i++) {
-		//	amount *= (commonTrigraph.length - i);
-		//}
 		
 		String[][] pattern = new String[amount][3];
 		
@@ -143,22 +141,46 @@ public class HillDecrypt implements IDecrypt {
 		return pattern;
 	}
 	
-	public static int[][] generatePickPattern(int size, int times) {
-		int amount = times;
-		for(int i = 1; i < size; i++) {
-			amount *= (times - i);
+	public static void recursive(int[][] patterns, ObjectTracker<Integer> count, int postion, int size, int times)  {
+
+		for(int i = 0; i < times; i++) {
+			//if(!ArrayUtil.contains(patterns[count.get()], postion, i) || postion == 0) {
+				patterns[count.get()][postion] = i;
+	
+				if(size - postion > 1)
+					recursive(patterns, count, postion + 1, size, times);
+				
+				if(postion + 1 == size) {
+					System.out.println(Arrays.toString(patterns[count.get()]));
+					count.target += 1;
+				}
+			//}
+			//else
+			//	continue;
+
+			
+
 		}
+	}
+	
+	public static int[][] generatePickPattern(int size, int times) { //MathUtil.factorial(times)
+		int[][] patterns = new int[(int)Math.pow(times, size)][size];
+		//System.out.println(patterns.length);
+		//recursive(patterns, ObjectTracker.create(0), 0, size, times);
 		
-		int[][] pattern = new int[amount][size];
+		//for(int i = 0; i < patterns.length; i++)
+		//		System.out.println(Arrays.toString(patterns[i]));
+		
+		
 		if(size == 2) {
 			int count = 0;
 			for(int i = 0; i < times; i++)
 				for(int j = 0; j < times; j++) {
 					if(i == j) continue;
-					pattern[count++] = new int[] {i, j};
+					patterns[count++] = new int[] {i, j};
 				}
 			
-			return pattern;
+			return patterns;
 		}
 		else if(size == 3) {
 			int count = 0;
@@ -166,11 +188,11 @@ public class HillDecrypt implements IDecrypt {
 				for(int j = 0; j < times; j++) {
 					for(int k = 0; k < times; k++) {
 						if(i == j || i == k || j == k) continue;
-						pattern[count++] = new int[] {i, j, k};
+						patterns[count++] = new int[] {i, j, k};
 					}
 				}
 			
-			return pattern;
+			return patterns;
 		}
 		
 		return new int[0][0];
@@ -185,10 +207,14 @@ public class HillDecrypt implements IDecrypt {
 	}
 	
 	public static void main(String[] args) {
+		generatePickPattern(3, 5);
+		
+		
 		//[14, 6, 13, 25, 10, 1, 18, 11, 13]
 		//THE goes to WDD --- AND goes to NDA --- THA goes to WZD --- ENT goes to RPU --- ING goes to IYB --- ION goes to BPZ
+		
 		int[] matrixData = new int[0];
-		for(int i = 0; i < 3; i++) {
+		for(int i = 0; i < 0; i++) {
 			int[] solution = solveSimEquationsInMod2x2(new int[][] {createEquationFrom("ENT", "RPU", i), createEquationFrom("THE", "WDD", i), createEquationFrom("ION", "BPZ", i),}, 26);
 			matrixData = ArrayUtil.concat(matrixData, solution);
 		}
