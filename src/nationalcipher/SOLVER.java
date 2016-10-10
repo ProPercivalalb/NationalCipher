@@ -64,8 +64,21 @@ public class SOLVER {
 		
 	    System.out.println(PortaAutokey.decode("SYNNJSCVRNRLAHUTUKUCVRYRLANY".toCharArray(), "FORTIFICATION", false));
 	    StatisticHandler.registerStatistics();
-	    for(Class<? extends TextStatistic> clz :StatisticHandler.map.values()) 
-	    	StatisticHandler.calculateStatPrint(new Cadenus(), clz);
+	   List<String> possible = Arrays.asList("THE", "ING", "ENT", "ION", "TIO", "FOR", "NDE", "EDT", "NCE", "TIS", "OFT", "MEN");
+	    for(String line : FileReader.compileTextFromResource("/plainText.txt", true) ) {
+	    	List<String> contains = new ArrayList<String>();
+	    	for(int i = 0; i < line.length() - 2; i+=3) {
+	    		String s = line.substring(i, i + 3);
+	    		if(possible.contains(s)) {
+	    			if(!contains.contains(s))
+	    				contains.add(s);
+	    		}
+	    	}
+	    	System.out.println((contains.size() >= 3) + " " + contains.size());
+	    }
+	    
+	   // for(Class<? extends TextStatistic> clz :StatisticHandler.map.values()) 
+	    //	StatisticHandler.calculateStatPrint(new Cadenus(), clz);
 	    /**
 	    List<Double> data = new ArrayList<Double>();
 	    for(int i = 0; i < 2000; i++) {

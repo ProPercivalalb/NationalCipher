@@ -88,34 +88,59 @@ public class HillDecrypt implements IDecrypt {
 				
 				for(int i = 0; i < pickPattern.length; i++) {
 					int[] pattern = pickPattern[i];
-				
-						
-						String[][] commonGrams = new String[][] {new String[] {"TH", "HE"}, new String[] {"THE", "ING", "ENT"}};
+					for(String[] triGraph : generateTrigraphPattern("THE", "ING", "ENT", "ION", "TIO")) {
+					
+						//THE ING ENT ION TIO FOR NDE NCE TIS OFT MEN //new String[] {"THE", "ING", "ENT"}
+						String[][] commonGrams = new String[][] {new String[] {"TH", "HE"}, triGraph};
 		
 				
 						//output.println("%s --> %s  %s --> %s", language0, sorted0, language1, sorted1);
 						// [ a, b ] 
 						// [ c, d ]
 					
-						int[] matrixData = new int[0];
-						for(int k = 0; k < size; k++) {
-							int[][] equations = new int[size][size + 1];
-							for(int l = 0; l < size; l++) {
-								equations[l] = createEquationFrom(commonGrams[size - 2][l], sorted.get(pattern[l]), k);
+						try {
+							int[] matrixData = new int[0];
+							for(int k = 0; k < size; k++) {
+								int[][] equations = new int[size][size + 1];
+								for(int l = 0; l < size; l++) {
+									equations[l] = createEquationFrom(commonGrams[size - 2][l], sorted.get(pattern[l]), k);
+								}
+								int[] solution = solveSimEquationsInMod2x2(equations, 26);
+								matrixData = ArrayUtil.concat(matrixData, solution);
 							}
-							int[] solution = solveSimEquationsInMod2x2(equations, 26);
-							matrixData = ArrayUtil.concat(matrixData, solution);
+							Matrix matrix = new Matrix(matrixData, size, size);
+					
+							task.onIteration(matrix);
 						}
-						Matrix matrix = new Matrix(matrixData, size, size);
-				
-						task.onIteration(matrix);
-				
+						catch(ArithmeticException e) {
+							
+						}
+					}
 				}
 			}
 		}
 		else {
 			output.println(" Unexpected decryption method provided!");
 		}	
+	}
+	
+	public static String[][] generateTrigraphPattern(String... commonTrigraph) {
+		int amount = (int)Math.pow(commonTrigraph.length, 3);
+		//for(int i = 1; i < 3; i++) {
+		//	amount *= (commonTrigraph.length - i);
+		//}
+		
+		String[][] pattern = new String[amount][3];
+		
+		int count = 0;
+		for(int i = 0; i < commonTrigraph.length; i++)
+			for(int j = 0; j < commonTrigraph.length; j++) {
+				for(int k = 0; k < commonTrigraph.length; k++) {
+					pattern[count++] = new String[] {commonTrigraph[i], commonTrigraph[j], commonTrigraph[k]};
+				}
+			}
+		
+		return pattern;
 	}
 	
 	public static int[][] generatePickPattern(int size, int times) {
@@ -161,10 +186,10 @@ public class HillDecrypt implements IDecrypt {
 	
 	public static void main(String[] args) {
 		//[14, 6, 13, 25, 10, 1, 18, 11, 13]
-		//THE goes to WDD --- AND goes to NDA --- THA goes to WZD --- ENT goes to RPU --- ING goes to IYB
+		//THE goes to WDD --- AND goes to NDA --- THA goes to WZD --- ENT goes to RPU --- ING goes to IYB --- ION goes to BPZ
 		int[] matrixData = new int[0];
-		for(int i = 0; i < 1; i++) {
-			int[] solution = solveSimEquationsInMod2x2(new int[][] {createEquationFrom("AND", "NDA", i), createEquationFrom("THE", "WDD", i), createEquationFrom("THA", "WZD", i)}, 26);
+		for(int i = 0; i < 3; i++) {
+			int[] solution = solveSimEquationsInMod2x2(new int[][] {createEquationFrom("ENT", "RPU", i), createEquationFrom("THE", "WDD", i), createEquationFrom("ION", "BPZ", i),}, 26);
 			matrixData = ArrayUtil.concat(matrixData, solution);
 		}
 		Matrix matrix = new Matrix(matrixData, 3, 3);
@@ -176,7 +201,7 @@ public class HillDecrypt implements IDecrypt {
 	public static int[] solveSimEquationsInMod2x2(int[][] simEquations, int mod) {
 		int UNKNOWNS = simEquations.length;
 		
-		printEquations(simEquations);
+		//printEquations(simEquations);
 		
 		int multipler = 0;
 		int equatIndex = 0;
@@ -196,10 +221,10 @@ public class HillDecrypt implements IDecrypt {
 			
 			}
 		}
-		System.out.println(equatIndex+ " " + constIndex);
+		//System.out.println(equatIndex+ " " + constIndex);
 		ArrayOperations.multiply(simEquations[equatIndex], multipler);
 		ArrayOperations.mod(simEquations[equatIndex], mod);
-		printEquations(simEquations);
+		//printEquations(simEquations);
 		int[][] productEquations = new int[UNKNOWNS - 1][UNKNOWNS];
 		for(int i = 0, realI = 0; i < UNKNOWNS; i++) {
 			if(i == equatIndex) continue;
@@ -219,7 +244,7 @@ public class HillDecrypt implements IDecrypt {
 		int[] solution = null;
 		
 		if(UNKNOWNS - 1 == 1) {
-			System.out.println(String.format("%da = %d", productEquations[0][0], productEquations[0][1]));
+			//System.out.println(String.format("%da = %d", productEquations[0][0], productEquations[0][1]));
 			int inverse = MathUtil.getMultiplicativeInverse(productEquations[0][0], mod);
 
 			solution = new int[] {(productEquations[0][1] * inverse) % mod};
@@ -253,6 +278,7 @@ public class HillDecrypt implements IDecrypt {
 			//Dont require this bit: answer %= mod;
 			finalSolution[constIndex] = MathUtil.mod(answer * MathUtil.getMultiplicativeInverse(simEquations[subBackIndex][constIndex], mod), mod);
 		}
+		//System.out.println(Arrays.toString(finalSolution));
 		
 		return finalSolution;
 	}
