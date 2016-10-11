@@ -16,6 +16,7 @@ import javax.swing.text.AbstractDocument;
 import javalibrary.Output;
 import javalibrary.algebra.Equation;
 import javalibrary.algebra.Expression;
+import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.ArrayOperations;
@@ -207,14 +208,14 @@ public class HillDecrypt implements IDecrypt {
 	}
 	
 	public static void main(String[] args) {
-		generatePickPattern(3, 5);
-		
+		//generatePickPattern(3, 5); //new double[] {7, 5, -3, 16}, new double[] {3, -5, 2, -8}, new double[] {5, 3, -7, 0}}
+		//System.out.println(Arrays.toString(SimultaneousEquations.solveSimEquations(new double[][] {new double[] {0, 0, 0, 4, 12}, new double[] {3, -5, 17, 2, 119}, new double[] {5, 3, -7, 0, -15}, new double[] {15, -5, -7, 2, -25}})));
 		
 		//[14, 6, 13, 25, 10, 1, 18, 11, 13]
 		//THE goes to WDD --- AND goes to NDA --- THA goes to WZD --- ENT goes to RPU --- ING goes to IYB --- ION goes to BPZ
 		
 		int[] matrixData = new int[0];
-		for(int i = 0; i < 0; i++) {
+		for(int i = 0; i < 3; i++) {
 			int[] solution = solveSimEquationsInMod2x2(new int[][] {createEquationFrom("ENT", "RPU", i), createEquationFrom("THE", "WDD", i), createEquationFrom("ION", "BPZ", i),}, 26);
 			matrixData = ArrayUtil.concat(matrixData, solution);
 		}
@@ -226,7 +227,10 @@ public class HillDecrypt implements IDecrypt {
 	
 	public static int[] solveSimEquationsInMod2x2(int[][] simEquations, int mod) {
 		int UNKNOWNS = simEquations.length;
-		
+		//for(int i = 0; i < UNKNOWNS; i++)
+		//	for(int j = 0 ; j < UNKNOWNS; j++)
+		//		if(i != j)
+		//			simEquations[i] = ArrayOperations.mod(ArrayOperations.add(simEquations[i], simEquations[j]), mod);
 		//printEquations(simEquations);
 		
 		int multipler = 0;
@@ -303,6 +307,7 @@ public class HillDecrypt implements IDecrypt {
 			}
 			//Dont require this bit: answer %= mod;
 			finalSolution[constIndex] = MathUtil.mod(answer * MathUtil.getMultiplicativeInverse(simEquations[subBackIndex][constIndex], mod), mod);
+			break;
 		}
 		//System.out.println(Arrays.toString(finalSolution));
 		
@@ -317,7 +322,29 @@ public class HillDecrypt implements IDecrypt {
 		}
 	}
 	
+	public static void printEquations(double[][] equations) {
+		for(int k = 0; k < equations.length; k++) {
+			System.out.print(toString(equations[k]));
+			if(k == equations.length - 1) System.out.println("");
+			else System.out.print(" || ");
+		}
+	}
+	
 	public static String toString(int[] equation) {
+		String build = "";
+		char[] s = new char[] {'a', 'b', 'c', 'd', 'e', 'f'};
+		for(int i = 0; i < equation.length - 1; i++) {
+			build += equation[i] + "" + s[i] + " ";
+			if(i != equation.length - 2)
+				build += "+ ";
+		}
+		build += "= " + equation[equation.length - 1];
+
+
+		return build;
+	}
+	
+	public static String toString(double[] equation) {
 		String build = "";
 		char[] s = new char[] {'a', 'b', 'c', 'd', 'e', 'f'};
 		for(int i = 0; i < equation.length - 1; i++) {
