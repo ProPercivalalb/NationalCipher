@@ -113,16 +113,16 @@ import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
 import nationalcipher.LoadElement;
 import nationalcipher.Settings;
-import nationalcipher.cipher.ColumnarRow;
 import nationalcipher.cipher.ProgressiveKey;
-import nationalcipher.cipher.Solitaire;
-import nationalcipher.cipher.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.RandomEncrypter;
+import nationalcipher.cipher.base.onetimepad.Solitaire;
+import nationalcipher.cipher.base.onetimepad.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.base.transposition.ColumnarRow;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
-import nationalcipher.cipher.manage.IRandEncrypter;
-import nationalcipher.cipher.manage.RandomEncrypter;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -781,6 +781,24 @@ public class UINew extends JFrame {
         ((JPanel)this.getContentPane()).setBorder(new EmptyBorder(0, 5, 5, 5));
     }
     
+    private class NCCDialog {
+    	
+    	public JDialog dialog;
+    	
+    	public NCCDialog(String title, String icon) {
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle(title);
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource(icon)));
+    		this.dialog.setFocusableWindowState(false);
+    		dialogs.add(this.dialog);
+    	}
+    }
+    
     private class InputTextChange extends DocumentUtil.DocumentChangeAdapter {
 
 		@Override
@@ -831,14 +849,16 @@ public class UINew extends JFrame {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		final JDialog dialog = new JDialog(UINew.this);
+    		JDialog dialog = new JDialog(UINew.this);
+    		
     		dialog.setTitle("Cipher Settings");
     		
     		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/cog.png")));
     		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     		dialog.setResizable(false);
     		dialog.setMinimumSize(new Dimension(400, 200));
-
+    		dialog.setModal(true);
+   
     		ActionListener escListener = new ActionListener() {
     	        @Override
     	        public void actionPerformed(ActionEvent e) {
@@ -859,9 +879,7 @@ public class UINew extends JFrame {
     		
 	        
     		dialog.pack();
-			dialog.setModal(true);
 			dialog.setVisible(true);
-   
     	}
     }
     
@@ -1005,22 +1023,14 @@ public class UINew extends JFrame {
 		}
     }
     
-    public class ShowTopSolutionsAction implements ActionListener {
+    public class ShowTopSolutionsAction extends NCCDialog implements ActionListener {
     	
-    	private JDialog dialog;
     	private JTextArea textOutput;
     	public List<Solution> solutions;
     	private boolean updateNeed;
     	
     	public ShowTopSolutionsAction() {
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Top Solutions");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Top Solutions", "image/lock_break.png");
     		this.dialog.setMinimumSize(new Dimension(900, 400));
     		
     		JPanel panel = new JPanel();
@@ -1048,8 +1058,6 @@ public class UINew extends JFrame {
 	        panel.add(button);
 	        
     		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     		
     		this.solutions = new ArrayList<Solution>();
     	}

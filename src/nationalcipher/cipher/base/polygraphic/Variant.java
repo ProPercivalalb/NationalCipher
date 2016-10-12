@@ -1,7 +1,7 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.polygraphic;
 
 import javalibrary.math.MathUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Variant implements IRandEncrypter {

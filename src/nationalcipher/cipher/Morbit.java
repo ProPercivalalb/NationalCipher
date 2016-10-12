@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.string.MorseCode;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Morbit implements IRandEncrypter {

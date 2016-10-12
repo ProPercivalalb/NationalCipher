@@ -1,9 +1,9 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.polygraphic;
 
 import java.util.Arrays;
 
 import javalibrary.string.StringTransformer;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 /**

@@ -3,7 +3,7 @@ package nationalcipher.cipher;
 import java.util.Arrays;
 
 import javalibrary.math.MathUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Nicodemus implements IRandEncrypter {

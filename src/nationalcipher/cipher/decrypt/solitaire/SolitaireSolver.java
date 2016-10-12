@@ -6,8 +6,8 @@ import java.util.List;
 
 import javalibrary.language.Languages;
 import javalibrary.util.ListUtil;
-import nationalcipher.cipher.Solitaire;
-import nationalcipher.cipher.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.base.onetimepad.Solitaire;
+import nationalcipher.cipher.base.onetimepad.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.manage.Solution;
 
 public class SolitaireSolver {

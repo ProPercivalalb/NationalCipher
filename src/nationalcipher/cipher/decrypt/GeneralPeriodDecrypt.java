@@ -16,7 +16,7 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Keyword;
+import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

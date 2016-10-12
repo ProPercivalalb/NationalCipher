@@ -2,6 +2,8 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
+import nationalcipher.cipher.base.transposition.ColumnarRow;
+
 public class ADFGVX {
 
 	public static String encode(String plainText, String keysquare, int[] order, String adfgvx) {

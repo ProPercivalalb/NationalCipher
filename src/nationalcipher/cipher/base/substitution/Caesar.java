@@ -1,4 +1,4 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.substitution;
 
 import java.util.stream.IntStream;
 
@@ -6,7 +6,8 @@ import javalibrary.lib.Timer;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.polybiussquare.ConjugatedBifid;
 
 public class Caesar implements IRandEncrypter {
 

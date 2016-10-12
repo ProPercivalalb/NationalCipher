@@ -11,7 +11,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.NihilistTransposition;
+import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

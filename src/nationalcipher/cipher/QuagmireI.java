@@ -2,7 +2,7 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class QuagmireI implements IRandEncrypter {

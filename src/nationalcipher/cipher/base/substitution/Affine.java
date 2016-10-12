@@ -1,10 +1,10 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.substitution;
 
 import java.math.BigInteger;
 
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 
 public class Affine implements IRandEncrypter {
 

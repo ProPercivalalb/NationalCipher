@@ -1,9 +1,9 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.polybiussquare;
 
 import java.util.Arrays;
 
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 /**

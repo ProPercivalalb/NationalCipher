@@ -10,7 +10,7 @@ import javalibrary.Output;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Redefence;
+import nationalcipher.cipher.base.transposition.Redefence;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

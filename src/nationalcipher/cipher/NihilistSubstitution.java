@@ -1,7 +1,7 @@
 package nationalcipher.cipher;
 
 import javalibrary.string.StringTransformer;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class NihilistSubstitution implements IRandEncrypter {

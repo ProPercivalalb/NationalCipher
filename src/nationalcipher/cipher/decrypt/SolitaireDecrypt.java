@@ -24,7 +24,7 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.LoadElement;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Solitaire;
+import nationalcipher.cipher.base.onetimepad.Solitaire;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

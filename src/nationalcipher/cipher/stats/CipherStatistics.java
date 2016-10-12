@@ -8,8 +8,8 @@ import java.util.List;
 import javalibrary.language.Languages;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import nationalcipher.cipher.manage.IRandEncrypter;
-import nationalcipher.cipher.manage.RandomEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.RandomEncrypter;
 
 
 public class CipherStatistics {

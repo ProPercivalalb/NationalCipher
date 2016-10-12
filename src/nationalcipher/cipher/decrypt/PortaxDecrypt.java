@@ -16,7 +16,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Portax;
+import nationalcipher.cipher.base.polygraphic.Portax;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

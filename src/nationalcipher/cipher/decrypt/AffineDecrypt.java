@@ -15,7 +15,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Affine;
+import nationalcipher.cipher.base.substitution.Affine;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

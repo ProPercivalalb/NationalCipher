@@ -1,7 +1,8 @@
 package nationalcipher.cipher;
 
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.polygraphic.Vigenere;
 
 public class RunningKey implements IRandEncrypter {
 

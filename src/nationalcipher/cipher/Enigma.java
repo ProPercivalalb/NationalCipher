@@ -4,7 +4,7 @@ import javalibrary.fitness.TextFitness;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {

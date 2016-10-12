@@ -1,7 +1,8 @@
 package nationalcipher.cipher;
 
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.polygraphic.Beaufort;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class BeaufortProgressiveKey implements IRandEncrypter {

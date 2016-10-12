@@ -12,7 +12,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Cadenus;
+import nationalcipher.cipher.base.transposition.Cadenus;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

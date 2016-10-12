@@ -2,7 +2,7 @@ package nationalcipher.cipher;
 
 import javalibrary.string.NumberString;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 
 public class Bazeries implements IRandEncrypter {
 

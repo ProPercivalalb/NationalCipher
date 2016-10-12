@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Myszkowski;
+import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

@@ -2,7 +2,8 @@ package nationalcipher.cipher;
 
 import java.util.Arrays;
 
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class VariantSlidefair implements IRandEncrypter {

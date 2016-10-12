@@ -10,7 +10,7 @@ import java.util.List;
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringTransformer;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter2to40;

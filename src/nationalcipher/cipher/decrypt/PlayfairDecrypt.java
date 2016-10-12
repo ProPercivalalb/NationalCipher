@@ -10,7 +10,7 @@ import javalibrary.Output;
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Playfair;
+import nationalcipher.cipher.base.polybiussquare.Playfair;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

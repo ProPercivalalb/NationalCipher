@@ -21,7 +21,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Porta;
+import nationalcipher.cipher.base.polygraphic.Porta;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
@@ -80,14 +80,10 @@ public class PortaDecrypt implements IDecrypt {
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		dialog.setMinimumSize(new Dimension(400, 400));
-
-        JLabel range = new JLabel("Keyword length range: ");
 		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
-		JLabel direction = new JLabel("Key created moving right? ");
 		
-		panel.add(new SubOptionPanel(range, this.rangeBox));
-		panel.add(new SubOptionPanel(direction, this.directionOption));
+		panel.add(new SubOptionPanel("Keyword length range:", this.rangeBox));
+		panel.add(new SubOptionPanel("Key created moving right?", this.directionOption));
 		
 		final JTextArea area = new JTextArea();
 		area.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Key Tabular"));

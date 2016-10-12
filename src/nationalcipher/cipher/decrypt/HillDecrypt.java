@@ -1,5 +1,7 @@
 package nationalcipher.cipher.decrypt;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,8 +32,8 @@ import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ObjectTracker;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Affine;
 import nationalcipher.cipher.Hill;
+import nationalcipher.cipher.base.substitution.Affine;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
@@ -86,39 +89,38 @@ public class HillDecrypt implements IDecrypt {
 				List<String> sorted = new ArrayList<String>(chars.keySet());
 				Collections.sort(sorted, new StringAnalyzer.SortStringInteger(chars));
 				Collections.reverse(sorted);
-				int[][] pickPattern = generatePickPattern(size, 20);
+				
+				String[][] commonGrams = new String[][] {new String[] {"TH", "HE"}, TRI_GRAM[directionOption.getSelectedIndex()]};
+				int[][] pickPattern = generatePickPattern(size, Math.min(SettingParse.getInteger(this.gramSearchBox), sorted.size()));
 				
 				for(int i = 0; i < pickPattern.length; i++) {
 					int[] pattern = pickPattern[i];
-					for(String[] triGraph : generateTrigraphPattern("THE", "ING", "ENT", "ION", "TIO")) {
+					//for(String[] triGraph : generateTrigraphPattern("THE", "ING", "ENT", "ION", "TIO")) {
 					
 						//THE ING ENT ION TIO FOR NDE NCE TIS OFT MEN //new String[] {"THE", "ING", "ENT"}
-						String[][] commonGrams = new String[][] {new String[] {"TH", "HE"}, triGraph};
+	
 		
 				
 						//output.println("%s --> %s  %s --> %s", language0, sorted0, language1, sorted1);
 						// [ a, b ] 
 						// [ c, d ]
 					
-						try {
+					
 							int[] matrixData = new int[0];
 							for(int k = 0; k < size; k++) {
 								int[][] equations = new int[size][size + 1];
 								for(int l = 0; l < size; l++) {
 									equations[l] = createEquationFrom(commonGrams[size - 2][l], sorted.get(pattern[l]), k);
 								}
-								int[] solution = solveSimEquationsInMod2x2(equations, 26);
+								int[] solution = SimultaneousEquations.solveSimEquationsMod(equations, 26);
 								matrixData = ArrayUtil.concat(matrixData, solution);
 							}
 							Matrix matrix = new Matrix(matrixData, size, size);
 					
 							task.onIteration(matrix);
-						}
-						catch(ArithmeticException e) {
-							
-						}
+				
 					}
-				}
+				//}
 			}
 		}
 		else {
@@ -210,17 +212,41 @@ public class HillDecrypt implements IDecrypt {
 	public static void main(String[] args) {
 		//generatePickPattern(3, 5); //new double[] {7, 5, -3, 16}, new double[] {3, -5, 2, -8}, new double[] {5, 3, -7, 0}}
 		//System.out.println(Arrays.toString(SimultaneousEquations.solveSimEquations(new double[][] {new double[] {0, 0, 0, 4, 12}, new double[] {3, -5, 17, 2, 119}, new double[] {5, 3, -7, 0, -15}, new double[] {15, -5, -7, 2, -25}})));
-		
-		//[14, 6, 13, 25, 10, 1, 18, 11, 13]
-		//THE goes to WDD --- AND goes to NDA --- THA goes to WZD --- ENT goes to RPU --- ING goes to IYB --- ION goes to BPZ
-		
 		int[] matrixData = new int[0];
 		for(int i = 0; i < 3; i++) {
-			int[] solution = solveSimEquationsInMod2x2(new int[][] {createEquationFrom("ENT", "RPU", i), createEquationFrom("THE", "WDD", i), createEquationFrom("ION", "BPZ", i),}, 26);
+			/**Working Combos
+			THE :  1.81, AND :  0.73, ING :  0.72, ENT :  0.42, ION :  0.42
+			HER :  0.36, FOR :  0.34, THA :  0.33, NTH :  0.33, INT :  0.32
+			
+			THE, AND, ING Determinant:  493.0
+			THE, ING, ENT Determinant:  2523.0
+			THE, ING, ION Determinant:  2165.0
+			THE, ENT, ION Determinant: -1335.0
+			ING, ENT, HER Determinant:  1555.0
+			ING, ENT, FOR Determinant: -63.0
+			ENT, ION, HER Determinant: -1095.0
+			ING, ENT, THA Determinant:  2315.0
+			ING, ENT, NTH Determinant:  129.0
+			ING, ENT, NTH Determinant:  129.0
+			
+			**/
+			int[] solution = SimultaneousEquations.solveSimEquationsMod(new int[][] {createEquationFrom("THE", "WDD", i), createEquationFrom("AND", "NDA", i), createEquationFrom("THA", "IYB", i)}, 26);
+			System.out.println(Arrays.toString(solution));
 			matrixData = ArrayUtil.concat(matrixData, solution);
 		}
 		Matrix matrix = new Matrix(matrixData, 3, 3);
 		System.out.println(matrix);
+			//[14, 6, 13, 25, 10, 1, 18, 11, 13]
+		//THE goes to WDD --- AND goes to NDA --- THA goes to WZD --- ENT goes to RPU --- ING goes to IYB --- ION goes to BPZ
+		
+		/**
+		int[] matrixData = new int[0];
+		for(int i = 0; i < 3; i++) {
+			int[] solution = solveSimEquationsInMod2x2(new int[][] {createEquationFrom("ENT", "RPU", i), createEquationFrom("THE", "WDD", i), createEquationFrom("ION", "BPZ", i)}, 26);
+			matrixData = ArrayUtil.concat(matrixData, solution);
+		}
+		Matrix matrix = new Matrix(matrixData, 3, 3);
+		System.out.println(matrix);**/
 	}
 	
 	
@@ -357,16 +383,29 @@ public class HillDecrypt implements IDecrypt {
 
 		return build;
 	}
+	public String[][] TRI_GRAM = new String[][] {new String[] {"THE", "AND", "ING"}, new String[] {"THE", "ING", "ENT"}, new String[] {"THE", "ING", "ION"}, new String[] {"THE", "ENT", "ION"}, new String[] {"ING", "ENT", "HER"}, new String[] {"ING", "ENT", "FOR"}, new String[] {"ENT", "ION", "HER"}, new String[] {"ING", "ENT", "THA"}, new String[] {"ING", "ENT", "NTH"}};
+	public String[] TRI_GRAM_DISPLAY = new String[] {"THE AND ING", "THE ING ENT", "THE ING ION", "THE ENT ION", "ING ENT HER", "ING ENT FOR", "ENT ION HER", "ING ENT THA", "ING ENT NTH"};
 	
-	private JTextField rangeBox = new JTextField("2");
+	private JTextField rangeBox = new JTextField("2-3");
+	private JTextField gramSearchBox = new JTextField("20");
+	private JComboBox<String> directionOption = new JComboBox<String>(TRI_GRAM_DISPLAY);
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
-        JLabel range = new JLabel("Matrix Size Range:");
 		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
+		((AbstractDocument)this.gramSearchBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
 		
-		panel.add(new SubOptionPanel(range, this.rangeBox));
-        
+		panel.add(new SubOptionPanel("Matrix Size Range:", this.rangeBox));
+		panel.add(new SubOptionPanel("N-Gram Search Range:", this.gramSearchBox));
+		panel.add(new SubOptionPanel("3x3 Trigram Sets:", this.directionOption));
+		
+		this.directionOption.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				directionOption.getSelectedIndex();
+			}
+		});
+		
 		dialog.add(panel);
 	}
 

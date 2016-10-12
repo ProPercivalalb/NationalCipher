@@ -1,6 +1,6 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.polybiussquare;
 
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class TwoSquare implements IRandEncrypter {

@@ -1,10 +1,10 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.onetimepad;
 
 import java.util.Arrays;
 
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Solitaire implements IRandEncrypter {

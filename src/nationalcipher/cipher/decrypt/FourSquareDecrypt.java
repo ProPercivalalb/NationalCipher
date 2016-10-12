@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.FourSquare;
+import nationalcipher.cipher.base.polybiussquare.FourSquare;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

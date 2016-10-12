@@ -1,8 +1,8 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.polygraphic;
 
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 /**

@@ -1,7 +1,7 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.polybiussquare;
 
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class ConjugatedBifid implements IRandEncrypter {

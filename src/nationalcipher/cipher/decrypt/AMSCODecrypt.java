@@ -14,7 +14,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.AMSCO;
+import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

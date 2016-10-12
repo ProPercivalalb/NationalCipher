@@ -14,7 +14,7 @@ import javalibrary.dict.Dictionary;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Bifid;
+import nationalcipher.cipher.base.polybiussquare.Bifid;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;

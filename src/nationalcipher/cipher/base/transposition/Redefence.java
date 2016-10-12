@@ -1,6 +1,6 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.transposition;
 
-import nationalcipher.cipher.manage.IRandEncrypter;
+import nationalcipher.cipher.base.IRandEncrypter;
 
 /**
  * @author Alex Barter (10AS)

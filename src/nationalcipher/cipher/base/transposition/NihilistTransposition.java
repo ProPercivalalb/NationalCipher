@@ -1,4 +1,4 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.transposition;
 
 public class NihilistTransposition {
 
