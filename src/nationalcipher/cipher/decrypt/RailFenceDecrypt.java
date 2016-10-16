@@ -10,13 +10,13 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.RailFence;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.RailFenceKey;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class RailFenceDecrypt implements IDecrypt {
 
@@ -58,7 +58,7 @@ public class RailFenceDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(int rows) {
-			this.lastSolution = new Solution(RailFence.decode(this.text, rows), this.settings.getLanguage()).setKeyString("Rows-%d", rows);
+			this.lastSolution = new Solution(RailFence.decode(this.cipherText, rows), this.settings.getLanguage()).setKeyString("Rows-%d", rows);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

@@ -10,10 +10,10 @@ import javalibrary.Output;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.ui.KeyPanel;
 
 
@@ -115,7 +115,7 @@ public class RouteDecrypt implements IDecrypt {
 		}
 
 		public void onIteration(int columns, int rows, RouteCipherType writtenOn, RouteCipherType readOff) {
-			this.lastSolution = new Solution(RouteTransposition.decode(this.text, columns, rows, writtenOn, readOff), this.settings.getLanguage()).setKeyString("C:%d R:%d %s %s ", columns, rows, writtenOn.getDescription(), readOff.getDescription());
+			this.lastSolution = new Solution(RouteTransposition.decode(this.cipherText, columns, rows, writtenOn, readOff), this.settings.getLanguage()).setKeyString("C:%d R:%d %s %s ", columns, rows, writtenOn.getDescription(), readOff.getDescription());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

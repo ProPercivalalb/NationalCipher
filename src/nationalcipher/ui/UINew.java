@@ -102,6 +102,7 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ImageUtil;
 import javalibrary.swing.LayoutUtil;
 import javalibrary.swing.MenuScroller;
+import javalibrary.swing.ProgressValue;
 import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
@@ -113,18 +114,18 @@ import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
 import nationalcipher.LoadElement;
 import nationalcipher.Settings;
-import nationalcipher.cipher.ProgressiveKey;
 import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.ProgressiveKey;
 import nationalcipher.cipher.base.RandomEncrypter;
 import nationalcipher.cipher.base.onetimepad.Solitaire;
 import nationalcipher.cipher.base.onetimepad.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.base.transposition.ColumnarRow;
+import nationalcipher.cipher.decrypt.complete.AttackRegistry;
+import nationalcipher.cipher.decrypt.complete.CipherAttack;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
 
@@ -132,7 +133,7 @@ import nationalcipher.cipher.stats.StatisticHandler;
  *
  * @author Alex
  */
-public class UINew extends JFrame {
+public class UINew extends JFrame implements IApplication {
 
 	public static char[] BEST_SOULTION;
 	public static ShowTopSolutionsAction topSolutions;
@@ -153,6 +154,7 @@ public class UINew extends JFrame {
     	this.dialogs = new ArrayList<JDialog>();
     	this.lastStates = new ArrayList<JDialog>();
     	
+    	AttackRegistry.loadCiphers(this.settings);
     	DecryptionManager.loadCiphers(this.settings);
     	this.settings.readFromFile();
     	
@@ -215,7 +217,6 @@ public class UINew extends JFrame {
 				output.println("	Word statitics");
 				WordSplit.loadFile();
 				progressBar.setValue(progressBar.getValue() + 1);
-				
 				
 				for(ILanguage language : Languages.languages) {
 					output.println("	Lang(" + language.getName() + ")");
@@ -285,7 +286,7 @@ public class UINew extends JFrame {
     }
                      
     private void initComponents() {
-    	this.cipherSelect = new JComboBox<String>(DecryptionManager.getNames());
+    	this.cipherSelect = new JComboBox<String>(AttackRegistry.getNames());
     	this.decryptionType = new JComboBox<DecryptionMethod>();
     	this.inputPanel = new JPanel();
         this.inputTextScroll = new JScrollPane();
@@ -310,6 +311,7 @@ public class UINew extends JFrame {
         this.menuItemBinary = new JMenuItem();
         this.menuItemASCII = new JMenuItem();
         this.menuItemShuffle = new JMenuItem();
+        this.menuItemReverseText = new JMenuItem();
         this.menuItemTools = new JMenu();
         this.menuItemNGram = new JMenuItem();
         this.menuItemLetterFrequency = new JMenuItem();
@@ -342,6 +344,8 @@ public class UINew extends JFrame {
 		this.menuItemSimulatedAnnealing = new JMenu();
         this.menuItemSAPreset = new JMenu();
         this.menuItemUpdateProgress = new JCheckBoxMenuItem();
+        this.menuCipherAttack = new JMenu();
+        this.menuItemCurrentAttack = new JMenuItem();
         
 		this.setLayout(new GridBagLayout());
 
@@ -380,12 +384,15 @@ public class UINew extends JFrame {
 		});
 		this.toolBar.add(nonletters);
         
+		
+		
+		//this.cipherSelect.setText("DECRYPTION");
         this.cipherSelect.setMaximumSize(new Dimension(180, Integer.MAX_VALUE));
         this.cipherSelect.addActionListener(new CipherSelectAction());
         this.toolBar.add(this.cipherSelect);
      		 
      	this.decryptionType.setMaximumSize(new Dimension(150, Integer.MAX_VALUE));
-		List<DecryptionMethod> methods = getDecryptManager().getDecryptionMethods();
+		List<DecryptionMethod> methods = getCipherAttack().getAttackMethods();
 		
 		for(DecryptionMethod method : methods)
 			decryptionType.addItem(method);
@@ -530,6 +537,11 @@ public class UINew extends JFrame {
         this.menuItemShuffle.addActionListener(new ShuffleTextAction());
         this.menuItemEdit.add(this.menuItemShuffle);
         
+        this.menuItemReverseText.setText("Reverse Text");
+        this.menuItemReverseText.setIcon(ImageUtil.createImageIcon("/image/page_white_text.png", "Reverse Text"));
+        this.menuItemReverseText.addActionListener(new ReverseTextAction());
+        this.menuItemEdit.add(this.menuItemReverseText);
+        
         this.menuBar.add(this.menuItemEdit);
 
         this.menuItemTools.setText("Tools");
@@ -656,7 +668,7 @@ public class UINew extends JFrame {
         this.menuItemEncrypter.addSeparator();
         
         this.menuItemEncodeChose.setText("Specific");
-        MenuScroller.setScrollerFor( this.menuItemEncodeChose, 15, 125, 0, 0);
+        MenuScroller.setScrollerFor(this.menuItemEncodeChose, 15, 125, 0, 0);
         for(final IRandEncrypter encrypt : RandomEncrypter.ciphers) {
         	JMenuItem jmi = new JMenuItem(encrypt.getClass().getSimpleName());
         	jmi.addActionListener(new ActionListener() {
@@ -685,7 +697,7 @@ public class UINew extends JFrame {
         this.menuItemLanguage.setText("Language");
 
 		this.menuItemLanguage.setIcon(ImageUtil.createImageIcon("/image/globe.png", "Language"));
-		this.menuItemCurrentLanguage.setText("Current: " + settings.language.getName());
+		this.menuItemCurrentLanguage.setText("Current: " + settings.getLanguage().getName());
 		
 		
 		this.menuItemLanguage.add(this.menuItemCurrentLanguage);
@@ -696,7 +708,7 @@ public class UINew extends JFrame {
 			jmi.addActionListener(new LanguageChangeAction(language));
 			this.menuItemLanguage.add(jmi);
 			group.add(jmi);
-			if(language == this.settings.language) jmi.setSelected(true);
+			if(language == this.settings.getLanguage()) jmi.setSelected(true);
 		}
 		this.menuItemSettings.add(this.menuItemLanguage);
 
@@ -706,7 +718,7 @@ public class UINew extends JFrame {
 		this.menuItemKeywordHalf.setText("NOPQRSTUVWXYZABCDEFGHIJKLM");
 		this.menuItemKeywordReverse.setText("ZYXWVUTSRQPONMLKJIHGFEDCBA");
 		
-		new JMenuItem[]{this.menuItemKeywordNormal, this.menuItemKeywordHalf, this.menuItemKeywordReverse}[this.settings.keywordCreation].setSelected(true);
+		new JMenuItem[]{this.menuItemKeywordNormal, this.menuItemKeywordHalf, this.menuItemKeywordReverse}[this.settings.getKeywordCreationId()].setSelected(true);
 		
 		this.settings.keywordCreationGroup = new ButtonGroup();
 		this.settings.keywordCreationGroup.add(this.menuItemKeywordNormal);
@@ -725,19 +737,19 @@ public class UINew extends JFrame {
 		
 		this.menuItemSimulatedAnnealing.setText("Simulated Annealing");
 		
-		JTextField tempSetting = new JTextField(ValueFormat.getNumber(this.settings.simulatedAnnealing.get(0)));
+		JTextField tempSetting = new JTextField(ValueFormat.getNumber(this.settings.getSATempStart()));
 		((AbstractDocument)tempSetting.getDocument()).setDocumentFilter(new DocumentUtil.DocumentDoubleInput(tempSetting));
 		tempSetting.addKeyListener(new SimulatedAnnealingAction(tempSetting, 0));
 		this.menuItemSimulatedAnnealing.add(new JLabel("Temperature Value"));
 		this.menuItemSimulatedAnnealing.add(tempSetting);
 		this.menuItemSimulatedAnnealing.addSeparator();
-		JTextField tempStepSetting = new JTextField(ValueFormat.getNumber(this.settings.simulatedAnnealing.get(1)));
+		JTextField tempStepSetting = new JTextField(ValueFormat.getNumber(this.settings.getSATempStep()));
 		((AbstractDocument)tempStepSetting.getDocument()).setDocumentFilter(new DocumentUtil.DocumentDoubleInput(tempStepSetting));
 		tempStepSetting.addKeyListener(new SimulatedAnnealingAction(tempStepSetting, 1));
 		this.menuItemSimulatedAnnealing.add(new JLabel("Temperature Step"));
 		this.menuItemSimulatedAnnealing.add(tempStepSetting);
 		this.menuItemSimulatedAnnealing.addSeparator();
-		JTextField countSetting = new JTextField(ValueFormat.getNumber(this.settings.simulatedAnnealing.get(2)));
+		JTextField countSetting = new JTextField(ValueFormat.getNumber(this.settings.getSACount()));
 		((AbstractDocument)countSetting.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerInput());
 		countSetting.addKeyListener(new SimulatedAnnealingAction(countSetting, 2));
 		this.menuItemSimulatedAnnealing.add(new JLabel("Count"));
@@ -765,12 +777,40 @@ public class UINew extends JFrame {
 		this.menuItemUpdateProgress.setSelected(this.settings.updateProgress());
 		this.keyPanel.setIterationUnsed();
 		this.menuItemUpdateProgress.addActionListener(new UpdateProgressAction(this.menuItemUpdateProgress));
-		this.menuItemSettings.add(this.menuItemUpdateProgress);
-		
-		
+		this.menuItemSettings.add(this.menuItemUpdateProgress);		
         this.menuBar.add(this.menuItemSettings);
 
+        this.menuCipherAttack.setText("Cipher Attack");
         
+        this.menuItemCurrentAttack.setText("Target: Caesar Shift");
+		
+		
+		this.menuCipherAttack.add(this.menuItemCurrentAttack);
+		this.menuCipherAttack.addSeparator();
+        
+        ButtonGroup cipherAttackGroup = new ButtonGroup();
+        JMenu substitution = new JMenu("Substitution");
+        JMenu transpostion = new JMenu("Transpostion");
+        
+        for(String name : new String[] {"Caesar Shift", "Affine", "Simple Subsitution", "Bazeries"}) {
+	        JMenuItem attackButton = new JCheckBoxMenuItem(name);
+	        if(name.equals("Caesar Shift")) attackButton.setSelected(true);
+	        attackButton.addActionListener(new CipherAttackChangeAction(attackButton));
+	        substitution.add(attackButton);
+	        cipherAttackGroup.add(attackButton);
+        }
+        for(String name : new String[] {"Rail Fence", "Bazeries"}) {
+	        JMenuItem attackButton = new JCheckBoxMenuItem(name);
+	        attackButton.addActionListener(new CipherAttackChangeAction(attackButton));
+	        transpostion.add(attackButton);
+	        cipherAttackGroup.add(attackButton);
+        }
+        
+        
+        this.menuCipherAttack.add(substitution);
+        this.menuCipherAttack.add(transpostion);
+        
+        this.menuBar.add(this.menuCipherAttack);
         
         
         this.setJMenuBar(this.menuBar);
@@ -815,8 +855,8 @@ public class UINew extends JFrame {
 				statText += "\n ___: " + StringTransformer.countSpacesChars(inputText);
 				statText += "\n *?!: " + StringTransformer.countOtherChars(inputText);
 				statText += "\n Unique Characters: " + StringTransformer.countUniqueChars(inputText);
-				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, settings.language);
-				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, settings.language);
+				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, settings.getLanguage());
+				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, settings.getLanguage());
 				statTextArea.setText(statText);
 				
 				menuItemBinary.setEnabled(inputText.length() != 0 && inputText.replaceAll("[^0-1]", "").length() == inputText.length());
@@ -834,8 +874,8 @@ public class UINew extends JFrame {
 		public void actionPerformed(ActionEvent event) {
     		DecryptionMethod lastMethod = (DecryptionMethod)decryptionType.getSelectedItem();
     		decryptionType.removeAllItems();
-    		IDecrypt decrypt = getDecryptManager();
-    		List<DecryptionMethod> methods = decrypt.getDecryptionMethods();
+    		CipherAttack decrypt = getCipherAttack();
+    		List<DecryptionMethod> methods = decrypt.getAttackMethods();
     		
     		for(DecryptionMethod method : methods)
     			decryptionType.addItem(method);
@@ -873,7 +913,7 @@ public class UINew extends JFrame {
             panel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(2, 2, 2, 2), BorderFactory.createEtchedBorder()));
     	    dialog.add(panel);
     		
-	        IDecrypt force = getDecryptManager();
+	        CipherAttack force = getCipherAttack();
 	        force.createSettingsUI(dialog, panel);
     		dialog.setLocationRelativeTo(UINew.this);
     		
@@ -899,28 +939,28 @@ public class UINew extends JFrame {
 					threadTimer.restart();
 					UINew.BEST_SOULTION = null;
 					UINew.this.topSolutions.solutions.clear();
-					IDecrypt force = getDecryptManager();
-					output.println("Cipher: " + force.getName());
+					
+					CipherAttack force = getCipherAttack();
+					output.println("Cipher: " + force.getDisplayName());
 					
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
-					
+					progressValue = new ProgressValueNC(1000, progressBar, settings);
 					try {
-						force.attemptDecrypt(text, settings, method, output, keyPanel, new ProgressValueNC(1000, progressBar, settings));
+						force.attemptAttack(text, method, UINew.this);
 					}
 					catch(Exception e) {
 						output.println(e.toString());
 						e.printStackTrace();
 					}
-					
+					force.onTermination(false);
 					DecimalFormat df = new DecimalFormat("#.#");
-					output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
-					output.println("");
+					output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
 		
 					toolBarStart.setEnabled(true);
 					toolBarStop.setEnabled(false);
 					menuItemSettings.setEnabled(true);
-					progressBar.setIndeterminate(false);
-					progressBar.setMaximum(10);
+					
+					UINew.this.progressValue.setIndeterminate(false);
 					progressBar.setValue(0);
 				}
 				
@@ -943,17 +983,15 @@ public class UINew extends JFrame {
 					@Override
 					public void run() {
 						thread.stop();
-						IDecrypt force = getDecryptManager();
-						force.onTermination();
+						CipherAttack force = getCipherAttack();
+						force.onTermination(true);
 						DecimalFormat df = new DecimalFormat("#.#");
-						output.println("Time Running: %sms - %ss", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
-						output.println("");
+						output.println("Time Running: %sms - %ss\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
 						toolBarStart.setEnabled(true);
 						toolBarStop.setEnabled(false);
 						menuItemSettings.setEnabled(true);
 
-						progressBar.setIndeterminate(false);
-						progressBar.setMaximum(10);
+						UINew.this.progressValue.setIndeterminate(false);
 						progressBar.setValue(0);
 					}
 					
@@ -1138,6 +1176,15 @@ public class UINew extends JFrame {
     		char[] chars = binaryText.toCharArray();
     		ArrayUtil.shuffle(chars);
     		inputTextArea.setText(new String(chars));	
+		}
+    }
+    
+    public class ReverseTextAction implements ActionListener {
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		String binaryText = StringTransformer.reverseString(inputTextArea.getText());
+    		inputTextArea.setText(binaryText);	
 		}
     }
     
@@ -1508,7 +1555,7 @@ public class UINew extends JFrame {
     		    		total += StatCalculator.calculateEvenDiagrahpicIC(StringTransformer.getEveryNthBlock(text, 2, i, period));
     		    	total /= period;
     		    	
-    		    	double sqDiff = Math.pow(total - settings.language.getNormalCoincidence(), 2);
+    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
     		    	
     		    	if(sqDiff < bestIoC)
     		    		bestPeriod = period;
@@ -1649,7 +1696,7 @@ public class UINew extends JFrame {
     		    double bestKappa = Double.MAX_VALUE;
     		    
     		    for(int period = 0; period <= Math.min(40, text.length()); ++period) {
-    		    	double sqDiff = Math.pow(StatCalculator.calculateKappaIC(text, period) - settings.language.getNormalCoincidence(), 2);
+    		    	double sqDiff = Math.pow(StatCalculator.calculateKappaIC(text, period) - settings.getLanguage().getNormalCoincidence(), 2);
     		    	
     		    	if(sqDiff < bestKappa)
     		    		bestPeriod = period;
@@ -1858,7 +1905,7 @@ public class UINew extends JFrame {
     		    double bestIC = Double.POSITIVE_INFINITY;
     		    
     		    for(int period = 2; period <= 40; ++period) {
-    		    	double sqDiff = Math.pow(StatCalculator.calculateNicodemusIC(text, 5, period) - settings.language.getNormalCoincidence(), 2) * 10000;
+    		    	double sqDiff = Math.pow(StatCalculator.calculateNicodemusIC(text, 5, period) - settings.getLanguage().getNormalCoincidence(), 2) * 10000;
     		    	
     		    	if(sqDiff < bestIC)
     		    		bestPeriod = period;
@@ -1937,7 +1984,7 @@ public class UINew extends JFrame {
     		    double bestIC = Double.POSITIVE_INFINITY;
     		    
     		    for(int period = 2; period <= 40; ++period) {
-    		    	double sqDiff = Math.pow(StatCalculator.calculateDiagraphicKappaIC(text, period * 2) - settings.language.getNormalCoincidence(), 2) * 10000;
+    		    	double sqDiff = Math.pow(StatCalculator.calculateDiagraphicKappaIC(text, period * 2) - settings.getLanguage().getNormalCoincidence(), 2) * 10000;
     		    	
     		    	if(sqDiff < bestIC)
     		    		bestPeriod = period;
@@ -1957,7 +2004,7 @@ public class UINew extends JFrame {
     		    		total += StatCalculator.calculateDiagrahpicIC(StringTransformer.getEveryNthBlock(text, 2, i, period));
     		    	total /= period;
     		    	
-    		    	double sqDiff = Math.pow(total - settings.language.getNormalCoincidence(), 2);
+    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
     		    	
     		    	if(sqDiff < bestIoC)
     		    		bestPeriod = period;
@@ -2163,7 +2210,7 @@ public class UINew extends JFrame {
 		    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(decoded, i, period));
 		    		    	total /= period;
 		    		    	
-		    		    	double sqDiff = Math.pow(total - settings.language.getNormalCoincidence(), 2);
+		    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
 		    		    	
 		    		    	if(sqDiff < bestIoC) {
 		    		    		bestProgressivePeriod = progressivePeriod;
@@ -2353,7 +2400,7 @@ public class UINew extends JFrame {
 	    		    	total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period * 2));
 	    		    total /= period * 2;
 	    		    	
-	    		    double sqDiff = Math.pow(total - settings.language.getNormalCoincidence(), 2);
+	    		    double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
 	    		    	
 	    		    if(sqDiff < bestIoC)
 	    		    	bestPeriod = period;
@@ -2572,7 +2619,7 @@ public class UINew extends JFrame {
     		    double bestKappa = Double.MAX_VALUE;
     		    
     		    for(int period = 2; period <= 40; ++period) {
-    		    	double sqDiff = Math.pow(StatCalculator.calculateKappaIC(text, period) - settings.language.getNormalCoincidence(), 2);
+    		    	double sqDiff = Math.pow(StatCalculator.calculateKappaIC(text, period) - settings.getLanguage().getNormalCoincidence(), 2);
     		    	
     		    	if(sqDiff < bestKappa)
     		    		bestPeriod = period;
@@ -2592,7 +2639,7 @@ public class UINew extends JFrame {
     		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period));
     		    	total /= period;
     		    	
-    		    	double sqDiff = Math.pow(total - settings.language.getNormalCoincidence(), 2);
+    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
     		    	
     		    	if(sqDiff < bestIoC)
     		    		bestPeriod = period;
@@ -2926,7 +2973,7 @@ public class UINew extends JFrame {
     		
     		if(!text.isEmpty()) {
     			
-    			/**
+    			
     			Object[] statValues = new Object[38];
 			    
 			    //Numerical values
@@ -2984,12 +3031,8 @@ public class UINew extends JFrame {
 				}
 				answers = MapHelper.sortMapByValue(answers, false);
 				
-				JLabel cipherScoreLabel = new JLabel("" + answers);
-		    	cipherScoreLabel.setFont(cipherScoreLabel.getFont().deriveFont(20F));
-		    	this.cipherScorePanel.add(cipherScoreLabel);
-	
 				System.out.println(answers);
-				**/
+				
     			
     		
 				List<List<Object>> num_dev = StatisticHandler.orderCipherProbibitly(text);
@@ -3083,7 +3126,7 @@ public class UINew extends JFrame {
     		int length = text.length();
     		
     		String outputText = "Length: " + length;
-			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, settings.language), 4);
+			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, settings.getLanguage()), 4);
     		
     		if(!text.isEmpty()) {
 
@@ -3237,8 +3280,8 @@ public class UINew extends JFrame {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-			settings.language = language;
-			menuItemCurrentLanguage.setText("Current: " + language.getName());
+			settings.setLanguage(this.language);
+			menuItemCurrentLanguage.setText("Current: " + this.language.getName());
 		}
     }
     
@@ -3252,7 +3295,7 @@ public class UINew extends JFrame {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-			settings.keywordCreation = id;
+			settings.setKeywordCreationId(this.id);
 		}
     }
     
@@ -3273,7 +3316,7 @@ public class UINew extends JFrame {
 
 		@Override
 		public void keyReleased(KeyEvent arg0) {
-			settings.simulatedAnnealing.set(this.id, Double.valueOf(this.textComponent.getText()));
+			settings.getSA().set(this.id, Double.valueOf(this.textComponent.getText()));
 			
 		}
 
@@ -3303,9 +3346,9 @@ public class UINew extends JFrame {
     	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			settings.simulatedAnnealing.set(0, this.tempStart);
-			settings.simulatedAnnealing.set(1, this.tempStep);
-			settings.simulatedAnnealing.set(2, (double)this.count);
+			settings.getSA().set(0, this.tempStart);
+			settings.getSA().set(1, this.tempStep);
+			settings.getSA().set(2, (double)this.count);
 			tempSetting.setText(ValueFormat.getNumber(this.tempStart));
 
 			tempStepSetting.setText(ValueFormat.getNumber(this.tempStep));
@@ -3336,7 +3379,29 @@ public class UINew extends JFrame {
 
 			keyPanel.setIterationUnsed();
 		}
+    }
+    
+    public class CipherAttackChangeAction implements ActionListener {
     	
+    	public JMenuItem menuItem;
+    	
+    	public CipherAttackChangeAction(JMenuItem menuItem) {
+    		this.menuItem = menuItem;
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		menuItemCurrentAttack.setText("Target: " + this.menuItem.getText());
+    		
+    		int index = 0;
+    		for(String name : AttackRegistry.getNames()) {
+    			if(this.menuItem.getText().equals(name)) {
+    				cipherSelect.setSelectedIndex(index);
+    				break;
+    			}
+    			index++;
+    		}
+		}
     }
     
     public String getInputText() {
@@ -3351,10 +3416,40 @@ public class UINew extends JFrame {
     	return this.inputTextArea.getText().replaceAll("[^0-9]+", "");
     }
     
-    public IDecrypt getDecryptManager() {
-    	return DecryptionManager.ciphers.get(cipherSelect.getSelectedIndex());
+    //public IDecrypt getDecryptManager() {
+    //	return DecryptionManager.ciphers.get(cipherSelect.getSelectedIndex());
+    //}
+    
+    public CipherAttack getCipherAttack() {
+    	return AttackRegistry.ciphers.get(cipherSelect.getSelectedIndex());
     }
      
+    //IApplication methods
+	@Override
+	public Settings getSettings() {
+		return this.settings;
+	}
+	
+	@Override
+	public ILanguage getLanguage() {
+		return this.settings.getLanguage();
+	}
+
+	@Override
+	public Output out() {
+		return this.output;
+	}
+
+	@Override
+	public KeyPanel getKeyPanel() {
+		return this.keyPanel;
+	}
+
+	@Override
+	public ProgressValue getProgress() {
+		return this.progressValue;
+	}
+    
     private JComboBox<String> cipherSelect;
     private JComboBox<DecryptionMethod> decryptionType;
     private JPanel inputPanel;
@@ -3364,6 +3459,7 @@ public class UINew extends JFrame {
     private JScrollPane outputTextScroll;
     private JTextArea outputTextArea;
     private JProgressBar progressBar;
+    private ProgressValue progressValue;
     private JToolBar toolBar;
     private JButton toolBarSettings;
     private JButton toolBarStart;
@@ -3380,6 +3476,7 @@ public class UINew extends JFrame {
     private JMenuItem menuItemBinary;
     private JMenuItem menuItemASCII;
     private JMenuItem menuItemShuffle;
+    private JMenuItem menuItemReverseText;
     private JMenu menuItemTools; 
     private JMenuItem menuItemLetterFrequency;
     private JMenuItem menuItemNGram;
@@ -3412,4 +3509,6 @@ public class UINew extends JFrame {
     private JMenu menuItemSimulatedAnnealing;
     private JMenu menuItemSAPreset;
     private JCheckBoxMenuItem menuItemUpdateProgress;
+    private JMenu menuCipherAttack;
+    private JMenuItem menuItemCurrentAttack;
 }

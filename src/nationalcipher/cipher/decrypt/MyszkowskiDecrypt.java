@@ -11,6 +11,7 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.Myszkowski;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
@@ -18,7 +19,6 @@ import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.MyszkowskiKey;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class MyszkowskiDecrypt implements IDecrypt {
 
@@ -69,7 +69,7 @@ public class MyszkowskiDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Myszkowski.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(Myszkowski.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

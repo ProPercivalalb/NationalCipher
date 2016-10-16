@@ -2,45 +2,26 @@ package nationalcipher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.swing.JLabel;
 
 import javalibrary.cipher.permentate.PermentateArray;
-import javalibrary.fitness.NGramData;
-import javalibrary.fitness.TextFitness;
-import javalibrary.language.English;
-import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
-import javalibrary.math.MathUtil;
-import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import javalibrary.string.StringTransformer;
+import javalibrary.string.StringAnalyzer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
-import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.*;
+import nationalcipher.cipher.PortaAutokey;
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.RandomEncrypter;
 import nationalcipher.cipher.base.onetimepad.Solitaire;
 import nationalcipher.cipher.base.onetimepad.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
-import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.stats.CipherStatistics;
-import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
-import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
-import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SOLVER {
 
@@ -61,22 +42,7 @@ public class SOLVER {
 		System.out.println(cipherText);
 		System.out.println(randomEncrypt.getClass().getName());
 		
-		
-		
-	    System.out.println(PortaAutokey.decode("SYNNJSCVRNRLAHUTUKUCVRYRLANY".toCharArray(), "FORTIFICATION", false));
-	    StatisticHandler.registerStatistics();
-	   List<String> possible = Arrays.asList("THE", "ING", "ENT", "ION", "TIO", "FOR", "NDE", "EDT", "NCE", "TIS", "OFT", "MEN");
-	    for(String line : FileReader.compileTextFromResource("/plainText.txt", true) ) {
-	    	List<String> contains = new ArrayList<String>();
-	    	for(int i = 0; i < line.length() - 2; i+=3) {
-	    		String s = line.substring(i, i + 3);
-	    		if(possible.contains(s)) {
-	    			if(!contains.contains(s))
-	    				contains.add(s);
-	    		}
-	    	}
-	    	System.out.println((contains.size() >= 3) + " " + contains.size());
-	    }
+		System.out.println(StringAnalyzer.getOrderedCharacterCount("BBAACCFGHHH".toCharArray()));
 	    
 	   // for(Class<? extends TextStatistic> clz :StatisticHandler.map.values()) 
 	    //	StatisticHandler.calculateStatPrint(new Cadenus(), clz);

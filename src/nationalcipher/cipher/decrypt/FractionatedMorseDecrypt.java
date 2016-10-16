@@ -10,11 +10,11 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.FractionatedMorse;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -61,13 +61,13 @@ public class FractionatedMorseDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKey();
-			return new Solution(FractionatedMorse.decode(this.text, this.bestMaximaKey), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
+			return new Solution(FractionatedMorse.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new Solution(FractionatedMorse.decode(this.text, this.lastKey), this.settings.getLanguage()).setKeyString(this.lastKey);
+			return new Solution(FractionatedMorse.decode(this.cipherText, this.lastKey), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}
 
 		@Override

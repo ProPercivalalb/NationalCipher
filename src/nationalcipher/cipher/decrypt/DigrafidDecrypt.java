@@ -10,11 +10,11 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Digrafid;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -65,7 +65,7 @@ public class DigrafidDecrypt implements IDecrypt {
 			this.bestMaximaKey2 = KeySquareManipulation.generateRandTrifidKey('#');
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(Digrafid.decode(text, this.bestMaximaKey1, this.bestMaximaKey2, this.fractionation), this.settings.getLanguage()).setKeyString(this.bestKey1 + " " + this.bestKey2);
+			return new Solution(Digrafid.decode(cipherText, this.bestMaximaKey1, this.bestMaximaKey2, this.fractionation), this.settings.getLanguage()).setKeyString(this.bestKey1 + " " + this.bestKey2);
 		}
 
 		@Override
@@ -75,7 +75,7 @@ public class DigrafidDecrypt implements IDecrypt {
 			else
 				this.lastKey2 = KeySquareManipulation.exchange2letters(this.bestMaximaKey2);
 			
-			return new Solution(Digrafid.decode(this.text, this.lastKey1, this.lastKey2, this.fractionation), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
+			return new Solution(Digrafid.decode(this.cipherText, this.lastKey1, this.lastKey2, this.fractionation), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
 		}
 
 		@Override

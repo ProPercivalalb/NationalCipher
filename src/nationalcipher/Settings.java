@@ -21,17 +21,18 @@ import javalibrary.string.StringTransformer;
 
 public class Settings {
 
-	public ILanguage language;
+	private ILanguage language;
 	public ButtonGroup languageGroup;
-	public int keywordCreation;
+	private int keywordCreation;
 	public ButtonGroup keywordCreationGroup;
-	public List<Double> simulatedAnnealing;
+	private List<Double> simulatedAnnealing;
 	public boolean updateProgressBars;
 	
 	private List<LoadElement> loadElements;
 	private Gson gson;
 	
 	public Settings() {
+		//Default
 		this.language = Languages.english;
 		this.keywordCreation = 0;
 		this.simulatedAnnealing = Arrays.asList(20.0D, 0.1D, 500.0D);
@@ -81,10 +82,26 @@ public class Settings {
 		return this.simulatedAnnealing.get(2).intValue();
 	}
 	
+	//Iteration counter
+	public int getSAIteration() {
+		return (int)(this.getSATempStart() / this.getSATempStep()) * this.getSACount();
+	}
+	
+	public List<Double> getSA() {
+		return this.simulatedAnnealing;
+	}
+	
 	public boolean updateProgress() {
 		return this.updateProgressBars;
 	}
-		
+	
+	public void setLanguage(ILanguage language) {
+		this.language = language;
+	}
+	
+	public void setKeywordCreationId(int id) {
+		this.keywordCreation = id;
+	}
 		
 	private void writeToFile() {
 		try {

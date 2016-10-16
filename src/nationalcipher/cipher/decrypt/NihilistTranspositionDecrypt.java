@@ -12,13 +12,13 @@ import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.NihilistTranspositionKey;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class NihilistTranspositionDecrypt implements IDecrypt {
 
@@ -76,9 +76,9 @@ public class NihilistTranspositionDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(int[] order, int blocks) {
-			String str = new String(this.text);
+			String str = new String(this.cipherText);
 			String plainText = "";
-			for(int i = 0; i < this.text.length / blocks; i++) {
+			for(int i = 0; i < this.cipherText.length / blocks; i++) {
 				plainText += new String(NihilistTransposition.decode(str.substring(i * blocks, (i + 1) * blocks).toCharArray(), order));
 			}
 			

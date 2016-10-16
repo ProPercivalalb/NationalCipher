@@ -10,12 +10,12 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Phillips;
+import nationalcipher.cipher.base.transposition.Phillips;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
@@ -74,13 +74,13 @@ public class PhillipsDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(Phillips.decode(this.text, this.bestMaximaKey, this.orderRows, this.orderColumns), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
+			return new Solution(Phillips.decode(this.cipherText, this.bestMaximaKey, this.orderRows, this.orderColumns), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Phillips.decode(this.text, this.lastKey, this.orderRows, this.orderColumns), this.settings.getLanguage()).setKeyString(this.lastKey);
+			return new Solution(Phillips.decode(this.cipherText, this.lastKey, this.orderRows, this.orderColumns), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}
 
 		@Override

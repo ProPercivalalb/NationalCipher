@@ -1,10 +1,10 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base;
 
 import javalibrary.math.MathUtil;
 
 public class ProgressiveKey {
 
-	protected static String encodeBase(String encodedText, int period, int progressiveKey) {
+	public static String encodeBase(String encodedText, int period, int progressiveKey) {
 		String cipherText = "";
 
 		for(int index = 0; index < encodedText.length(); index++) {

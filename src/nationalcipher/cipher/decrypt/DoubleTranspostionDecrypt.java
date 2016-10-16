@@ -10,11 +10,11 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.Columnar;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -64,7 +64,7 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 			this.bestMaximaKey2 = new int[] {0, 3, 4, 1, 2};
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(Columnar.decode(Columnar.decode(this.text, this.bestMaximaKey1), this.bestMaximaKey2), this.settings.getLanguage());
+			return new Solution(Columnar.decode(Columnar.decode(this.cipherText, this.bestMaximaKey1), this.bestMaximaKey2), this.settings.getLanguage());
 		}
 
 		@Override
@@ -73,7 +73,7 @@ public class DoubleTranspostionDecrypt implements IDecrypt {
 				this.lastKey1 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey1);
 			else
 				this.lastKey2 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey2);
-			return new Solution(Columnar.decode(Columnar.decode(this.text, this.lastKey1), this.lastKey2), this.settings.getLanguage());
+			return new Solution(Columnar.decode(Columnar.decode(this.cipherText, this.lastKey1), this.lastKey2), this.settings.getLanguage());
 		}
 
 		@Override

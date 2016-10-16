@@ -10,11 +10,11 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Morbit;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -61,13 +61,13 @@ public class MorbitDecrypt implements IDecrypt {
 		public Solution generateKey() {
 			this.bestMaximaKey1 = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 			this.lastKey1 = this.bestMaximaKey1;
-			return new Solution(Morbit.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage());
+			return new Solution(Morbit.decode(this.cipherText, this.bestMaximaKey1), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey1 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey1);
-			return new Solution(Morbit.decode(this.text, this.lastKey1), this.settings.getLanguage());
+			return new Solution(Morbit.decode(this.cipherText, this.lastKey1), this.settings.getLanguage());
 		}
 
 		@Override

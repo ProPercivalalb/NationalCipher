@@ -1,7 +1,5 @@
 package nationalcipher.cipher.base.substitution;
 
-import java.util.stream.IntStream;
-
 import javalibrary.lib.Timer;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
@@ -88,6 +86,6 @@ public class Caesar implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, RandomUtil.pickRandomInt(26));
+		return encode(plainText, RandomUtil.pickRandomInt(1, 25));
 	}
 }

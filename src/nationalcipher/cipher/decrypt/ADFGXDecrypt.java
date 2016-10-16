@@ -12,15 +12,15 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.ADFGX;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.BifidKey;
+import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
-import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class ADFGXDecrypt implements IDecrypt {
 
@@ -68,7 +68,7 @@ public class ADFGXDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String keysquare) {
-			this.lastSolution = new Solution(ADFGX.decode(this.text, keysquare, new int[] {0, 1}), this.settings.getLanguage()).setKeyString(keysquare);
+			this.lastSolution = new Solution(ADFGX.decode(this.cipherText, keysquare, new int[] {0, 1}), this.settings.getLanguage()).setKeyString(keysquare);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -83,13 +83,13 @@ public class ADFGXDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(ADFGX.decode(this.text, this.bestMaximaKey, new int[] {4, 1, 3, 0, 2, 3}), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
+			return new Solution(ADFGX.decode(this.cipherText, this.bestMaximaKey, new int[] {4, 1, 3, 0, 2, 3}), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(ADFGX.decode(this.text, this.lastKey, new int[] {4, 1, 3, 0, 2, 3}), this.settings.getLanguage()).setKeyString(this.lastKey);
+			return new Solution(ADFGX.decode(this.cipherText, this.lastKey, new int[] {4, 1, 3, 0, 2, 3}), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}
 
 		@Override

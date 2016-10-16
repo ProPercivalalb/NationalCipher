@@ -1,6 +1,5 @@
 package nationalcipher.cipher.stats;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -8,9 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javalibrary.language.ILanguage;
-import javalibrary.math.MathUtil;
-import javalibrary.math.Statistics;
-import javalibrary.streams.FileReader;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;

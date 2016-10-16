@@ -22,15 +22,15 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.PortaAutokey;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.PortaAutoKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class PortaAutokeyDecrypt implements IDecrypt {
 
@@ -131,7 +131,7 @@ public class PortaAutokeyDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(PortaAutokey.decode(this.text, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(PortaAutokey.decode(this.cipherText, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;	
@@ -144,7 +144,7 @@ public class PortaAutokeyDecrypt implements IDecrypt {
 
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(PortaAutokey.decode(this.text, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
+			return new Solution(PortaAutokey.decode(this.cipherText, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
 		}
 
 		@Override

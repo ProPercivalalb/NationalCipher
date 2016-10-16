@@ -1,4 +1,4 @@
-package nationalcipher.cipher;
+package nationalcipher.cipher.base.transposition;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;

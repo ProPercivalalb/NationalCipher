@@ -11,15 +11,15 @@ import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.substitution.Keyword;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.SubstitutionKey;
+import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 
 public class SubstitutionDecrypt implements IDecrypt {
 
@@ -59,7 +59,7 @@ public class SubstitutionDecrypt implements IDecrypt {
 					if(!change.contains("" + i))
 						change += i;
 				}
-				String regex = new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIJKLM", "ZYXWVUTSRQPONMLKJIHGFEDCBA"}[settings.keywordCreation];
+				String regex = new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIJKLM", "ZYXWVUTSRQPONMLKJIHGFEDCBA"}[settings.getKeywordCreationId()];
 				
 				for(char i : regex.toCharArray()) {
 					if(!change.contains("" + i))
@@ -90,7 +90,7 @@ public class SubstitutionDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String keyalpha) {
-			this.lastSolution = new Solution(Keyword.decode(this.text, keyalpha), this.settings.getLanguage()).setKeyString(keyalpha);
+			this.lastSolution = new Solution(Keyword.decode(this.cipherText, keyalpha), this.settings.getLanguage()).setKeyString(keyalpha);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -105,13 +105,13 @@ public class SubstitutionDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKey();
-			return new Solution(Keyword.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
+			return new Solution(Keyword.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new Solution(Keyword.decode(this.text, this.lastKey), this.settings.getLanguage());
+			return new Solution(Keyword.decode(this.cipherText, this.lastKey), this.settings.getLanguage());
 		}
 
 		@Override

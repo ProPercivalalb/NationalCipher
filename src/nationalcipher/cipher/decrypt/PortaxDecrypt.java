@@ -17,14 +17,14 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polygraphic.Portax;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.PortaKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class PortaxDecrypt implements IDecrypt {
 
@@ -89,7 +89,7 @@ public class PortaxDecrypt implements IDecrypt {
 			
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Portax.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(Portax.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -103,7 +103,7 @@ public class PortaxDecrypt implements IDecrypt {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(Portax.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			return new Solution(Portax.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 		}
 
 		@Override

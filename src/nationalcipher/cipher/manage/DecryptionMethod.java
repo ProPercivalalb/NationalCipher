@@ -6,7 +6,8 @@ public enum DecryptionMethod {
 	SIMULATED_ANNEALING("Simulated Annealing"),
 	CALCULATED("Calculated"),
 	DICTIONARY("Dictionary"),
-	KEY_MANIPULATION("Key Manipulation");
+	KEY_MANIPULATION("Key Manipulation"),
+	EXAMINE("Examine");
 	
 	private String name;
 	
@@ -22,5 +23,4 @@ public enum DecryptionMethod {
 	public String toString() {
 		return this.name;
 	}
-	
 }

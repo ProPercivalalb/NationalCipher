@@ -25,6 +25,7 @@ import javalibrary.util.ListUtil;
 import nationalcipher.LoadElement;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.onetimepad.Solitaire;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
@@ -32,10 +33,9 @@ import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
 import nationalcipher.cipher.tools.Creator.VigereneKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class SolitaireDecrypt implements IDecrypt, LoadElement {
 
@@ -147,7 +147,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Solitaire.decode(this.text, Solitaire.createCardOrder(key)), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(Solitaire.decode(this.cipherText, Solitaire.createCardOrder(key)), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score > this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -163,7 +163,7 @@ public class SolitaireDecrypt implements IDecrypt, LoadElement {
 			for(int i = 0; i < this.emptyIndex.length; i++)
 				this.incompleteOrder[this.emptyIndex[this.direction ? i : this.emptyIndex.length - i - 1]] = order[i];
 			
-			this.lastSolution = new Solution(decode(this.text, this.incompleteOrder, this.bestSolution.score, quadgramData), this.score);
+			this.lastSolution = new Solution(decode(this.cipherText, this.incompleteOrder, this.bestSolution.score, quadgramData), this.score);
 			
 			if(this.lastSolution.score > this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

@@ -22,15 +22,15 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.PortaProgressiveKey;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class PortaProgressiveKeyDecrypt implements IDecrypt {
 
@@ -158,7 +158,7 @@ public class PortaProgressiveKeyDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(PortaProgressiveKey.decode(this.text, key, this.shiftRight, this.progPeriod, this.progIndex), this.settings.getLanguage()).setKeyString(key).setKeyString("%s, PP-%d, PI-%d", key, this.progPeriod, this.progIndex);;
+			this.lastSolution = new Solution(PortaProgressiveKey.decode(this.cipherText, key, this.shiftRight, this.progPeriod, this.progIndex), this.settings.getLanguage()).setKeyString(key).setKeyString("%s, PP-%d, PI-%d", key, this.progPeriod, this.progIndex);;
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;	
@@ -171,7 +171,7 @@ public class PortaProgressiveKeyDecrypt implements IDecrypt {
 
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(PortaProgressiveKey.decode(this.text, key, this.shiftRight, this.progPeriod, this.progIndex), this.settings.getLanguage()).setKeyString("%s, PP-%d, PI-%d", key, this.progPeriod, this.progIndex);
+			return new Solution(PortaProgressiveKey.decode(this.cipherText, key, this.shiftRight, this.progPeriod, this.progIndex), this.settings.getLanguage()).setKeyString("%s, PP-%d, PI-%d", key, this.progPeriod, this.progIndex);
 		}
 
 		@Override

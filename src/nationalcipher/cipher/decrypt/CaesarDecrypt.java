@@ -10,13 +10,13 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.substitution.Caesar;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.CaesarShift;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class CaesarDecrypt implements IDecrypt {
 
@@ -58,7 +58,7 @@ public class CaesarDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(int shift) {
-			this.lastSolution = new Solution(Caesar.decode(this.text, shift), this.settings.getLanguage()).setKeyString("Shift-%d", shift);
+			this.lastSolution = new Solution(Caesar.decode(this.cipherText, shift), this.settings.getLanguage()).setKeyString("Shift-%d", shift);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

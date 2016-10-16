@@ -17,18 +17,18 @@ import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.Columnar;
 import nationalcipher.cipher.base.transposition.ColumnarRow;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.RedefenceKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.ui.UINew;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class SingleTranspostion implements IDecrypt {
 
@@ -101,7 +101,7 @@ public class SingleTranspostion implements IDecrypt {
 
 		@Override
 		public void onIteration(int[] order) {
-			this.lastSolution = new Solution(this.readColumns ? Columnar.decode(this.text, order) : ColumnarRow.decode(this.text, order), this.settings.getLanguage()).setKeyString(Arrays.toString(order));
+			this.lastSolution = new Solution(this.readColumns ? Columnar.decode(this.cipherText, order) : ColumnarRow.decode(this.cipherText, order), this.settings.getLanguage()).setKeyString(Arrays.toString(order));
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -117,14 +117,14 @@ public class SingleTranspostion implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey1 = KeyGeneration.createOrder(this.length);
-			return new Solution(this.readColumns ? Columnar.decode(this.text, this.bestMaximaKey1) : ColumnarRow.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.bestMaximaKey1));
+			return new Solution(this.readColumns ? Columnar.decode(this.cipherText, this.bestMaximaKey1) : ColumnarRow.decode(this.cipherText, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.bestMaximaKey1));
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
 
-			return new Solution(this.readColumns ? Columnar.decode(this.text, this.lastKey1) : ColumnarRow.decode(this.text, this.lastKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.lastKey1));
+			return new Solution(this.readColumns ? Columnar.decode(this.cipherText, this.lastKey1) : ColumnarRow.decode(this.cipherText, this.lastKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.lastKey1));
 		}
 
 		@Override

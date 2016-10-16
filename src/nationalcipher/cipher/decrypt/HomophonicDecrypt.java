@@ -11,13 +11,13 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Homophonic;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.HomophonicKey;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class HomophonicDecrypt implements IDecrypt {
 
@@ -67,7 +67,7 @@ public class HomophonicDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Homophonic.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(Homophonic.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

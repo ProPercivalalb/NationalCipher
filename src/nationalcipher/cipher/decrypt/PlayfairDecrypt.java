@@ -11,12 +11,11 @@ import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polybiussquare.Playfair;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -54,7 +53,7 @@ public class PlayfairDecrypt implements IDecrypt {
 					if(i != 'J' && !change.contains("" + i))
 						change += i;
 				}
-				String regex = new String[]{"ABCDEFGHIKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIKLM", "ZYXWVUTSRQPONMLKIHGFEDCBA"}[settings.keywordCreation];
+				String regex = new String[]{"ABCDEFGHIKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIKLM", "ZYXWVUTSRQPONMLKIHGFEDCBA"}[settings.getKeywordCreationId()];
 				
 				for(char i : regex.toCharArray()) {
 					if(!change.contains("" + i))
@@ -84,7 +83,7 @@ public class PlayfairDecrypt implements IDecrypt {
 		}
 		
 		public void onIteration(String keysquare) {
-			this.lastSolution = new Solution(Playfair.decode(this.text, this.outputText, keysquare), this.settings.getLanguage());
+			this.lastSolution = new Solution(Playfair.decode(this.cipherText, this.plainText, keysquare), this.settings.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.lastSolution.setKeyString(keysquare);
@@ -102,13 +101,13 @@ public class PlayfairDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(Playfair.decode(this.text, this.outputText, this.bestMaximaKey), this.settings.getLanguage());
+			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Playfair.decode(this.text, this.outputText, this.lastKey), this.settings.getLanguage(), this.bestSolution.score);
+			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.lastKey), this.settings.getLanguage(), this.bestSolution.score);
 		}
 
 		@Override

@@ -14,12 +14,12 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.NihilistSubstitution;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
@@ -174,13 +174,13 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(NihilistSubstitution.decode(this.text, this.bestMaximaKey, "EASY"), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
+			return new Solution(NihilistSubstitution.decode(this.cipherText, this.bestMaximaKey, "EASY"), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(NihilistSubstitution.decode(this.text, this.lastKey, "EASY"), this.settings.getLanguage()).setKeyString(this.lastKey);
+			return new Solution(NihilistSubstitution.decode(this.cipherText, this.lastKey, "EASY"), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}
 
 		@Override

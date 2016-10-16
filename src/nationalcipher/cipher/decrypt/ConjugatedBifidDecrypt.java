@@ -14,12 +14,12 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polybiussquare.ConjugatedBifid;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
@@ -79,7 +79,7 @@ public class ConjugatedBifidDecrypt implements IDecrypt {
 			this.bestMaximaKey2 = KeySquareManipulation.generateRandKeySquare();
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(ConjugatedBifid.decode(text, this.bestMaximaKey1, this.bestMaximaKey2, this.period), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
+			return new Solution(ConjugatedBifid.decode(cipherText, this.bestMaximaKey1, this.bestMaximaKey2, this.period), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
 		}
 
 		@Override
@@ -89,7 +89,7 @@ public class ConjugatedBifidDecrypt implements IDecrypt {
 			else
 				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
 			
-			return new Solution(ConjugatedBifid.decode(this.text, this.lastKey1, this.lastKey2, this.period), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
+			return new Solution(ConjugatedBifid.decode(this.cipherText, this.lastKey1, this.lastKey2, this.period), this.settings.getLanguage()).setKeyString(this.lastKey1 + " " + this.lastKey2);
 		}
 
 		@Override

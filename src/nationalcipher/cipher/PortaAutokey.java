@@ -1,7 +1,6 @@
 package nationalcipher.cipher;
 
 import javalibrary.math.MathUtil;
-import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.polygraphic.Porta;
 import nationalcipher.cipher.tools.KeyGeneration;

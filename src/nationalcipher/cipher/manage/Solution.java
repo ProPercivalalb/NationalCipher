@@ -2,7 +2,6 @@ package nationalcipher.cipher.manage;
 
 import java.util.Arrays;
 
-import javalibrary.cipher.stats.WordSplit;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.util.ArrayUtil;

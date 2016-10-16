@@ -11,14 +11,14 @@ import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.RunningKey;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.VigereneKey;
+import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 
 public class RunningKeyDecrypt implements IDecrypt {
 
@@ -71,7 +71,7 @@ public class RunningKeyDecrypt implements IDecrypt {
 			
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(RunningKey.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(RunningKey.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -84,9 +84,9 @@ public class RunningKeyDecrypt implements IDecrypt {
 		
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey1 = StringTransformer.repeat("A", this.text.length / 2);
+			this.bestMaximaKey1 = StringTransformer.repeat("A", this.cipherText.length / 2);
 			this.lastKey1 = this.bestMaximaKey1;
-			return new Solution(RunningKey.decode(this.text, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(this.lastKey1);
+			return new Solution(RunningKey.decode(this.cipherText, this.bestMaximaKey1), this.settings.getLanguage()).setKeyString(this.lastKey1);
 		}
 
 		@Override
@@ -95,7 +95,7 @@ public class RunningKeyDecrypt implements IDecrypt {
 			this.lastKey1 = KeySquareManipulation.swapCharIndex(this.bestMaximaKey1);
 	
 			
-			return new Solution(RunningKey.decode(this.text, this.lastKey1), this.settings.getLanguage()).setKeyString(this.lastKey1);
+			return new Solution(RunningKey.decode(this.cipherText, this.lastKey1), this.settings.getLanguage()).setKeyString(this.lastKey1);
 		}
 
 		@Override

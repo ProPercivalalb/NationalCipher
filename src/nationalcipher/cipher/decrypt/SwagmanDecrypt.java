@@ -14,15 +14,15 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Swagman;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.SwagmanKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class SwagmanDecrypt implements IDecrypt {
 
@@ -76,7 +76,7 @@ public class SwagmanDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(int[] key) {
-			this.lastSolution = new Solution(Swagman.decode(this.text, this.keyDimensions, key), this.settings.getLanguage());//.setKeyString(Arrays.toString(order));
+			this.lastSolution = new Solution(Swagman.decode(this.cipherText, this.keyDimensions, key), this.settings.getLanguage());//.setKeyString(Arrays.toString(order));
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

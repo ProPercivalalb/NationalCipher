@@ -17,13 +17,13 @@ import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.substitution.Keyword;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
@@ -54,7 +54,7 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			for(int i = 0; i < task2.period; ++i) {
 		    	String temp = StringTransformer.getEveryNthChar(text, i, task2.period);
-		    	task2.text = temp.toCharArray();
+		    	task2.cipherText = temp.toCharArray();
 				task2.run();
 				task.bestMaximaKey[i] = task2.bestKey;
 				task.lastKey[i] = task.bestMaximaKey[i];
@@ -97,13 +97,13 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 		public Solution generateKey() {
 			
 			
-			return new Solution(GeneralPeriod.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
+			return new Solution(GeneralPeriod.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
 		public Solution modifyKey(int count) {
 			int index = count % this.period;
 			this.lastKey[index] = KeySquareManipulation.exchange2letters(this.bestMaximaKey[index]);
-			return new Solution(GeneralPeriod.decode(this.text, this.lastKey), this.settings.getLanguage());
+			return new Solution(GeneralPeriod.decode(this.cipherText, this.lastKey), this.settings.getLanguage());
 		}
 
 		public void storeKey() {
@@ -182,12 +182,12 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandKey();
-			return new HalfSolution(Keyword.decode(this.text, this.bestMaximaKey), this.settings.getLanguage());
+			return new HalfSolution(Keyword.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new HalfSolution(Keyword.decode(this.text, this.lastKey), this.settings.getLanguage());
+			return new HalfSolution(Keyword.decode(this.cipherText, this.lastKey), this.settings.getLanguage());
 		}
 
 		public void storeKey() {

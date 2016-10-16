@@ -36,7 +36,8 @@ import nationalcipher.cipher.decrypt.PortaAutokeyDecrypt;
 import nationalcipher.cipher.decrypt.PortaDecrypt;
 import nationalcipher.cipher.decrypt.PortaProgressiveKeyDecrypt;
 import nationalcipher.cipher.decrypt.PortaxDecrypt;
-import nationalcipher.cipher.decrypt.QuagmireIDecrypt;
+import nationalcipher.cipher.decrypt.QuagmireIIIDecrypt;
+import nationalcipher.cipher.decrypt.QuagmireIandIIDecrypt;
 import nationalcipher.cipher.decrypt.RailFenceDecrypt;
 import nationalcipher.cipher.decrypt.ReddefenceDecrypt;
 import nationalcipher.cipher.decrypt.RunningKeyDecrypt;
@@ -133,7 +134,8 @@ public class DecryptionManager {
 		registerCipher(new SeriatedPlayfairDecrypt(), settings);
 		registerCipher(new HillDecrypt(), settings);
 		registerCipher(new ADFGXDecrypt(), settings);
-		registerCipher(new QuagmireIDecrypt(), settings);
+		registerCipher(new QuagmireIandIIDecrypt(), settings);
+		registerCipher(new QuagmireIIIDecrypt(), settings);
 		
 		registerCipher(new NihilistSubstitutionDecrypt(), settings);
 		registerCipher(new NihilistTranspositionDecrypt(), settings);

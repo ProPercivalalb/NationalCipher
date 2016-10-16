@@ -10,12 +10,12 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Bazeries;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.BazeriesKey;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class BazeriesDecrypt implements IDecrypt {
 
@@ -65,7 +65,7 @@ public class BazeriesDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(int no) {
-			this.lastSolution = new Solution(Bazeries.decode(this.text, no), this.settings.getLanguage()).setKeyString("" + no);
+			this.lastSolution = new Solution(Bazeries.decode(this.cipherText, no), this.settings.getLanguage()).setKeyString("" + no);
 			this.addSolution(this.lastSolution);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {

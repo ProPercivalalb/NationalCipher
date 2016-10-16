@@ -14,15 +14,15 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.BeaufortSlidefair;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.VigenereAutoKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class BeaufortSlidefairDecrypt implements IDecrypt {
 
@@ -87,7 +87,7 @@ public class BeaufortSlidefairDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(BeaufortSlidefair.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(BeaufortSlidefair.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;	
@@ -100,7 +100,7 @@ public class BeaufortSlidefairDecrypt implements IDecrypt {
 
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(BeaufortSlidefair.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			return new Solution(BeaufortSlidefair.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 		}
 
 		@Override

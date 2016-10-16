@@ -1,28 +1,37 @@
 package nationalcipher.cipher.tools;
 
 import javalibrary.Output;
+import javalibrary.lib.Timer;
+import javalibrary.math.Units;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
 import nationalcipher.Settings;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.ui.IApplication;
 import nationalcipher.ui.KeyPanel;
 
 public abstract class SimulatedAnnealing extends InternalDecryption {
 
-	public SimulatedAnnealing(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
-		super(text, settings, keyPanel, output, progress);
+	public boolean iterationTimer;
+	
+	public SimulatedAnnealing(char[] text, IApplication app) {
+		super(text, app);
+		this.iterationTimer = false;
 	}
 
 	public Solution maxSolution;
 	
 	public void run() {
+		Timer timer = new Timer();
 		while(true) {
+			timer.restart();
 			this.bestSolution = this.generateKey();
 			this.maxSolution = this.bestSolution;
 			this.solutionFound();
 
-			for(double TEMP = this.settings.getSATempStart(); TEMP >= 0; TEMP -= this.settings.getSATempStep()) {
-				for(int count = 0; count < this.settings.getSACount(); count++) { 
+			for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {
+				for(int count = 0; count < this.getSettings().getSACount(); count++) { 
 					
 					this.lastSolution = this.modifyKey(count);
 					//this.addSolution(this.lastSolution);
@@ -50,8 +59,14 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 					this.onIteration();
 				}
 			}
-
-			if(this.endIteration()) break;
+		
+			if(this.endIteration())  {
+				if(this.iterationTimer)
+					this.out().println("Iteration Time: %f", timer.getTimeRunning(Units.Time.MILLISECOND));
+				break;
+			}
+			if(this.iterationTimer)
+				this.out().println("Iteration Time: %f", timer.getTimeRunning(Units.Time.MILLISECOND));
 		}	
 	}
 	

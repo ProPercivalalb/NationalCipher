@@ -13,13 +13,13 @@ import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.Cadenus;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.CadenusKey;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class CadenusDecrypt implements IDecrypt {
 
@@ -112,8 +112,8 @@ public class CadenusDecrypt implements IDecrypt {
 		@Override
 		public void onIteration(String key, int textLength) {
 			char[] plainText = new char[0];
-			for(int i = 0; i < this.text.length / textLength; i++)
-				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.text, i * textLength, textLength), key));
+			for(int i = 0; i < this.cipherText.length / textLength; i++)
+				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.cipherText, i * textLength, textLength), key));
 
 			this.lastSolution = new Solution(plainText, this.settings.getLanguage()).setKeyString(key);
 			

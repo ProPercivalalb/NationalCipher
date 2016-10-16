@@ -15,16 +15,16 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polybiussquare.Trifid;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator.BifidKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.ui.UINew;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class TrifidDecrypt implements IDecrypt {
 
@@ -57,7 +57,7 @@ public class TrifidDecrypt implements IDecrypt {
 					if(i != 'J' && !change.contains("" + i))
 						change += i;
 				}
-				String regex = new String[]{"ABCDEFGHIKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIKLM", "ZYXWVUTSRQPONMLKIHGFEDCBA"}[settings.keywordCreation];
+				String regex = new String[]{"ABCDEFGHIKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIKLM", "ZYXWVUTSRQPONMLKIHGFEDCBA"}[settings.getKeywordCreationId()];
 				
 				for(char i : regex.toCharArray()) {
 					if(!change.contains("" + i))
@@ -98,7 +98,7 @@ public class TrifidDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(String keysquare) {
-			this.lastSolution = new Solution(Trifid.decode(this.text, keysquare, this.period), this.settings.getLanguage()).setKeyString(keysquare);
+			this.lastSolution = new Solution(Trifid.decode(this.cipherText, keysquare, this.period), this.settings.getLanguage()).setKeyString(keysquare);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -113,13 +113,13 @@ public class TrifidDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeySquareManipulation.generateRandTrifidKey((char)comboBox.getSelectedItem());
-			return new Solution(Trifid.decode(this.text, this.bestMaximaKey, this.period), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
+			return new Solution(Trifid.decode(this.cipherText, this.bestMaximaKey, this.period), this.settings.getLanguage()).setKeyString(this.bestMaximaKey);
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Trifid.decode(this.text, this.lastKey, this.period), this.settings.getLanguage()).setKeyString(this.lastKey);
+			return new Solution(Trifid.decode(this.cipherText, this.lastKey, this.period), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}
 
 		@Override

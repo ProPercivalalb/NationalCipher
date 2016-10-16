@@ -9,7 +9,7 @@ import nationalcipher.cipher.base.IRandEncrypter;
 public class Affine implements IRandEncrypter {
 
 	public static String encode(String plainText, int a, int b) {
-		
+		System.out.println(a + " " + b);
 		String cipherText = "";
 		
 		String tempAlphabet = "";

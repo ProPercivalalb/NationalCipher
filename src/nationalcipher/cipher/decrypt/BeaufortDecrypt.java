@@ -18,11 +18,11 @@ import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polygraphic.Beaufort;
 import nationalcipher.cipher.base.substitution.Caesar;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
@@ -122,7 +122,7 @@ public class BeaufortDecrypt implements IDecrypt {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(Beaufort.decode(this.text, key), this.settings.getLanguage()).setKeyString(key);
+			return new Solution(Beaufort.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(key);
 		}
 
 		@Override

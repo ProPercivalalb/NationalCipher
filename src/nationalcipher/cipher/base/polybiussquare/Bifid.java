@@ -1,7 +1,5 @@
 package nationalcipher.cipher.base.polybiussquare;
 
-import java.util.Arrays;
-
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;

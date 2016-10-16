@@ -16,6 +16,7 @@ import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.substitution.Affine;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
@@ -23,7 +24,6 @@ import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AffineKey;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class AffineDecrypt implements IDecrypt {
 
@@ -99,7 +99,7 @@ public class AffineDecrypt implements IDecrypt {
 			
 		@Override
 		public void onIteration(int a, int b) {
-			this.lastSolution = new Solution(Affine.decode(this.text, a, b), this.settings.getLanguage()).setKeyString("A-%d, B-%d", a, b);
+			this.lastSolution = new Solution(Affine.decode(this.cipherText, a, b), this.settings.getLanguage()).setKeyString("A-%d, B-%d", a, b);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

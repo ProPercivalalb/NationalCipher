@@ -15,18 +15,18 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.AMSCO;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.ui.UINew;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
+import nationalcipher.ui.UINew;
 
 public class AMSCODecrypt implements IDecrypt {
 
@@ -103,7 +103,7 @@ public class AMSCODecrypt implements IDecrypt {
 			
 		@Override
 		public void onIteration(int[] order) {
-			this.lastSolution = new Solution(AMSCO.decode(this.text, this.outputText, this.first, order), this.settings.getLanguage(), this.bestSolution.score);
+			this.lastSolution = new Solution(AMSCO.decode(this.cipherText, this.plainText, this.first, order), this.settings.getLanguage(), this.bestSolution.score);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.lastSolution.setKeyString(Arrays.toString(order));
@@ -121,14 +121,14 @@ public class AMSCODecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey1 = KeyGeneration.createOrder(this.length);
-			return new Solution(AMSCO.decode(this.text, this.outputText, this.first, this.bestMaximaKey1), this.settings.getLanguage());
+			return new Solution(AMSCO.decode(this.cipherText, this.plainText, this.first, this.bestMaximaKey1), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
 
-			return new Solution(AMSCO.decode(this.text, this.outputText, this.first, this.lastKey1), this.settings.getLanguage(), this.bestSolution.score);
+			return new Solution(AMSCO.decode(this.cipherText, this.plainText, this.first, this.lastKey1), this.settings.getLanguage(), this.bestSolution.score);
 		}
 
 		@Override

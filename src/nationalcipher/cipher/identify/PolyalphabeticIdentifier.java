@@ -1,8 +1,5 @@
 package nationalcipher.cipher.identify;
 
-import java.util.Arrays;
-import java.util.List;
-
 import nationalcipher.cipher.stats.StatCalculator;
 
 public class PolyalphabeticIdentifier {

@@ -1,9 +1,11 @@
-package nationalcipher.cipher.tools;
+package nationalcipher.cipher.decrypt.complete.methods;
 
 import javalibrary.Output;
+import javalibrary.language.ILanguage;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.ui.IApplication;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -12,20 +14,14 @@ public class InternalDecryption {
 	public Solution bestSolution, lastSolution;
 	public int iteration;
 	
-	public char[] text;
-	public char[] outputText;
-	public Settings settings;
-	public KeyPanel keyPanel;	
-	public Output output;
-	public ProgressValue progress;
+	public char[] cipherText;
+	public char[] plainText;
+	public IApplication app;
 	
-	public InternalDecryption(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
-		this.text = text;
-		this.outputText = new char[this.getOutputTextLength(text.length)];
-		this.settings = settings;
-		this.keyPanel = keyPanel;
-		this.output = output;
-		this.progress = progress;
+	public InternalDecryption(char[] cipherText, IApplication app) {
+		this.cipherText = cipherText;
+		this.plainText = new char[this.getOutputTextLength(cipherText.length)];
+		this.app = app;
 		
 		this.iteration = 1;
 		this.bestSolution = new Solution(null, Double.NEGATIVE_INFINITY);
@@ -50,5 +46,26 @@ public class InternalDecryption {
 	
 	public String getBestSolution() {
 		return new String(this.bestSolution.getText());
+	}
+	
+	//IApplication methods
+	public ILanguage getLanguage() {
+		return this.app.getLanguage();
+	}
+	
+	public Settings getSettings() {
+		return this.app.getSettings();
+	}
+	
+	public ProgressValue getProgress() {
+		return this.app.getProgress();
+	}
+	
+	public Output out() {
+		return this.app.out();
+	}
+	
+	public KeyPanel getKeyPanel() {
+		return this.app.getKeyPanel();
 	}
 }

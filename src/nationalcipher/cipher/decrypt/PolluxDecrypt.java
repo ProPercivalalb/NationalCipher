@@ -13,15 +13,15 @@ import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Pollux;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.PolluxKey;
+import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 
 public class PolluxDecrypt implements IDecrypt {
 
@@ -83,7 +83,7 @@ public class PolluxDecrypt implements IDecrypt {
 		
 		@Override
 		public void onIteration(char[] key) {
-			this.lastSolution = new Solution(Pollux.decode(this.text, key), this.settings.getLanguage()).setKeyString(new String(key));
+			this.lastSolution = new Solution(Pollux.decode(this.cipherText, key), this.settings.getLanguage()).setKeyString(new String(key));
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -98,13 +98,13 @@ public class PolluxDecrypt implements IDecrypt {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = new char[] {'X', '.', '.', '-', '.', '.', '-', '-', 'X', 'X'};
-			return new Solution(Pollux.decode(this.text, this.bestMaximaKey), this.settings.getLanguage()).setKeyString(new String(this.bestMaximaKey));
+			return new Solution(Pollux.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage()).setKeyString(new String(this.bestMaximaKey));
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.swapMorseIndex(this.bestMaximaKey);
-			return new Solution(Pollux.decode(this.text, this.lastKey), this.settings.getLanguage()).setKeyString(new String(this.lastKey));
+			return new Solution(Pollux.decode(this.cipherText, this.lastKey), this.settings.getLanguage()).setKeyString(new String(this.lastKey));
 		}
 
 		@Override

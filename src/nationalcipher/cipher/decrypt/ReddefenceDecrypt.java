@@ -11,13 +11,13 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.Redefence;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.RedefenceKey;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.InternalDecryption;
 
 public class ReddefenceDecrypt implements IDecrypt {
 
@@ -66,7 +66,7 @@ public class ReddefenceDecrypt implements IDecrypt {
 
 		@Override
 		public void onIteration(int[] order) {
-			this.lastSolution = new Solution(Redefence.decode(this.text, order), this.settings.getLanguage()).setKeyString(Arrays.toString(order));
+			this.lastSolution = new Solution(Redefence.decode(this.cipherText, order), this.settings.getLanguage()).setKeyString(Arrays.toString(order));
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
@@ -10,7 +9,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -22,15 +20,15 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polygraphic.Porta;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.PortaKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.cipher.tools.KeySearch;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class PortaDecrypt implements IDecrypt {
 
@@ -126,7 +124,7 @@ public class PortaDecrypt implements IDecrypt {
 			
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Porta.decode(this.text, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
+			this.lastSolution = new Solution(Porta.decode(this.cipherText, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -140,7 +138,7 @@ public class PortaDecrypt implements IDecrypt {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(Porta.decode(this.text, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
+			return new Solution(Porta.decode(this.cipherText, key, this.shiftRight), this.settings.getLanguage()).setKeyString(key);
 		}
 
 		@Override

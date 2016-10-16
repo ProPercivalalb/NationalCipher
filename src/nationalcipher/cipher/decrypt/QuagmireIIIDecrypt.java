@@ -9,27 +9,31 @@ import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
+import javalibrary.fitness.ChiSquared;
+import javalibrary.language.ILanguage;
+import javalibrary.string.StringTransformer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.QuagmireI;
+import nationalcipher.cipher.base.Quagmire;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
+public class QuagmireIIIDecrypt implements IDecrypt {
 
-public class QuagmireIDecrypt implements IDecrypt {
-
+	private QuagmireTask task;
+	
 	@Override
 	public String getName() {
-		return "Quagmire I";
+		return "Quagmire III";
 	}
 
 	@Override
@@ -39,16 +43,18 @@ public class QuagmireIDecrypt implements IDecrypt {
 	
 	@Override
 	public void attemptDecrypt(String text, Settings settings, DecryptionMethod method, Output output, KeyPanel keyPanel, ProgressValue progress) {
-		QuagmireITask task = new QuagmireITask(text.toCharArray(), settings, keyPanel, output, progress);
+		this.task = new QuagmireTask(text.toCharArray(), settings, keyPanel, output, progress);
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			progress.addMaxValue((int)(settings.getSATempStart() / settings.getSATempStep()) * settings.getSACount());
 			
-			task.run();
+			this.task.run();
 		}
 		else {
 			output.println(" Unexpected decryption method provided!");
 		}	
 	}
+	
+	
 
 	private JTextField rangeBox = new JTextField("5");
 	
@@ -61,48 +67,40 @@ public class QuagmireIDecrypt implements IDecrypt {
 		dialog.add(panel);
 	}
 	
-	public class QuagmireITask extends SimulatedAnnealing  {
+	public class QuagmireTask extends SimulatedAnnealing  {
 
 		public int period;
 		public String bestKey1, bestMaximaKey1, lastKey1;
-		public String bestKey2, bestMaximaKey2, lastKey2;
 		
-		public QuagmireITask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
+		public QuagmireTask(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
 			super(text, settings, keyPanel, output, progress);
 			this.period = SettingParse.getInteger(rangeBox);
 		}
 
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey1 = KeySquareManipulation.generateRandKey();
-			this.bestMaximaKey2 = KeyGeneration.createShortKey26(this.period);
+			this.bestMaximaKey1 = KeyGeneration.createLongKey26();
 			this.lastKey1 = this.bestMaximaKey1;
-			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(QuagmireI.decode(text, this.bestMaximaKey1, this.bestMaximaKey2), this.settings.getLanguage()).setKeyString("%s %s", this.lastKey1, this.lastKey2);
+			return new Solution(decode(this.bestMaximaKey1), this.settings.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(int count) {
-			if(count % 2 == 0)
-				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
-			else
-				this.lastKey2 = KeySquareManipulation.swapCharIndex(this.bestMaximaKey2);
+			this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
 			
-			return new Solution(QuagmireI.decode(this.text, this.lastKey1, this.lastKey2), this.settings.getLanguage()).setKeyString("%s %s", this.lastKey1, this.lastKey2);
+			return new Solution(decode(this.lastKey1), this.settings.getLanguage());
 		}
 
 		@Override
 		public void storeKey() {
 			this.bestMaximaKey1 = this.lastKey1;
-			this.bestMaximaKey2 = this.lastKey2;
 		}
 
 		@Override
 		public void solutionFound() {
 			this.bestKey1 = this.bestMaximaKey1;
-			this.bestKey2 = this.bestMaximaKey2;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
-			this.keyPanel.key.setText(this.bestKey1 + " " + this.bestKey2);
+			this.keyPanel.key.setText(this.bestKey1);
 		}
 		
 		@Override
@@ -113,16 +111,57 @@ public class QuagmireIDecrypt implements IDecrypt {
 
 		@Override
 		public boolean endIteration() {
+			this.bestSolution.setKeyString("%s", this.lastKey1);
 			this.output.println("%s", this.bestSolution);
 			UINew.BEST_SOULTION = this.bestSolution.getText();
 			this.progress.setValue(0);
 			return false;
 		}
+		
+		public char[] decode(String key) {
+			String indicatorKey = "";
+			int[] keyIndex = new int[26];
+			for(int i = 0; i < 26; i++)
+				keyIndex[key.charAt(i) - 'A'] = i;
+			
+	        for(int i = 0; i < this.period; ++i) {
+	        	String temp = StringTransformer.getEveryNthChar(this.cipherText, i, this.period);
+	            int shift = this.findBestCaesarShift(temp.toCharArray(), key, keyIndex, this.settings.getLanguage(), this.progress);
+	            indicatorKey += key.charAt(shift);
+	        }
+			
+	        return Quagmire.decode(this.cipherText, key, key, indicatorKey, 'A');
+		}
+		
+		public int findBestCaesarShift(char[] text, String keyTop, int[] keyIndex, ILanguage language, ProgressValue progressBar) {
+			int best = 0;
+		    double smallestSum = Double.MAX_VALUE;
+		    for(int shift = 0; shift < 26; ++shift) {
+		    	char[] encodedText = decode(text, keyTop, keyIndex, shift);
+		        double currentSum = ChiSquared.calculate(encodedText, language);
+		    
+		        if(currentSum < smallestSum) {
+		        	best = shift;
+		            smallestSum = currentSum;
+		        }
+		  
+		    }
+		    return best;
+		}
+		
+		public char[] decode(char[] cipherText, String keyTop, int[] keyIndex, int shift) {
+			char[] plainText = new char[cipherText.length];
+			
+			for(int i = 0; i < cipherText.length; i++)
+				plainText[i] = keyTop.charAt((26 + keyIndex[cipherText[i] - 'A'] - shift) % 26);
+			
+			return plainText;
+		}
 	}
 
 	@Override
 	public void onTermination() {
-		// TODO Auto-generated method stub
+		this.task.endIteration();
 		
 	}
 }

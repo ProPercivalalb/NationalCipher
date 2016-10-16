@@ -1,16 +1,17 @@
-package nationalcipher.cipher.tools;
+package nationalcipher.cipher.decrypt.complete.methods;
 
 import javalibrary.Output;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.ui.IApplication;
 import nationalcipher.ui.KeyPanel;
 
 public abstract class KeySearch extends InternalDecryption {
 
-	public KeySearch(char[] text, Settings settings, KeyPanel keyPanel, Output output, ProgressValue progress) {
-		super(text, settings, keyPanel, output, progress);
+	public KeySearch(char[] text, IApplication app) {
+		super(text, app);
 	}
 	
 	public void run(int minLength, int maxLength) {

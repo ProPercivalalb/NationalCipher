@@ -1,9 +1,11 @@
 package nationalcipher.wip;
 
-import java.net.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
 
 public class NetworkingTest extends Thread {
 	public static String SERVER_NAME = "localhost";

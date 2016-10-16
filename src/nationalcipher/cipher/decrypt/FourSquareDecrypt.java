@@ -10,11 +10,11 @@ import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.polybiussquare.FourSquare;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.tools.SimulatedAnnealing;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
 
@@ -64,7 +64,7 @@ public class FourSquareDecrypt implements IDecrypt {
 			this.bestMaximaKey2 = KeySquareManipulation.generateRandKeySquare();
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(FourSquare.decode(text, this.bestMaximaKey1, this.bestMaximaKey2), this.settings.getLanguage());
+			return new Solution(FourSquare.decode(cipherText, this.bestMaximaKey1, this.bestMaximaKey2), this.settings.getLanguage());
 		}
 
 		@Override
@@ -74,7 +74,7 @@ public class FourSquareDecrypt implements IDecrypt {
 			else
 				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
 			
-			return new Solution(FourSquare.decode(this.text, this.lastKey1, this.lastKey2), this.settings.getLanguage());
+			return new Solution(FourSquare.decode(this.cipherText, this.lastKey1, this.lastKey2), this.settings.getLanguage());
 		}
 
 		@Override

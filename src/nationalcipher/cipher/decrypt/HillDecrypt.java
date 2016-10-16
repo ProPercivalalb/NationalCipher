@@ -11,19 +11,15 @@ import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
 import javalibrary.Output;
-import javalibrary.algebra.Equation;
-import javalibrary.algebra.Expression;
 import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.ArrayOperations;
-import javalibrary.math.GCD;
 import javalibrary.math.MathUtil;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.string.StringAnalyzer;
@@ -33,17 +29,15 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.ObjectTracker;
 import nationalcipher.Settings;
 import nationalcipher.cipher.Hill;
-import nationalcipher.cipher.base.substitution.Affine;
+import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.HillKey;
-import nationalcipher.ui.KeyPanel;
-import nationalcipher.ui.UINew;
-import nationalcipher.cipher.tools.InternalDecryption;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.ui.KeyPanel;
 
 public class HillDecrypt implements IDecrypt {
 
@@ -419,7 +413,7 @@ public class HillDecrypt implements IDecrypt {
 		public void onIteration(Matrix matrix) {
 			
 			try {
-				this.lastSolution = new Solution(Hill.decode(this.text, matrix), this.settings.getLanguage()).setKeyString(matrix.toString());
+				this.lastSolution = new Solution(Hill.decode(this.cipherText, matrix), this.settings.getLanguage()).setKeyString(matrix.toString());
 				this.addSolution(this.lastSolution);
 				
 				if(this.lastSolution.score >= this.bestSolution.score) {
