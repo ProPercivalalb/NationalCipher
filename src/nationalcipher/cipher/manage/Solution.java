@@ -40,7 +40,7 @@ public class Solution implements Comparable<Solution> {
 		return this.setKeyString(String.format(keyString, args));
 	}
 	
-	public Solution copyTextInstance() {
+	public Solution bakeSolution() {
 		this.text = ArrayUtil.copyOfRange(this.text, 0, this.text.length);
 		return this;
 	}

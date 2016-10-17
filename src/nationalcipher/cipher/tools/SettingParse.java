@@ -1,5 +1,7 @@
 package nationalcipher.cipher.tools;
 
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
 import javax.swing.text.JTextComponent;
 
 public class SettingParse {
@@ -26,5 +28,13 @@ public class SettingParse {
 	
 		return Integer.valueOf(text);
 
+	}
+
+	public static int[] getIntegerRange(JSpinner[] spinners) {
+		return new int[] {(int)spinners[0].getValue(), (int)spinners[1].getValue()};
+	}
+	
+	public static boolean getBooleanValue(JComboBox<Boolean> comboBox) {
+		return (Boolean)comboBox.getSelectedItem();
 	}
 }

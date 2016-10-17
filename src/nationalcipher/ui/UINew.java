@@ -799,7 +799,7 @@ public class UINew extends JFrame implements IApplication {
 	        substitution.add(attackButton);
 	        cipherAttackGroup.add(attackButton);
         }
-        for(String name : new String[] {"Rail Fence", "Bazeries"}) {
+        for(String name : new String[] {"Rail Fence", "Redefence", "Bazeries"}) {
 	        JMenuItem attackButton = new JCheckBoxMenuItem(name);
 	        attackButton.addActionListener(new CipherAttackChangeAction(attackButton));
 	        transpostion.add(attackButton);
@@ -945,6 +945,8 @@ public class UINew extends JFrame implements IApplication {
 					
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
 					progressValue = new ProgressValueNC(1000, progressBar, settings);
+					if(!settings.updateProgress())
+						UINew.this.progressValue.setIndeterminate(true);
 					try {
 						force.attemptAttack(text, method, UINew.this);
 					}

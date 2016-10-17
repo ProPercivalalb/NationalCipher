@@ -29,13 +29,22 @@ public class AttackRegistry {
 	}
 	
 	public static void loadCiphers(Settings settings) {
-		registerCipher(new CaesarAttack(), settings);
-		registerCipher(new BazeriesAttack(), settings);
+		//Substitution
+		registerCipher(new CaesarAttack(), settings);		
 		registerCipher(new AffineAttack(), settings);
 		registerCipher(new SimpleSubstitutionAttack(), settings);
+		registerCipher(new BazeriesAttack(), settings);
+
+	
+		
+		//Transpostion
 		registerCipher(new RailFenceAttack(), settings);
+		registerCipher(new RedefenceAttack(), settings);
+		registerCipher(new AMSCOAttack(), settings);
+		
+		//Other
 		registerCipher(new VigenereAttack(), settings);
-		//registerCipher(new (), settings);
+		//
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);

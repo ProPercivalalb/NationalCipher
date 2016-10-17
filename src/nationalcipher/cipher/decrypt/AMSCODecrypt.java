@@ -107,7 +107,7 @@ public class AMSCODecrypt implements IDecrypt {
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.lastSolution.setKeyString(Arrays.toString(order));
-				this.lastSolution.copyTextInstance();
+				this.lastSolution.bakeSolution();
 				
 				this.bestSolution = this.lastSolution;
 				this.output.println("%s", this.bestSolution);
@@ -139,7 +139,7 @@ public class AMSCODecrypt implements IDecrypt {
 		@Override
 		public void solutionFound() {
 			this.bestSolution.setKeyString(Arrays.toString(this.bestMaximaKey1));
-			this.bestSolution.copyTextInstance();
+			this.bestSolution.bakeSolution();
 			this.bestKey1 = this.bestMaximaKey1;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
 			this.keyPanel.key.setText(this.bestSolution.keyString);

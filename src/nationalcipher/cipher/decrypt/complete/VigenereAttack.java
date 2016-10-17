@@ -1,7 +1,8 @@
 package nationalcipher.cipher.decrypt.complete;
 
+import java.util.HashMap;
+
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -34,10 +35,7 @@ public class VigenereAttack extends CipherAttack {
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		((AbstractDocument)this.rangeBox.getDocument()).setDocumentFilter(new DocumentUtil.DocumentIntegerRangeInput(this.rangeBox));
-			
 		panel.add(new SubOptionPanel("Period Range:", this.rangeBox));
-	        
-		dialog.add(panel);
 	}
 	
 	@Override
@@ -45,10 +43,10 @@ public class VigenereAttack extends CipherAttack {
 		VigenereTask task = new VigenereTask(text, app);
 		
 		//Settings grab
-		int[] range = SettingParse.getIntegerRange(this.rangeBox);
+		int[] periodRange = SettingParse.getIntegerRange(this.rangeBox);
 		
 		if(method == DecryptionMethod.CALCULATED) {
-			int keyLength = StatCalculator.calculateBestKappaIC(text, range[0], range[1], app.getLanguage());
+			int keyLength = StatCalculator.calculateBestKappaIC(text, periodRange[0], periodRange[1], app.getLanguage());
 			
 			app.getProgress().addMaxValue(keyLength * 26);
 			
@@ -100,5 +98,16 @@ public class VigenereAttack extends CipherAttack {
 			this.getKeyPanel().updateIteration(this.iteration++);
 			this.getProgress().increase();
 		}
+	}
+	
+	@Override
+	public void write(HashMap<String, Object> map) {
+		map.put("vigenere_period_range", this.rangeBox.getText());
+	}
+
+	@Override
+	public void read(HashMap<String, Object> map) {
+		if(map.containsKey("vigenere_period_range"))
+			this.rangeBox.setText((String)map.get("vigenere_period_range"));
 	}
 }

@@ -46,7 +46,7 @@ public class AMSCO implements IRandEncrypter {
 		return read;
 	}
 	
-	public static String decode(String cipherText, char[] plainText, boolean reversed, String keyword) {
+	public static String decode(String cipherText, char[] plainText, String keyword, boolean first) {
 		keyword = keyword.toUpperCase();
 		int[] order = new int[keyword.length()];
 		
@@ -59,10 +59,10 @@ public class AMSCO implements IRandEncrypter {
 			}
 		}
 		
-		return new String(decode(cipherText.toCharArray(), plainText, reversed, order));
+		return new String(decode(cipherText.toCharArray(), plainText, order, first));
 	}
 	
-	public static char[] decode(char[] cipherText, char[] plainText, boolean first, int[] order) {
+	public static char[] decode(char[] cipherText, char[] plainText, int[] order, boolean first) {
 		int period = order.length;
 		
 		

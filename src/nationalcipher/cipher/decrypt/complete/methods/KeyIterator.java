@@ -1,5 +1,7 @@
 package nationalcipher.cipher.decrypt.complete.methods;
 
+import javalibrary.util.ArrayUtil;
+
 public class KeyIterator {
 
 	public static interface IntegerKey {
@@ -27,5 +29,29 @@ public class KeyIterator {
 	
 	public static void iterateLong26Key(Long26Key capturer) {
 		
+	}
+	
+	public static interface IntegerOrderedKey {
+		public void onIteration(int[] order);
+	}
+	
+	public static void iterateIntegerOrderedKey(IntegerOrderedKey task, int length) {
+		iterateIntegerOrderedKey(task, ArrayUtil.range(0, length), 0);
+	}
+	
+	private static void iterateIntegerOrderedKey(IntegerOrderedKey task, int[] arr, int pos) {
+	    if(arr.length - pos == 1)
+	    	task.onIteration(arr);
+	    else
+	        for(int i = pos; i < arr.length; i++) {
+	            int h = arr[pos];
+	            int j = arr[i];
+	            arr[pos] = j;
+	            arr[i] = h;
+	            
+	            iterateIntegerOrderedKey(task, arr, pos + 1);
+	            arr[pos] = h;
+	    	    arr[i] = j;
+	        }
 	}
 }

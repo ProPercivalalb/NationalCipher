@@ -12,29 +12,32 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class SubOptionPanel extends JPanel {
 	
-	public SubOptionPanel(String label, JComponent field) {
-		this(new JLabel(label), field);
+	public SubOptionPanel(String label, JComponent... fields) {
+		this(new JLabel(label), fields);
 	}
 	
-	public SubOptionPanel(JLabel label, JComponent field) {
-		this(label, field, 400);
+	public SubOptionPanel(JLabel label, JComponent... fields) {
+		this(label, 400, fields);
 	}
 	
-	public SubOptionPanel(String label, JComponent field, int width) {
-		this(new JLabel(label), field, width);
+	public SubOptionPanel(String label, int width, JComponent... fields) {
+		this(new JLabel(label), width, fields);
 	}
 	
-	public SubOptionPanel(JLabel label, JComponent field, int width) {
+	public SubOptionPanel(JLabel label, int width, JComponent... fields) {
 		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		label.setMinimumSize(new Dimension(190, 20));
 		label.setPreferredSize(new Dimension(190, 20));
 		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 4));
-		field.setMinimumSize(new Dimension(width - 200 - 30, 20));
-		field.setPreferredSize(new Dimension(width - 200 - 30, 20));
+		//field.setMinimumSize(new Dimension(width - 200 - 30, 20));
+	
 		
 		this.add(label);
-		this.add(field);
+		for(JComponent field : fields) {
+			field.setPreferredSize(new Dimension((width  - 200) / fields.length - 30, 20));
+			this.add(field);
+		}
 	}
 
 	@Override

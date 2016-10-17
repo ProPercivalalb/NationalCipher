@@ -87,7 +87,7 @@ public class PlayfairDecrypt implements IDecrypt {
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.lastSolution.setKeyString(keysquare);
-				this.lastSolution.copyTextInstance();
+				this.lastSolution.bakeSolution();
 				
 				this.bestSolution = this.lastSolution;
 				this.output.println("%s", this.bestSolution);	
@@ -118,7 +118,7 @@ public class PlayfairDecrypt implements IDecrypt {
 		@Override
 		public void solutionFound() {
 			this.bestSolution.setKeyString(this.bestMaximaKey);
-			this.bestSolution.copyTextInstance();
+			this.bestSolution.bakeSolution();
 			this.bestKey = this.bestMaximaKey;
 			this.keyPanel.fitness.setText("" + this.bestSolution.score);
 			this.keyPanel.key.setText(this.bestKey);
