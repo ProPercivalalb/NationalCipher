@@ -34,7 +34,7 @@ public class AttackRegistry {
 		registerCipher(new AffineAttack(), settings);
 		registerCipher(new SimpleSubstitutionAttack(), settings);
 		registerCipher(new RailFenceAttack(), settings);
-		//registerCipher(new (), settings);
+		registerCipher(new VigenereAttack(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);
