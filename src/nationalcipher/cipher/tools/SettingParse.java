@@ -34,6 +34,10 @@ public class SettingParse {
 		return new int[] {(int)spinners[0].getValue(), (int)spinners[1].getValue()};
 	}
 	
+	public static int getInteger(JSpinner spinners) {
+		return (int)spinners.getValue();
+	}
+	
 	public static boolean getBooleanValue(JComboBox<Boolean> comboBox) {
 		return (Boolean)comboBox.getSelectedItem();
 	}

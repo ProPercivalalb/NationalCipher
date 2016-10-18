@@ -44,6 +44,9 @@ public class AttackRegistry {
 		
 		//Other
 		registerCipher(new VigenereAttack(), settings);
+		registerCipher(new PlayfairAttack(), settings);
+		registerCipher(new BifidAttack(), settings);
+		
 		//
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);

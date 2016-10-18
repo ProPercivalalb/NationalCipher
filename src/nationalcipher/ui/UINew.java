@@ -345,6 +345,7 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemSAPreset = new JMenu();
         this.menuItemUpdateProgress = new JCheckBoxMenuItem();
         this.menuCipherAttack = new JMenu();
+        this.menuCribInput = new JMenuItem();
         this.menuItemCurrentAttack = new JMenuItem();
         
 		this.setLayout(new GridBagLayout());
@@ -781,6 +782,10 @@ public class UINew extends JFrame implements IApplication {
         this.menuBar.add(this.menuItemSettings);
 
         this.menuCipherAttack.setText("Cipher Attack");
+        
+        this.menuCribInput.setText("Crib Input");
+        this.menuCribInput.addActionListener(new CribInputAction());
+        this.menuCipherAttack.add(this.menuCribInput);
         
         this.menuItemCurrentAttack.setText("Target: Caesar Shift");
 		
@@ -3383,6 +3388,43 @@ public class UINew extends JFrame implements IApplication {
 		}
     }
     
+    public class CribInputAction implements ActionListener {
+
+    	public void actionPerformed(ActionEvent event) {
+    		JDialog dialog = new JDialog(UINew.this);
+    		
+    		dialog.setTitle("Crib Input");
+    		
+    		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/cog.png")));
+    		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    		dialog.setResizable(false);
+    		dialog.setMinimumSize(new Dimension(400, 200));
+    		dialog.setModal(true);
+   
+    		ActionListener escListener = new ActionListener() {
+    	        @Override
+    	        public void actionPerformed(ActionEvent e) {
+    	        	dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+    	        }
+    	    };
+
+    	    dialog.getRootPane().registerKeyboardAction(escListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    		
+    		JPanel panel = new JPanel();
+    		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(2, 2, 2, 2), BorderFactory.createEtchedBorder()));
+    	    dialog.add(panel);
+    		
+    	    panel.add(new JTextArea());
+    		dialog.setLocationRelativeTo(UINew.this);
+    		
+	        
+    		dialog.pack();
+			dialog.setVisible(true);
+    	}
+    	
+    }
+    
     public class CipherAttackChangeAction implements ActionListener {
     	
     	public JMenuItem menuItem;
@@ -3512,5 +3554,7 @@ public class UINew extends JFrame implements IApplication {
     private JMenu menuItemSAPreset;
     private JCheckBoxMenuItem menuItemUpdateProgress;
     private JMenu menuCipherAttack;
+    private JMenuItem menuCribInput;
     private JMenuItem menuItemCurrentAttack;
+    
 }

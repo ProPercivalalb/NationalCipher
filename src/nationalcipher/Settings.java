@@ -70,6 +70,11 @@ public class Settings {
 		return this.keywordCreation;
 	}
 	
+	//
+	public String getKeywordFiller() {
+		return new String[]{"ABCDEFGHIJKLMNOPQRSTUVWXYZ", "NOPQRSTUVWXYZABCDEFGHIJKLM", "ZYXWVUTSRQPONMLKJIHGFEDCBA"}[this.getKeywordCreationId()];
+	}
+	
 	public double getSATempStart() {
 		return this.simulatedAnnealing.get(0);
 	}

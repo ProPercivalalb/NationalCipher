@@ -31,6 +31,14 @@ public class KeyIterator {
 		
 	}
 	
+	public static interface Long25Key {
+		public void onIteration(String key);
+	}
+	
+	public static void iterateLong25Key(Long26Key capturer) {
+		
+	}
+	
 	public static interface IntegerOrderedKey {
 		public void onIteration(int[] order);
 	}
