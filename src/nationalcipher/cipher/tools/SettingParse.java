@@ -31,7 +31,7 @@ public class SettingParse {
 	}
 
 	public static int[] getIntegerRange(JSpinner[] spinners) {
-		return new int[] {(int)spinners[0].getValue(), (int)spinners[1].getValue()};
+		return new int[] {((Number)spinners[0].getValue()).intValue(), ((Number)spinners[1].getValue()).intValue()};
 	}
 	
 	public static int getInteger(JSpinner spinners) {

@@ -1,11 +1,8 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import javalibrary.dict.Dictionary;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.decrypt.complete.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.Long26Key;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
@@ -86,8 +83,7 @@ public class SimpleSubstitutionAttack extends CipherAttack {
 		public void solutionFound() {
 			this.bestKey = this.bestMaximaKey;
 			this.bestSolution.setKeyString(this.bestKey);
-			this.getKeyPanel().fitness.setText("" + this.bestSolution.score);
-			this.getKeyPanel().key.setText(this.bestKey);
+			this.getKeyPanel().updateSolution(this.bestSolution);
 		}
 		
 		@Override

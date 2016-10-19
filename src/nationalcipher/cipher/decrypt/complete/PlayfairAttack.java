@@ -3,8 +3,8 @@ package nationalcipher.cipher.decrypt.complete;
 import javalibrary.dict.Dictionary;
 import nationalcipher.cipher.base.polybiussquare.Playfair;
 import nationalcipher.cipher.decrypt.complete.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.Long25Key;
+import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
@@ -81,8 +81,7 @@ public class PlayfairAttack extends CipherAttack {
 			this.bestKey = this.bestMaximaKey;
 			this.bestSolution.setKeyString(this.bestKey);
 			this.bestSolution.bakeSolution();
-			this.getKeyPanel().fitness.setText("" + this.bestSolution.score);
-			this.getKeyPanel().key.setText(this.bestKey);
+			this.getKeyPanel().updateSolution(this.bestSolution);
 		}
 		
 		@Override

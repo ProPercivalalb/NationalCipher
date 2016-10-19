@@ -43,6 +43,9 @@ public class AttackRegistry {
 		registerCipher(new AMSCOAttack(), settings);
 		
 		//Other
+		registerCipher(new BeaufortAttack(), settings);
+		registerCipher(new PortaAttack(), settings);
+		registerCipher(new VariantAttack(), settings);
 		registerCipher(new VigenereAttack(), settings);
 		registerCipher(new PlayfairAttack(), settings);
 		registerCipher(new BifidAttack(), settings);

@@ -10,11 +10,9 @@ import javax.swing.JSpinner;
 
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
