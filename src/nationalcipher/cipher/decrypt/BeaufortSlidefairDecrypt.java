@@ -13,7 +13,7 @@ import javalibrary.Output;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.BeaufortSlidefair;
+import nationalcipher.cipher.base.substitution.BeaufortSlidefair;
 import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

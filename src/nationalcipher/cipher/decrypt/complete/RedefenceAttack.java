@@ -84,9 +84,9 @@ public class RedefenceAttack extends CipherAttack {
 
 	@Override
 	public void read(HashMap<String, Object> map) {
-		if(map.containsKey("redefence_period_range_min"))
-			this.rangeSpinner[0].setValue(map.get("redefence_period_range_min"));
 		if(map.containsKey("redefence_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("redefence_period_range_max"));
+		if(map.containsKey("redefence_period_range_min"))
+			this.rangeSpinner[0].setValue(map.get("redefence_period_range_min"));
 	}
 }

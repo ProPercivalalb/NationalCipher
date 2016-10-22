@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Homophonic;
+import nationalcipher.cipher.base.other.Homophonic;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

@@ -6,7 +6,8 @@ import javax.swing.JSpinner;
 
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.JSpinnerUtil;
-import nationalcipher.cipher.base.polybiussquare.Bifid;
+import javalibrary.util.ArrayUtil;
+import nationalcipher.cipher.base.other.Bifid;
 import nationalcipher.cipher.decrypt.complete.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
@@ -25,7 +26,7 @@ public class BifidAttack extends CipherAttack {
 	public BifidAttack() {
 		super("Bifid");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.DICTIONARY);
-		this.spinner = JSpinnerUtil.createSpinner(3, 2, 100, 1);
+		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.rangeInt(2, 101)));
 	}
 	
 	@Override

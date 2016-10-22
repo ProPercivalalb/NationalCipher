@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.base.polybiussquare.TriSquare;
+import nationalcipher.cipher.base.substitution.TriSquare;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

@@ -13,7 +13,7 @@ import javalibrary.Output;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.base.polybiussquare.ConjugatedBifid;
+import nationalcipher.cipher.base.other.ConjugatedBifid;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

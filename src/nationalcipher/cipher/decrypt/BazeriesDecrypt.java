@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 import javalibrary.Output;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Bazeries;
+import nationalcipher.cipher.base.substitution.Bazeries;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

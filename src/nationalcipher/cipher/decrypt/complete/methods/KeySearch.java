@@ -1,12 +1,8 @@
 package nationalcipher.cipher.decrypt.complete.methods;
 
-import javalibrary.Output;
 import javalibrary.string.StringTransformer;
-import javalibrary.swing.ProgressValue;
-import nationalcipher.Settings;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
-import nationalcipher.ui.KeyPanel;
 
 public abstract class KeySearch extends InternalDecryption {
 

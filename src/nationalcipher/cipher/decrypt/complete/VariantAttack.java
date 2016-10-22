@@ -8,12 +8,15 @@ import javax.swing.JSpinner;
 
 import javalibrary.fitness.ChiSquared;
 import javalibrary.language.ILanguage;
+import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.cipher.base.polygraphic.Variant;
 import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
+import nationalcipher.cipher.base.substitution.Variant;
+import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -27,7 +30,7 @@ public class VariantAttack extends CipherAttack {
 	
 	public VariantAttack() {
 		super("Variant");
-		this.setAttackMethods(DecryptionMethod.CALCULATED);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
 	}
 	
@@ -43,7 +46,14 @@ public class VariantAttack extends CipherAttack {
 		//Settings grab
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		
-		if(method == DecryptionMethod.CALCULATED) {
+		if(method == DecryptionMethod.BRUTE_FORCE) {
+			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+				app.getProgress().addMaxValue(MathUtil.pow(26, length));
+			
+			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+				KeyIterator.iterateShort26Key(task, length, true);
+		}
+		else if(method == DecryptionMethod.CALCULATED) {
 			int keyLength = StatCalculator.calculateBestKappaIC(text, periodRange[0], periodRange[1], app.getLanguage());
 			
 			app.getProgress().addMaxValue(keyLength * 26);
@@ -55,6 +65,10 @@ public class VariantAttack extends CipherAttack {
 	            keyword += (char)('A' - (shift - 26) % 26);
 	        }
 			task.onIteration(keyword);
+		}
+		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+			app.getProgress().setIndeterminate(true);
+			task.run(periodRange[0], periodRange[1]);
 		}
 		
 		app.out().println(task.getBestSolution());
@@ -77,12 +91,13 @@ public class VariantAttack extends CipherAttack {
 	    return best;
 	}
 	
-	public static class VariantTask extends InternalDecryption {
+	public static class VariantTask extends KeySearch implements ShortCustomKey {
 
 		public VariantTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
+		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(Variant.decode(this.cipherText, key), this.getLanguage());
 			
@@ -96,6 +111,22 @@ public class VariantAttack extends CipherAttack {
 			this.getKeyPanel().updateIteration(this.iteration++);
 			this.getProgress().increase();
 		}
+		
+		@Override
+		public Solution tryModifiedKey(String key) {
+			return new Solution(Variant.decode(this.cipherText, key), this.getLanguage()).setKeyString(key);
+		}
+
+		@Override
+		public void solutionFound() {
+			this.out().println("%s", this.bestSolution);
+			this.getKeyPanel().updateSolution(this.bestSolution);
+		}
+
+		@Override
+		public void onIteration() {
+			this.getKeyPanel().updateIteration(this.iteration++);
+		}
 	}
 	
 	@Override
@@ -106,9 +137,9 @@ public class VariantAttack extends CipherAttack {
 
 	@Override
 	public void read(HashMap<String, Object> map) {
-		if(map.containsKey("variant_period_range_min"))
-			this.rangeSpinner[0].setValue(map.get("variant_period_range_min"));
 		if(map.containsKey("variant_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("variant_period_range_max"));
+		if(map.containsKey("variant_period_range_min"))
+			this.rangeSpinner[0].setValue(map.get("variant_period_range_min"));
 	}
 }

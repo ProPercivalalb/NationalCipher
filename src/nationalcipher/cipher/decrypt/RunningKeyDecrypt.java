@@ -10,7 +10,7 @@ import javalibrary.Output;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.RunningKey;
+import nationalcipher.cipher.base.substitution.RunningKey;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

@@ -1,25 +1,23 @@
 package nationalcipher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.streams.FileReader;
-import javalibrary.string.StringAnalyzer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.PortaAutokey;
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.onetimepad.Solitaire;
-import nationalcipher.cipher.base.onetimepad.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.base.other.Solitaire;
+import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
+import nationalcipher.cipher.base.substitution.PortaAutokey;
+import nationalcipher.cipher.base.transposition.Cadenus;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
 
@@ -42,8 +40,24 @@ public class SOLVER {
 		System.out.println(cipherText);
 		System.out.println(randomEncrypt.getClass().getName());
 		
-		System.out.println(StringAnalyzer.getOrderedCharacterCount("BBAACCFGHHH".toCharArray()));
-	    
+	//	System.out.println(StringAnalyzer.getOrderedCharacterCount("BBAACCFGHHH".toCharArray()));
+	    //System.out.println(Cadenus.decode("ANTODELEEEUHRSIDRBHMHDRRHNIMEFMTHGEAETAKSEOMEHETYAASUVOYEGRASTMMUUAEENABBTPCHEHTARORIKSWOSMVALEATNED".toCharArray(), "WINK"));
+		System.out.println(Cadenus.encode("DEARPHILHOWCOULDIPASSUPTHEOPPORTUNITYTOWORKONTHISIHADACRACKATANOTHEROFTHENOTESYOUFOUNDINMONTMARTREITLOOKSLIKETHEOLDESTITEMINTHEPACKETANDITHOUGHTITMIGHTBEAGOODPLACETOSTARTITMAKESSOMESENSEOFTHEBUCHENWALDREFERENCEINTHELATERNOTEYOUSENTITDIDNTEXPLAINTHEPARISLINKSOISENTATEAMINTOTHATNEIGHBOURHOODTOGATHERINTELBUTTHEYDIDNTCOMEUPWITHVERYMUCHWEDIDGETONEREPORTTHATTHEHOUSEHADBEENOWNEDBYAGERMANFAMILYBEFORETHEWARBUTTHATITHADBEENTAKENOVERBYANSSOFFICERINNINETEENFORTYONESURETERECORDSSUGGESTTHATTHEFAMILYCAMEFROMWEIMARINAUGUSTNINETEENTHIRTYSEVENWHICHISSUGGESTIVEGIVENTHETIMINGANDTHEGEOGRAPHYSOIHAVESENTTHETEAMTOBUCHENWALDTOSEEWHATTHEYCANFINDIAMJUMPINGTOCONCLUSIONSHEREBUTTHEPORTRAITSARAHMENTIONSHASTOBETHEMONALISAIHAVEBEENTRYINGTOGETACCESSTOITBUTTHEFRENCHAUTHORITIESARESPOOKEDTHETHEFTOFTHEPAINTINGBYPERUGGIABACKINNINETEENELEVENHASMADETHEMVERYSENSITIVETHENAMECHAUDRONWASMENTIONEDMORETHANONCEANDINEEDSOMETIMETOLOOKINTOTHEHISTORYIFYOUHAVEANYINFLUENCEATALLATTHEMUSEUMITHINKWENEEDAPROPEREXAMINATIONOFTHEPAINTINGANDINEED", "WINK"));
+		
+		String key = "KKEY";
+		int[] order = new int[key.length()];
+		
+		int p = 0;
+		for(char ch = 'A'; ch <= 'Z'; ++ch)
+			for(int i = 0; i < order.length; i++)
+				if(ch == key.charAt(i))
+					order[i] = p++;
+
+		//System.out.println(Arrays.toString(order));
+		
+		//for(char ch = 'A'; ch <= 'Z'; ++ch)
+		//	System.out.println(ch +" " + Cadenus.charValue(ch));
+		
 	   // for(Class<? extends TextStatistic> clz :StatisticHandler.map.values()) 
 	    //	StatisticHandler.calculateStatPrint(new Cadenus(), clz);
 	    /**

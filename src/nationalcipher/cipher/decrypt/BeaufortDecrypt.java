@@ -16,7 +16,7 @@ import javalibrary.string.StringTransformer;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.base.polygraphic.Beaufort;
+import nationalcipher.cipher.base.substitution.Beaufort;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;

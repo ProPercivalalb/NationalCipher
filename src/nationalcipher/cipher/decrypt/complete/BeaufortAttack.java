@@ -8,12 +8,15 @@ import javax.swing.JSpinner;
 
 import javalibrary.fitness.ChiSquared;
 import javalibrary.language.ILanguage;
+import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.swing.ProgressValue;
-import nationalcipher.cipher.base.polygraphic.Beaufort;
+import nationalcipher.cipher.base.substitution.Beaufort;
 import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
+import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -27,7 +30,7 @@ public class BeaufortAttack extends CipherAttack {
 	
 	public BeaufortAttack() {
 		super("Beaufort");
-		this.setAttackMethods(DecryptionMethod.CALCULATED);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
 	}
 	
@@ -43,7 +46,14 @@ public class BeaufortAttack extends CipherAttack {
 		//Settings grab
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		
-		if(method == DecryptionMethod.CALCULATED) {
+		if(method == DecryptionMethod.BRUTE_FORCE) {
+			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+				app.getProgress().addMaxValue(MathUtil.pow(26, length));
+			
+			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+				KeyIterator.iterateShort26Key(task, length, true);
+		}
+		else if(method == DecryptionMethod.CALCULATED) {
 			int keyLength = StatCalculator.calculateBestKappaIC(text, periodRange[0], periodRange[1], app.getLanguage());
 			
 			app.getProgress().addMaxValue(keyLength * 26);
@@ -59,6 +69,10 @@ public class BeaufortAttack extends CipherAttack {
 	            keyword += (char)('Z' - shift);
 	        }
 			task.onIteration(keyword);
+		}
+		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+			app.getProgress().setIndeterminate(true);
+			task.run(periodRange[0], periodRange[1]);
 		}
 		
 		app.out().println(task.getBestSolution());
@@ -81,12 +95,13 @@ public class BeaufortAttack extends CipherAttack {
 	    return best;
 	}
 	
-	public static class BeaufortTask extends InternalDecryption {
+	public static class BeaufortTask extends KeySearch implements ShortCustomKey {
 
 		public BeaufortTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
+		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(Beaufort.decode(this.cipherText, key), this.getLanguage());
 			
@@ -100,6 +115,22 @@ public class BeaufortAttack extends CipherAttack {
 			this.getKeyPanel().updateIteration(this.iteration++);
 			this.getProgress().increase();
 		}
+		
+		@Override
+		public Solution tryModifiedKey(String key) {
+			return new Solution(Beaufort.decode(this.cipherText, key), this.getLanguage()).setKeyString(key);
+		}
+
+		@Override
+		public void solutionFound() {
+			this.out().println("%s", this.bestSolution);
+			this.getKeyPanel().updateSolution(this.bestSolution);
+		}
+
+		@Override
+		public void onIteration() {
+			this.getKeyPanel().updateIteration(this.iteration++);
+		}
 	}
 	
 	@Override
@@ -110,9 +141,9 @@ public class BeaufortAttack extends CipherAttack {
 
 	@Override
 	public void read(HashMap<String, Object> map) {
-		if(map.containsKey("beaufort_period_range_min"))
-			this.rangeSpinner[0].setValue(map.get("beaufort_period_range_min"));
 		if(map.containsKey("beaufort_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("beaufort_period_range_max"));
+		if(map.containsKey("beaufort_period_range_min"))
+			this.rangeSpinner[0].setValue(map.get("beaufort_period_range_min"));
 	}
 }

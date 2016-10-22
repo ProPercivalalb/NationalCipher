@@ -39,6 +39,35 @@ public class KeyIterator {
 		
 	}
 	
+	public static interface ShortCustomKey {
+		public void onIteration(String key);
+	}
+	
+	public static void iterateShort26Key(ShortCustomKey capturer, int length, boolean repeats) {
+		iterateShortCustomKey(capturer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", length, repeats);
+	}
+	
+	public static void iterateShortCustomKey(ShortCustomKey capturer, String chars, int length, boolean repeats) {
+		iterateShortKey(capturer, chars.toCharArray(), length, 0, "", repeats);
+	}
+
+	private static void iterateShortKey(ShortCustomKey capturer, char[] characters, int no, int time, String key, boolean repeats) {
+		for(char character : characters) {
+			String backup = key;
+			if(!repeats && key.contains("" + character))
+				continue;
+			
+			backup += character;
+			
+			if(time + 1 >= no) {
+				capturer.onIteration(backup);
+				continue;
+			}
+			
+			iterateShortKey(capturer, characters, no, time + 1, backup, repeats);
+		}
+	}
+	
 	public static interface IntegerOrderedKey {
 		public void onIteration(int[] order);
 	}

@@ -27,9 +27,13 @@ public class Solution implements Comparable<Solution> {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
 	}
 	
-	public Solution(char[] text, ILanguage language, double currentLowest) {
-		this(text, TextFitness.scoreFitnessQuadgrams(text, language, currentLowest));
-	}
+	//public Solution(char[] text, ILanguage language, Solution bestSolution) {
+	//	this(text, language, bestSolution.score);
+	//}
+	
+	//public Solution(char[] text, ILanguage language, double bestScore) {
+	//	this(text, TextFitness.scoreFitnessQuadgrams(text, language, bestScore));
+	//}
 	
 	public Solution setKeyString(String keyString) {
 		this.keyString = keyString;

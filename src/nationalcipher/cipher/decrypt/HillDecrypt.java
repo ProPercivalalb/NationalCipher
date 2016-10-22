@@ -28,7 +28,7 @@ import javalibrary.swing.ProgressValue;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ObjectTracker;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Hill;
+import nationalcipher.cipher.base.other.Hill;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

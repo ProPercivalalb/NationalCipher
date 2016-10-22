@@ -5,7 +5,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.polybiussquare.ConjugatedBifid;
+import nationalcipher.cipher.base.other.ConjugatedBifid;
 
 public class Caesar implements IRandEncrypter {
 

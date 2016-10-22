@@ -12,7 +12,7 @@ import javalibrary.Output;
 import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.Pollux;
+import nationalcipher.cipher.base.other.Pollux;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

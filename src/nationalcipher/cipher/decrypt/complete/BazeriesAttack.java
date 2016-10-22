@@ -1,6 +1,6 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.Bazeries;
+import nationalcipher.cipher.base.substitution.Bazeries;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;

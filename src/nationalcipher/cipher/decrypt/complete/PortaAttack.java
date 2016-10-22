@@ -13,8 +13,9 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
-import nationalcipher.cipher.base.polygraphic.Porta;
-import nationalcipher.cipher.base.polygraphic.Variant;
+import nationalcipher.cipher.base.substitution.Porta;
+import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
@@ -29,7 +30,7 @@ public class PortaAttack extends CipherAttack {
 	
 	public PortaAttack() {
 		super("Porta");
-		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
 		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
 	}
@@ -77,7 +78,14 @@ public class PortaAttack extends CipherAttack {
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		task.shiftRight = SettingParse.getBooleanValue(this.directionOption);
 		
-		if(method == DecryptionMethod.KEY_MANIPULATION) {
+		if(method == DecryptionMethod.BRUTE_FORCE) {
+			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+				app.getProgress().addMaxValue(MathUtil.pow(13, length));
+			
+			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+				KeyIterator.iterateShortCustomKey(task, "ACEGIKMOQSUWY", length, true);
+		}
+		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			app.getProgress().setIndeterminate(true);
 			task.run(periodRange[0], periodRange[1]);
 		}
@@ -85,7 +93,7 @@ public class PortaAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class PortaTask extends KeySearch {
+	public static class PortaTask extends KeySearch implements ShortCustomKey {
 
 		public boolean shiftRight;
 		
@@ -93,12 +101,13 @@ public class PortaAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 
+		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Variant.decode(this.cipherText, key), this.getLanguage());
+			this.lastSolution = new Solution(Porta.decode(this.cipherText, key, this.shiftRight), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s", key);
+				this.bestSolution.setKeyString(key);
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
@@ -133,10 +142,10 @@ public class PortaAttack extends CipherAttack {
 
 	@Override
 	public void read(HashMap<String, Object> map) {
-		if(map.containsKey("porta_period_range_min"))
-			this.rangeSpinner[0].setValue(map.get("porta_period_range_min"));
 		if(map.containsKey("porta_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("porta_period_range_max"));
+		if(map.containsKey("porta_period_range_min"))
+			this.rangeSpinner[0].setValue(map.get("porta_period_range_min"));
 		if(map.containsKey("porta_shift_right"))
 			this.directionOption.setSelectedItem(map.get("porta_shift_right"));
 	}

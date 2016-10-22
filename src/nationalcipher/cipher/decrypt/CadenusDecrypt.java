@@ -110,10 +110,10 @@ public class CadenusDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public void onIteration(String key, int textLength) {
+		public void onIteration(String key, int blockSize) {
 			char[] plainText = new char[0];
-			for(int i = 0; i < this.cipherText.length / textLength; i++)
-				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.cipherText, i * textLength, textLength), key));
+			for(int i = 0; i < this.cipherText.length / blockSize; i++)
+				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.cipherText, i * blockSize, blockSize), key));
 
 			this.lastSolution = new Solution(plainText, this.settings.getLanguage()).setKeyString(key);
 			

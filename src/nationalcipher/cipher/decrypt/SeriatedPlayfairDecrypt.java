@@ -13,7 +13,7 @@ import javalibrary.dict.Dictionary;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.SeriatedPlayfair;
+import nationalcipher.cipher.base.other.SeriatedPlayfair;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;

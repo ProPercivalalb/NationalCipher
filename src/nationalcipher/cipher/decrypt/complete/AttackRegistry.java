@@ -34,10 +34,11 @@ public class AttackRegistry {
 		registerCipher(new AffineAttack(), settings);
 		registerCipher(new SimpleSubstitutionAttack(), settings);
 		registerCipher(new BazeriesAttack(), settings);
-
-	
+		registerCipher(new FourSquareAttack(), settings);
+		registerCipher(new NihilistSubstitutionAttack(), settings);
 		
 		//Transpostion
+		registerCipher(new CadenusAttack(), settings);
 		registerCipher(new RailFenceAttack(), settings);
 		registerCipher(new RedefenceAttack(), settings);
 		registerCipher(new AMSCOAttack(), settings);
@@ -49,6 +50,8 @@ public class AttackRegistry {
 		registerCipher(new VigenereAttack(), settings);
 		registerCipher(new PlayfairAttack(), settings);
 		registerCipher(new BifidAttack(), settings);
+		registerCipher(new ConjugatedBifidAttack(), settings);
+		registerCipher(new ProgressiveKeyBeaufortAttack(), settings);
 		
 		//
 		//registerCipher(new (), settings);

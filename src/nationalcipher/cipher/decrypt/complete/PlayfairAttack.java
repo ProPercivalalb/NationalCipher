@@ -1,7 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import javalibrary.dict.Dictionary;
-import nationalcipher.cipher.base.polybiussquare.Playfair;
+import nationalcipher.cipher.base.other.Playfair;
 import nationalcipher.cipher.decrypt.complete.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
@@ -68,7 +68,7 @@ public class PlayfairAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(int count) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage(), this.bestSolution.score);
+			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
 		}
 
 		@Override

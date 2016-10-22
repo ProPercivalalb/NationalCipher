@@ -1,27 +1,45 @@
 package nationalcipher.cipher.decrypt.complete;
 
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+
+import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.RailFence;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.tools.SettingParse;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
 
 public class RailFenceAttack extends CipherAttack {
 
+	public JSpinner[] rangeSpinner;
+	
 	public RailFenceAttack() {
 		super("Rail Fence");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
+		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 100, 2, Integer.MAX_VALUE, 1);
+	}
+	
+	@Override
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
+		panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
 	}
 	
 	@Override
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		RailFenceTask task = new RailFenceTask(text, app);
 		
+		//Settings grab
+		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
+		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			app.getProgress().addMaxValue(30);
-			KeyIterator.iterateIntegerKey(task, 2, 32, 1);
+			app.getProgress().addMaxValue(periodRange[1] - periodRange[0]);
+			KeyIterator.iterateIntegerKey(task, periodRange[0], periodRange[1], 1);
 		}
 		
 		app.out().println(task.getBestSolution());

@@ -21,7 +21,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.PortaProgressiveKey;
+import nationalcipher.cipher.base.substitution.PortaProgressiveKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.IDecrypt;
