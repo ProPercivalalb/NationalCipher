@@ -1,5 +1,7 @@
 package nationalcipher.cipher.base.transposition;
 
+import java.util.Arrays;
+
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -8,15 +10,15 @@ public class Swagman implements IRandEncrypter {
 	
 	public static void main(String[] args) throws InterruptedException {
 		while(true) {
-			int size = RandomUtil.pickRandomInt(2, 6);
+			int size = RandomUtil.pickRandomInt(2, 7);
 			int[] key = KeyGeneration.createSwagmanKey(size);
-			
+			System.out.println(Arrays.toString(key));
 			String orignal = "DONTBEAFRAIDTOTAKEABIGLEAPIFONEISINDICATEDYOUCANNOTCROSSARIVERORACHASMINTWOSMALLJUMPS";
 			while(orignal.length() % size != 0)
 				orignal += 'X';
-			String encoded = encode(orignal, size, key);
+			String encoded = encode(orignal, key, size);
 			System.out.println("Size: " +size + " " + encoded);
-			String decoded = new String(decode(encoded.toCharArray(), size, key));
+			String decoded = new String(decode(encoded.toCharArray(), key, size));
 			//System.out.println(decoded);
 			if(!decoded.equals(orignal))
 				System.out.println("FAILED");
@@ -24,7 +26,7 @@ public class Swagman implements IRandEncrypter {
 		}
 	}
 	
-	public static String encode(String plainText, int size, int[] key) {
+	public static String encode(String plainText, int[] key, int size) {
 		while(plainText.length() % size != 0) plainText += 'X';
 		
 		char[] tempText = new char[plainText.length()];
@@ -53,7 +55,7 @@ public class Swagman implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static char[] decode(char[] cipherText, int size, int[] key) {
+	public static char[] decode(char[] cipherText, int[] key, int size) {
 		int[] inKey = new int[key.length];
 		for(int c = 0; c < size; c++) for(int r = 0; r < size; r++) inKey[key[r * size + c] * size + c] = r;
 

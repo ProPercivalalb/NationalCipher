@@ -107,62 +107,86 @@ public class KeyGeneration {
 	}
 
 	
+	//Very inefficient requires much more work to be more efficient
 	public static int[] createSwagmanKey(int size) {
 		while(true) {
-		
+			try {
 				int[] key = new int[size * size];
 				Arrays.fill(key, -1);
+			
+				while(!isFilled(key, size)) {
+					creation:
+					for(int row = 0; row < size; row++) {
+						for(int col = 0; col < size; col++) {
+							boolean change = autoFill(key, size);
+							if(change) break creation;
+							if(key[row * size + col] != -1) continue;
+							
+							List<Integer> options = getOptionsForCell(key, size, row, col);
 				
-				for(int r = 0; r < size; r++) {
-					for(int c = 0; c < size; c++) {
-						if(key[r * size + c] != -1) continue;
-						List<Integer> validOptions = ListUtil.range(0, size - 1);
+							Integer option = RandomUtil.pickRandomElement(options);
 						
-						for(int nR = 0; nR < size; nR++)
-							validOptions.remove((Integer)key[nR * size + c]);
-						
-						for(int nC = 0; nC < size; nC++)
-							validOptions.remove((Integer)key[r * size + nC]);
-
-
-						key[r * size + c] = RandomUtil.pickRandomElement(validOptions);
-						
-						fillInKnowns(key, size);
+							key[row * size + col] = option;
+							options.remove(option);
+						}
 					}
 				}
-				
 				return key;
-	
+			}
+			catch(Exception e) {} //If the key is invalid will attept again till it gets it gets a valid key
 		}
 	}
 	
-	private static int[] fillInKnowns(int[] key, int size) {
-		boolean update = true;
-		while(update) {
-			update = false;
-			for(int r = 0; r < size; r++) {
-				for(int c = 0; c < size; c++) {
-					if(key[r * size + c] != -1) continue;
+	public static boolean isFilled(int[] key, int size) {
+		for(int row = 0; row < size; row++)
+			for(int col = 0; col < size; col++)
+				if(key[row * size + col] == -1)
+					return false;
+		
+		return true;
+	}
+	
+	public static List<Integer> getOptionsForCell(int[] key, int size, int index) {
+		return getOptionsForCell(key, size, index / size, index % size);
+	}
+	
+	public static List<Integer> getOptionsForCell(int[] key, int size, int row, int column) {
+		List<Integer> validOptions = ListUtil.range(0, size - 1);
+
+		for(int nR = 0; nR < size; nR++)
+			validOptions.remove((Integer)key[nR * size + column]);
+		
+		for(int nC = 0; nC < size; nC++)
+			validOptions.remove((Integer)key[row * size + nC]);
+		
+		return validOptions;
+	}
+	
+	private static boolean autoFill(int[] key, int size) {
+		boolean finished;
+		boolean change = false;
+		
+		do {
+			finished = true;
+			search:
+			for(int row = 0; row < size; row++) {
+				for(int col = 0; col < size; col++) {
+					if(key[row * size + col] != -1) continue;
 					
-					List<Integer> validOptions = ListUtil.range(0, size - 1);
+					List<Integer> options = getOptionsForCell(key, size, row, col);
 					
-					for(int nR = 0; nR < size; nR++)
-						validOptions.remove((Integer)key[nR * size + c]);
-					
-					for(int nC = 0; nC < size; nC++)
-						validOptions.remove((Integer)key[r * size + nC]);
-					
-					if(validOptions.size() == 1) {
-						key[r * size + c] = validOptions.get(0);
-						update = true;
+					if(options.size() == 1) {
+						key[row * size + col] = options.get(0);
+						finished = false;
+						change = true;
+						break search;
 					}
-					
-					
 				}
 			}
 		}
+		while(!finished);
 		
-		return key;
+		return change;
 	}
 	
 	// Random key length generator

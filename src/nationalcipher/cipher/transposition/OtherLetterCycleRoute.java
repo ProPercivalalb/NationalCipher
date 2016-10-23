@@ -11,8 +11,6 @@ public class OtherLetterCycleRoute extends RouteCipherType {
 		int[] grid = new int[totalSize];
 		int index = 0;
 		
-		
-		
 		for(int i = totalSize - 1; i >= 0; i -= 2)
 			grid[index++] = i;
 		for(int i = totalSize % 2; i < totalSize; i += 2)

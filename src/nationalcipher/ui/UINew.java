@@ -107,6 +107,7 @@ import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
 import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
+import javalibrary.thread.ThreadCancelable;
 import javalibrary.thread.Threads;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
@@ -325,6 +326,7 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemIoCProgKey = new JMenuItem();
         this.menuItemIoCSeriatedPlayfair = new JMenuItem();
         this.menuItemIoCSlidefair = new JMenuItem();
+        this.menuItemIoCSwagman = new JMenuItem();
         this.menuItemIoCTrifid = new JMenuItem();
         this.menuItemIoCVigenere = new JMenuItem();
         this.menuItemSolitaire = new JMenuItem();
@@ -607,6 +609,11 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemIoCSlidefair.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Slidefair"));
         this.menuItemIoCSlidefair.addActionListener(new SlidefairIoCAction());
         this.menuItemIoC.add(this.menuItemIoCSlidefair);
+        
+        this.menuItemIoCSwagman.setText("Swagman");
+        this.menuItemIoCSwagman.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Swagman"));
+        this.menuItemIoCSwagman.addActionListener(new SwagmanTestAction());
+        this.menuItemIoC.add(this.menuItemIoCSwagman);
         
         this.menuItemIoCTrifid.setText("Trifid");
         this.menuItemIoCTrifid.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Trifid"));
@@ -1000,6 +1007,7 @@ public class UINew extends JFrame implements IApplication {
 
 						UINew.this.progressValue.setIndeterminate(false);
 						progressBar.setValue(0);
+						System.gc();
 					}
 					
 				});
@@ -1016,22 +1024,28 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			dispose();
-			if(!isUndecorated()) {
-				this.lastSize = getSize();
-				this.lastLocation = getLocation();
-				this.lastState = getExtendedState();
-				setExtendedState(Frame.MAXIMIZED_BOTH);
-		    	setUndecorated(true);
-			}
-			else {
-				setSize(this.lastSize);
-				setLocation(this.lastLocation);
-				setExtendedState(this.lastState);
-				setUndecorated(false);
-			}
-			
-			setVisible(true);
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					dispose();
+					if(!isUndecorated()) {
+						lastSize = getSize();
+						lastLocation = getLocation();
+						lastState = getExtendedState();
+						setExtendedState(Frame.MAXIMIZED_BOTH);
+				    	setUndecorated(true);
+					}
+					else {
+						setSize(lastSize);
+						setLocation(lastLocation);
+						setExtendedState(lastState);
+						setUndecorated(false);
+					}
+					
+					setVisible(true);
+				}
+			});
 		}
     }
     
@@ -2146,14 +2160,23 @@ public class UINew extends JFrame implements IApplication {
     	
     	private JDialog dialog;
     	private JBarChart chart;
+    	private ThreadCancelable threadCancel;
     	
     	public ProgressiveKeyIoCAction() {
+    		threadCancel = new ThreadCancelable(new Runnable() {
+
+							@Override
+							public void run() {
+								updateDialog();
+							}
+						});
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
 
 				@Override
 				public void onUpdate(DocumentEvent event) {
 					if(dialog.isVisible()) {
-						updateDialog();
+						threadCancel.restart();
+						
 					}	
 				}
     		});
@@ -2187,7 +2210,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setVisible(true);
     		addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		threadCancel.restart();
 		}
     	
     	public void updateDialog() {
@@ -2230,14 +2253,7 @@ public class UINew extends JFrame implements IApplication {
 					}
 					
 					Collections.sort(list);
-					
-					//String outputText = "\n\n\n\n\nPeriod: " + period + "\n";
-					
-					//for(int i = 0; i < Math.min(list.size(), 15); i++) {
-					//	outputText += list.get(i) + "\n";
-					//}
-					//this.textOutput.setText(this.textOutput.getText() + outputText);
-					
+		
 					if(bestIoC < bestEverIoC) {
 						bestEverIoC = bestIoC;
 						bestPeriod = period;
@@ -2246,7 +2262,8 @@ public class UINew extends JFrame implements IApplication {
 					}
 				
 					this.chart.values.add(new ChartData(String.format("Period: %d, PP %d, PI %d", period, bestProgressivePeriod, bestProgressiveIndex), bestIoC));
-			    }
+					this.chart.repaint();
+				}
 				
 				//output.println("Period: " + bestPeriod);
 				///output.println("  Prog Period: " + bestProgressivePeriod);
@@ -2424,6 +2441,80 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
+    public class SwagmanTestAction extends NCCDialog implements ActionListener {
+    	
+    	private JBarChart chart;
+    	
+    	public SwagmanTestAction() {
+    		super("Swagman Test", "image/lock_break.png");
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart(new ChartList());
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Swagman Test"));
+	        panel.add(this.chart);
+
+	         
+    		this.dialog.add(panel);
+    
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+    		addDialog(this.dialog);
+    		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+			String text = getInputTextOnlyAlpha();
+			if(!text.isEmpty()) {
+				int bestScore = Integer.MIN_VALUE;
+				int bestPeriod = -1;
+				for(int period = 2; period <= 9; period++) {
+		            if(text.length() % period != 0) {
+		            	this.chart.values.add(new ChartData("" + period, 0));
+		            	continue;
+		            }
+		            
+		            if(3 * period * period > text.length()) {
+		                this.chart.values.add(new ChartData("" + period, 0));
+		            	continue;
+		            }
+		            
+		            int result = StatCalculator.swagTest(text, period);
+		            if(result > bestScore) {
+		            	bestScore = result;
+		            	bestPeriod = period;
+		            }
+		            this.chart.values.add(new ChartData("" + period, result));
+		        }
+				if(bestPeriod != -1)
+					this.chart.setSelected(bestPeriod - 2);
+			}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
     public class TrifidIoCAction implements ActionListener {
     	
     	private JDialog dialog;
@@ -2460,7 +2551,7 @@ public class UINew extends JFrame implements IApplication {
 	        panel.add(this.chart);
 	         
 	        this.chart2 = new JBarChart(new ChartList());
-	        //this.chart2.setHasBarText(false);
+	
 	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Trigraphic Phi Test"));
 	        panel.add(this.chart2);
 	        
@@ -3534,6 +3625,7 @@ public class UINew extends JFrame implements IApplication {
     private JMenuItem menuItemIoCProgKey;
     private JMenuItem menuItemIoCSeriatedPlayfair;
     private JMenuItem menuItemIoCSlidefair;
+    private JMenuItem menuItemIoCSwagman;
     private JMenuItem menuItemIoCTrifid;
     private JMenuItem menuItemIoCVigenere;
     private JMenuItem menuItemIdentify;

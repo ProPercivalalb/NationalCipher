@@ -42,6 +42,8 @@ public class AttackRegistry {
 		registerCipher(new RailFenceAttack(), settings);
 		registerCipher(new RedefenceAttack(), settings);
 		registerCipher(new AMSCOAttack(), settings);
+		registerCipher(new RouteAttack(), settings);
+		registerCipher(new SwagmanAttack(), settings);
 		
 		//Other
 		registerCipher(new BeaufortAttack(), settings);

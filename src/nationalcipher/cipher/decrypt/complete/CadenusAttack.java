@@ -24,39 +24,25 @@ public class CadenusAttack extends CipherAttack {
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		CadenusTask task = new CadenusTask(text, app);
 		
+		app.getProgress().addMaxValue(Dictionary.wordCount());
+		List<Integer> factors = MathUtil.getFactors(text.length() / 25);	
+		app.out().println("" + factors);
+		
 		if(method == DecryptionMethod.DICTIONARY) {
-			app.getProgress().addMaxValue(Dictionary.wordCount());
-			List<Integer> factors = MathUtil.getFactors(text.length() / 25);			
-			app.out().println("" + factors);
-			
-			
-			if(!factors.isEmpty()) {
-				
-				for(int factor : factors) {
-					app.out().println("Factor: %d", factor);
-					for(String word : Dictionary.words) {
+			for(int factor : factors) {
+				app.out().println("Factor: %d", factor);
+				for(String word : Dictionary.words) {
 					
-						if(word.length() == factor)
-							task.onIteration(word);
+					if(word.length() == factor)
+						task.onIteration(word);
 						
-					}
 				}
 			}
 		}
-		else if(method == DecryptionMethod.BRUTE_FORCE) {
-			List<Integer> factors = MathUtil.getFactors(text.length() / 25);			
-			app.out().println("" + factors);
-			app.getProgress().addMaxValue(1000);
-			
-			
-			if(!factors.isEmpty()) {
-				
-				for(int factor : factors)
-					KeyIterator.iterateShort26Key(task, factor, false);
-
-			}
-			else
-				app.out().println("NOT SQUARE FACTORS");
+		else if(method == DecryptionMethod.BRUTE_FORCE) {		
+	
+			for(int factor : factors)
+				KeyIterator.iterateShort26Key(task, factor, true);
 		}
 		
 		app.out().println(task.getBestSolution());

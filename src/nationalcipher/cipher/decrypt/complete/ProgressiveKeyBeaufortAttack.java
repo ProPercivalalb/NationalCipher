@@ -1,23 +1,14 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import java.math.BigInteger;
-
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.substitution.BeaufortProgressiveKey;
-import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Variant;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
