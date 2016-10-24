@@ -1,6 +1,8 @@
 package nationalcipher.cipher.decrypt.complete.methods;
 
+import javalibrary.math.matrics.Matrix;
 import javalibrary.util.ArrayUtil;
+import nationalcipher.cipher.tools.Creator.HillKey;
 
 public class KeyIterator {
 
@@ -90,5 +92,27 @@ public class KeyIterator {
 	            arr[pos] = h;
 	    	    arr[i] = j;
 	        }
+	}
+	
+	public static interface SquareMatrixKey {
+		public void onIteration(Matrix matrix);
+	}
+	
+	public static void iteratorSquareMatrixKey(SquareMatrixKey task, int size) {
+		iteratorSquareMatrixKey(task, 0, 25, (int)Math.pow(size, 2), size, size, 0, new int[(int)Math.pow(size, 2)]);
+	}
+	
+	private static void iteratorSquareMatrixKey(SquareMatrixKey task, int range_low, int range_high, int no, int rows, int columns, int time, int[] array) {
+		for(int i = range_low; i <= range_high; i++) {
+			array[time] = i;
+			
+			if(time + 1 >= no) {
+				Matrix matrix = new Matrix(array, rows, columns);
+				task.onIteration(matrix);
+				continue;
+			}
+			
+			iteratorSquareMatrixKey(task, range_low, range_high, no, rows, columns, time + 1, array);
+		}
 	}
 }

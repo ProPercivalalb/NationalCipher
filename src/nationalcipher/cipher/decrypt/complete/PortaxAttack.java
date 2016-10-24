@@ -1,7 +1,6 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -9,12 +8,8 @@ import javax.swing.JSpinner;
 
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Portax;
-import nationalcipher.cipher.base.substitution.Vigenere;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
 import nationalcipher.cipher.manage.DecryptionMethod;

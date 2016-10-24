@@ -3,10 +3,7 @@ package nationalcipher.cipher.decrypt.complete;
 import java.util.List;
 
 import javalibrary.math.MathUtil;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.transposition.RouteCipherType;
