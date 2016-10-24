@@ -90,6 +90,6 @@ public class Swagman implements IRandEncrypter {
 	@Override
 	public String randomlyEncrypt(String plainText) {
 		int size = RandomUtil.pickRandomInt(2, 5);
-		return encode(plainText, size, KeyGeneration.createSwagmanKey(size));
+		return encode(plainText, KeyGeneration.createSwagmanKey(size), size);
 	}
 }

@@ -156,7 +156,7 @@ public class UINew extends JFrame implements IApplication {
     	this.lastStates = new ArrayList<JDialog>();
     	
     	AttackRegistry.loadCiphers(this.settings);
-    	DecryptionManager.loadCiphers(this.settings);
+    	//DecryptionManager.loadCiphers(this.settings);
     	this.settings.readFromFile();
     	
         initComponents();

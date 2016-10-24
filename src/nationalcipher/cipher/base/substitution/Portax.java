@@ -40,6 +40,7 @@ public class Portax implements IRandEncrypter {
 		
 		for(int i = 0; i < cipherText.length; i += period * 2) {
 			for(int j = 0; j < keyword.length(); j++) {
+				if(i + j + period >= cipherText.length) break;
 				char a = cipherText[i + j];
 				char b = cipherText[i + j + period];
 

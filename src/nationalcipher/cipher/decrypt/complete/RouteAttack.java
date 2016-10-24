@@ -23,7 +23,7 @@ public class RouteAttack extends CipherAttack {
 	
 	@Override
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		CaesarTask task = new CaesarTask(text, app);
+		RouteTask task = new RouteTask(text, app);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			List<Integer> factors = MathUtil.getFactors(text.length());
@@ -46,9 +46,9 @@ public class RouteAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class CaesarTask extends InternalDecryption {
+	public static class RouteTask extends InternalDecryption {
 
-		public CaesarTask(String text, IApplication app) {
+		public RouteTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 

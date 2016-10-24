@@ -36,6 +36,7 @@ public class AttackRegistry {
 		registerCipher(new BazeriesAttack(), settings);
 		registerCipher(new FourSquareAttack(), settings);
 		registerCipher(new NihilistSubstitutionAttack(), settings);
+		registerCipher(new PortaxAttack(), settings);
 		
 		//Transpostion
 		registerCipher(new CadenusAttack(), settings);
