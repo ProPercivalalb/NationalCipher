@@ -2,24 +2,14 @@ package nationalcipher.cipher.base.substitution;
 
 import java.util.Arrays;
 
-import javalibrary.string.StringTransformer;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-/**
- * @author Alex Barter (10AS)
- */
 public class Portax implements IRandEncrypter {
 
-	public static void main(String[] args) {
-		System.out.println(new String(encode("THEEARLYBIRDGETSTHEWORMXXXX", "EASY")));
-		System.out.println(new String(decode("NIJAMPBGQCWKHQJEUIKYMPAT".toCharArray(), "EASY")));
-	}
-	
 	public static String encode(String plainText, String keyword) {
-	
-		if(plainText.length() % (keyword.length() * 2) != 0)
-			plainText += StringTransformer.repeat("X", keyword.length() * 2 - (plainText.length() % (keyword.length() * 2)));
+		while(plainText.length() % 2 != 0)
+			plainText += 'X';
 		
 		return new String(decode(plainText.toCharArray(), keyword));
 	}
@@ -37,12 +27,13 @@ public class Portax implements IRandEncrypter {
 			for(int s = 0; s < 13; s++)
 				slidingKey[i] += (char)((13 + s - slide) % 13 + 'A');
 		}
-		
+
 		for(int i = 0; i < cipherText.length; i += period * 2) {
-			for(int j = 0; j < keyword.length(); j++) {
-				if(i + j + period >= cipherText.length) break;
+			int actingPeriod = Math.min((cipherText.length - i) / 2, period);
+			for(int j = 0; j < actingPeriod; j++) {
+				
 				char a = cipherText[i + j];
-				char b = cipherText[i + j + period];
+				char b = cipherText[i + j + actingPeriod];
 
 				int row = (b - 'A') % 2;
 				int column = (b - 'A') / 2;
@@ -72,7 +63,7 @@ public class Portax implements IRandEncrypter {
 				}
 				
 				plainText[i + j] = c;
-				plainText[i + j + period] = d;
+				plainText[i + j + actingPeriod] = d;
 			}
 		}
 		

@@ -131,6 +131,11 @@ public class PortaAttack extends CipherAttack {
 		public void onIteration() {
 			this.getKeyPanel().updateIteration(this.iteration++);
 		}
+		
+		@Override
+		public int alphaIncrease() {
+			return 2;
+		}
 	}
 	
 	@Override

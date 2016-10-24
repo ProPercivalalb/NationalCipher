@@ -42,8 +42,6 @@ public class PortaxAttack extends CipherAttack {
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		PortaxTask task = new PortaxTask(text, app);
 		
-		List<Integer> factors = MathUtil.getFactors(text.length() / 2);
-		app.out().println("Factors: %s", factors);
 		//Settings grab
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		
@@ -99,6 +97,11 @@ public class PortaxAttack extends CipherAttack {
 		@Override
 		public void onIteration() {
 			this.getKeyPanel().updateIteration(this.iteration++);
+		}
+		
+		@Override
+		public int alphaIncrease() {
+			return 2;
 		}
 	}
 	
