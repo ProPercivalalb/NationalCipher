@@ -31,7 +31,7 @@ public class BeaufortAttack extends CipherAttack {
 	public BeaufortAttack() {
 		super("Beaufort");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
-		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
+		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 	}
 	
 	@Override

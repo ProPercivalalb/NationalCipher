@@ -31,7 +31,7 @@ public class PortaAttack extends CipherAttack {
 	public PortaAttack() {
 		super("Porta");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
-		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
+		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
 	}
 	
