@@ -2,7 +2,7 @@ package nationalcipher.cipher.decrypt.complete;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -14,9 +14,10 @@ import javax.swing.JTextArea;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.substitution.Porta;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
-import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeySearch;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -93,7 +94,7 @@ public class PortaAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class PortaTask extends KeySearch implements ShortCustomKey {
+	public class PortaTask extends KeySearch implements ShortCustomKey {
 
 		public boolean shiftRight;
 		
@@ -120,17 +121,6 @@ public class PortaAttack extends CipherAttack {
 		public Solution tryModifiedKey(String key) {
 			return new Solution(Porta.decode(this.cipherText, key, this.shiftRight), this.getLanguage()).setKeyString(key);
 		}
-
-		@Override
-		public void solutionFound() {
-			this.out().println("%s", this.bestSolution);
-			this.getKeyPanel().updateSolution(this.bestSolution);
-		}
-
-		@Override
-		public void onIteration() {
-			this.getKeyPanel().updateIteration(this.iteration++);
-		}
 		
 		@Override
 		public int alphaIncrease() {
@@ -139,14 +129,14 @@ public class PortaAttack extends CipherAttack {
 	}
 	
 	@Override
-	public void write(HashMap<String, Object> map) {
+	public void writeTo(Map<String, Object> map) {
 		map.put("porta_period_range_min", this.rangeSpinner[0].getValue());
 		map.put("porta_period_range_max", this.rangeSpinner[1].getValue());
 		map.put("porta_shift_right", this.directionOption.getSelectedItem());
 	}
 
 	@Override
-	public void read(HashMap<String, Object> map) {
+	public void readFrom(Map<String, Object> map) {
 		if(map.containsKey("porta_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("porta_period_range_max"));
 		if(map.containsKey("porta_period_range_min"))

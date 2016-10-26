@@ -32,9 +32,7 @@ public class TwoSquare implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare1, String keysquare2) {
-	    char[] plainText = new char[cipherText.length];
-	    
+	public static char[] decode(char[] cipherText, char[] plainText, String keysquare1, String keysquare2) {
 	    for(int i = 0; i < cipherText.length; i += 2){
 	        char a = cipherText[i];
 	        char b = cipherText[i + 1];

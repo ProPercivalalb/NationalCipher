@@ -1,7 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -11,9 +11,10 @@ import javax.swing.JSpinner;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.AMSCO;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerOrderedKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -30,6 +31,7 @@ public class AMSCOAttack extends CipherAttack {
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
 		this.doubleLetterChose = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.doubleLetterChose.setSelectedItem(true);
 	}
 	
 	@Override
@@ -57,7 +59,7 @@ public class AMSCOAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class AMSCOTask extends InternalDecryption implements IntegerOrderedKey {
+	public class AMSCOTask extends InternalDecryption implements IntegerOrderedKey {
 
 		public boolean doubleLetterFirst;
 		
@@ -83,14 +85,14 @@ public class AMSCOAttack extends CipherAttack {
 	}
 
 	@Override
-	public void write(HashMap<String, Object> map) {
+	public void writeTo(Map<String, Object> map) {
 		map.put("amsco_period_range_min", this.rangeSpinner[0].getValue());
 		map.put("amsco_period_range_max", this.rangeSpinner[1].getValue());
 		map.put("amsco_double_letter_first", this.doubleLetterChose.getSelectedItem());
 	}
 
 	@Override
-	public void read(HashMap<String, Object> map) {
+	public void readFrom(Map<String, Object> map) {
 		if(map.containsKey("amsco_period_range_min"))
 			this.rangeSpinner[0].setValue(map.get("amsco_period_range_min"));
 		if(map.containsKey("amsco_period_range_max"))

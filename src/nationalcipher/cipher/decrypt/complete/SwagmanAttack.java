@@ -3,7 +3,8 @@ package nationalcipher.cipher.decrypt.complete;
 import java.util.Arrays;
 
 import nationalcipher.cipher.base.transposition.Swagman;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -31,7 +32,7 @@ public class SwagmanAttack extends CipherAttack {
 		//app.out().println(task.getBestSolution());
 	}
 	
-	public static class SwagmanTask extends InternalDecryption {
+	public class SwagmanTask extends InternalDecryption {
 
 		public int size;
 		

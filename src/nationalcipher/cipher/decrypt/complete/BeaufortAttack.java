@@ -1,6 +1,6 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -14,9 +14,10 @@ import javalibrary.swing.JSpinnerUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.cipher.base.substitution.Beaufort;
 import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
-import nationalcipher.cipher.decrypt.complete.methods.KeySearch;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeySearch;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -95,7 +96,7 @@ public class BeaufortAttack extends CipherAttack {
 	    return best;
 	}
 	
-	public static class BeaufortTask extends KeySearch implements ShortCustomKey {
+	public class BeaufortTask extends KeySearch implements ShortCustomKey {
 
 		public BeaufortTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
@@ -120,27 +121,16 @@ public class BeaufortAttack extends CipherAttack {
 		public Solution tryModifiedKey(String key) {
 			return new Solution(Beaufort.decode(this.cipherText, key), this.getLanguage()).setKeyString(key);
 		}
-
-		@Override
-		public void solutionFound() {
-			this.out().println("%s", this.bestSolution);
-			this.getKeyPanel().updateSolution(this.bestSolution);
-		}
-
-		@Override
-		public void onIteration() {
-			this.getKeyPanel().updateIteration(this.iteration++);
-		}
 	}
 	
 	@Override
-	public void write(HashMap<String, Object> map) {
+	public void writeTo(Map<String, Object> map) {
 		map.put("beaufort_period_range_min", this.rangeSpinner[0].getValue());
 		map.put("beaufort_period_range_max", this.rangeSpinner[1].getValue());
 	}
 
 	@Override
-	public void read(HashMap<String, Object> map) {
+	public void readFrom(Map<String, Object> map) {
 		if(map.containsKey("beaufort_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("beaufort_period_range_max"));
 		if(map.containsKey("beaufort_period_range_min"))

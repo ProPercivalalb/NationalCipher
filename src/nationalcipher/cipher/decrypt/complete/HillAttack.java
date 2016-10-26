@@ -19,13 +19,12 @@ import javalibrary.string.StringAnalyzer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.Hill;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.SquareMatrixKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.SquareMatrixKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
-import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -136,7 +135,7 @@ public class HillAttack extends CipherAttack {
 		return equation;
 	}
 	
-	public static class HillTask extends InternalDecryption implements SquareMatrixKey {
+	public class HillTask extends InternalDecryption implements SquareMatrixKey {
 
 		public HillTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

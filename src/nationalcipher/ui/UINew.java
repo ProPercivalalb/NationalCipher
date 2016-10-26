@@ -121,14 +121,14 @@ import nationalcipher.cipher.base.RandomEncrypter;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.base.transposition.ColumnarRow;
-import nationalcipher.cipher.decrypt.complete.AttackRegistry;
-import nationalcipher.cipher.decrypt.complete.CipherAttack;
+import nationalcipher.cipher.decrypt.AttackRegistry;
+import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
-import nationalcipher.cipher.manage.DecryptionManager;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
+import nationalcipher.old.DecryptionManager;
 
 /**
  *
@@ -992,26 +992,17 @@ public class UINew extends JFrame implements IApplication {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			if(thread != null) {
-				SwingUtilities.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-						thread.stop();
-						CipherAttack force = getCipherAttack();
-						force.onTermination(true);
-						DecimalFormat df = new DecimalFormat("#.#");
-						output.println("Time Running: %sms - %ss\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
-						toolBarStart.setEnabled(true);
-						toolBarStop.setEnabled(false);
-						menuItemSettings.setEnabled(true);
-
-						UINew.this.progressValue.setIndeterminate(false);
-						progressBar.setValue(0);
-						System.gc();
-					}
-					
-				});
-			
+				thread.stop();
+				CipherAttack force = getCipherAttack();
+				force.onTermination(true);
+				DecimalFormat df = new DecimalFormat("#.#");
+				output.println("Time Running: %sms - %ss\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
+				toolBarStart.setEnabled(true);
+				toolBarStop.setEnabled(false);
+				menuItemSettings.setEnabled(true);
+				
+				UINew.this.progressValue.setIndeterminate(false);
+				progressBar.setValue(0);
 			}
 		}
     }

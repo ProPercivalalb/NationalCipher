@@ -3,7 +3,8 @@ package nationalcipher.cipher.decrypt.complete;
 import java.util.List;
 
 import javalibrary.math.MathUtil;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.transposition.RouteCipherType;
@@ -43,7 +44,7 @@ public class RouteAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class RouteTask extends InternalDecryption {
+	public class RouteTask extends InternalDecryption {
 
 		public RouteTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

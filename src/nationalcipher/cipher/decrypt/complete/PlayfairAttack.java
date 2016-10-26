@@ -2,9 +2,10 @@ package nationalcipher.cipher.decrypt.complete;
 
 import javalibrary.dict.Dictionary;
 import nationalcipher.cipher.base.other.Playfair;
-import nationalcipher.cipher.decrypt.complete.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.Long25Key;
-import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
+import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
@@ -35,7 +36,7 @@ public class PlayfairAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class PlayfairTask extends SimulatedAnnealing implements Long25Key {
+	public class PlayfairTask extends SimulatedAnnealing implements Long25Key {
 
 		public String bestKey, bestMaximaKey, lastKey;
 		

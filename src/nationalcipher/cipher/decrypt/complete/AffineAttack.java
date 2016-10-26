@@ -5,9 +5,10 @@ import java.util.List;
 import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.string.StringAnalyzer;
 import nationalcipher.cipher.base.substitution.Affine;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.AffineKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.AffineKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
@@ -44,7 +45,7 @@ public class AffineAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class AffineTask extends InternalDecryption implements AffineKey {
+	public class AffineTask extends InternalDecryption implements AffineKey {
 
 		public AffineTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

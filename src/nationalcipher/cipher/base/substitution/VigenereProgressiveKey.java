@@ -24,12 +24,12 @@ public class VigenereProgressiveKey implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String keyword, int period, int progressiveKey) {
+	public static char[] decode(char[] cipherText, String key, int period, int progKey) {
 		char[] plainText = new char[cipherText.length];
 
 		for(int index = 0; index < cipherText.length; index++) {
-			int progression = (int)Math.floor(index / period) * progressiveKey;
-			plainText[index] = (char)(MathUtil.mod(cipherText[index] - progression - keyword.charAt(index % keyword.length()), 26) + 'A');
+			int progression = (int)Math.floor(index / period) * progKey;
+			plainText[index] = (char)(MathUtil.mod(cipherText[index] - progression - key.charAt(index % key.length()), 26) + 'A');
 		}
 		
 		return plainText;

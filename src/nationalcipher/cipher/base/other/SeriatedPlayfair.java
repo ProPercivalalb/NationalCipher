@@ -37,7 +37,8 @@ public class SeriatedPlayfair implements IRandEncrypter {
 		
 		if(plainText.length() % 2 != 0)
 			plainText += 'X';
-
+		
+		if(period == 0) period = plainText.length() / 2;
 		
 		char[] cipherText = new char[plainText.length()];
 		
@@ -84,6 +85,7 @@ public class SeriatedPlayfair implements IRandEncrypter {
 	}
 	
 	public static char[] decode(char[] cipherText, String keysquare, int period) {
+		if(period == 0) period = cipherText.length / 2;
 		char[] plainText = new char[cipherText.length];
 		
 		for(int i = 0; i < cipherText.length; i += period * 2) {
@@ -125,6 +127,6 @@ public class SeriatedPlayfair implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createLongKey25(), RandomUtil.pickRandomInt(2, 15));
+		return encode(plainText, KeyGeneration.createLongKey25(), RandomUtil.pickRandomElement(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
 	}
 }

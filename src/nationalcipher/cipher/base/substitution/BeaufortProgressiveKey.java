@@ -12,9 +12,9 @@ public class BeaufortProgressiveKey implements IRandEncrypter {
 		return ProgressiveKey.encodeBase(encodedText, period, progressiveKey);
 	}
 	
-	public static char[] decode(char[] plainText, String keyword, int period, int progressiveKey) {
-		char[] decodedText = ProgressiveKey.decodeBase(plainText, period, progressiveKey);
-		return Beaufort.decode(decodedText, keyword);
+	public static char[] decode(char[] cipherText, String key, int period, int progressiveKey) {
+		char[] decodedText = ProgressiveKey.decodeBase(cipherText, period, progressiveKey);
+		return Beaufort.decode(decodedText, key);
 	}
 	
 	@Override

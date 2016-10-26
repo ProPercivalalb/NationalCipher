@@ -6,9 +6,10 @@ import javalibrary.dict.Dictionary;
 import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.transposition.Cadenus;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.ShortCustomKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
@@ -48,7 +49,7 @@ public class CadenusAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class CadenusTask extends InternalDecryption implements ShortCustomKey {
+	public class CadenusTask extends InternalDecryption implements ShortCustomKey {
 
 		public CadenusTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

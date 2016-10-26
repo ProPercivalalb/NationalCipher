@@ -7,7 +7,8 @@ import javax.swing.JSpinner;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.ConjugatedBifid;
-import nationalcipher.cipher.decrypt.complete.methods.SimulatedAnnealing;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
@@ -46,7 +47,7 @@ public class ConjugatedBifidAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class ConjugatedBifidTask extends SimulatedAnnealing {
+	public class ConjugatedBifidTask extends SimulatedAnnealing {
 
 		public int period;
 		public String bestKey1, bestMaximaKey1, lastKey1;

@@ -6,9 +6,10 @@ import javax.swing.JSpinner;
 
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.RailFence;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -45,7 +46,7 @@ public class RailFenceAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class RailFenceTask extends InternalDecryption implements IntegerKey {
+	public class RailFenceTask extends InternalDecryption implements IntegerKey {
 
 		public RailFenceTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

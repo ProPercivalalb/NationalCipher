@@ -11,7 +11,7 @@ public class Trifid implements IRandEncrypter {
 	}
 	
 	public static String encode(String plainText, String keysquares, int period) {
-		//System.out.println("trifid: " + period);
+		if(period == 0) period = plainText.length();
 		int[] numberText = new int[plainText.length() * 3];
 		for(int i = 0; i < plainText.length(); i++) {
 			
@@ -45,6 +45,7 @@ public class Trifid implements IRandEncrypter {
 	}
 	
 	public static char[] decode(char[] cipherText, String keysquares, int period) {
+		if(period == 0) period = cipherText.length;
 		char[] plainText = new char[cipherText.length];
 		
 		int[] numberText = new int[plainText.length * 3];
@@ -80,6 +81,6 @@ public class Trifid implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createLongKey27(), RandomUtil.pickRandomInt(3, 15));
+		return encode(plainText, KeyGeneration.createLongKey27(), RandomUtil.pickRandomElement(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
 	}
 }

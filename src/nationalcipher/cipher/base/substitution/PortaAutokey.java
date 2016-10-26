@@ -1,6 +1,7 @@
 package nationalcipher.cipher.base.substitution;
 
 import javalibrary.math.MathUtil;
+import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -15,11 +16,8 @@ public class PortaAutokey implements IRandEncrypter {
 		char[] plainText = new char[cipherText.length];
 		
 		for(int pos = 0; pos < cipherText.length; pos++){
-			int rowNo = (autoKey.charAt(pos) - 'A') / 2;
-			String row = "";
-			
-			for(int j = 0; j < 13; j++)
-				row += (char)(MathUtil.mod(j + (shiftRight ? -1 : 1) * rowNo, 13) + 'N');
+			int rowNo = (int)Math.floor((autoKey.charAt(pos) - 'A') / 2);
+			String row = Porta.key[rowNo + (shiftRight ? 0 : 13)];
 			
 			int inGrid = row.indexOf(cipherText[pos]);
 			if(inGrid >= 0)
@@ -35,6 +33,6 @@ public class PortaAutokey implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createShortKey26(2, 15), true);//RandomUtil.pickBoolean());
+		return encode(plainText, KeyGeneration.createShortKey26(2, 15), RandomUtil.pickBoolean());
 	}
 }

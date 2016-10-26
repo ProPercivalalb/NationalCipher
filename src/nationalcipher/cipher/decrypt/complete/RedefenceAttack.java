@@ -1,7 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -10,9 +10,10 @@ import javax.swing.JSpinner;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.Redefence;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerOrderedKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -54,7 +55,7 @@ public class RedefenceAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class RedefenceTask extends InternalDecryption implements IntegerOrderedKey {
+	public class RedefenceTask extends InternalDecryption implements IntegerOrderedKey {
 
 		public RedefenceTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
@@ -77,13 +78,13 @@ public class RedefenceAttack extends CipherAttack {
 	}
 	
 	@Override
-	public void write(HashMap<String, Object> map) {
+	public void writeTo(Map<String, Object> map) {
 		map.put("redefence_period_range_min", this.rangeSpinner[0].getValue());
 		map.put("redefence_period_range_max", this.rangeSpinner[1].getValue());
 	}
 
 	@Override
-	public void read(HashMap<String, Object> map) {
+	public void readFrom(Map<String, Object> map) {
 		if(map.containsKey("redefence_period_range_max"))
 			this.rangeSpinner[1].setValue(map.get("redefence_period_range_max"));
 		if(map.containsKey("redefence_period_range_min"))

@@ -1,9 +1,10 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.decrypt.complete.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.complete.methods.KeyIterator.IntegerKey;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
@@ -27,7 +28,7 @@ public class CaesarAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public static class CaesarTask extends InternalDecryption implements IntegerKey {
+	public class CaesarTask extends InternalDecryption implements IntegerKey {
 
 		public CaesarTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
