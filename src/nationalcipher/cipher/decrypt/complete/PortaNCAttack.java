@@ -13,17 +13,19 @@ import javax.swing.JTextArea;
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.base.substitution.PortaAutokey;
+import nationalcipher.cipher.base.substitution.PortaNicodemus;
 import nationalcipher.cipher.decrypt.AutokeyAttack;
+import nationalcipher.cipher.decrypt.NicodemusAttack;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
-//TODO Quite often can produce result that has better score but is not real answer
-public class PortaAKAttack extends AutokeyAttack {
+//TODO Quite often can produce 
+public class PortaNCAttack extends NicodemusAttack {
 
 	public JComboBox<Boolean> directionOption;
 	
-	public PortaAKAttack() {
-		super("Porta Autokey");
+	public PortaNCAttack() {
+		super("Nicodemus Porta");
 		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
 	}
 
@@ -64,18 +66,9 @@ public class PortaAKAttack extends AutokeyAttack {
 
 	@Override
 	public char[] decode(char[] cipherText, String key) {
-		return PortaAutokey.decode(cipherText, key, SettingParse.getBooleanValue(this.directionOption));
+		return PortaNicodemus.decode(cipherText, key, SettingParse.getBooleanValue(this.directionOption));
 	}
 	
-	@Override
-	public int alphaIncrease() { 
-		return 2; 
-	}
-	
-	@Override
-	public String keyAlphabet() { 
-		return "ACEGIKMOQSUWY"; 
-	}
 	
 	@Override
 	public void writeTo(Map<String, Object> map) {

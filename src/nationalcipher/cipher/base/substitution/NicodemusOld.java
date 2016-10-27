@@ -6,7 +6,7 @@ import javalibrary.math.MathUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class Nicodemus implements IRandEncrypter {
+public class NicodemusOld implements IRandEncrypter {
 
 	public static String encode(String plainText, String keyword) {
 		String cipherText = "";

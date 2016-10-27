@@ -39,11 +39,12 @@ public abstract class KeySearch extends InternalDecryption {
 					break;
 			}
 			
+			this.foundBestSolutionForLength(currentBestSolution);
+			
 			if(currentBestSolution.score >= this.bestSolution.score) {
 				this.bestSolution = currentBestSolution;
 				this.solutionFound();
 			}
-			
 		}
 	}
 
@@ -57,6 +58,10 @@ public abstract class KeySearch extends InternalDecryption {
 	}
 	
 	public abstract Solution tryModifiedKey(String key);
+	
+	public void foundBestSolutionForLength(Solution currentBestSolution) {
+		
+	}
 	
 	public void solutionFound() {
 		this.out().println("%s", this.bestSolution);

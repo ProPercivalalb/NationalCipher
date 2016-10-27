@@ -54,6 +54,11 @@ public class AttackRegistry {
 		registerCipher(new VariantPKAttack(), settings);
 		registerCipher(new VigenerePKAttack(), settings);
 		
+		registerCipher(new BeaufortNCAttack(), settings);
+		registerCipher(new PortaNCAttack(), settings);
+		registerCipher(new VariantNCAttack(), settings);
+		registerCipher(new VigenereNCAttack(), settings);
+		
 		registerCipher(new BeaufortSFAttack(), settings);
 		registerCipher(new VariantSFAttack(), settings);
 		registerCipher(new VigenereSFAttack(), settings);

@@ -98,6 +98,34 @@ public class KeyIterator {
 	        }
 	}
 	
+	public static interface PermutateString {
+		public void onPermutate(String key);
+	}
+	
+	public static void permutateString(PermutateString task, String str) {
+		permutateString(task, str, ArrayUtil.range(0, str.length()), 0);
+	}
+	
+	private static void permutateString(PermutateString task, String str, int[] arr, int pos) {
+	    if(arr.length - pos == 1) {
+	    	String newStr = "";
+	    	for(int i =0; i < arr.length; i++)
+	    		newStr += str.charAt(arr[i]);
+	    	task.onPermutate(newStr);
+	    }
+	    else
+	        for(int i = pos; i < arr.length; i++) {
+	            int h = arr[pos];
+	            int j = arr[i];
+	            arr[pos] = j;
+	            arr[i] = h;
+	            
+	            permutateString(task, str, arr, pos + 1);
+	            arr[pos] = h;
+	    	    arr[i] = j;
+	        }
+	}
+	
 	public static interface SquareMatrixKey {
 		public void onIteration(Matrix matrix);
 	}
