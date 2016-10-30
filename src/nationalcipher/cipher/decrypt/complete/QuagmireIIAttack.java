@@ -66,7 +66,7 @@ public class QuagmireIIAttack extends CipherAttack {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(decode(this.lastKey), this.getLanguage());
 		}

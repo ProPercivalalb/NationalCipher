@@ -16,7 +16,6 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.transposition.Columnar;
-import nationalcipher.cipher.base.transposition.ColumnarRow;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
@@ -120,7 +119,7 @@ public class SingleTranspostion implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
 
 			return new Solution(this.readColumns ? Columnar.decode(this.cipherText, this.lastKey1) : ColumnarRow.decode(this.cipherText, this.lastKey1), this.settings.getLanguage()).setKeyString(Arrays.toString(this.lastKey1));

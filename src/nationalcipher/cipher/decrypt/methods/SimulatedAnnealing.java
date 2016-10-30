@@ -16,6 +16,7 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 	}
 
 	public Solution maxSolution;
+	public double lastDF;
 	
 	public void run() {
 		Timer timer = new Timer();
@@ -28,18 +29,17 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 			for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {
 				for(int count = 0; count < this.getSettings().getSACount(); count++) { 
 					
-					this.lastSolution = this.modifyKey(count);
+					this.lastSolution = this.modifyKey(TEMP, count, this.lastDF);
 					//this.addSolution(this.lastSolution);
 					
-					double score = this.lastSolution.score;
-					double dF = score - this.maxSolution.score;
+					this.lastDF = this.lastSolution.score - this.maxSolution.score;
 					
-				    if(dF >= 0) {
+				    if(this.lastDF >= 0) {
 				    	this.maxSolution = this.lastSolution;
 				        this.storeKey();
 				    }
 				    else if(TEMP > 0) { 
-				    	double prob = Math.exp(dF / TEMP);
+				    	double prob = Math.exp(this.lastDF / TEMP);
 				        if(prob > RandomUtil.pickDouble()) {
 				        	this.maxSolution = this.lastSolution;
 				        	this.storeKey();
@@ -67,7 +67,7 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 	
 	public abstract Solution generateKey();
 	
-	public abstract Solution modifyKey(int count);
+	public abstract Solution modifyKey(double temp, int count, double lastDF);
 	
 	public abstract void storeKey();
 

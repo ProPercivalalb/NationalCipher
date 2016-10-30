@@ -124,7 +124,7 @@ public class AMSCODecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey1 = KeySquareManipulation.modifyOrder(this.bestMaximaKey1);
 
 			return new Solution(AMSCO.decode(this.cipherText, this.plainText, this.first, this.lastKey1), this.settings.getLanguage(), this.bestSolution.score);

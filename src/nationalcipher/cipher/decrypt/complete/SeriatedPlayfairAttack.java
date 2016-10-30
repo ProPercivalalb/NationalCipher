@@ -10,8 +10,8 @@ import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.SeriatedPlayfair;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
+import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.KeySquareManipulation;
@@ -86,7 +86,7 @@ public class SeriatedPlayfairAttack extends CipherAttack {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(SeriatedPlayfair.decode(this.cipherText, this.lastKey, this.period), this.getLanguage());
 		}

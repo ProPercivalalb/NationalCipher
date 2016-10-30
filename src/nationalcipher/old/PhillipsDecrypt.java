@@ -77,7 +77,7 @@ public class PhillipsDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(Phillips.decode(this.cipherText, this.lastKey, this.orderRows, this.orderColumns), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}

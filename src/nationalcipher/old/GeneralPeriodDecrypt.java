@@ -99,7 +99,7 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 			return new Solution(GeneralPeriod.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			int index = count % this.period;
 			this.lastKey[index] = KeySquareManipulation.exchange2letters(this.bestMaximaKey[index]);
 			return new Solution(GeneralPeriod.decode(this.cipherText, this.lastKey), this.settings.getLanguage());
@@ -184,7 +184,7 @@ public class GeneralPeriodDecrypt implements IDecrypt {
 			return new HalfSolution(Keyword.decode(this.cipherText, this.bestMaximaKey), this.settings.getLanguage());
 		}
 
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
 			return new HalfSolution(Keyword.decode(this.cipherText, this.lastKey), this.settings.getLanguage());
 		}

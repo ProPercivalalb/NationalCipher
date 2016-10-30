@@ -101,7 +101,7 @@ public class PolluxDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.swapMorseIndex(this.bestMaximaKey);
 			return new Solution(Pollux.decode(this.cipherText, this.lastKey), this.settings.getLanguage()).setKeyString(new String(this.lastKey));
 		}

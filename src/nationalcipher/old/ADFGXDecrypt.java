@@ -86,7 +86,7 @@ public class ADFGXDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(ADFGX.decode(this.cipherText, this.lastKey, new int[] {4, 1, 3, 0, 2, 3}), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}

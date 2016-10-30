@@ -2,7 +2,6 @@ package nationalcipher.cipher.decrypt.methods;
 
 import javalibrary.math.matrics.Matrix;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.tools.Creator.HillKey;
 
 public class KeyIterator {
 
@@ -98,6 +97,49 @@ public class KeyIterator {
 	        }
 	}
 	
+
+	public static interface DoubleIntegerOrderedKey {
+		public void onIteration(int[] order1, int[] order2);
+	}
+	
+	public static void iterateDoubleIntegerOrderedKey(DoubleIntegerOrderedKey task, int length1, int length2) {
+		iterateDoubleIntegerOrderedKey(task, ArrayUtil.range(0, length1), length2, 0);
+	}
+	
+	private static void iterateDoubleIntegerOrderedKey(DoubleIntegerOrderedKey task, int[] arr, int length2, int pos) {
+	    if(arr.length - pos == 1)
+	    	iterateIntegerOrderedKeySecond(task, ArrayUtil.range(0, length2), arr, 0);
+	    else
+	        for(int i = pos; i < arr.length; i++) {
+	            int h = arr[pos];
+	            int j = arr[i];
+	            arr[pos] = j;
+	            arr[i] = h;
+	            
+	            iterateDoubleIntegerOrderedKey(task, arr, length2, pos + 1);
+	            arr[pos] = h;
+	    	    arr[i] = j;
+	        }
+	}
+	
+
+	private static void iterateIntegerOrderedKeySecond(DoubleIntegerOrderedKey task, int[] arr, int[] firstArray, int pos) {
+	    if(arr.length - pos == 1)
+	    	task.onIteration(firstArray, arr);
+	    else
+	        for(int i = pos; i < arr.length; i++) {
+	            int h = arr[pos];
+	            int j = arr[i];
+	            arr[pos] = j;
+	            arr[i] = h;
+	            
+	            iterateIntegerOrderedKeySecond(task, arr, firstArray, pos + 1);
+	            arr[pos] = h;
+	    	    arr[i] = j;
+	        }
+	}
+	       
+	
 	public static interface PermutateString {
 		public void onPermutate(String key);
 	}
@@ -146,5 +188,26 @@ public class KeyIterator {
 			
 			iteratorSquareMatrixKey(task, range_low, range_high, no, rows, columns, time + 1, array);
 		}
+	}
+	
+	public static interface CharacterKey {
+		public void onIteration(char[] key);
+	} 
+	
+	public static void iteratePollux(CharacterKey task) {
+		iteratePollux(task, 0, new char[10]);
+	}
+	
+	private static void iteratePollux(CharacterKey task, int pos, char[] arr) {
+		if(arr.length - pos == 0)
+			task.onIteration(arr);
+		else
+			for(char i : new char[] {'.', '-', 'X'}) {
+				char h = arr[pos];
+	            arr[pos] = i;
+	            
+	            iteratePollux(task, pos + 1, arr);
+	            arr[pos] = h;
+			}
 	}
 }

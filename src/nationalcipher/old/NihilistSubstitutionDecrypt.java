@@ -177,7 +177,7 @@ public class NihilistSubstitutionDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(NihilistSubstitution.decode(this.cipherText, this.lastKey, "EASY"), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}

@@ -5,15 +5,6 @@ import java.util.List;
 
 import nationalcipher.LoadElement;
 import nationalcipher.Settings;
-import nationalcipher.cipher.decrypt.AffineDecrypt;
-import nationalcipher.cipher.decrypt.BazeriesDecrypt;
-import nationalcipher.cipher.decrypt.CadenusDecrypt;
-import nationalcipher.cipher.decrypt.CaesarDecrypt;
-import nationalcipher.cipher.decrypt.HillDecrypt;
-import nationalcipher.cipher.decrypt.PortaxDecrypt;
-import nationalcipher.cipher.decrypt.RailFenceDecrypt;
-import nationalcipher.cipher.decrypt.ReddefenceDecrypt;
-import nationalcipher.cipher.transposition.RouteDecrypt;
 
 /**
  * @author Alex Barter (10AS)

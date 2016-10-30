@@ -48,6 +48,7 @@ import nationalcipher.cipher.base.substitution.VigenereProgressiveKey;
 import nationalcipher.cipher.base.substitution.VigenereSlidefair;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.base.transposition.Cadenus;
+import nationalcipher.cipher.base.transposition.Columnar;
 import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
@@ -76,6 +77,7 @@ public class RandomEncrypter {
 		ciphers.add(new Bifid());
 		ciphers.add(new Caesar());
 		ciphers.add(new Cadenus());
+		ciphers.add(new Columnar());
 		ciphers.add(new Bazeries());
 		ciphers.add(new ConjugatedBifid());
 		ciphers.add(new Enigma());

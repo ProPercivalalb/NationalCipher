@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt;
 
-import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.manage.Solution;
@@ -49,7 +48,7 @@ public abstract class DoubleKeySquareAttack extends CipherAttack {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
 				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
 			else

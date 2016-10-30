@@ -89,7 +89,7 @@ public class RunningKeyDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 
 			this.lastKey1 = KeySquareManipulation.swapCharIndex(this.bestMaximaKey1);
 	

@@ -1,7 +1,6 @@
 package nationalcipher.cipher.decrypt;
 
 import javalibrary.dict.Dictionary;
-import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long26Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
@@ -68,7 +67,7 @@ public abstract class LongKeyAttack extends CipherAttack {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
 			return new Solution(LongKeyAttack.this.decode(this.cipherText, this.lastKey), this.getLanguage());
 		}

@@ -82,7 +82,7 @@ public class ConjugatedBifidDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
 				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
 			else

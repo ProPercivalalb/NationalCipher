@@ -12,9 +12,7 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
-import nationalcipher.cipher.base.substitution.PortaAutokey;
 import nationalcipher.cipher.base.substitution.PortaNicodemus;
-import nationalcipher.cipher.decrypt.AutokeyAttack;
 import nationalcipher.cipher.decrypt.NicodemusAttack;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;

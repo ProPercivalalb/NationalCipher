@@ -84,7 +84,7 @@ public class QuagmireIIIDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
 			
 			return new Solution(decode(this.lastKey1), this.settings.getLanguage());

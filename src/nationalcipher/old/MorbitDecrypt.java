@@ -64,7 +64,7 @@ public class MorbitDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey1 = KeySquareManipulation.exchangeOrder(this.bestMaximaKey1);
 			return new Solution(Morbit.decode(this.cipherText, this.lastKey1), this.settings.getLanguage());
 		}

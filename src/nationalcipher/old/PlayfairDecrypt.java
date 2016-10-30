@@ -104,7 +104,7 @@ public class PlayfairDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.lastKey), this.settings.getLanguage(), this.bestSolution.score);
 		}

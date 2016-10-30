@@ -64,7 +64,7 @@ public class FractionatedMorseDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
 			return new Solution(FractionatedMorse.decode(this.cipherText, this.lastKey), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}

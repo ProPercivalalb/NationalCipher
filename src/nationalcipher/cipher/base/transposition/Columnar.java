@@ -1,74 +1,89 @@
 package nationalcipher.cipher.base.transposition;
 
-import java.util.Arrays;
-
 import javalibrary.string.StringTransformer;
+import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 /**
  * @author Alex Barter (10AS)
  */
-public class Columnar {
-
-	public static String encode(String plainText, String key) {
-		int[] order = new int[key.length()];
-		
-		char[] charArray = key.toCharArray();
-		Arrays.sort(charArray);
-		for(int i = 0; i < charArray.length; i++)
-			order[key.indexOf(charArray[i])] = i;
-		
-		return encode(plainText, order);
-	}
+public class Columnar implements IRandEncrypter {
 	
-	public static String encode(String plainText, int[] order) {
-		int[] reversedOrder = new int[order.length];
-		for(int i = 0; i < order.length; i++)
-			reversedOrder[order[i]] = i;
+	public static String encode(String plainText, int[] order, boolean defaultRead) {
 		
-		String cipherText = "";
-		for(int column = 0; column < order.length; column++) 
-			cipherText += StringTransformer.getEveryNthChar(plainText, reversedOrder[column], order.length);
-		
-		return cipherText;
-	}
-	
-	public static char[] decode(char[] cipherText, String key) {
-		int[] order = new int[key.length()];
-		
-		char[] charArray = key.toCharArray();
-		Arrays.sort(charArray);
-		for(int i = 0; i < charArray.length; i++)
-			order[key.indexOf(charArray[i])] = i;
-		
-		return decode(cipherText, order);
-	}
-	
-	public static char[] decode(char[] cipherText, int[] order) {
-		int index = 0;
-		int columns = order.length;
-		
-		int rows = (int)Math.ceil(cipherText.length / (double)columns);
-		
-		char[] grid = new char[cipherText.length];
-
-		for(int column = 0; column < columns; column++) {
-			for(int row = 0; row < rows; row++) {
-				
-				int trueColumn = order[column];
-				if(row * columns + trueColumn >= cipherText.length)
-					continue;
-					
-				if(index >= cipherText.length)
-					break;
-
-				char character = cipherText[index];
-
-				grid[row * columns + trueColumn] = character;
-					
-				index += 1;
-			}
+		if(defaultRead) {
+			String cipherText = "";
+			for(int column = 0; column < order.length; column++) 
+				cipherText += StringTransformer.getEveryNthChar(plainText, order[column], order.length);
+			return cipherText;
 		}
+		else {
+			char[] cipherText = new char[plainText.length()];
+			int rows = (int)Math.ceil(plainText.length() / (double)order.length);
+			
+			int index = 0;
+			for(int row = 0; row < rows; row++) {
+				for(int column = 0; column < order.length; column++) {
+					int fakeColumn = order[column];
+	
+				
+					if(row * order.length + fakeColumn < plainText.length())
+						cipherText[row * order.length + fakeColumn] = plainText.charAt(index++);
+				}
+			}
+			return new String(cipherText);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param cipherText
+	 * @param order
+	 * @param defaultRead True means it will read the cipherText down columns, False means the cipherText was read across rows
+	 * @return
+	 */
+	public static char[] decode(char[] cipherText, int[] order, boolean defaultRead) {
+		char[] plainText = new char[cipherText.length];
+		int[] orderIndex = ArrayUtil.toIndexedArray(order);
+		int period = order.length;
+		int rows = (int)Math.ceil(cipherText.length / (double)period);
+		
+		
+		int index = 0;
+		if(defaultRead)
+			for(int col = 0; col < period; col++) {
+				int trueColumn = orderIndex[col];
+				for(int row = 0; row < rows; row++) {
+					if(row * period + trueColumn >= cipherText.length)
+						continue;
+						
+					if(index >= cipherText.length)
+						break;
+	
+					plainText[row * period + trueColumn] = cipherText[index++];
+				}
+			}
+		else
+			for(int row = 0; row < rows; row++) {
+				for(int col = 0; col < period; col++) { //Swapped is all that needs to happen
+					int trueColumn = orderIndex[col];
+					if(row * period + trueColumn >= cipherText.length)
+						continue;
+						
+					if(index >= cipherText.length)
+						break;
 
-		return grid;
+					plainText[row * period + trueColumn] = cipherText[index++];
+				}
+			}
+
+		return plainText;
+	}
+	
+	@Override
+	public String randomlyEncrypt(String plainText) {
+		return encode(plainText, KeyGeneration.createOrder(2, 9), RandomUtil.pickBoolean());
 	}
 }

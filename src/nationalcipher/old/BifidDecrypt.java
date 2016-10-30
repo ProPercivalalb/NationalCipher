@@ -123,7 +123,7 @@ public class BifidDecrypt implements IDecrypt {
 		}
 
 		@Override
-		public Solution modifyKey(int count) {
+		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
 			return new Solution(Bifid.decode(this.cipherText, this.lastKey, this.period), this.settings.getLanguage()).setKeyString(this.lastKey);
 		}

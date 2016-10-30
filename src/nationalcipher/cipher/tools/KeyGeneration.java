@@ -137,7 +137,7 @@ public class KeyGeneration {
 		}
 	}
 	
-	public static boolean isFilled(int[] key, int size) {
+	private static boolean isFilled(int[] key, int size) {
 		for(int row = 0; row < size; row++)
 			for(int col = 0; col < size; col++)
 				if(key[row * size + col] == -1)
@@ -146,11 +146,11 @@ public class KeyGeneration {
 		return true;
 	}
 	
-	public static List<Integer> getOptionsForCell(int[] key, int size, int index) {
+	private static List<Integer> getOptionsForCell(int[] key, int size, int index) {
 		return getOptionsForCell(key, size, index / size, index % size);
 	}
 	
-	public static List<Integer> getOptionsForCell(int[] key, int size, int row, int column) {
+	private static List<Integer> getOptionsForCell(int[] key, int size, int row, int column) {
 		List<Integer> validOptions = ListUtil.range(0, size - 1);
 
 		for(int nR = 0; nR < size; nR++)
@@ -194,11 +194,13 @@ public class KeyGeneration {
 	
 	public static String createShortKey26(int minLength, int maxLength) {
 		int length = RandomUtil.pickRandomInt(minLength, maxLength);
-		
 		return createShortKey26(length);
 	}
 	
-	
+	public static int[] createOrder(int minLength, int maxLength) {
+		int length = RandomUtil.pickRandomInt(minLength, maxLength);
+		return createOrder(length);
+	}
 	
 	
 	
