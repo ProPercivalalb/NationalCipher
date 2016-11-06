@@ -1,11 +1,11 @@
 package nationalcipher.cipher.decrypt;
 
 import javalibrary.dict.Dictionary;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long26Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.ui.IApplication;
@@ -47,7 +47,8 @@ public abstract class LongKeyAttack extends CipherAttack {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(LongKeyAttack.this.decode(this.cipherText, key), this.getLanguage());
+			this.lastSolution = new Solution(LongKeyAttack.this.decode(this.cipherText, this.plainText, key), this.getLanguage());
+			this.addSolution(this.lastSolution);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -63,13 +64,13 @@ public abstract class LongKeyAttack extends CipherAttack {
 		@Override
 		public Solution generateKey() {
 			this.bestMaximaKey = KeyGeneration.createLongKey26();
-			return new Solution(LongKeyAttack.this.decode(this.cipherText, this.bestMaximaKey), this.getLanguage());
+			return new Solution(LongKeyAttack.this.decode(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new Solution(LongKeyAttack.this.decode(this.cipherText, this.lastKey), this.getLanguage());
+			return new Solution(LongKeyAttack.this.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
 		}
 
 		@Override
@@ -81,6 +82,7 @@ public abstract class LongKeyAttack extends CipherAttack {
 		public void solutionFound() {
 			this.bestKey = this.bestMaximaKey;
 			this.bestSolution.setKeyString(this.bestKey);
+			this.bestSolution.bakeSolution();
 			this.getKeyPanel().updateSolution(this.bestSolution);
 		}
 		
@@ -97,6 +99,11 @@ public abstract class LongKeyAttack extends CipherAttack {
 			this.getProgress().setValue(0);
 			return false;
 		}
+		
+		@Override
+		public int getOutputTextLength(int inputLength) {
+			return LongKeyAttack.this.getOutputTextLength(inputLength);
+		}
 	}
 	
 	@Override
@@ -105,5 +112,9 @@ public abstract class LongKeyAttack extends CipherAttack {
 			this.task.app.out().println("%s", this.task.bestSolution);
 	}
 	
-	public abstract char[] decode(char[] cipherText, String key);
+	public abstract byte[] decode(char[] cipherText, byte[] plainText, String key);
+	
+	public int getOutputTextLength(int inputLength) {
+		return inputLength;
+	}
 }

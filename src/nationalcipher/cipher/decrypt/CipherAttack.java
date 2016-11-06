@@ -9,7 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import nationalcipher.LoadElement;
-import nationalcipher.cipher.manage.DecryptionMethod;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.ui.IApplication;
 
 public class CipherAttack implements LoadElement {

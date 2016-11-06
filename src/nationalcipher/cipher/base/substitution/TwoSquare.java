@@ -32,10 +32,10 @@ public class TwoSquare implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, char[] plainText, String keysquare1, String keysquare2) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare1, String keysquare2) {
 	    for(int i = 0; i < cipherText.length; i += 2){
-	        char a = cipherText[i];
-	        char b = cipherText[i + 1];
+	        byte a = (byte)cipherText[i];
+	        byte b = (byte)cipherText[i + 1];
 	        int aIndex = keysquare2.indexOf(a);
 	        int bIndex = keysquare1.indexOf(b);
 	        int aRow = (int)Math.floor(aIndex / 5);
@@ -48,8 +48,8 @@ public class TwoSquare implements IRandEncrypter {
 	        	plainText[i + 1] = a;
 	        }
 	        else {
-	        	plainText[i] = keysquare1.charAt(5 * aRow + bCol);
-	        	plainText[i + 1] = keysquare2.charAt(5 * bRow + aCol);
+	        	plainText[i] = (byte) keysquare1.charAt(5 * aRow + bCol);
+	        	plainText[i + 1] = (byte) keysquare2.charAt(5 * bRow + aCol);
 
 	        }
 	    }

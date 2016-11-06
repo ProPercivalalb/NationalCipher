@@ -1,7 +1,6 @@
 package nationalcipher.cipher.decrypt.methods;
 
 import javalibrary.string.StringTransformer;
-import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
 
 public abstract class KeySearch extends InternalDecryption {

@@ -25,7 +25,7 @@ public class TriSquare implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, char[] plainText, String keysquare1, String keysquare2, String keysquare3) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare1, String keysquare2, String keysquare3) {
 		for(int i = 0; i < cipherText.length / 3; i++) {
 			char a = cipherText[i * 3];
 			char b = cipherText[i * 3 + 1];
@@ -39,8 +39,8 @@ public class TriSquare implements IRandEncrypter {
 			int columnSort = index % 5;
 			int rowSort = index / 5;
 			
-			plainText[i * 2] = keysquare1.charAt(rowSort * 5 + column);
-			plainText[i * 2 + 1] = keysquare2.charAt(row * 5 + columnSort);
+			plainText[i * 2] = (byte)keysquare1.charAt(rowSort * 5 + column);
+			plainText[i * 2 + 1] = (byte)keysquare2.charAt(row * 5 + columnSort);
 		}
 		
 		

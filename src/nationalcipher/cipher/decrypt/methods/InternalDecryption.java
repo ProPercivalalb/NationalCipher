@@ -1,10 +1,13 @@
 package nationalcipher.cipher.decrypt.methods;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javalibrary.Output;
+import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
-import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.UINew;
@@ -14,17 +17,20 @@ public class InternalDecryption {
 	public Solution bestSolution, lastSolution;
 	public int iteration;
 	
+	
 	public char[] cipherText;
-	public char[] plainText;
+	public byte[] plainText;
 	public IApplication app;
+	public final double UPPER_ESTIMATE;
 	
 	public InternalDecryption(char[] cipherText, IApplication app) {
 		this.cipherText = cipherText;
-		this.plainText = new char[this.getOutputTextLength(cipherText.length)];
+		this.plainText = new byte[this.getOutputTextLength(cipherText.length)];
 		this.app = app;
 		
+		this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage()) * 1.1;
 		this.iteration = 1;
-		this.bestSolution = new Solution(null, Double.NEGATIVE_INFINITY);
+		this.bestSolution = new Solution();
 	}
 	
 	public int getOutputTextLength(int inputLength) {
@@ -32,12 +38,14 @@ public class InternalDecryption {
 	}
 	
 	public void addSolution(Solution solution) {
-		UINew.topSolutions.solutions.add(solution);
+		if(this.getSettings().collectSolutions())
+			if(solution.score > Math.max(this.UPPER_ESTIMATE, this.bestSolution.score * 1.1))
+				UINew.topSolutions.addSolution(solution);
 	}
 	
 	public void resetSolution() {
-		this.bestSolution = new Solution(null, Double.NEGATIVE_INFINITY);
-		UINew.topSolutions.solutions.clear();
+		this.bestSolution = new Solution();
+		UINew.topSolutions.reset();
 	}
 	
 	public void resetIteration() {

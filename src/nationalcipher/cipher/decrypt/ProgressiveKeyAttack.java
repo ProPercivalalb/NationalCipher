@@ -8,9 +8,9 @@ import javax.swing.JSpinner;
 
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.SettingsUtil;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;

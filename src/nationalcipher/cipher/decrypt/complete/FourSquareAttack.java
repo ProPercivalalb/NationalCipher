@@ -10,7 +10,7 @@ public class FourSquareAttack extends DoubleKeySquareAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, char[] plainText, String key1, String key2) {
+	public byte[] decode(char[] cipherText, byte[] plainText, String key1, String key2) {
 		return FourSquare.decode(cipherText, plainText, key1, key2);
 	}
 

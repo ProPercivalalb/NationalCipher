@@ -10,8 +10,8 @@ import javax.swing.JSpinner;
 
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
-import nationalcipher.cipher.manage.DecryptionMethod;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;

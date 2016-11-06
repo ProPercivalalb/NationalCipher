@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 import nationalcipher.cipher.base.transposition.Swagman;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.ui.IApplication;
 

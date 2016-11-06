@@ -2,11 +2,11 @@ package nationalcipher.cipher.decrypt.complete;
 
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
 
 public class CaesarAttack extends CipherAttack {

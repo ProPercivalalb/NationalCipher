@@ -26,6 +26,14 @@ public class Keyword implements IRandEncrypter {
 
 		return plainText;
 	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keyword) {
+		
+		for(int i = 0; i < cipherText.length; i++)
+			plainText[i] = (byte)(keyword.indexOf(cipherText[i]) + 'A');
+
+		return plainText;
+	}
 
 	@Override
 	public String randomlyEncrypt(String plainText) {

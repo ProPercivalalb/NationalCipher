@@ -10,8 +10,8 @@ public class SimpleSubstitutionAttack extends LongKeyAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return Keyword.decode(cipherText, key);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Keyword.decode(cipherText, plainText, key);
 	}
 	
 }

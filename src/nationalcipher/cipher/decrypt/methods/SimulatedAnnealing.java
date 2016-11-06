@@ -1,10 +1,13 @@
 package nationalcipher.cipher.decrypt.methods;
 
+import java.util.Arrays;
+
 import javalibrary.lib.Timer;
 import javalibrary.math.Units;
+import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.manage.Solution;
 import nationalcipher.ui.IApplication;
+import nationalcipher.ui.UINew;
 
 public abstract class SimulatedAnnealing extends InternalDecryption {
 
@@ -30,7 +33,7 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 				for(int count = 0; count < this.getSettings().getSACount(); count++) { 
 					
 					this.lastSolution = this.modifyKey(TEMP, count, this.lastDF);
-					//this.addSolution(this.lastSolution);
+					this.addSolution(this.lastSolution);
 					
 					this.lastDF = this.lastSolution.score - this.maxSolution.score;
 					
@@ -54,14 +57,11 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 					this.onIteration();
 				}
 			}
-		
-			if(this.endIteration())  {
-				if(this.iterationTimer)
-					this.out().println("Iteration Time: %f", timer.getTimeRunning(Units.Time.MILLISECOND));
-				break;
-			}
 			if(this.iterationTimer)
 				this.out().println("Iteration Time: %f", timer.getTimeRunning(Units.Time.MILLISECOND));
+			
+			if(this.endIteration())
+				break;
 		}	
 	}
 	

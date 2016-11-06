@@ -8,7 +8,7 @@ import javalibrary.language.Languages;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
-import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.decrypt.methods.Solution;
 
 public class SolitaireSolver {
 

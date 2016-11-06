@@ -4,16 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.string.MorseCode;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class FractionatedMorse implements IRandEncrypter {
 
-	public static void main(String[] args) {
-		System.out.println(encode("HARRY, THE PUZZLE OF THE STAMPED POSTCARD HAD ME FOOLED FOR A WHILE, BUT I THINK I FIGURED IT OUT. WAS THE MESSAGE ON THE BACK OF THE STAMP? I AM GUESSING YOU STEAMED IT OFF AND FOUND IT THERE. IT WAS A PRETTY INGENIOUS PLOY. MY MASTERS BACK IN WASHINGTON ARE INCREASINGLY WORRIED ABOUT OUR RELATIONSHIP WITH THE REST OF THE FOUR POWERS. FOLLOWING THE BREAKDOWN IN TRUST WITH THE SOVIETS THEY ARE COUNTING ON THE UK AND FRANCE AS ALLIES. IF THEY ARE GOING BEHIND OUR BACKS WITH THIS REICHSDOKTOR, THAT DOES NOT BODE WELL FOR FUTURE DIPLOMACY. DO YOU HAVE CONTACTS THERE YOU CAN EXPLOIT TO FIND OUT WHAT THEY ARE INTENDING? WE REALLY CANNOT AFFORD TO FALL OUT RIGHT NOW. THE ATTACHED MESSAGE IS ANOTHER INTERCEPT, THIS TIME FROM THE BRITISH EMBASSY WIRELESS. WHILE THINGS ARE DICEY I DON�T FEEL I CAN ASK THEM ABOUT IT, MAYBE YOU COULD CRACK IT FOR US. DOES IT MENTION THE RATLINES? BEST, CHARLIE", "ROUNDTABLECFGHIJKMPQSVWXYZ"));
-		System.out.println(new String(decode("ESOAVVLJRSSTRX".toCharArray(), "ROUNDTABLECFGHIJKMPQSVWXYZ")));
-	}
-	
 	public static String encode(String plainText, String key) {
 		
 		String cipherText = "";
@@ -34,7 +30,39 @@ public class FractionatedMorse implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String key) {
+	private static char[] list = new char[] {'.', '-', 'X'}; 
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		char[] morseText = new char[cipherText.length * 3];
+		
+		for(int i = 0; i < cipherText.length; i++) {
+			int index = key.indexOf(cipherText[i]);
+			morseText[i * 3] = list[index / 9];
+			morseText[i * 3 + 1] = list[(int)(index / 3) % 3];
+			morseText[i * 3 + 2] = list[index % 3];
+		}
+		
+		int index = 0;
+		int lastX = 0;
+		for(int i = 0; i < morseText.length; i++) {
+			char morseCh = morseText[i];
+			if(morseCh == 'X' || i == morseText.length - 1) { //When char is X or is at the end of the text
+				char character = MorseCode.getCharFromMorse(morseText, lastX, i - lastX);
+				if(character == ' ') 
+					for(int j = lastX; j < i; j++)
+						plainText[index++] = (byte)morseText[j];
+				else 
+					plainText[index++] = (byte)character;
+				
+				lastX = i + 1;
+			}
+		}
+		
+		return ArrayUtil.copyOfRange(plainText, 0, index);
+	}
+
+	/**
+	 * public static byte[] decode(char[] cipherText, String key) {
 		String plainText = "";
 		String morseText = "";
 		char[] list = new char[] {'.', '-', 'X'}; 
@@ -61,10 +89,10 @@ public class FractionatedMorse implements IRandEncrypter {
 			}
 		}
 		
-		return plainText.replaceAll(" ", "").toCharArray();
-		
+		return ArrayUtil.convertCharType(plainText.replaceAll(" ", "").toCharArray());
 	}
-
+	 */
+	
 	@Override
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey26());

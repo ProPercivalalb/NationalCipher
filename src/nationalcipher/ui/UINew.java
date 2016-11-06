@@ -123,9 +123,9 @@ import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.base.transposition.Columnar;
 import nationalcipher.cipher.decrypt.AttackRegistry;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
 
@@ -135,7 +135,7 @@ import nationalcipher.cipher.stats.StatisticHandler;
  */
 public class UINew extends JFrame implements IApplication {
 
-	public static char[] BEST_SOULTION;
+	public static byte[] BEST_SOULTION;
 	public static ShowTopSolutionsAction topSolutions;
 	public KeyPanel keyPanel;
 	
@@ -345,6 +345,7 @@ public class UINew extends JFrame implements IApplication {
 		this.menuItemSimulatedAnnealing = new JMenu();
         this.menuItemSAPreset = new JMenu();
         this.menuItemUpdateProgress = new JCheckBoxMenuItem();
+        this.menuItemCollectSolutions = new JCheckBoxMenuItem();
         this.menuCipherAttack = new JMenu();
         this.menuCribInput = new JMenuItem();
         this.menuItemCurrentAttack = new JMenuItem();
@@ -784,7 +785,13 @@ public class UINew extends JFrame implements IApplication {
 		this.menuItemUpdateProgress.setSelected(this.settings.updateProgress());
 		this.keyPanel.setIterationUnsed();
 		this.menuItemUpdateProgress.addActionListener(new UpdateProgressAction(this.menuItemUpdateProgress));
-		this.menuItemSettings.add(this.menuItemUpdateProgress);		
+		this.menuItemSettings.add(this.menuItemUpdateProgress);	
+		
+		this.menuItemCollectSolutions.setText("Collect Solutions");
+		this.menuItemCollectSolutions.setSelected(this.settings.collectSolutions());
+		this.menuItemCollectSolutions.addActionListener(new CollectSolutionsAction(this.menuItemCollectSolutions));
+		this.menuItemSettings.add(this.menuItemCollectSolutions);	
+		
         this.menuBar.add(this.menuItemSettings);
 
         this.menuCipherAttack.setText("Cipher Attack");
@@ -949,11 +956,11 @@ public class UINew extends JFrame implements IApplication {
 				public void run() {
 					threadTimer.restart();
 					UINew.BEST_SOULTION = null;
-					UINew.this.topSolutions.solutions.clear();
+					UINew.topSolutions.reset();
 					
 					CipherAttack force = getCipherAttack();
 					output.println("Cipher: " + force.getDisplayName());
-					
+					output.println("Optimizations . Progress Update: %b (Δs = x3) | Collect Solutions: %b (Δs = x1.5)", settings.updateProgress(), settings.collectSolutions());
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
 					progressValue = new ProgressValueNC(1000, progressBar, settings);
 					if(!settings.updateProgress())
@@ -1075,7 +1082,8 @@ public class UINew extends JFrame implements IApplication {
     public class ShowTopSolutionsAction extends NCCDialog implements ActionListener {
     	
     	private JTextArea textOutput;
-    	public List<Solution> solutions;
+    	public Solution[] solutions; //Can sort up to 10 Million
+    	public int i = 0;
     	private boolean updateNeed;
     	
     	public ShowTopSolutionsAction() {
@@ -1108,7 +1116,7 @@ public class UINew extends JFrame implements IApplication {
 	        
     		this.dialog.add(panel);
     		
-    		this.solutions = new ArrayList<Solution>();
+    		this.solutions = new Solution[10000000];
     	}
     	
     	@Override
@@ -1119,8 +1127,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	public void sortSolutions() {
     		Set<Solution> hs = new HashSet<Solution>();
-    		hs.addAll(this.solutions);
-    		
+    		hs.addAll(Arrays.asList(Arrays.copyOf(this.solutions, ArrayUtil.indexOf(solutions, null))));
     		List<Solution> sorted = new ArrayList<Solution>();
     		sorted.addAll(hs);
     		Collections.sort(sorted);
@@ -1129,7 +1136,6 @@ public class UINew extends JFrame implements IApplication {
     		int min = Math.min(250, sorted.size());
     		for(int i = 0; i < min; i++)
     			text += String.format(i + " %s\n", sorted.get(i));
-    		this.solutions = sorted.subList(0, min);
 
     		textOutput.setText(text);
     		textOutput.revalidate();
@@ -1137,8 +1143,13 @@ public class UINew extends JFrame implements IApplication {
     	}
 
     	public void addSolution(Solution solution) {
-    		this.solutions.add(solution);
+    		this.solutions[i++] = solution;
     		updateNeed = true;
+    	}
+    	
+    	public void reset() {
+    		this.solutions = new Solution[10000000];
+    		this.i = 0;
     	}
     }
     
@@ -3469,6 +3480,24 @@ public class UINew extends JFrame implements IApplication {
 		}
     }
     
+    public class CollectSolutionsAction implements ActionListener {
+
+    	public JCheckBoxMenuItem checkBox;
+    	
+    	public CollectSolutionsAction(JCheckBoxMenuItem checkBox) {
+    		this.checkBox = checkBox;
+    	}
+    	
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			if(checkBox.isSelected()) {
+				settings.collectSolutions = true;
+			}
+			else {
+				settings.collectSolutions = false;
+			}
+		}
+    }
     public class CribInputAction implements ActionListener {
 
     	public void actionPerformed(ActionEvent event) {
@@ -3635,6 +3664,7 @@ public class UINew extends JFrame implements IApplication {
     private JMenu menuItemSimulatedAnnealing;
     private JMenu menuItemSAPreset;
     private JCheckBoxMenuItem menuItemUpdateProgress;
+    private JCheckBoxMenuItem menuItemCollectSolutions;
     private JMenu menuCipherAttack;
     private JMenuItem menuCribInput;
     private JMenuItem menuItemCurrentAttack;

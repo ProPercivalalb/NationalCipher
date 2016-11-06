@@ -1,4 +1,4 @@
-package nationalcipher.cipher.manage;
+package nationalcipher.cipher.decrypt.methods;
 
 import java.util.Arrays;
 
@@ -8,12 +8,17 @@ import javalibrary.util.ArrayUtil;
 
 public class Solution implements Comparable<Solution> {
 	
-	private char[] text;
+	private byte[] text;
+	//Could change to float to reduce memory from 64 bits to 32 bits
 	public final double score;
 	public String keyString;
 	public static final String UNKNOWN_KEY = "UNKNOWN";
 	
 	public Solution(char[] text, double score) {
+		this(ArrayUtil.convertCharType(text), score);
+	}
+	
+	public Solution(byte[] text, double score) {
 		this.text = text;
 		this.score = score;
 		this.keyString = UNKNOWN_KEY;
@@ -24,6 +29,10 @@ public class Solution implements Comparable<Solution> {
 	}
 	
 	public Solution(char[] text, ILanguage language) {
+		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
+	}
+	
+	public Solution(byte[] text, ILanguage language) {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
 	}
 	
@@ -80,7 +89,7 @@ public class Solution implements Comparable<Solution> {
 		return String.format("Fitness: %f, Key: %s, Plaintext: %s", this.score, this.keyString, new String(this.text));
 	}
 
-	public char[] getText() {
+	public byte[] getText() {
 		return this.text;
 	}
 }

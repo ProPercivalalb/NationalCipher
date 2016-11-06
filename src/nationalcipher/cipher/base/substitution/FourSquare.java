@@ -32,7 +32,7 @@ public class FourSquare implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, char[] plainText, String keysquare1, String keysquare2) {
+	public static byte[] decode(char[] cipherText, byte[] result, String keysquare1, String keysquare2) {
 	    String shortAlpha = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
 	    
 	    for(int i = 0; i < cipherText.length; i += 2){
@@ -45,11 +45,11 @@ public class FourSquare implements IRandEncrypter {
 	        int aCol = aIndex % 5;
 	        int bCol = bIndex % 5;
 	        
-	        plainText[i] = shortAlpha.charAt(5 * aRow + bCol);
-	        plainText[i + 1] = shortAlpha.charAt(5 * bRow + aCol);
+	        result[i] = (byte)shortAlpha.charAt(5 * aRow + bCol);
+	        result[i + 1] = (byte)shortAlpha.charAt(5 * bRow + aCol);
 	    }
 	   
-	    return plainText;
+	    return result;
 	}
 
 	@Override

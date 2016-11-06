@@ -12,11 +12,11 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -70,6 +70,7 @@ public class AMSCOAttack extends CipherAttack {
 		@Override
 		public void onIteration(int[] order) {
 			this.lastSolution = new Solution(AMSCO.decode(this.cipherText, this.plainText, order, this.doubleLetterFirst), this.getLanguage());
+			this.addSolution(this.lastSolution);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;

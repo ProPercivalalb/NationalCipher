@@ -1,8 +1,8 @@
 package nationalcipher.cipher.decrypt;
 
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
-import nationalcipher.cipher.manage.DecryptionMethod;
-import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.ui.IApplication;
@@ -93,5 +93,5 @@ public abstract class DoubleKeySquareAttack extends CipherAttack {
 			this.task.app.out().println("%s", this.task.bestSolution);
 	}
 	
-	public abstract char[] decode(char[] cipherText, char[] plainText, String key1, String key2);
+	public abstract byte[] decode(char[] cipherText, byte[] plainText, String key1, String key2);
 }

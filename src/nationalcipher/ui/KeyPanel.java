@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import nationalcipher.Settings;
-import nationalcipher.cipher.manage.Solution;
+import nationalcipher.cipher.decrypt.methods.Solution;
 
 public class KeyPanel extends JPanel {
 	

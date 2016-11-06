@@ -27,6 +27,7 @@ public class Settings {
 	public ButtonGroup keywordCreationGroup;
 	private List<Double> simulatedAnnealing;
 	public boolean updateProgressBars;
+	public boolean collectSolutions;
 	
 	private List<LoadElement> loadElements;
 	private Gson gson;
@@ -100,6 +101,10 @@ public class Settings {
 		return this.updateProgressBars;
 	}
 	
+	public boolean collectSolutions() {
+		return this.collectSolutions;
+	}
+	
 	public void setLanguage(ILanguage language) {
 		this.language = language;
 	}
@@ -121,6 +126,8 @@ public class Settings {
 			map.put("keyword_creation", this.keywordCreation);
 			map.put("simulated_annealing", this.simulatedAnnealing);
 			map.put("update_progress_bars", this.updateProgressBars);
+			map.put("collect_solutions", this.collectSolutions);
+			
 			
 			for(LoadElement loadElement : this.loadElements)
 				loadElement.write(map);
@@ -164,6 +171,10 @@ public class Settings {
 			
 			if(map.containsKey("update_progress_bars")) {
 				this.updateProgressBars = (boolean)map.get("update_progress_bars");
+			}
+			
+			if(map.containsKey("collect_solutions")) {
+				this.collectSolutions = (boolean)map.get("collect_solutions");
 			}
 			
 			for(LoadElement loadElement : this.loadElements)

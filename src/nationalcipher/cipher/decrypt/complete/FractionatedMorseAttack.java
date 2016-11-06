@@ -10,8 +10,12 @@ public class FractionatedMorseAttack extends LongKeyAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return FractionatedMorse.decode(cipherText, key);
+	public byte[] decode(char[] cipherText, byte[] result, String key) {
+		return FractionatedMorse.decode(cipherText, result, key);
 	}
 	
+	@Override
+	public int getOutputTextLength(int inputLength) {
+		return inputLength * 3;
+	}
 }
