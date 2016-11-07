@@ -6,7 +6,7 @@ import nationalcipher.cipher.base.transposition.Columnar;
 
 public class ADFGVX {
 
-	public static String encode(String plainText, String keysquare, int[] order, String adfgvx) {
+	public static String encode(String plainText, String keysquare, int[] order, String adfgvx, boolean defaultRead) {
 		String cipherText = "";
 		
 		for(int i = 0; i < plainText.length(); i++) {
@@ -21,18 +21,18 @@ public class ADFGVX {
 			cipherText += adfgvx.charAt(column);
 		}
 		
-		return Columnar.encode(cipherText, order, false);
+		return Columnar.encode(cipherText, order, defaultRead);
 	}
 	
-	public static String decode(String cipherText, String keysquare, String key) {
-		return decode(cipherText, keysquare, key, "ADFGVX");
+	public static String decode(String cipherText, String keysquare, String key, boolean defaultRead) {
+		return decode(cipherText, keysquare, key, "ADFGVX", defaultRead);
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare, int[] order) {
-		return decode(cipherText, keysquare, order, "ADFGVX");
+	public static char[] decode(char[] cipherText, String keysquare, int[] order, boolean defaultRead) {
+		return decode(cipherText, keysquare, order, "ADFGVX", defaultRead);
 	}
 	
-	public static String decode(String cipherText, String keysquare, String key, String adfgvx) {
+	public static String decode(String cipherText, String keysquare, String key, String adfgvx, boolean defaultRead) {
 		int[] order = new int[key.length()];
 		
 		char[] charArray = key.toCharArray();
@@ -40,11 +40,11 @@ public class ADFGVX {
 		for(int i = 0; i < charArray.length; i++)
 			order[key.indexOf(charArray[i])] = i;
 		
-		return new String(decode(cipherText.toCharArray(), keysquare, order, adfgvx));
+		return new String(decode(cipherText.toCharArray(), keysquare, order, adfgvx, defaultRead));
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare, int[] order, String adfgvx) {
-		return decodeTransformed(Columnar.decode(cipherText, order, false), keysquare, adfgvx);
+	public static char[] decode(char[] cipherText, String keysquare, int[] order, String adfgvx, boolean defaultRead) {
+		return decodeTransformed(Columnar.decode(cipherText, order, defaultRead), keysquare, adfgvx);
 	}
 	
 	public static char[] decodeTransformed(char[] untransformedText, String keysquare) {
@@ -52,7 +52,7 @@ public class ADFGVX {
 	}
 
 	public static char[] decodeTransformed(char[] untransformedText, String keysquare, String adfgvx) {
-		char[] plainText = new char[untransformedText.length];
+		char[] plainText = new char[untransformedText.length / 2];
 		
 		for(int i = 0; i < untransformedText.length; i += 2) {
 			char c1 = untransformedText[i];

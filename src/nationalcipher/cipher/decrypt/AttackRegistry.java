@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nationalcipher.Settings;
+import nationalcipher.cipher.decrypt.complete.ADFGXAttack;
 import nationalcipher.cipher.decrypt.complete.AMSCOAttack;
 import nationalcipher.cipher.decrypt.complete.AffineAttack;
 import nationalcipher.cipher.decrypt.complete.BazeriesAttack;
@@ -17,10 +18,12 @@ import nationalcipher.cipher.decrypt.complete.CadenusAttack;
 import nationalcipher.cipher.decrypt.complete.CaesarAttack;
 import nationalcipher.cipher.decrypt.complete.ColumnarTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.ConjugatedBifidAttack;
+import nationalcipher.cipher.decrypt.complete.DigrafidAttack;
 import nationalcipher.cipher.decrypt.complete.DoubleTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.FourSquareAttack;
 import nationalcipher.cipher.decrypt.complete.FractionatedMorseAttack;
 import nationalcipher.cipher.decrypt.complete.HillAttack;
+import nationalcipher.cipher.decrypt.complete.HomophonicAttack;
 import nationalcipher.cipher.decrypt.complete.MyszkowskiAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.PhillipsAttack;
@@ -136,9 +139,12 @@ public class AttackRegistry {
 		registerCipher(new HillAttack(), settings);
 		registerCipher(new SeriatedPlayfairAttack(), settings);
 		registerCipher(new PolluxAttack(), settings);
+		registerCipher(new ADFGXAttack(), settings);
+		registerCipher(new HomophonicAttack(), settings);
+		registerCipher(new DigrafidAttack(), settings);
 		
 		//
-		//registerCipher(new PolluxAttack(), settings);
+		//registerCipher(new DigrafidAttack(), settings);
 		//registerCipher(new SeriatedPlayfairAttack(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);

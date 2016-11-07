@@ -23,7 +23,7 @@ public abstract class KeySearch extends InternalDecryption {
 						String child = parent.substring(0, i) + j + parent.substring(i + 1, length);
 						
 						this.lastSolution = this.tryModifiedKey(child);
-						//this.addSolution(this.lastSolution);
+						this.addSolution(this.lastSolution);
 						
 						if(this.lastSolution.score >= currentBestSolution.score) {
 							parent = child;

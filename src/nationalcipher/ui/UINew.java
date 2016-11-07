@@ -960,7 +960,7 @@ public class UINew extends JFrame implements IApplication {
 					
 					CipherAttack force = getCipherAttack();
 					output.println("Cipher: " + force.getDisplayName());
-					output.println("Optimizations . Progress Update: %b (Δs = x3) | Collect Solutions: %b (Δs = x1.5)", settings.updateProgress(), settings.collectSolutions());
+					output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
 					progressValue = new ProgressValueNC(1000, progressBar, settings);
 					if(!settings.updateProgress())
@@ -1116,7 +1116,7 @@ public class UINew extends JFrame implements IApplication {
 	        
     		this.dialog.add(panel);
     		
-    		this.solutions = new Solution[10000000];
+    		this.solutions = new Solution[1000000];
     	}
     	
     	@Override
@@ -1148,7 +1148,8 @@ public class UINew extends JFrame implements IApplication {
     	}
     	
     	public void reset() {
-    		this.solutions = new Solution[10000000];
+    		for(int j = 0; j < this.solutions.length; j++)
+    			this.solutions[j] = null;
     		this.i = 0;
     	}
     }

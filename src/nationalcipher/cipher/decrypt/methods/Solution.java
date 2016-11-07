@@ -14,9 +14,6 @@ public class Solution implements Comparable<Solution> {
 	public String keyString;
 	public static final String UNKNOWN_KEY = "UNKNOWN";
 	
-	public Solution(char[] text, double score) {
-		this(ArrayUtil.convertCharType(text), score);
-	}
 	
 	public Solution(byte[] text, double score) {
 		this.text = text;
@@ -25,11 +22,11 @@ public class Solution implements Comparable<Solution> {
 	}
 	
 	public Solution() {
-		this(new char[0], Double.NEGATIVE_INFINITY);
+		this(new byte[0], Double.NEGATIVE_INFINITY);
 	}
 	
 	public Solution(char[] text, ILanguage language) {
-		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
+		this(ArrayUtil.convertCharType(text), language);
 	}
 	
 	public Solution(byte[] text, ILanguage language) {

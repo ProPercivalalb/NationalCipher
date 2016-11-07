@@ -46,6 +46,7 @@ public class Trifid implements IRandEncrypter {
 	
 	public static char[] decode(char[] cipherText, String keysquares, int period) {
 		if(period == 0) period = cipherText.length;
+		
 		char[] plainText = new char[cipherText.length];
 		
 		int[] numberText = new int[plainText.length * 3];

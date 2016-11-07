@@ -40,7 +40,7 @@ public class Homophonic implements IRandEncrypter {
 	public static char[] decode(char[] cipherText, String key) {
 		char[] plainText = new char[cipherText.length / 2];
 		
-		List<String> rows = new ArrayList<String>();
+		int[] rows = new int[100];
 		String shortAlpha = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
 		
 		for(int i = 0; i < 4; i++) {
@@ -49,15 +49,13 @@ public class Homophonic implements IRandEncrypter {
 			if(c >= 8) c--;
 			
 			for(int no = 0; no < 25; no++) {
-				String n = "" + (i * 25 + MathUtil.mod(no - c, 25) + 1) % 100;
-				if(n.length() < 2) n = "0" + n;
-				rows.add(n);
+
+				rows[(i * 25 + MathUtil.mod(no - c, 25) + 1) % 100] = no;
 			}
 		}
 		
 		for(int i = 0; i < plainText.length; i++) {
-			String s = new String(cipherText, i * 2, 2);
-			int col = rows.indexOf(s) % 25;
+			int col = rows[10 * (cipherText[i * 2] - '0') + (cipherText[i * 2 + 1] - '0')];
 			plainText[i] = shortAlpha.charAt(col);
 		}
 		
