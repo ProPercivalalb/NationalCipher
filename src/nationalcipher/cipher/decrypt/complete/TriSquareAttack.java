@@ -2,7 +2,6 @@ package nationalcipher.cipher.decrypt.complete;
 
 import javalibrary.dict.Dictionary;
 import javalibrary.math.MathUtil;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.TriSquare;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;

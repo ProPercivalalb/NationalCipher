@@ -10,8 +10,8 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
 public class CadenusAttack extends CipherAttack {
@@ -25,11 +25,11 @@ public class CadenusAttack extends CipherAttack {
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		CadenusTask task = new CadenusTask(text, app);
 		
-		app.getProgress().addMaxValue(Dictionary.wordCount());
 		List<Integer> factors = MathUtil.getFactors(text.length() / 25);	
 		app.out().println("" + factors);
 		
 		if(method == DecryptionMethod.DICTIONARY) {
+			app.getProgress().addMaxValue(Dictionary.wordCount()); //TODO Calculate real amount
 			for(int factor : factors) {
 				app.out().println("Factor: %d", factor);
 				for(String word : Dictionary.words) {
@@ -41,7 +41,9 @@ public class CadenusAttack extends CipherAttack {
 			}
 		}
 		else if(method == DecryptionMethod.BRUTE_FORCE) {		
-	
+			for(int factor : factors)
+				app.getProgress().addMaxValue(MathUtil.pow(26, factor));
+			
 			for(int factor : factors)
 				KeyIterator.iterateShort26Key(task, factor, true);
 		}

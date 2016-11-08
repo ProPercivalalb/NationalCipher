@@ -9,8 +9,8 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.AffineKey;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
 public class AffineAttack extends CipherAttack {

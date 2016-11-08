@@ -44,42 +44,40 @@ public class Trifid implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquares, int period) {
+	public static String decode(String cipherText, String keysquares, int period) {
+		return new String(decode(cipherText.toCharArray(), new byte[cipherText.length()], new byte[cipherText.length() * 3], keysquares, period));
+	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, byte[] numberText, String keysquares, int period) {
 		if(period == 0) period = cipherText.length;
 		
-		char[] plainText = new char[cipherText.length];
+		int blocks = (int)Math.ceil(cipherText.length / (double)period);
 		
-		int[] numberText = new int[plainText.length * 3];
-		for(int i = 0; i < cipherText.length; i++) {
-			char a = cipherText[i];
-			
-			int index = keysquares.indexOf(a);
-			int tableNo = index / 9;
-			int rowNo = (int)(index / 3) % 3;
-			int colNo = index % 3;
-			
-			numberText[i * 3] = tableNo;
-			numberText[i * 3 + 1] = rowNo;
-			numberText[i * 3 + 2] = colNo;
-		}
-		
+		int indexNo = 0;
 		int index = 0;
 		
-		for(int i = 0; i < numberText.length; i += period * 3) {
-			int min = Math.min(period, (numberText.length - i) / 3);
-
-			for(int j = 0; j < min; j++) {
-				int a = numberText[i + j];
-				int b = numberText[i + j + min];
-				int c = numberText[i + j + min * 2];
-				plainText[index++] = keysquares.charAt(a * 9 + b * 3 + c);
+		for(int b = 0; b < blocks; b++) {
+			int chPass = b * period;
+			int noPass = chPass * 3;
+			int min = Math.min(period, cipherText.length - chPass);
+			
+			for(int f = 0; f < min; f++) {
+				int index1 = keysquares.indexOf(cipherText[chPass + f]);
+				
+				numberText[indexNo++] = (byte)(index1 / 9);
+				numberText[indexNo++] = (byte)((int)(index1 / 3) % 3);
+				numberText[indexNo++] = (byte) (index1 % 3);
 			}
+			
+			for(int f = 0; f < min; f++)
+				plainText[index++] = (byte)keysquares.charAt(numberText[noPass + f] * 9 
+													+ numberText[noPass + min + f] * 3 
+													+ numberText[noPass + min * 2 + f]);
 		}
-
 		
 		return plainText;
 	}
-
+	
 	@Override
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey27(), RandomUtil.pickRandomElement(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));

@@ -1,15 +1,12 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import javalibrary.math.MathUtil;
 import nationalcipher.cipher.base.other.Homophonic;
-import nationalcipher.cipher.base.substitution.Variant;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
 public class HomophonicAttack extends CipherAttack {

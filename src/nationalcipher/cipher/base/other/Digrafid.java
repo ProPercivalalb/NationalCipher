@@ -1,54 +1,91 @@
 package nationalcipher.cipher.base.other;
 
-import java.util.Arrays;
+import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.tools.KeyGeneration;
 
-public class Digrafid {
+public class Digrafid implements IRandEncrypter {
 
-	public static void main(String[] args) {
-		//System.out.println(new String(decode("HJMXWSWJADWGFCSPYI".toCharArray(), "KEYWORDABCFGHIJLMNPQSTUVXZ#", "VDPEFQRGSTHUIJWCKXAMYLNZBO#", 3)));
-		//System.out.println(encode("HARRYTHEPUZZLEOFTHESTAMPEDPOSTCARDHADMEFOOLEDFORAWHILEBUTITHINKIFIGUREDITOUTWASTHEMESSAGEONTHEBACKOFTHESTAMPIAMGUESSINGYOUSTEAMEDITOFFANDFOUNDITTHEREITWASAPRETTYINGENIOUSPLOYMYMASTERSBACKINWASHINGTONAREINCREASINGLYWORRIEDABOUTOURRELATIONSHIPWITHTHERESTOFTHEFOURPOWERSFOLLOWINGTHEBREAKDOWNINTRUSTWITHTHESOVIETSTHEYARECOUNTINGONTHEUKANDFRANCEASALLIESIFTHEYAREGOINGBEHINDOURBACKSWITHTHISREICHSDOKTORTHATDOESNOTBODEWELLFORFUTUREDIPLOMACYDOYOUHAVECONTACTSTHEREYOUCANEXPLOITTOFINDOUTWHATTHEYAREINTENDINGWEREALLYCANNOTAFFORDTOFALLOUTRIGHTNOWTHEATTACHEDMESSAGEISANOTHERINTERCEPTTHISTIMEFROMTHEBRITISHEMBASSYWIRELESSWHILETHINGSAREDICEYIDONTFEELICANASKTHEMABOUTITMAYBEYOUCOULDCRACKITFORUSDOESITMENTIONTHERATLINESBESTCHARLIEX", "KEYWORDABCFGHIJLMNPQSTUVXZ#", "VDPEFQRGSTHUIJWCKXAMYLNZBO#", 3));
-	}
-	
-	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare1, String keysquare2, int fractional) {
-		if(fractional == 0) fractional = cipherText.length / 2; //I believe this will work
+	public static String encode(String plainText, String keysquare1, String keysquare2, int fractionation) {
+		if(plainText.length() % 2 == 1) plainText += 'X';
+		if(fractionation == 0) fractionation = plainText.length() / 2; //I believe this will work
 		
-		int[] numberText = new int[cipherText.length * 3 / 2];
-		for(int i = 0; i < cipherText.length / 2; i++) {
-			
-			char a = cipherText[i * 2];
-			char b = cipherText[i * 2 + 1];
-			
-			int index1 = keysquare1.indexOf(a);
-			int index2 = keysquare2.indexOf(b);
-						
-			int column1 = index1 % 9 + 1;
-			int row1 = index1 / 9;
-			
-			int column2 = index2 % 3;
-			int row2 = index2 / 3 + 1;
-			
-			int middleNo = row1 * 3 + column2 + 1;
+		int period = fractionation * 2;
 		
-			int blockBase = (int)(i / fractional) * (fractional * 3) + i % fractional;
-			int min = Math.min(fractional, cipherText.length / 2 - (int)(i / fractional) * fractional);
-			
-			numberText[blockBase] = column1;
-			numberText[blockBase + min] = middleNo;
-			numberText[blockBase + min * 2] = row2;
-		}
-
+		int[] numberText = new int[plainText.length() * 3 / 2];
+		int blocks = (int)Math.ceil(plainText.length() / (double)period);
+		
 		int index = 0;
 		
-		for(int i = 0; i < numberText.length; i += 3) {
-			int a = numberText[i] - 1;
-			int b = numberText[i + 1] - 1;
-			int c = numberText[i + 2] - 1;
-			plainText[index++] = (byte)keysquare1.charAt(a + (int)Math.floor(b / 3) * 9);
-			plainText[index++] = (byte)keysquare2.charAt(c * 3 + b % 3);
-			
-		}
+		char[] cipherText = new char[plainText.length()];
 		
-		return plainText;
+		for(int b = 0; b < blocks; b++) {
+			int min = Math.min(fractionation, (plainText.length() - b * period) / 2);
+			
+			for(int f = 0; f < min; f++) {
+				int cTIndex = b * period + f * 2;
+				int index1 = keysquare1.indexOf(plainText.charAt(cTIndex));
+				int index2 = keysquare2.indexOf(plainText.charAt(cTIndex + 1));
+				
+				numberText[b * fractionation * 3 + f] = index1 % 9;
+				numberText[b * fractionation * 3 + min + f] = (index1 / 9) * 3 + (index2 % 3);
+				numberText[b * fractionation * 3 + min * 2 + f] = index2 / 3;
+			}
+			
+			for(int f = 0; f < min; f++) {
+				int n1 = numberText[b * fractionation * 3 + f * 3];
+				int n2 = numberText[b * fractionation * 3 + f * 3 + 1];
+				int n3 = numberText[b * fractionation * 3 + f * 3 + 2];
+				cipherText[index++] = keysquare1.charAt(n1 + (int)(n2 / 3) * 9);
+				cipherText[index++] = keysquare2.charAt(n3 * 3 + n2 % 3);
+			}
+		}
+
+		return new String(cipherText);
 	}
 	
+	public static String decode(String cipherText, String keysquare1, String keysquare2, int fractionation) {
+		return new String(decode(cipherText.toCharArray(), new byte[cipherText.length()], new byte[cipherText.length() * 3 / 2], keysquare1, keysquare2, fractionation));
+	}
+	
+	//Most memory efficient version used for automatic decrypt
+	public static byte[] decode(char[] cipherText, byte[] plainText, byte[] numberText, String keysquare1, String keysquare2, int fractionation) {
+		if(fractionation == 0) fractionation = cipherText.length / 2; //I believe this will work
+		
+		int period = fractionation * 2;
+		
+		int blocks = (int)Math.ceil(cipherText.length / (double)period);
+		
+		int indexNo = 0;
+		int index = 0;
+		
+		for(int b = 0; b < blocks; b++) {
+			int min = Math.min(fractionation, (cipherText.length - b * period) / 2);
+			
+			for(int f = 0; f < min; f++) {
+				int cTIndex = b * period + f * 2;
+				int index1 = keysquare1.indexOf(cipherText[cTIndex]);
+				int index2 = keysquare2.indexOf(cipherText[cTIndex + 1]);
+
+				numberText[indexNo++] = (byte)(index1 % 9);
+				numberText[indexNo++] = (byte)((index1 / 9) * 3 + (index2 % 3));
+				numberText[indexNo++] = (byte)(index2 / 3);
+			}
+			
+			for(int f = 0; f < min; f++) {
+				int n1 = numberText[b * fractionation * 3 + f];
+				int n2 = numberText[b * fractionation * 3 + min + f];
+				int n3 = numberText[b * fractionation * 3 + min * 2 + f];
+				plainText[index++] = (byte)keysquare1.charAt(n1 + (int)(n2 / 3) * 9);
+				plainText[index++] = (byte)keysquare2.charAt(n3 * 3 + n2 % 3);
+			}
+		}
+
+		return plainText;
+	}
+
+	@Override
+	public String randomlyEncrypt(String plainText) {
+		return encode(plainText, KeyGeneration.createLongKey27(), KeyGeneration.createLongKey27(), RandomUtil.pickRandomElement(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
+	}
 }

@@ -26,6 +26,7 @@ import nationalcipher.cipher.decrypt.complete.HillAttack;
 import nationalcipher.cipher.decrypt.complete.HomophonicAttack;
 import nationalcipher.cipher.decrypt.complete.MyszkowskiAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistSubstitutionAttack;
+import nationalcipher.cipher.decrypt.complete.NihilistTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.PhillipsAttack;
 import nationalcipher.cipher.decrypt.complete.PlayfairAttack;
 import nationalcipher.cipher.decrypt.complete.PolluxAttack;
@@ -130,6 +131,7 @@ public class AttackRegistry {
 		registerCipher(new ColumnarTranspositionAttack(), settings);
 		registerCipher(new MyszkowskiAttack(), settings);
 		registerCipher(new DoubleTranspositionAttack(), settings);
+		registerCipher(new NihilistTranspositionAttack(), settings);
 		
 		//Other
 		registerCipher(new PlayfairAttack(), settings);

@@ -6,6 +6,7 @@ import java.util.List;
 import nationalcipher.cipher.base.other.ADFGX;
 import nationalcipher.cipher.base.other.Bifid;
 import nationalcipher.cipher.base.other.ConjugatedBifid;
+import nationalcipher.cipher.base.other.Digrafid;
 import nationalcipher.cipher.base.other.Hill;
 import nationalcipher.cipher.base.other.Homophonic;
 import nationalcipher.cipher.base.other.Morbit;
@@ -50,6 +51,7 @@ import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.base.transposition.Cadenus;
 import nationalcipher.cipher.base.transposition.Columnar;
 import nationalcipher.cipher.base.transposition.Myszkowski;
+import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
 import nationalcipher.cipher.transposition.RouteTransposition;
@@ -69,7 +71,8 @@ public class RandomEncrypter {
 	static {
 		ciphers.add(new ADFGX());
 		ciphers.add(new Affine());
-		ciphers.add(new AMSCO());
+		ciphers.add(new AMSCO());	
+		ciphers.add(new Bazeries());
 		ciphers.add(new Beaufort());
 		ciphers.add(new BeaufortAutokey());
 		ciphers.add(new BeaufortProgressiveKey());
@@ -78,8 +81,8 @@ public class RandomEncrypter {
 		ciphers.add(new Caesar());
 		ciphers.add(new Cadenus());
 		ciphers.add(new Columnar());
-		ciphers.add(new Bazeries());
 		ciphers.add(new ConjugatedBifid());
+		ciphers.add(new Digrafid());
 		ciphers.add(new Enigma());
 		ciphers.add(new FourSquare());
 		ciphers.add(new FractionatedMorse());
@@ -89,6 +92,7 @@ public class RandomEncrypter {
 		ciphers.add(new Morbit());
 		ciphers.add(new Myszkowski());
 		ciphers.add(new NihilistSubstitution());
+		ciphers.add(new NihilistTransposition());
 		ciphers.add(new PeriodicGromark());
 		ciphers.add(new Phillips());
 		ciphers.add(new Playfair());
