@@ -418,23 +418,23 @@ public class Solitaire implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static char[] decodeWithKeyStream(int[] cipherText, int[] keyStream) {
+	public static byte[] decodeWithKeyStream(byte[] cipherText, int[] keyStream) {
 		return decodeWithKeyStream(cipherText, 0, keyStream);
 	}
 	
-	public static char[] decodeWithKeyStream(int[] cipherText, int startingIndex, int[] keyStream) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decodeWithKeyStream(byte[] cipherText, int startingIndex, int[] keyStream) {
+		byte[] plainText = new byte[cipherText.length];
 		int index = startingIndex;
 		
 
 		
 		for(int i = 0; i < index; i++)
-			plainText[i] = (char)(cipherText[i] + 'A');
+			plainText[i] = (byte)(cipherText[i] + 'A');
 		
 		for(int keyStreamNumber : keyStream) {
 
 			
-			plainText[index] = (char)((51 + cipherText[index] - keyStreamNumber) % 26 + 'A');
+			plainText[index] = (byte)((51 + cipherText[index] - keyStreamNumber) % 26 + 'A');
 			index += 1;
 		}
 
@@ -469,6 +469,37 @@ public class Solitaire implements IRandEncrypter {
 				continue;
 			
 			plainText[index] = (char)((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
+			index += 1;
+		}
+
+		return plainText;
+	}
+	
+	//Byte version of above
+	public static byte[] decode(byte[] cipherText, int startingIndex, int[] cardOrder) {
+		byte[] plainText = new byte[cipherText.length];
+		int index = startingIndex;
+		
+		for(int i = 0; i < index; i++)
+			plainText[i] = cipherText[i];
+		
+		while(index < cipherText.length) {
+
+			cardOrder = nextCardOrder(cardOrder);
+			
+			int topCard = cardOrder[0];
+			int keyStreamNumber;
+			//System.out.println("Top card" + topCard);
+			if(!isJoker(topCard))
+				keyStreamNumber = cardOrder[topCard + 1];
+			else 
+				keyStreamNumber = cardOrder[cardOrder.length - 1];
+			
+			//System.out.println(keyStreamNumber);
+			if(isJoker(keyStreamNumber))
+				continue;
+			
+			plainText[index] = (byte)((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
 			index += 1;
 		}
 

@@ -78,7 +78,11 @@ public class KeyIterator {
 	}
 	
 	public static void iterateIntegerOrderedKey(IntegerOrderedKey task, int length) {
-		iterateIntegerOrderedKey(task, ArrayUtil.range(0, length), 0);
+		iterateIntegerOrderedKey(task, ArrayUtil.range(0, length));
+	}
+	
+	public static void iterateIntegerOrderedKey(IntegerOrderedKey task, int[] arr) {
+		iterateIntegerOrderedKey(task, arr, 0);
 	}
 	
 	private static void iterateIntegerOrderedKey(IntegerOrderedKey task, int[] arr, int pos) {
