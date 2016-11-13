@@ -1,7 +1,9 @@
 package nationalcipher.cipher.base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nationalcipher.cipher.base.other.ADFGX;
 import nationalcipher.cipher.base.other.Bifid;
@@ -49,78 +51,106 @@ import nationalcipher.cipher.base.substitution.VigenereProgressiveKey;
 import nationalcipher.cipher.base.substitution.VigenereSlidefair;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.base.transposition.Cadenus;
-import nationalcipher.cipher.base.transposition.Columnar;
+import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
+import nationalcipher.cipher.base.transposition.Redefence;
 import nationalcipher.cipher.transposition.RouteTransposition;
 
 public class RandomEncrypter {
 
-	public static List<IRandEncrypter> ciphers = new ArrayList<IRandEncrypter>();
+	public static Map<String, IRandEncrypter> ciphers = new HashMap<String, IRandEncrypter>();
+	public static Map<String, Integer> ciphersDifficulty = new HashMap<String, Integer>();
 	
 	public static IRandEncrypter getFromName(String name) {
-		for(IRandEncrypter randEncrypt : ciphers)
-			if(randEncrypt.getClass().getSimpleName().equals(name))
-				return randEncrypt;
-		
-		return null;
+		return ciphers.get(name);
+	}
+	
+	public static IRandEncrypter getDifficulty(String name) {
+		return ciphers.get(name);
+	}
+	
+	public static List<String> getAllWithDifficulty(int maxDifficulty) {
+		List<String> below = new ArrayList<String>();
+		for(String key : ciphersDifficulty.keySet())
+			if(ciphersDifficulty.get(key) <= maxDifficulty)
+				for(int i = 0; i < Math.log(ciphersDifficulty.get(key)) / Math.log(2) + 1; i++) 
+					below.add(key);
+
+		return below;
+	}
+	
+	//By Default difficulty is 5 (medium)
+	public static void registerEncrypter(IRandEncrypter randEncrypter) {
+		registerEncrypter(randEncrypter, 5);
+	}
+	
+	/**
+	 * 
+	 * @param randEncrypter
+	 * @param difficulty Integer 1 to 10 inclusive, 1 being easier to decrypt that 10
+	 */
+	public static void registerEncrypter(IRandEncrypter randEncrypter, int difficulty) {
+		ciphers.put(randEncrypter.getClass().getSimpleName(), randEncrypter);
+		ciphersDifficulty.put(randEncrypter.getClass().getSimpleName(), difficulty);
 	}
 	
 	static {
-		ciphers.add(new ADFGX());
-		ciphers.add(new Affine());
-		ciphers.add(new AMSCO());	
-		ciphers.add(new Bazeries());
-		ciphers.add(new Beaufort());
-		ciphers.add(new BeaufortAutokey());
-		ciphers.add(new BeaufortProgressiveKey());
-		ciphers.add(new BeaufortSlidefair());
-		ciphers.add(new Bifid());
-		ciphers.add(new Caesar());
-		ciphers.add(new Cadenus());
-		ciphers.add(new Columnar());
-		ciphers.add(new ConjugatedBifid());
-		ciphers.add(new Digrafid());
-		ciphers.add(new Enigma());
-		ciphers.add(new FourSquare());
-		ciphers.add(new FractionatedMorse());
-		ciphers.add(new Hill());
-		ciphers.add(new Homophonic());
-		ciphers.add(new Keyword());
-		ciphers.add(new Morbit());
-		ciphers.add(new Myszkowski());
-		ciphers.add(new NihilistSubstitution());
-		ciphers.add(new NihilistTransposition());
-		ciphers.add(new PeriodicGromark());
-		ciphers.add(new Phillips());
-		ciphers.add(new Playfair());
-		ciphers.add(new Pollux());
-		ciphers.add(new Porta());
-		ciphers.add(new PortaAutokey());
-		ciphers.add(new PortaProgressiveKey());
-		ciphers.add(new Portax());
-		ciphers.add(new QuagmireI());
-		ciphers.add(new QuagmireII());
-		ciphers.add(new QuagmireIII());
-		ciphers.add(new QuagmireIV());
-		ciphers.add(new RailFence());
-		ciphers.add(new RouteTransposition());
-		ciphers.add(new RunningKey());
-		ciphers.add(new SeriatedPlayfair());
-		ciphers.add(new Solitaire());
-		//TODO ciphers.add(new Swagman());
-		ciphers.add(new Trifid());
-		ciphers.add(new TwoSquare());
-		ciphers.add(new TriSquare());
-		ciphers.add(new Variant());
-		ciphers.add(new VariantAutokey());
-		ciphers.add(new VariantProgressiveKey());
-		ciphers.add(new VariantSlidefair());
-		ciphers.add(new Vigenere());
-		ciphers.add(new VigenereAutokey());
-		ciphers.add(new VigenereProgressiveKey());
-		ciphers.add(new VigenereSlidefair());
+		registerEncrypter(new ADFGX(), 10);
+		registerEncrypter(new Affine(), 1);
+		registerEncrypter(new AMSCO(), 3);	
+		registerEncrypter(new Bazeries(), 3);
+		registerEncrypter(new Beaufort(), 2);
+		registerEncrypter(new BeaufortAutokey(), 2);
+		registerEncrypter(new BeaufortProgressiveKey(), 4);
+		registerEncrypter(new BeaufortSlidefair(), 2);
+		registerEncrypter(new Bifid(), 5);
+		registerEncrypter(new Caesar(), 1);
+		registerEncrypter(new Cadenus(), 7);
+		registerEncrypter(new ColumnarTransposition(), 2);
+		registerEncrypter(new ConjugatedBifid(), 6);
+		registerEncrypter(new Digrafid(), 5);
+		registerEncrypter(new Enigma(), 8);
+		registerEncrypter(new FourSquare(), 7);
+		registerEncrypter(new FractionatedMorse(), 5);
+		registerEncrypter(new Hill(), 7);
+		registerEncrypter(new Homophonic(), 5);
+		registerEncrypter(new Keyword(), 1);
+		registerEncrypter(new Morbit());
+		registerEncrypter(new Myszkowski(), 3);
+		registerEncrypter(new NihilistSubstitution(), 4);
+		registerEncrypter(new NihilistTransposition(), 6);
+		registerEncrypter(new PeriodicGromark());
+		registerEncrypter(new Phillips(), 7);
+		registerEncrypter(new Playfair(), 8);
+		registerEncrypter(new Pollux(), 5);
+		registerEncrypter(new Porta(), 2);
+		registerEncrypter(new PortaAutokey(), 2);
+		registerEncrypter(new PortaProgressiveKey(), 4);
+		registerEncrypter(new Portax(), 3);
+		registerEncrypter(new QuagmireI(), 6);
+		registerEncrypter(new QuagmireII(), 6);
+		registerEncrypter(new QuagmireIII(), 7);
+		registerEncrypter(new QuagmireIV(), 8);
+		registerEncrypter(new RailFence(), 1);
+		//registerEncrypter(new Redefence(), 2);
+		registerEncrypter(new RouteTransposition(), 4);
+		registerEncrypter(new RunningKey(), 10);
+		registerEncrypter(new SeriatedPlayfair(), 8);
+		registerEncrypter(new Solitaire(), 10);
+		//TODO registerEncrypter(new Swagman());
+		registerEncrypter(new Trifid(), 8);
+		registerEncrypter(new TwoSquare(), 7);
+		registerEncrypter(new TriSquare(), 9);
+		registerEncrypter(new Variant(), 2);
+		registerEncrypter(new VariantAutokey(), 2);
+		registerEncrypter(new VariantProgressiveKey(), 4);
+		registerEncrypter(new VariantSlidefair(), 2);
+		registerEncrypter(new Vigenere(), 2);
+		registerEncrypter(new VigenereAutokey(), 2);
+		registerEncrypter(new VigenereProgressiveKey(), 4);
+		registerEncrypter(new VigenereSlidefair(), 2);
 	}
 }

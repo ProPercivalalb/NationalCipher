@@ -120,7 +120,7 @@ import nationalcipher.cipher.base.ProgressiveKey;
 import nationalcipher.cipher.base.RandomEncrypter;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
-import nationalcipher.cipher.base.transposition.Columnar;
+import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.AttackRegistry;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
@@ -333,6 +333,7 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemWordSplit = new JMenuItem();
         this.menuItemInfo = new JMenuItem();
         this.menuItemEncrypter = new JMenu();
+        this.encodingDiffSlider = new JSlider(JSlider.HORIZONTAL);
         this.menuItemEncode = new JMenuItem();
         this.menuItemEncodeChose = new JMenu();
         this.menuItemSettings = new JMenu();
@@ -658,33 +659,32 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemEncrypter.add(this.menuItemEncode);
   
         
-        final JSlider slider = new JSlider(JSlider.HORIZONTAL);
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        labelTable.put(0, new JLabel("Easy"));
-        labelTable.put(5, new JLabel("Hard"));
-        slider.setLabelTable( labelTable );
-        slider.setMinimum(0);
-        slider.setMaximum(5);
-        slider.setMinorTickSpacing(1);
-        slider.setMajorTickSpacing(5);
-        slider.setSnapToTicks(false);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        slider.setFocusable(false);
-        this.menuItemEncrypter.add(slider);
+        labelTable.put(1, new JLabel("Easy"));
+        labelTable.put(10, new JLabel("Hard"));
+        this.encodingDiffSlider.setLabelTable(labelTable);
+        this.encodingDiffSlider.setMinimum(1);
+        this.encodingDiffSlider.setMaximum(10);
+        this.encodingDiffSlider.setMinorTickSpacing(1);
+        this.encodingDiffSlider.setMajorTickSpacing(9);
+        this.encodingDiffSlider.setSnapToTicks(true);
+        this.encodingDiffSlider.setPaintTicks(true);
+        this.encodingDiffSlider.setPaintLabels(true);
+        this.encodingDiffSlider.setFocusable(false);
+        this.menuItemEncrypter.add(this.encodingDiffSlider);
         
         this.menuItemEncrypter.addSeparator();
         
         this.menuItemEncodeChose.setText("Specific");
         MenuScroller.setScrollerFor(this.menuItemEncodeChose, 15, 125, 0, 0);
-        for(final IRandEncrypter encrypt : RandomEncrypter.ciphers) {
-        	JMenuItem jmi = new JMenuItem(encrypt.getClass().getSimpleName());
+        for(final String key : RandomEncrypter.ciphers.keySet()) {
+        	JMenuItem jmi = new JMenuItem(key);
         	jmi.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent event) {
 					String text = getInputTextOnlyAlpha();
-	    			String cipherText = encrypt.randomlyEncrypt(text);
+	    			String cipherText = RandomEncrypter.getFromName(key).randomlyEncrypt(text);
 	 
 	    			StringSelection selection = new StringSelection(cipherText);
 		    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
@@ -1613,7 +1613,7 @@ public class UINew extends JFrame implements IApplication {
 		@Override
 		public void onPermentate(int[] array) {
 			System.out.println(""+ Arrays.toString(array));
-			char[] s = Columnar.decode(this.text, array, false);
+			char[] s = ColumnarTransposition.decode(this.text, array, false);
 			String str = new String(s);
 			double n = calculate(str, this.language);
 	    	double evenDiagraphicIC = StatCalculator.calculateEvenDiagrahpicIC(str);
@@ -3357,7 +3357,8 @@ public class UINew extends JFrame implements IApplication {
     		}
     		
     		if(!text.isEmpty()) {
-    			IRandEncrypter randomEncrypt = RandomUtil.pickRandomElement(RandomEncrypter.ciphers);
+    			List<String> possible = RandomEncrypter.getAllWithDifficulty(encodingDiffSlider.getValue());
+    			IRandEncrypter randomEncrypt = RandomEncrypter.getFromName(RandomUtil.pickRandomElement(possible));
     			String cipherText = randomEncrypt.randomlyEncrypt(text);
     			output.println(randomEncrypt.getClass().getSimpleName());
     			output.println(StringTransformer.repeat("\n", 25));
@@ -3604,6 +3605,30 @@ public class UINew extends JFrame implements IApplication {
 	public ProgressValue getProgress() {
 		return this.progressValue;
 	}
+	
+
+	@Override
+	public JDialog openGraph(JBarChart barChart) {
+		JDialog dialog = new JDialog();
+		dialog.addWindowListener(new JDialogCloseEvent(dialog));
+		dialog.setAlwaysOnTop(true);
+		dialog.setModal(false);
+		dialog.setResizable(false);
+		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
+		dialog.setFocusableWindowState(false);
+		dialog.setMinimumSize(new Dimension(800, 400));
+		
+		JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(barChart);
+        dialog.add(panel);
+        
+        dialog.setVisible(true);
+		dialogs.add(dialog);
+		addDialog(dialog);
+		
+		return dialog;
+	}
     
     private JComboBox<String> cipherSelect;
     private JComboBox<DecryptionMethod> decryptionType;
@@ -3653,6 +3678,7 @@ public class UINew extends JFrame implements IApplication {
     private JMenuItem menuItemInfo;
     private JMenuItem menuItemSolitaire;
     private JMenu menuItemEncrypter;
+    private JSlider encodingDiffSlider;
     private JMenuItem menuItemEncode;
     private JMenu menuItemEncodeChose;
     private JMenu menuItemSettings;

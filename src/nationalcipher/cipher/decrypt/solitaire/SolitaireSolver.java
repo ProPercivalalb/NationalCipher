@@ -56,9 +56,6 @@ public class SolitaireSolver {
 		SolitaireSolution task = new SolitaireSolution(ArrayUtil.convertCharType(cipherText.substring(offset + n, cipherText.length()).toCharArray()), offset + n, out);
 		out.println("Solutions: " + solutions.size());
 		for(Solution solution : solutions) {
-			if(solution.getText()[0] == 'A' && solution.getText()[1] == 'S' && solution.getText()[2] == 'T' && solution.getText()[3] == 'H' && solution.getText()[4] == 'E') {
-				out.println("FOUND " + new String(solution.getText()));
-			}
 			DeckParse deck = new DeckParse(solution.keyString);
 			task.incompleteOrder = deck.order;
 			task.emptyIndex = deck.emptyIndex;

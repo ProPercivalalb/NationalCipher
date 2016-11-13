@@ -10,7 +10,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.transposition.route.RouteTwist;
-import nationalcipher.cipher.transposition.route.RouteWriteAcross;
+import nationalcipher.cipher.transposition.route.RowRoute;
 import nationalcipher.cipher.transposition.route.RouteWriteDown;
 
 
@@ -285,7 +285,11 @@ public class Routes {
 	
 	public static RouteCipherRandom RANDOM = new RouteCipherRandom("Totally random.");
 	
-	public static RouteWriteAcross ACROSS = new RouteWriteAcross("Written across.");
+	//TODO Fix not working
+	public static RouteCipherType ACROSS_1 = new RowRoute.TopLeft();
+	public static RouteCipherType ACROSS_2 = new RowRoute.TopRight();
+	public static RouteCipherType ACROSS_3 = new RowRoute.BottomLeft();
+	public static RouteCipherType ACROSS_4 = new RowRoute.BottomRight();
 	
 	public static RouteWriteDown DOWN  = new RouteWriteDown("Written down.");
 	

@@ -9,6 +9,8 @@ import javax.swing.JSpinner;
 import javalibrary.dict.Dictionary;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
+import javalibrary.swing.chart.ChartData;
+import javalibrary.swing.chart.JBarChart;
 import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -26,7 +28,7 @@ public abstract class NicodemusAttack extends CipherAttack {
 	
 	public NicodemusAttack(String displayName) {
 		super(displayName);
-		this.setAttackMethods(DecryptionMethod.DICTIONARY, DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.DICTIONARY, DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION, DecryptionMethod.EXAMINE);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 	}
 	
@@ -58,6 +60,11 @@ public abstract class NicodemusAttack extends CipherAttack {
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			app.getProgress().setIndeterminate(true);
 			task.run(periodRange[0], periodRange[1]);
+		}
+		else if(method == DecryptionMethod.EXAMINE) {
+			JBarChart barChart = new JBarChart();
+			barChart.values.add(new ChartData("Value", 2));
+			app.openGraph(barChart);
 		}
 		
 		app.out().println(task.getBestSolution());

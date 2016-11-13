@@ -1,5 +1,7 @@
 package nationalcipher.cipher.base.transposition;
 
+import java.util.Arrays;
+
 import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
@@ -9,10 +11,10 @@ import nationalcipher.cipher.tools.KeyGeneration;
 /**
  * @author Alex Barter (10AS)
  */
-public class Columnar implements IRandEncrypter {
+public class ColumnarTransposition implements IRandEncrypter {
 	
 	public static String encode(String plainText, int[] order, boolean defaultRead) {
-		
+		System.out.print(Arrays.toString(order));
 		if(defaultRead) {
 			String cipherText = "";
 			for(int column = 0; column < order.length; column++) 
@@ -44,8 +46,7 @@ public class Columnar implements IRandEncrypter {
 	 * @param defaultRead True means it will read the cipherText down columns, False means the cipherText was read across rows
 	 * @return
 	 */
-	public static char[] decode(char[] cipherText, int[] order, boolean defaultRead) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, byte[] plainText, int[] order, boolean defaultRead) {
 		int[] orderIndex = ArrayUtil.toIndexedArray(order);
 		int period = order.length;
 		int rows = (int)Math.ceil(cipherText.length / (double)period);
@@ -62,7 +63,7 @@ public class Columnar implements IRandEncrypter {
 					if(index >= cipherText.length)
 						break;
 	
-					plainText[row * period + trueColumn] = cipherText[index++];
+					plainText[row * period + trueColumn] = (byte)cipherText[index++];
 				}
 			}
 		else
@@ -75,7 +76,7 @@ public class Columnar implements IRandEncrypter {
 					if(index >= cipherText.length)
 						break;
 
-					plainText[row * period + trueColumn] = cipherText[index++];
+					plainText[row * period + trueColumn] = (byte)cipherText[index++];
 				}
 			}
 
@@ -84,6 +85,6 @@ public class Columnar implements IRandEncrypter {
 	
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createOrder(2, 9), RandomUtil.pickBoolean());
+		return encode(plainText, KeyGeneration.createOrder(14, 14), true);
 	}
 }

@@ -2,7 +2,7 @@ package nationalcipher.cipher.decrypt.methods;
 
 public enum DecryptionMethod {
 
-	BRUTE_FORCE("Brute Force"),
+	BRUTE_FORCE("Brute Force"), //Attempts all keys
 	SIMULATED_ANNEALING("Simulated Annealing"),
 	CALCULATED("Calculated"),
 	DICTIONARY("Dictionary"),

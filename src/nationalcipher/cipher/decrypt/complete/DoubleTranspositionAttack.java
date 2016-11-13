@@ -10,7 +10,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.transposition.Columnar;
+import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -62,11 +62,11 @@ public class DoubleTranspositionAttack extends CipherAttack {
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			for(int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
 				for(int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
-					app.getProgress().addMaxValue(MathUtil.factorialBig(length1).multiply(MathUtil.factorialBig(length2)) );
+					app.getProgress().addMaxValue(MathUtil.factorialBig(length1).multiply(MathUtil.factorialBig(length2)));
 			
 			for(int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
 				for(int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
-				KeyIterator.iterateDoubleIntegerOrderedKey(this.task, length1, length2);
+					KeyIterator.iterateDoubleIntegerOrderedKey(this.task, length1, length2);
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
@@ -89,7 +89,7 @@ public class DoubleTranspositionAttack extends CipherAttack {
 		
 		@Override
 		public void onIteration(int[] order1, int[] order2) {
-			this.lastSolution = new Solution(Columnar.decode(Columnar.decode(this.cipherText, order2, true), order1, true), this.getLanguage());
+			this.lastSolution = new Solution(ColumnarTransposition.decode(ColumnarTransposition.decode(this.cipherText, order2, true), order1, true), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -108,7 +108,7 @@ public class DoubleTranspositionAttack extends CipherAttack {
 			this.bestMaximaKey2 = KeyGeneration.createOrder(this.period2);
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(Columnar.decode(Columnar.decode(this.cipherText, this.bestMaximaKey2, true), this.bestMaximaKey1, true), this.getLanguage());
+			return new Solution(ColumnarTransposition.decode(ColumnarTransposition.decode(this.cipherText, this.bestMaximaKey2, true), this.bestMaximaKey1, true), this.getLanguage());
 		}
 
 		@Override
@@ -125,7 +125,7 @@ public class DoubleTranspositionAttack extends CipherAttack {
 					KeySquareManipulation.exchangeOrder(copy);
 				this.lastKey2 = copy;
 			}
-			return new Solution(Columnar.decode(Columnar.decode(this.cipherText, this.lastKey2, true), this.lastKey1, true), this.getLanguage());
+			return new Solution(ColumnarTransposition.decode(ColumnarTransposition.decode(this.cipherText, this.lastKey2, true), this.lastKey1, true), this.getLanguage());
 		}
 
 		@Override
