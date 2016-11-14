@@ -19,20 +19,17 @@ import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.base.other.Solitaire;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
-import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
 public class SolitaireAttack extends CipherAttack {

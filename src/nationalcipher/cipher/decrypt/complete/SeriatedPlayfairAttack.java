@@ -14,7 +14,8 @@ import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -81,13 +82,13 @@ public class SeriatedPlayfairAttack extends CipherAttack {
 		
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
+			this.bestMaximaKey = KeyGeneration.createLongKey25();
 			return new Solution(SeriatedPlayfair.decode(this.cipherText, this.bestMaximaKey, this.period), this.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
+			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 5, 5);
 			return new Solution(SeriatedPlayfair.decode(this.cipherText, this.lastKey, this.period), this.getLanguage());
 		}
 

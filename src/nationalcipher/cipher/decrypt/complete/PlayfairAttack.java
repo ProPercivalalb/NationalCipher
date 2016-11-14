@@ -8,7 +8,8 @@ import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -62,13 +63,13 @@ public class PlayfairAttack extends CipherAttack {
 		
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
+			this.bestMaximaKey = KeyGeneration.createLongKey25();
 			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
+			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 5, 5);
 			return new Solution(Playfair.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
 		}
 
