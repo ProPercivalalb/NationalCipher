@@ -43,6 +43,7 @@ import nationalcipher.cipher.decrypt.complete.RouteAttack;
 import nationalcipher.cipher.decrypt.complete.SeriatedPlayfairAttack;
 import nationalcipher.cipher.decrypt.complete.SimpleSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.SolitaireAttack;
+import nationalcipher.cipher.decrypt.complete.StraddleCheckerboardAttack;
 import nationalcipher.cipher.decrypt.complete.SwagmanAttack;
 import nationalcipher.cipher.decrypt.complete.TriSquareAttack;
 import nationalcipher.cipher.decrypt.complete.TrifidAttack;
@@ -146,9 +147,10 @@ public class AttackRegistry {
 		registerCipher(new HomophonicAttack(), settings);
 		registerCipher(new DigrafidAttack(), settings);
 		registerCipher(new SolitaireAttack(), settings);
+		registerCipher(new StraddleCheckerboardAttack(), settings);
 		
 		//
-		//registerCipher(new SolitaireAttack(), settings);
+		//registerCipher(new StraddleCheckerboardAttack(), settings);
 		//registerCipher(new SeriatedPlayfairAttack(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);
