@@ -29,18 +29,21 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 
 	private JSpinner[] rangeSpinner;
 	private JComboBox<Boolean> readOffDefaultChose;
+	private JSpinner saSpinner;
 	
 	public ColumnarTranspositionAttack() {
 		super("Columnar Transposition");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.DICTIONARY, DecryptionMethod.SIMULATED_ANNEALING);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
 		this.readOffDefaultChose = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.saSpinner = JSpinnerUtil.createSpinner(14, 2, 100, 1);
 	}
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
 		panel.add(new SubOptionPanel("Read down columns (T) or across rows (F)? ", this.readOffDefaultChose));
+		panel.add(new SubOptionPanel("SA Period:", this.saSpinner));
 	}
 	
 	@Override
@@ -50,6 +53,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		//Settings grab
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		task.readOffDefault = SettingParse.getBooleanValue(this.readOffDefaultChose);
+		task.period1 = SettingParse.getInteger(this.saSpinner);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
@@ -87,7 +91,6 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		
 		public ColumnarTranspositionTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
-			this.period1 = 14;
 		}
 
 		@Override
@@ -97,6 +100,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString("%s, d: %b", Arrays.toString(order), this.readOffDefault);
+				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
