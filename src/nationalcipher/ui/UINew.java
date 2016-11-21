@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -48,6 +49,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -67,6 +69,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
@@ -128,6 +131,7 @@ import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
+import nationalcipher.cipher.stats.TextStatistic;
 
 /**
  *
@@ -155,7 +159,7 @@ public class UINew extends JFrame implements IApplication {
     	this.lastStates = new ArrayList<JDialog>();
     	
     	AttackRegistry.loadCiphers(this.settings);
-    	//DecryptionManager.loadCiphers(this.settings);
+		StatisticHandler.registerStatistics();
     	this.settings.readFromFile();
     	
         initComponents();
@@ -203,7 +207,7 @@ public class UINew extends JFrame implements IApplication {
     	final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents((JComponent)getContentPane(), menuBar);
     	
     	
-    	this.progressBar.setMaximum(Languages.languages.size() + 4);
+    	this.progressBar.setMaximum(Languages.languages.size() + 3);
 		//Loading
 		Threads.runTask(new Runnable() {
 			@Override
@@ -223,9 +227,7 @@ public class UINew extends JFrame implements IApplication {
 					language.loadNGramData();
 					progressBar.setValue(progressBar.getValue() + 1);
 				}
-				
-				StatisticHandler.registerStatistics();
-				progressBar.setValue(progressBar.getValue() + 1);
+			
 				  
 				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(TraverseTree.class.getResourceAsStream("/javalibrary/cipher/stats/trigraph.txt")));
 
@@ -319,6 +321,7 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemIoCADFGX = new JMenuItem();
         this.menuItemIoCNormal = new JMenuItem();
         this.menuItemIoCBifid = new JMenuItem();
+        this.menuItemIoCHill = new JMenuItem();
         this.menuItemIoCNicodemus = new JMenuItem();
         this.menuItemIoCNihilist = new JMenuItem();
         this.menuItemIoCPortax = new JMenuItem();
@@ -579,6 +582,11 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemIoCBifid.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Bifid IoC"));
         this.menuItemIoCBifid.addActionListener(new BifidIoCAction());
         this.menuItemIoC.add(this.menuItemIoCBifid);
+        
+        this.menuItemIoCHill.setText("Hill");
+        this.menuItemIoCHill.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Hill IoC"));
+        this.menuItemIoCHill.addActionListener(new HillIoCAction());
+        this.menuItemIoC.add(this.menuItemIoCHill);
         
         this.menuItemIoCNicodemus.setText("Nicodemus");
         this.menuItemIoCNicodemus.setIcon(ImageUtil.createImageIcon("/image/chart_bar.png", "Nicodemus"));
@@ -1159,7 +1167,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		String binaryText = inputTextArea.getText();
-			List<String> split = StringTransformer.splitInto(binaryText, (int)5);
+			String[] split = StringTransformer.splitInto(binaryText, 5);
 			
 			String cipherText = "";
 			for(String binary : split) {
@@ -1613,10 +1621,10 @@ public class UINew extends JFrame implements IApplication {
 		@Override
 		public void onPermentate(int[] array) {
 			System.out.println(""+ Arrays.toString(array));
-			char[] s = ColumnarTransposition.decode(this.text, array, false);
+			byte[] s = ColumnarTransposition.decode(this.text, new byte[this.text.length], array, false);
 			String str = new String(s);
 			double n = calculate(str, this.language);
-	    	double evenDiagraphicIC = StatCalculator.calculateEvenDiagrahpicIC(str);
+	    	double evenDiagraphicIC = StatCalculator.calculateIC(str, 2, false);
 	    	
 	    	Integer[] arr = new Integer[array.length];
 	    	for(int i = 0; i <array.length; i++)
@@ -1872,6 +1880,79 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
+    private class HillIoCAction implements ActionListener {
+    	
+    	private JDialog dialog;
+    	private JBarChart chart;
+    	
+    	public HillIoCAction() {
+    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(dialog.isVisible()) {
+						updateDialog();
+					}	
+				}
+    		});
+    		
+    		this.dialog = new JDialog();
+    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
+    		this.dialog.setTitle("Hill IoC");
+    		this.dialog.setAlwaysOnTop(true);
+    		this.dialog.setModal(false);
+    		this.dialog.setResizable(false);
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setFocusableWindowState(false);
+    		this.dialog.setMinimumSize(new Dimension(800, 400));
+    		
+    		JPanel panel = new JPanel();
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	          
+	        this.chart = new JBarChart();
+	        this.chart.setHasBarText(false);
+	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+	        panel.add(this.chart);
+	         
+    		this.dialog.add(panel);
+    		
+    		dialogs.add(this.dialog);
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		this.dialog.setVisible(true);
+     		addDialog(this.dialog);
+     		
+    		this.updateDialog();
+		}
+    	
+    	public void updateDialog() {
+			this.chart.resetAll();
+			
+    		String text = getInputTextOnlyAlpha();
+			if(!text.isEmpty()) {
+				
+				int bestPeriod = -1;
+				double bestIC = Double.MIN_VALUE;
+				
+			    for(int period = 2; period <= 10; period++) {
+			    	
+			        double score = StatCalculator.calculateLongIC(text, period, 26);
+			        this.chart.values.add(new ChartData("" + period, score));
+			        if(bestIC < score)
+			        	bestPeriod = period;
+			        
+			        bestIC = Math.max(bestIC, score);
+			    }
+			    
+			    this.chart.setSelected(bestPeriod - 2);
+			}
+    		
+    		this.chart.repaint();
+    	}
+    }
+    
     private class NicodemusIoCAction implements ActionListener {
     	
     	private JDialog dialog;
@@ -2024,7 +2105,7 @@ public class UINew extends JFrame implements IApplication {
     		    for(int period = 2; period <= 40; ++period) {
     		    	double total = 0.0D;
     		    	for(int i = 0; i < period; i++)
-    		    		total += StatCalculator.calculateDiagrahpicIC(StringTransformer.getEveryNthBlock(text, 2, i, period));
+    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthBlock(text, 2, i, period), 2, true);
     		    	total /= period;
     		    	
     		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
@@ -2119,7 +2200,7 @@ public class UINew extends JFrame implements IApplication {
 			                }
 			        	}
 			        }
-			        double sqDiff = StatCalculator.calculateIC(string);
+			        double sqDiff = StatCalculator.calculateIC(string, 1, true);
 			        
 			        if(sqDiff < bestIoC)
     		    		bestPeriod = period;
@@ -2239,7 +2320,7 @@ public class UINew extends JFrame implements IApplication {
 							
 							double total = 0.0D;
 		    		    	for(int i = 0; i < period; i++)
-		    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(decoded, i, period));
+		    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(decoded, i, period), 1, true);
 		    		    	total /= period;
 		    		    	
 		    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
@@ -2423,7 +2504,7 @@ public class UINew extends JFrame implements IApplication {
 	    		for(int period = 2; period <= 40; ++period) {
 	    		    double total = 0.0D;
 	    		    for(int i = 0; i < period * 2; i++)
-	    		    	total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period * 2));
+	    		    	total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period * 2), 1, true);
 	    		    total /= period * 2;
 	    		    	
 	    		    double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
@@ -2635,11 +2716,12 @@ public class UINew extends JFrame implements IApplication {
 				
 				int bestPeriod = -1;
 				double bestIC = Double.MIN_VALUE;
+				int size = 3;
+				
 			    for(int period = 0; period <= 40; period++) {
-			    	if(period == 1) continue;
-			    	if(period == 2) continue;
+			    	if(period > 0 && period < size) continue;
 			    	
-			        double score = StatCalculator.calculateTrifidDiagraphicIC(text, period);
+			        double score = StatCalculator.calculateStrangeIC(text, period, size, 27);
 			        this.chart2.values.add(new ChartData("" + period, score));
 			        if(bestIC < score)
 			        	bestPeriod = period;
@@ -2736,7 +2818,7 @@ public class UINew extends JFrame implements IApplication {
     		    for(int period = 2; period <= 40; ++period) {
     		    	double total = 0.0D;
     		    	for(int i = 0; i < period; i++)
-    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period));
+    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period), 1, true);
     		    	total /= period;
     		    	
     		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
@@ -2955,77 +3037,43 @@ public class UINew extends JFrame implements IApplication {
 		}
     }
     
-    private class SoiltaireStartAttack implements SolitaireAttack {
-
-    	public Solution bestSolution;
-    	public int[] intText;
+    private class IdentifyAction extends NCCDialog implements ActionListener {
     	
-    	private SoiltaireStartAttack(String cipherText) {
-    		this.bestSolution = new Solution();
-    		this.intText = new int[cipherText.length()];
-    		for(int i = 0; i < cipherText.length(); i++)
-    			this.intText[i] = cipherText.charAt(i) - 'A';
-    	}
-    	
-		@Override
-		public void tryKeyStream(int[] keyStream, int[] lastOrder) {
-			char[] chars = Solitaire.decodeWithKeyStream(this.intText, keyStream);
-			Solution last = new Solution(chars, settings.getLanguage());
-			
-			if(this.bestSolution.score < last.score) {
-				this.bestSolution = last;
-			
-				int[] order = lastOrder;
-				//for(int i = 0; i < times; i++) {
-				//	order = Solitaire.previousCardOrder(order);
-				//}
-				
-				this.bestSolution.setKeyString(ListUtil.toCardString2(order, 0));
-				output.println("%s", this.bestSolution);
-			}
-			
-		}
-
-		@Override
-		public int getSubBranches() {
-			return this.intText.length;
-		}
-    }
-    
-    private class IdentifyAction implements ActionListener {
-    	
-    	private JDialog dialog;
     	private JPanel cipherInfoPanel;
     	private JPanel cipherScorePanel;
     	private JScrollPane scrollPane;
-    	private JTree tree;
-    	private DefaultMutableTreeNode top;
-    	private JScrollPane treeView;
+    	private HashMap<String, JCheckBox> statCheckBoxes;
+    	private HashMap<String, TextStatistic> stats;
+    	private List<List<Object>> lastNumDev;
     	
     	public IdentifyAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+    		super("Identify Cipher", "image/lock_break.png");
+    		this.statCheckBoxes = new HashMap<String, JCheckBox>();
+    		
+    		this.dialog.setMinimumSize(new Dimension(500, 700));
 
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Identify Cipher");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
-    		this.dialog.setFocusableWindowState(false);
-    		this.dialog.setMinimumSize(new Dimension(500, 400));
-    		
     		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-	          
+
+    		
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+	        JPanel optionPanel = new JPanel();
+	        optionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+	        optionPanel.setLayout(new GridLayout(0, 4));
+	        for(String key : StatisticHandler.map.keySet()) {
+	        	JCheckBox checkBox = new JCheckBox(StatisticHandler.shortNameMap.get(key));
+	        	statCheckBoxes.put(key, checkBox);
+	        	checkBox.setFont(checkBox.getFont().deriveFont(Font.BOLD));
+	        	checkBox.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent event) {
+						updateDialog();
+					}
+	        	});
+	            checkBox.setSelected(true);
+	        	optionPanel.add(checkBox);
+	        }
+	        panel.add(optionPanel);
+	        
 	        JPanel basePanel = new JPanel();
 	        basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.X_AXIS));
 	        scrollPane = new JScrollPane(basePanel);
@@ -3039,103 +3087,34 @@ public class UINew extends JFrame implements IApplication {
 		    this.cipherScorePanel = new JPanel();
 		    this.cipherScorePanel.setLayout(new BoxLayout(this.cipherScorePanel, BoxLayout.Y_AXIS));
 		    basePanel.add(this.cipherScorePanel);
-		    
-			this.top = new DefaultMutableTreeNode("The Java Series");
-			//createNodes(top);
-			this.tree = new JTree(this.top);
-			this.tree.putClientProperty("JTree.lineStyle", "None");
-			this.tree.setFont(this.tree.getFont().deriveFont(20F));
-			this.tree.setRowHeight((int) (this.tree.getFont().getSize() * 1.2F));
-			
-		 //treeView = new JScrollPane(this.tree);
-			//panel.add(treeView);
+		   
 		    panel.add(scrollPane);
 	         
     		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
+    		this.dialog.pack();
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
      		addDialog(this.dialog);
-     		
-    		this.updateDialog();
+     		this.stats = StatisticHandler.createTextStatistics(getInputText());
+     		this.lastNumDev = null;
+     		this.updateDialog();
 		}
     	
     	public void updateDialog() {
     		this.cipherInfoPanel.removeAll();
     		this.cipherScorePanel.removeAll();
-    		this.top.removeAllChildren();
-    		
-    		String text = getInputText();
-    		
-    		if(!text.isEmpty()) {
+  
+    		if(this.stats != null) {
+    			ArrayList<String> doOnly = new ArrayList<String>();
+    			for(String id : this.statCheckBoxes.keySet()) {
+    				if(this.statCheckBoxes.get(id).isSelected())
+    					doOnly.add(id);
+    			}
     			
-    			
-    			Object[] statValues = new Object[38];
-			    
-			    //Numerical values
-			    statValues[0] = StatCalculator.calculateIC(text) * 1000.0D;
-				statValues[1] = StatCalculator.calculateMaxIC(text, 1, 15) * 1000.0D;
-				statValues[2] = StatCalculator.calculateMaxKappaIC(text, 1, 15);
-				statValues[3] = StatCalculator.calculateDiagrahpicIC(text) * 10000.0D;
-				statValues[4] = StatCalculator.calculateEvenDiagrahpicIC(text) * 10000;
-				statValues[5] = StatCalculator.calculateLR(text);
-				statValues[6] = StatCalculator.calculateROD(text);
-				statValues[7] = PolyalphabeticIdentifier.calculateLDI(text);
-				statValues[8] = StatCalculator.calculateSDD(text);
-			    statValues[22] = PolyalphabeticIdentifier.calculateAutokeyPortaLDI(text);
-				statValues[23] = PolyalphabeticIdentifier.calculateBeaufortLDI(text);
-				statValues[24] = PolyalphabeticIdentifier.calculatePortaLDI(text);
-				statValues[25] = PolyalphabeticIdentifier.calculateSLDI(text);
-				statValues[26] = PolyalphabeticIdentifier.calculateVigenereLDI(text);
-				statValues[27] = StatCalculator.calculateNormalOrder(text, settings.getLanguage());
-				statValues[28] = PolyalphabeticIdentifier.calculateRDI(text);
-				statValues[29] = PolyalphabeticIdentifier.calculatePTX(text);
-				statValues[30] = StatCalculator.calculateMaxNicodemusIC(text, 3, 15);
-				statValues[31] = StatCalculator.calculatePHIC(text);
-			    statValues[33] = StatCalculator.calculateMaxBifidDiagraphicIC(text, 3, 15);
-				statValues[34] = StatCalculator.calculateCDD(text);
-				statValues[35] = StatCalculator.calculateSSTD(text);
-				statValues[36] = StatCalculator.calculateMPIC(text);
-			    
-			    
-				statValues[9] = "CIPHER";
-			    
-				statValues[10] = StatCalculator.isLengthDivisible2(text);
-				statValues[11] = StatCalculator.isLengthDivisible3(text);
-				statValues[12] = StatCalculator.isLengthDivisible5(text);
-				statValues[13] = StatCalculator.isLengthDivisible25(text);
-				statValues[14] = StatCalculator.isLengthDivisible4_15(text);
-				statValues[15] = StatCalculator.isLengthDivisible4_30(text);
-				statValues[16] = StatCalculator.isLengthPerfectSquare(text);
-				statValues[17] = StatCalculator.containsLetter(text);
-				statValues[18] = StatCalculator.containsDigit(text);
-				statValues[19] = StatCalculator.containsJ(text);
-				statValues[20] = StatCalculator.containsHash(text);
-				statValues[21] = StatCalculator.calculateDBL(text);
-				
-				
-	
-				statValues[32] = StatCalculator.calculateHAS0(text);
-		
-				statValues[37] = StatCalculator.calculateSeriatedPlayfair(text, 3, 10);
-			    
-				Map<String, Integer> answers = new HashMap<String, Integer>();
-				
-				for(Map map : TraverseTree.trees) {
-					String answer = TraverseTree.traverse_tree(map, statValues);
-					answers.put(answer, 1 + (answers.containsKey(answer) ? answers.get(answer) : 0));
-				}
-				answers = MapHelper.sortMapByValue(answers, false);
-				
-				System.out.println(answers);
-				
-    			
-    		
-				List<List<Object>> num_dev = StatisticHandler.orderCipherProbibitly(text);
+				List<List<Object>> num_dev = StatisticHandler.orderCipherProbibitly(this.stats, doOnly);
 				 
 			    
 			    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
@@ -3163,14 +3142,38 @@ public class UINew extends JFrame implements IApplication {
 			    	cipherInfoLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
 			    	this.cipherInfoPanel.add(cipherInfoLabel);
 			    	
+			    	String valueStr = String.format("%.2f", (double)num_dev.get(i).get(1), 2);
+			    	if(this.lastNumDev != null) {
+			    		for(int l = 0; l < this.lastNumDev.size(); l++) {
+			    			if(this.lastNumDev.get(l).get(0).equals(num_dev.get(i).get(0))) {
+			    				valueStr += " ";
+			    				
+			    				if(i != l) {
+				    				if(i < l)
+				    					valueStr += (char)8593;
+				    				else if(i > l)
+				    					valueStr += (char)8595;
+				    				valueStr += " " + Math.abs(i - l);
+			    				}
+			    				else
+			    					valueStr += (char)8592;
+			    				
+			    				break;
+			    			}
+			    		}
+			    	}
 			    	
-			    	JLabel cipherScoreLabel = new JLabel(String.format("%.2f", (double)num_dev.get(i).get(1), 2));
+			    	JLabel cipherScoreLabel = new JLabel(valueStr);
 			    	cipherScoreLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
 			    	this.cipherScorePanel.add(cipherScoreLabel);
 			    }
-    			
+			    
+			    this.lastNumDev = num_dev;
+			    this.cipherScorePanel.revalidate();
+	    		this.cipherScorePanel.repaint();	
+			    this.cipherInfoPanel.revalidate();
+	    		this.cipherInfoPanel.repaint();	
     		}
-    		this.cipherInfoPanel.revalidate();
     	}
     }
      
@@ -3230,11 +3233,11 @@ public class UINew extends JFrame implements IApplication {
     		
     		if(!text.isEmpty()) {
 
-    			outputText += "\n IC: " + StatCalculator.calculateIC(text) * 1000.0D;
+    			outputText += "\n IC: " + StatCalculator.calculateIC(text, 1, true) * 1000.0D;
     			outputText += "\n MIC: " + StatCalculator.calculateMaxIC(text, 1, 15) * 1000.0D;
     		    outputText += "\n MKA: " + StatCalculator.calculateMaxKappaIC(text, 1, 15);
-    		    outputText += "\n DIC: " + StatCalculator.calculateDiagrahpicIC(text) * 10000.0D;
-    		    outputText += "\n EDI: " + StatCalculator.calculateEvenDiagrahpicIC(text) * 10000;
+    		    outputText += "\n DIC: " + StatCalculator.calculateIC(text, 2, true) * 10000.0D;
+    		    outputText += "\n EDI: " + StatCalculator.calculateIC(text, 2, false) * 10000;
     		    outputText += "\n LR: " + StatCalculator.calculateLR(text);
     		    outputText += "\n ROD: " + StatCalculator.calculateROD(text);
     		    outputText += "\n LDI: " + PolyalphabeticIdentifier.calculateLDI(text);
@@ -3243,7 +3246,7 @@ public class UINew extends JFrame implements IApplication {
     		    outputText += "\n A_LDI: " + PolyalphabeticIdentifier.calculateAutokeyPortaLDI(text);
     		    outputText += "\n B_LDI: " + PolyalphabeticIdentifier.calculateBeaufortLDI(text);
     		    outputText += "\n P_LDI: " + PolyalphabeticIdentifier.calculatePortaLDI(text);
-    		    outputText += "\n S_LDI: " + PolyalphabeticIdentifier.calculateSLDI(text);
+    		    outputText += "\n S_LDI: " + Math.max(PolyalphabeticIdentifier.calculateSlidefairBeaufortLDI(text), PolyalphabeticIdentifier.calculateSlidefairVigenereLDI(text));
     		    outputText += "\n V_LDI: " + PolyalphabeticIdentifier.calculateVigenereLDI(text);
     		    
     		    outputText += "\n NOMOR: " + StatCalculator.calculateNormalOrder(text, settings.getLanguage());
@@ -3664,6 +3667,7 @@ public class UINew extends JFrame implements IApplication {
     private JMenuItem menuItemIoCADFGX;
     private JMenuItem menuItemIoCNormal;
     private JMenuItem menuItemIoCBifid;
+    private JMenuItem menuItemIoCHill;
     private JMenuItem menuItemIoCNicodemus;
     private JMenuItem menuItemIoCNihilist;
     private JMenuItem menuItemIoCPortax;

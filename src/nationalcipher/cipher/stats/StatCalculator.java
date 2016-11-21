@@ -18,17 +18,6 @@ public class StatCalculator {
 
 	/*                   Index of coincidence calculations                   */
 	
-	public static double calculateIC(String text) {
-		TreeMap<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, 1, 1);
-
-		double total = 0.0D;
-		
-		for(String letter : letters.keySet())
-			total += letters.get(letter) * (letters.get(letter) - 1);
-
-		return total / (text.length() * (text.length() - 1));
-	}
-	
 	public static double calculateMaxIC(String text, int minPeriod, int maxPeriod) {
 		double maxIC = 0.0D;
 		
@@ -36,35 +25,24 @@ public class StatCalculator {
 	    	double totalIOC = 0.0D;
 	    	
 	    	for(int i = 0; i < period; ++i)
-		    	totalIOC += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period));
+		    	totalIOC += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(text, i, period), 1, true);
 	    	
 	    	maxIC = Math.max(maxIC, totalIOC / period);
 	    }
 	    return maxIC;
 	}
 	
-	public static double calculateDiagrahpicIC(String text) {
-		TreeMap<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, 2, 2);
+	public static double calculateIC(String text, int length, boolean overlap) {
+		TreeMap<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, length, length, overlap);
 
-		double sum = 0.0;
-		for(String letter : letters.keySet())
-			sum += letters.get(letter) * (letters.get(letter) - 1);
-		
-		int n = text.length() - 1;
+		double sum = 0.0D;
+		for(int value : letters.values())
+			sum += value * (value - 1);
+			
+		int n = overlap ? text.length() - (length - 1) : text.length() / length;
 		return sum / (n * (n - 1));
 	}
-	
-	public static double calculateEvenDiagrahpicIC(String text) {
-		TreeMap<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, 2, 2, false);
-		
-		double sum = 0.0;
-		for(String letter : letters.keySet())
-			sum += letters.get(letter) * (letters.get(letter) - 1);
-		
-		int n = text.length() / 2;
-		return sum / (n * (n - 1));
-	}
-	
+
 	/*                         Friedman's Kappa test                         */
 	
 	/**
@@ -214,6 +192,48 @@ public class StatCalculator {
 		return 27 * 27 * 2700 * sum / (count * (count - 1));
 	}
 	
+	public static double calculateStrangeIC(String text, int period, int size, int uniqueChars) {
+		
+		if(period == 0) period = text.length();
+		
+		Map<String, Integer> theatricalDiagram = new HashMap<String, Integer>();
+		int count = 0;
+		for(int i = 0; i < text.length(); i += period) {
+			int columns = Math.min(period / size, (text.length() - i) / size);
+			int limit = Math.min(i + period, text.length());
+			
+			for(int j = i; j < limit - columns * (size - 1); j++) {
+				String theatrical = "";
+				for(int s = 0; s < size; s++)
+					theatrical += text.charAt(j + columns * s);
+				theatricalDiagram.put(theatrical, 1 + (theatricalDiagram.containsKey(theatrical) ? theatricalDiagram.get(theatrical) : 0));
+			}
+			count += Math.max(limit - columns * (size - 1) - i, 0);
+		}
+		
+		double sum = 0.0;
+		for(String diagram : theatricalDiagram.keySet())
+			sum += theatricalDiagram.get(diagram) * (theatricalDiagram.get(diagram) - 1);
+		
+		return Math.pow(uniqueChars, size) * 100 * sum / (count * (count - 1));
+	}
+	
+	public static double calculateLongIC(String text, int period, int uniqueChars) {
+		
+		Map<String, Integer> theatricalDiagram = new HashMap<String, Integer>();
+		int count = 0;
+		for(int i = 0; i < text.length(); i += period) {
+			String theatrical = text.substring(i, Math.min(i + period, text.length()));
+			theatricalDiagram.put(theatrical, 1 + (theatricalDiagram.containsKey(theatrical) ? theatricalDiagram.get(theatrical) : 0));
+			count++;
+		}
+		
+		double sum = 0.0;
+		for(String diagram : theatricalDiagram.keySet())
+			sum += theatricalDiagram.get(diagram) * (theatricalDiagram.get(diagram) - 1);
+		
+		return Math.pow(uniqueChars, period) * 100 * sum / (count * (count - 1));
+	}
 
 	public static double calculateMaxTrifidDiagraphicIC(String text, int minPeriod, int maxPeriod) {
 		if(containsDigit(text))
@@ -333,16 +353,16 @@ public class StatCalculator {
 		if(containsDigit(text) || containsHash(text))
 			return 0.0D;
 
-		List<Character> normalLetterOrder = language.getLetterLargestFirst();
+		char[] frequencyLargestLanguage = language.getFrequencyLargest();
 		
-		List<String> textLetterOrder = StringAnalyzer.orderByCount(StringAnalyzer.getEmbeddedStrings(text, 1, 1));
+		List<Character> frequencyLargestText = StringAnalyzer.getOrderedCharacterCount(text.toCharArray());
 		
 		double total = 0.0D;
-		for(int i = 0; i < normalLetterOrder.size(); i++) {
-			String target = "" + normalLetterOrder.get(i);
+		for(int i = 0; i < frequencyLargestLanguage.length; i++) {
+			char target = frequencyLargestLanguage[i];
 			
-			if(textLetterOrder.contains(target))
-				total += Math.abs(i - textLetterOrder.indexOf(target));
+			if(frequencyLargestText.contains(target))
+				total += Math.abs(i - frequencyLargestText.indexOf(target));
 			else
 				total += i;
 		}

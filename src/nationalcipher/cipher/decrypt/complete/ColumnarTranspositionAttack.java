@@ -99,7 +99,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s, d: %b", Arrays.toString(order), this.readOffDefault);
+				this.bestSolution.setKeyString("%s  d:%b", Arrays.toString(order), this.readOffDefault);
 				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
@@ -131,7 +131,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		@Override
 		public void solutionFound() {
 			this.bestKey1 = this.bestMaximaKey1;
-			this.bestSolution.setKeyString("%s", Arrays.toString(this.bestKey1));
+			this.bestSolution.setKeyString("%s d:%b", Arrays.toString(this.bestKey1), this.readOffDefault);
 			this.bestSolution.bakeSolution();
 			this.getKeyPanel().updateSolution(this.bestSolution);
 		}

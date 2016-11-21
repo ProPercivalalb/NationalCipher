@@ -11,7 +11,8 @@ public class TriSquare implements IRandEncrypter {
 		for(int i = 0; i < plainText.length() / 2; i++) {
 			char a = plainText.charAt(i * 2);
 			char b = plainText.charAt(i * 2 + 1);
-			
+			if(a == 'J') a = 'I';
+			if(b == 'J') b = 'I';
 			int column = keysquare1.indexOf(a) % 5;
 			int rowSort = keysquare1.indexOf(a) / 5;
 			int row = keysquare2.indexOf(b) / 5;

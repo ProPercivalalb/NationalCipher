@@ -11,6 +11,6 @@ public class StatisticICx1000 extends TextStatistic {
 
 	@Override
 	public void calculateStatistic() {
-		this.value = StatCalculator.calculateIC(this.text) * 1000;
+		this.value = StatCalculator.calculateIC(this.text, 1, true) * 1000;
 	}
 }

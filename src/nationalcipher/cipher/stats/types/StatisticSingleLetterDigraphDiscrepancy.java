@@ -3,14 +3,14 @@ package nationalcipher.cipher.stats.types;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticEvenDiagrahpicICx10000 extends TextStatistic {
+public class StatisticSingleLetterDigraphDiscrepancy extends TextStatistic {
 
-	public StatisticEvenDiagrahpicICx10000(String text) {
+	public StatisticSingleLetterDigraphDiscrepancy(String text) {
 		super(text);
 	}
 
 	@Override
 	public void calculateStatistic() {
-		this.value = StatCalculator.calculateIC(this.text, 2, false) * 10000;
+		this.value = StatCalculator.calculateSDD(this.text);
 	}
 }

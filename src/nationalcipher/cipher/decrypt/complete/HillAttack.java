@@ -15,7 +15,9 @@ import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.matrics.Matrix;
+import javalibrary.streams.FileReader;
 import javalibrary.string.StringAnalyzer;
+import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.Hill;
@@ -77,20 +79,26 @@ public class HillAttack extends CipherAttack {
 				List<String> sorted = new ArrayList<String>(chars.keySet());
 				Collections.sort(sorted, new StringAnalyzer.SortStringInteger(chars));
 				Collections.reverse(sorted);
-				
+				app.out().println("" + chars.size());
 				int[][] pickPattern = this.generatePickPattern(size, Math.min(gramSearchRange, sorted.size()));
 				
-				for(int i = 0; i < pickPattern.length; i++) {
-					int[] matrixData = new int[0];
-					for(int k = 0; k < size; k++) {
-						int[][] equations = new int[size][size + 1];
-						for(int l = 0; l < size; l++)
-							equations[l] = this.createEquationFrom(commonGrams[size - 2][l], sorted.get(pickPattern[i][l]), k);
-						int[] solution = SimultaneousEquations.solveSimEquationsMod(equations, 26);
-						matrixData = ArrayUtil.concat(matrixData, solution);
+				List<String> list2 = FileReader.compileTextFromResource("/resources/commontrigrampairings.txt");
+				
+				for(String line : list2) {
+					String[] str = StringTransformer.splitInto(line, 3);
+						
+					for(int i = 0; i < pickPattern.length; i++) {
+						int[] matrixData = new int[0];
+						for(int k = 0; k < size; k++) {
+							int[][] equations = new int[size][size + 1];
+							for(int l = 0; l < size; l++)
+								equations[l] = this.createEquationFrom(str[l], sorted.get(pickPattern[i][l]), k);
+							int[] solution = SimultaneousEquations.solveSimEquationsMod(equations, 26);
+							matrixData = ArrayUtil.concat(matrixData, solution);
+						}
+			
+						task.onIteration(new Matrix(matrixData, size, size));
 					}
-		
-					task.onIteration(new Matrix(matrixData, size, size));
 				}
 			}
 		}

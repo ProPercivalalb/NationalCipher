@@ -3,14 +3,14 @@ package nationalcipher.cipher.stats.types;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.TextStatistic;
 
-public class StatisticMaxBifid0 extends TextStatistic {
+public class StatisticTrigraphNoOverlapICx100000 extends TextStatistic {
 
-	public StatisticMaxBifid0(String text) {
+	public StatisticTrigraphNoOverlapICx100000(String text) {
 		super(text);
 	}
-
+	
 	@Override
 	public void calculateStatistic() {
-		this.value = StatCalculator.calculateMaxBifidDiagraphicIC(this.text, 0, 0);
+		this.value = StatCalculator.calculateIC(this.text, 3, false) * 100000;
 	}
 }

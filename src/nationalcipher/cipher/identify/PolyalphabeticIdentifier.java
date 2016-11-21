@@ -14,7 +14,12 @@ public class PolyalphabeticIdentifier {
 		AUTOKEY_VARIANT(),
 		AUTOKEY_VIGENERE(),
 		AUTOKEY_PORTA(),
-		AUTOKEY_PORTA_LEFT();
+		AUTOKEY_PORTA_LEFT(),
+		
+		SLIDEFAIR_BEAUFORT(),
+		SLIDEFAIR_VARIANT(),
+		SLIDEFAIR_VIGENERE();
+		
 	}
 	
 	public static double calculateLDI(String text) {
@@ -44,12 +49,14 @@ public class PolyalphabeticIdentifier {
 		return largestSum;
 	}
 	
+	//?!?!? IMPORTANT ?!?!? These functions only check between period 3 and 15
+	
 	public static double calculateAutokeyVigenereLDI(String text) {
 		return calculateSubTypeLDI(text, SubType.AUTOKEY_VIGENERE);
 	}
 	
 	public static double calculateAutokeyPortaLDI(String text) {
-		return Math.max(calculateSubTypeLDI(text, SubType.AUTOKEY_PORTA), calculateSubTypeLDI(text, SubType.AUTOKEY_PORTA_LEFT));
+		return calculateSubTypeLDI(text, SubType.AUTOKEY_PORTA);
 	}
 	
 	public static double calculateAutokeyBeaufortLDI(String text) {
@@ -75,34 +82,43 @@ public class PolyalphabeticIdentifier {
 	public static double calculateVariantLDI(String text) {
 		return calculateSubTypeLDI(text, SubType.VARIANT);
 	}
+	
+	public static double calculateSlidefairBeaufortLDI(String text) {
+		return calculateSubTypeSLDI(text, SubType.SLIDEFAIR_BEAUFORT);
+	}
 
-	public static double calculateSLDI(String text) {
+	public static double calculateSlidefairVariantLDI(String text) {
+		return calculateSubTypeSLDI(text, SubType.SLIDEFAIR_VARIANT);
+	}
+	
+	public static double calculateSlidefairVigenereLDI(String text) {
+		return calculateSubTypeSLDI(text, SubType.SLIDEFAIR_VIGENERE);
+	}
+	
+	public static double calculateSubTypeSLDI(String text, SubType type) {
 		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text) || text.length() % 2 == 1)
 			return 0;
 		
 		double largestSum = Double.MIN_VALUE;
 		
-		for(int type = 0; type <= 1; type += 1) {
-			for(int period = 3; period <= 15; period++) {
-	        	double sum = 0.0D;
-	        	
-	            for(int col = 0; col < period; col++) 
-	                sum += best_sldi(col, type, period, text);
+		for(int period = 3; period <= 15; period++) {
+	        double sum = 0.0D;
+	        for(int col = 0; col < period; col++) 
+	        	sum += best_sldi(col, type, period, text);
 	            
-	            sum /= period;
-		        largestSum = Math.max(largestSum, sum);
-	         }
-		}
+	        sum /= period;
+		    largestSum = Math.max(largestSum, sum);
+	    }
 		
 		return largestSum;
 	}
 
-	public static double best_di(int col, SubType type, int period, String text){
+	public static double best_di(int col, SubType type, int period, String text) {
 		int bestScore = 0;
 		
 		int rows = (int)Math.floor(text.length() / period);
-	    for (int kl = 0;kl < 26;kl++) {
-	    	for (int kr = 0; kr < 26;kr++) {
+	    for(int kl = 0; kl < 26; kl++) {
+	    	for(int kr = 0; kr < 26; kr++) {
 	    		int score = 0;
 	            int ct = 0;
 	            int kl1 = kl;
@@ -139,7 +155,7 @@ public class PolyalphabeticIdentifier {
 	/**
 	 * @param type Can either be 0 (VSlidefair) or 1 (BSlidefair)
 	 */
-	public static double best_sldi(int col, int type, int period, String text){
+	public static double best_sldi(int col, SubType type, int period, String text) {
 		int best_score = 0;
 		int rows = (int)Math.floor(text.length() / (2 * period));
 		int rowb = 2 * col;
@@ -227,18 +243,27 @@ public class PolyalphabeticIdentifier {
         return plainChar;
 	}
 	
-	public static int[] decodeSL(int cl, int cr, int key, int ciph_type){
+	public static int[] decodeSL(int cl, int cr, int key, SubType type) {
 		int pl = 0;
 		int pr = 0;
 
-        if(ciph_type == 1) { //BSLIDEFAIR
+		switch(type) { //BSLIDEFAIR
+		case SLIDEFAIR_BEAUFORT:
         	pl = (26 + key - cr) % 26;
         	pr = (26 + key - cl) % 26;
+        	break;
+		case SLIDEFAIR_VARIANT:
+			pl = (cr + key) % 26;
+	        pr = (26 + cl - key) % 26;
+	        break;
+		case SLIDEFAIR_VIGENERE:
+			pl = (26 + cr - key) % 26;
+	        pr = (cl + key) % 26;
+	        break;
+		default:
+	        System.out.println("INVALID SUBTYPE GIVEN");
         }
-        else {
-        	pl = (26 + cr - key) % 26;
-        	pr = (cl + key) % 26;
-        }
+ 
         return new int[] {pl, pr};
 	}
 	
