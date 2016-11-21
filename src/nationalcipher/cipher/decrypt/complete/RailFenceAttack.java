@@ -54,17 +54,19 @@ public class RailFenceAttack extends CipherAttack {
 
 		@Override
 		public void onIteration(int no) {
-			this.lastSolution = new Solution(RailFence.decode(this.cipherText, no), this.getLanguage());
-			
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("Rows-%d", no);
-				this.out().println("%s", this.bestSolution);	
-				this.getKeyPanel().updateSolution(this.bestSolution);
+			for(int i = 0; i < (no - 1) * 2; i++) {
+				this.lastSolution = new Solution(RailFence.decode(this.cipherText, no, i), this.getLanguage());
+				
+				if(this.lastSolution.score >= this.bestSolution.score) {
+					this.bestSolution = this.lastSolution;
+					this.bestSolution.setKeyString("Rows:%d Offset:%d", no, i);
+					this.out().println("%s", this.bestSolution);	
+					this.getKeyPanel().updateSolution(this.bestSolution);
+				}
+				
+				this.getKeyPanel().updateIteration(this.iteration++);
+				this.getProgress().increase();
 			}
-			
-			this.getKeyPanel().updateIteration(this.iteration++);
-			this.getProgress().increase();
 		}
 	}
 }

@@ -398,6 +398,32 @@ public class CipherStatistics extends StatisticsRef {
 			triSquare.put(NORMAL_ORDER, new DataHolder(194.46, 28.14)); //Min: 107.00 Max: 291.00
 			triSquare.put(TEXT_LENGTH_MULTIPLE, new DataHolder(3));
 			
+			HashMap<String, DataHolder> railfence = createOrGetList("Transposition", "Railfence");
+			railfence.put(IC_x1000, new DataHolder(66.05, 2.72)); //Min: 60.87 Max: 74.50
+			railfence.put(IC_MAX_1to15_x1000, new DataHolder(68.16, 3.22)); //Min: 61.66 Max: 89.67
+			railfence.put(IC_2_TRUE_x10000, new DataHolder(45.07, 4.93)); //Min: 29.42 Max: 69.26
+			railfence.put(IC_2_FALSE_x10000, new DataHolder(45.20, 5.78)); //Min: 22.15 Max: 80.36
+			railfence.put(IC_3_FALSE_x100000, new DataHolder(32.93, 14.72)); //Min: 0.00 Max: 131.19
+			railfence.put(IC_KAPPA_x1000, new DataHolder(81.10, 8.02)); //Min: 64.52 Max: 125.32
+			railfence.put(LOG_DIGRAPH, new DataHolder(656.59, 8.12)); //Min: 619.00 Max: 682.00
+			railfence.put(LOG_DIGRAPH_REVERSED, new DataHolder(225.26, 311.93)); //Min: 0.00 Max: 686.00
+			railfence.put(LONG_REPEAT, new DataHolder(12.09, 1.50)); //Min: 0.00 Max: 18.90
+			railfence.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.37, 1.78)); //Min: 35.00 Max: 62.00
+			railfence.put(NORMAL_ORDER, new DataHolder(73.71, 28.63)); //Min: 22.00 Max: 140.00
+			
+			HashMap<String, DataHolder> myszkowski = createOrGetList("Transposition", "Myszkowski");
+			myszkowski.put(IC_x1000, new DataHolder(66.05, 2.72)); //Min: 60.87 Max: 74.50
+			myszkowski.put(IC_MAX_1to15_x1000, new DataHolder(68.15, 3.13)); //Min: 60.87 Max: 92.79
+			myszkowski.put(IC_2_TRUE_x10000, new DataHolder(45.19, 5.14)); //Min: 26.73 Max: 86.77
+			myszkowski.put(IC_2_FALSE_x10000, new DataHolder(45.45, 6.08)); //Min: 12.66 Max: 91.15
+			myszkowski.put(IC_3_FALSE_x100000, new DataHolder(33.19, 16.30)); //Min: 0.00 Max: 219.18
+			myszkowski.put(IC_KAPPA_x1000, new DataHolder(81.33, 7.65)); //Min: 66.25 Max: 130.43
+			myszkowski.put(LOG_DIGRAPH, new DataHolder(660.63, 12.10)); //Min: 617.00 Max: 766.00
+			myszkowski.put(LOG_DIGRAPH_REVERSED, new DataHolder(225.34, 312.03)); //Min: 0.00 Max: 694.00
+			myszkowski.put(LONG_REPEAT, new DataHolder(12.13, 1.66)); //Min: 0.00 Max: 27.93
+			myszkowski.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.33, 2.04)); //Min: 24.00 Max: 68.00
+			myszkowski.put(NORMAL_ORDER, new DataHolder(73.71, 28.63)); //Min: 22.00 Max: 140.00
+			
 			HashMap<String, DataHolder> substitution = createOrGetList("Substitution");
 			substitution.put(IC_x1000, new DataHolder(66.01, 2.71));
 			substitution.put(IC_MAX_1to15_x1000, new DataHolder(68.32, 3.07));
@@ -467,7 +493,7 @@ public class CipherStatistics extends StatisticsRef {
 			swagman.put(NICODEMUS_MAX_3to15, new DataHolder(67.10, 8.68));
 			swagman.put(TRIFID_MAX_3to15, new DataHolder(1151.34, 476.91));**/
 
-			HashMap<String, DataHolder> amsco = createOrGetList("AMSCO");
+			HashMap<String, DataHolder> amsco = createOrGetList("Transposition", "AMSCO");
 			amsco.put(IC_x1000, new DataHolder(66.00, 2.71));
 			amsco.put(IC_MAX_1to15_x1000, new DataHolder(68.12, 3.15));
 			amsco.put(IC_KAPPA_x1000, new DataHolder(80.85, 7.47));

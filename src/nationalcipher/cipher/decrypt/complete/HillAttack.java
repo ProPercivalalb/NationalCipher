@@ -82,22 +82,38 @@ public class HillAttack extends CipherAttack {
 				app.out().println("" + chars.size());
 				int[][] pickPattern = this.generatePickPattern(size, Math.min(gramSearchRange, sorted.size()));
 				
-				List<String> list2 = FileReader.compileTextFromResource("/resources/commontrigrampairings.txt");
-				
-				for(String line : list2) {
-					String[] str = StringTransformer.splitInto(line, 3);
-						
+				if(size == 2) {
 					for(int i = 0; i < pickPattern.length; i++) {
 						int[] matrixData = new int[0];
 						for(int k = 0; k < size; k++) {
 							int[][] equations = new int[size][size + 1];
 							for(int l = 0; l < size; l++)
-								equations[l] = this.createEquationFrom(str[l], sorted.get(pickPattern[i][l]), k);
+								equations[l] = this.createEquationFrom(commonGrams[size - 2][l], sorted.get(pickPattern[i][l]), k);
 							int[] solution = SimultaneousEquations.solveSimEquationsMod(equations, 26);
 							matrixData = ArrayUtil.concat(matrixData, solution);
 						}
 			
 						task.onIteration(new Matrix(matrixData, size, size));
+					}
+				}
+				else if(size == 3) {
+					List<String> list2 = FileReader.compileTextFromResource("/resources/commontrigrampairings.txt");
+					
+					for(String line : list2) {
+						String[] str = StringTransformer.splitInto(line, 3);
+							
+						for(int i = 0; i < pickPattern.length; i++) {
+							int[] matrixData = new int[0];
+							for(int k = 0; k < size; k++) {
+								int[][] equations = new int[size][size + 1];
+								for(int l = 0; l < size; l++)
+									equations[l] = this.createEquationFrom(str[l], sorted.get(pickPattern[i][l]), k);
+								int[] solution = SimultaneousEquations.solveSimEquationsMod(equations, 26);
+								matrixData = ArrayUtil.concat(matrixData, solution);
+							}
+				
+							task.onIteration(new Matrix(matrixData, size, size));
+						}
 					}
 				}
 			}

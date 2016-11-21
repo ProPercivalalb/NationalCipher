@@ -197,6 +197,12 @@ public class KeyGeneration {
 		return createShortKey26(length);
 	}
 	
+
+	public static String createRepeatingShortKey26(int minLength, int maxLength) {
+		int length = RandomUtil.pickRandomInt(minLength, maxLength);
+		return createRepeatingShortKey26(length);
+	}
+	
 	public static int[] createOrder(int minLength, int maxLength) {
 		int length = RandomUtil.pickRandomInt(minLength, maxLength);
 		return createOrder(length);

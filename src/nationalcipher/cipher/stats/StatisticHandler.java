@@ -102,20 +102,17 @@ public class StatisticHandler {
 				IdentifyOutput identifyOutput = null;
 				List<IdentifyOutput> last = num_dev;
 				for(int i = 0; i < copy.size(); i++) {
-					
-						int index = indexOf(copy.get(i), last);
-						if(index != -1) {
-							identifyOutput = last.get(index);
-							if(identifyOutput.score > value)
-								identifyOutput.score = value;
-						}
-						else {
-							identifyOutput = new IdentifyOutput(copy.get(i), value);
-							last.add(identifyOutput);
-	
-						}
-						last = identifyOutput.subOutput;
-			
+					int index = indexOf(copy.get(i), last);
+					if(index != -1) {
+						identifyOutput = last.get(index);
+						identifyOutput.score = Math.min(identifyOutput.score, value);
+					}
+					else {
+						identifyOutput = new IdentifyOutput(copy.get(i), value);
+						last.add(identifyOutput);
+					}
+						
+					last = identifyOutput.subOutput;
 				}
 			}
 			else

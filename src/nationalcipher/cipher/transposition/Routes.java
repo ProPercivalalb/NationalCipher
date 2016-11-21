@@ -9,10 +9,9 @@ import java.util.Random;
 import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
+import nationalcipher.cipher.transposition.route.ColumnRoute;
 import nationalcipher.cipher.transposition.route.RouteTwist;
 import nationalcipher.cipher.transposition.route.RowRoute;
-import nationalcipher.cipher.transposition.route.RouteWriteDown;
-
 
 public class Routes {
 
@@ -285,13 +284,15 @@ public class Routes {
 	
 	public static RouteCipherRandom RANDOM = new RouteCipherRandom("Totally random.");
 	
-	//TODO Fix not working
 	public static RouteCipherType ACROSS_1 = new RowRoute.TopLeft();
 	public static RouteCipherType ACROSS_2 = new RowRoute.TopRight();
 	public static RouteCipherType ACROSS_3 = new RowRoute.BottomLeft();
 	public static RouteCipherType ACROSS_4 = new RowRoute.BottomRight();
 	
-	public static RouteWriteDown DOWN  = new RouteWriteDown("Written down.");
+	public static RouteCipherType DOWN_1 = new ColumnRoute.TopLeft();
+	public static RouteCipherType DOWN_2 = new ColumnRoute.TopRight();
+	public static RouteCipherType DOWN_3 = new ColumnRoute.BottomLeft();
+	public static RouteCipherType DOWN_4 = new ColumnRoute.BottomRight();
 	
 	public static OtherLetterCycleRoute OTHER_LETTER = new OtherLetterCycleRoute("Other letter route.");
 	

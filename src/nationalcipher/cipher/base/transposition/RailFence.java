@@ -32,13 +32,14 @@ public class RailFence implements IRandEncrypter {
 		return last;
 	}
 	
-	public static char[] decode(char[] cipherText, int rows) {
+	public static char[] decode(char[] cipherText, int rows, int startingOffset) {
 		char[] plainText = new char[cipherText.length];
+		int ghostLength = cipherText.length + startingOffset;
 		
 		int branchTotal = 2 * (rows - 1);
-		int branchs = cipherText.length / branchTotal;
-		int noUnassigned = cipherText.length - (branchs * branchTotal);
-		
+		int branchs = ghostLength / branchTotal;
+		int noUnassigned = ghostLength - (branchs * branchTotal);
+		System.out.println(rows + " " + startingOffset);
 		int index = 0;
 		for(int row = 1; row <= rows; row++) {
 			if(index >= cipherText.length) break;
@@ -49,26 +50,44 @@ public class RailFence implements IRandEncrypter {
 
 			if(noUnassigned >= row) {
 				occurs += 1;
-				
 				if(row < rows && row + (rows - row) * 2 <= noUnassigned)
 					occurs += 1;
 			}
 			
+			if(startingOffset >= row) {
+				occurs -= 1;
+				if(row < rows && row + (rows - row) * 2 <= startingOffset)
+					occurs -= 1;
+			}
+			System.out.println("Occurs: " + occurs);
+
 			for(int i = 0; i < occurs; i++) {
 				int newIndex = 0;
 				
 				if(row > 1 && row < rows) {
-					int branch = (int)(i / 2);
-					newIndex = branch * branchTotal + row - 1;
-					
-					if(i % 2 == 1)
-						newIndex += (rows - row) * 2;	
+					int branch2 = i;
+					if(startingOffset >= row) {
+						System.out.println("ADD");
+						branch2 += 1;
+					}
+	
+					int branch = (int)(branch2 / 2);
+					newIndex = branch * branchTotal + row - 1 - startingOffset + (row == 3 ? 3 : 0);
+					System.out.println("" + newIndex);
+					if(branch2 % 2 == 1)
+						newIndex += (rows - row) * 2;
+					System.out.println(plainText);
+					plainText[newIndex] = cipherText[index++];
 				}
-				else
-					newIndex = i * branchTotal + row - 1;
+				else {
+					int branch = i;
+					if(startingOffset >= row)
+						branch += 1;
+					newIndex = branch * branchTotal + row - 1 - startingOffset;
+					System.out.println(plainText);
+					plainText[newIndex] = cipherText[index++];
+				}
 				
-				plainText[newIndex] = cipherText[index];
-				index++;
 			}
 		}
 		
