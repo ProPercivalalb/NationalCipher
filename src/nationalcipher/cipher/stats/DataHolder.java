@@ -21,4 +21,9 @@ public class DataHolder {
 	public double quantify(double value) {
 		return Math.abs((value - this.value)) / this.sD;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("[%f, %f]", this.value, this.sD);
+	}
 }

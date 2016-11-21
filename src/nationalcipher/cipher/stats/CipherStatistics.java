@@ -5,13 +5,13 @@ import java.util.TreeMap;
 
 public class CipherStatistics extends StatisticsRef {
 
-	private static TreeMap<String, HashMap<String, DataHolder>> map;
+	private static TreeMap<String, Object> map;
 	
-	public static TreeMap<String, HashMap<String, DataHolder>> getOtherCipherStatistics() {
+	public static TreeMap<String, Object> getOtherCipherStatistics() {
 		if(map == null) {
-			map = new TreeMap<String, HashMap<String, DataHolder>>();
-	
-			HashMap<String, DataHolder> hill2x2 = createOrGetList("Hill 2x2");
+			map = new TreeMap<String, Object>();
+			//HashMap<String, DataHolder>
+			HashMap<String, DataHolder> hill2x2 = createOrGetList("Hill", "2x2");
 			hill2x2.put(IC_x1000, new DataHolder(42.00, 2.61)); //Min: 35.58 Max: 74.33
 			hill2x2.put(IC_MAX_1to15_x1000, new DataHolder(47.18, 5.07)); //Min: 39.63 Max: 72.02
 			hill2x2.put(IC_2_TRUE_x10000, new DataHolder(32.75, 2.99)); //Min: 19.41 Max: 56.57
@@ -25,7 +25,7 @@ public class CipherStatistics extends StatisticsRef {
 			hill2x2.put(NORMAL_ORDER, new DataHolder(215.51, 30.18)); //Min: 40.00 Max: 306.00
 			hill2x2.put(TEXT_LENGTH_MULTIPLE, new DataHolder(2));
 			
-			HashMap<String, DataHolder> hill3x3 = createOrGetList("Hill 3x3");
+			HashMap<String, DataHolder> hill3x3 = createOrGetList("Hill", "3x3");
 			hill3x3.put(IC_x1000, new DataHolder(39.19, 0.79)); //Min: 35.12 Max: 47.30
 			hill3x3.put(IC_MAX_1to15_x1000, new DataHolder(41.99, 2.28)); //Min: 37.04 Max: 61.11
 			hill3x3.put(IC_2_TRUE_x10000, new DataHolder(19.03, 2.05)); //Min: 7.76 Max: 32.45
@@ -39,7 +39,7 @@ public class CipherStatistics extends StatisticsRef {
 			hill3x3.put(NORMAL_ORDER, new DataHolder(221.35, 28.74)); //Min: 68.00 Max: 316.00
 			hill3x3.put(TEXT_LENGTH_MULTIPLE, new DataHolder(3));
 			
-			HashMap<String, DataHolder> cadenusx = createOrGetList("Cadenus w/x");
+			HashMap<String, DataHolder> cadenusx = createOrGetList("Cadenus", "w/x");
 			cadenusx.put(IC_x1000, new DataHolder(64.81, 7.69)); //Min: 57.75 Max: 153.86
 			cadenusx.put(IC_MAX_1to15_x1000, new DataHolder(66.22, 7.63)); //Min: 57.75 Max: 159.93
 			cadenusx.put(IC_2_TRUE_x10000, new DataHolder(66.37, 70.90)); //Min: 24.87 Max: 985.88
@@ -53,7 +53,7 @@ public class CipherStatistics extends StatisticsRef {
 			cadenusx.put(NORMAL_ORDER, new DataHolder(83.50, 29.86)); //Min: 22.00 Max: 150.00
 			cadenusx.put(TEXT_LENGTH_MULTIPLE, new DataHolder(25));
 			
-			HashMap<String, DataHolder> cadenus = createOrGetList("Cadenus");
+			HashMap<String, DataHolder> cadenus = createOrGetList("Cadenus", "!w/x");
 			cadenus.put(IC_x1000, new DataHolder(66.14, 2.73)); //Min: 58.38 Max: 75.46
 			cadenus.put(IC_MAX_1to15_x1000, new DataHolder(68.47, 3.52)); //Min: 61.25 Max: 116.19
 			cadenus.put(IC_2_TRUE_x10000, new DataHolder(44.07, 4.22)); //Min: 20.61 Max: 79.96
@@ -67,7 +67,7 @@ public class CipherStatistics extends StatisticsRef {
 			cadenus.put(NORMAL_ORDER, new DataHolder(76.69, 31.99)); //Min: 24.00 Max: 166.00
 			cadenus.put(TEXT_LENGTH_MULTIPLE, new DataHolder(25));
 			
-			HashMap<String, DataHolder> beaufortSlidefair = createOrGetList("Beaufort Slidefair");
+			HashMap<String, DataHolder> beaufortSlidefair = createOrGetList("Slidefair", "Beaufort");
 			beaufortSlidefair.put(IC_x1000, new DataHolder(41.86, 3.40)); //Min: 34.91 Max: 62.52
 			beaufortSlidefair.put(IC_MAX_1to15_x1000, new DataHolder(56.99, 7.41)); //Min: 40.63 Max: 76.51
 			beaufortSlidefair.put(IC_2_TRUE_x10000, new DataHolder(19.62, 4.37)); //Min: 6.37 Max: 46.24
@@ -83,7 +83,7 @@ public class CipherStatistics extends StatisticsRef {
 			beaufortSlidefair.put(LOG_DIGRAPH_SLIDEFAIR_VARIANT, new DataHolder(553.56, 26.85)); //Min: 509.75 Max: 686.67
 			beaufortSlidefair.put(LOG_DIGRAPH_SLIDEFAIR_VIGENERE, new DataHolder(553.88, 26.67)); //Min: 509.00 Max: 693.33
 			
-			HashMap<String, DataHolder> variantSlidefair = createOrGetList("Variant Slidefair");
+			HashMap<String, DataHolder> variantSlidefair = createOrGetList("Slidefair", "Variant");
 			variantSlidefair.put(IC_x1000, new DataHolder(40.23, 1.94)); //Min: 35.28 Max: 54.64
 			variantSlidefair.put(IC_MAX_1to15_x1000, new DataHolder(57.03, 7.23)); //Min: 37.65 Max: 77.23
 			variantSlidefair.put(IC_2_TRUE_x10000, new DataHolder(18.56, 3.16)); //Min: 7.17 Max: 35.95
@@ -99,7 +99,7 @@ public class CipherStatistics extends StatisticsRef {
 			variantSlidefair.put(LOG_DIGRAPH_SLIDEFAIR_VARIANT, new DataHolder(748.43, 7.98)); //Min: 716.15 Max: 769.25
 			variantSlidefair.put(LOG_DIGRAPH_SLIDEFAIR_VIGENERE, new DataHolder(748.52, 7.86)); //Min: 717.33 Max: 768.38
 			
-			HashMap<String, DataHolder> vigenereSlidefair = createOrGetList("Vigenere Slidefair");
+			HashMap<String, DataHolder> vigenereSlidefair = createOrGetList("Slidefair", "Vigenere");
 			vigenereSlidefair.put(IC_x1000, new DataHolder(40.23, 1.92)); //Min: 34.51 Max: 55.96
 			vigenereSlidefair.put(IC_MAX_1to15_x1000, new DataHolder(57.17, 7.32)); //Min: 40.03 Max: 76.02
 			vigenereSlidefair.put(IC_2_TRUE_x10000, new DataHolder(18.64, 3.19)); //Min: 8.76 Max: 42.03
@@ -115,7 +115,7 @@ public class CipherStatistics extends StatisticsRef {
 			vigenereSlidefair.put(LOG_DIGRAPH_SLIDEFAIR_VARIANT, new DataHolder(748.67, 7.85)); //Min: 712.50 Max: 772.80
 			vigenereSlidefair.put(LOG_DIGRAPH_SLIDEFAIR_VIGENERE, new DataHolder(748.52, 8.04)); //Min: 704.33 Max: 772.50
 			
-			HashMap<String, DataHolder> beaufortAutokey = createOrGetList("Beaufort Autokey");
+			HashMap<String, DataHolder> beaufortAutokey = createOrGetList("Autokey", "Beaufort");
 			beaufortAutokey.put(IC_x1000, new DataHolder(39.80, 0.77)); //Min: 35.64 Max: 44.41
 			beaufortAutokey.put(IC_MAX_1to15_x1000, new DataHolder(41.37, 1.89)); //Min: 38.82 Max: 62.86
 			beaufortAutokey.put(IC_2_TRUE_x10000, new DataHolder(16.72, 1.58)); //Min: 10.21 Max: 28.30
@@ -132,7 +132,7 @@ public class CipherStatistics extends StatisticsRef {
 			beaufortAutokey.put(LOG_DIGRAPH_AUTOKEY_VARIANT, new DataHolder(567.29, 24.57)); //Min: 535.50 Max: 690.67
 			beaufortAutokey.put(LOG_DIGRAPH_AUTOKEY_VIGENERE, new DataHolder(533.37, 33.17)); //Min: 483.50 Max: 691.33
 			
-			HashMap<String, DataHolder> portaAutokey = createOrGetList("Porta Autokey");
+			HashMap<String, DataHolder> portaAutokey = createOrGetList("Autokey", "Porta");
 			portaAutokey.put(IC_x1000, new DataHolder(39.32, 0.68)); //Min: 34.94 Max: 45.74
 			portaAutokey.put(IC_MAX_1to15_x1000, new DataHolder(40.96, 1.90)); //Min: 38.12 Max: 62.12
 			portaAutokey.put(IC_2_TRUE_x10000, new DataHolder(16.29, 1.64)); //Min: 6.29 Max: 27.42
@@ -149,7 +149,7 @@ public class CipherStatistics extends StatisticsRef {
 			portaAutokey.put(LOG_DIGRAPH_AUTOKEY_VARIANT, new DataHolder(532.39, 33.03)); //Min: 483.07 Max: 689.33
 			portaAutokey.put(LOG_DIGRAPH_AUTOKEY_VIGENERE, new DataHolder(532.28, 32.78)); //Min: 484.73 Max: 676.00
 			
-			HashMap<String, DataHolder> variantAutokey = createOrGetList("Variant Autokey");
+			HashMap<String, DataHolder> variantAutokey = createOrGetList("Autokey", "Variant");
 			variantAutokey.put(IC_x1000, new DataHolder(39.79, 0.77)); //Min: 35.48 Max: 43.56
 			variantAutokey.put(IC_MAX_1to15_x1000, new DataHolder(41.39, 1.87)); //Min: 38.80 Max: 61.85
 			variantAutokey.put(IC_2_TRUE_x10000, new DataHolder(16.75, 1.64)); //Min: 9.61 Max: 35.43
@@ -166,7 +166,7 @@ public class CipherStatistics extends StatisticsRef {
 			variantAutokey.put(LOG_DIGRAPH_AUTOKEY_VARIANT, new DataHolder(759.63, 6.65)); //Min: 736.25 Max: 774.47
 			variantAutokey.put(LOG_DIGRAPH_AUTOKEY_VIGENERE, new DataHolder(533.99, 32.91)); //Min: 487.31 Max: 685.33
 			
-			HashMap<String, DataHolder> vigenereAutokey = createOrGetList("Vigenere Autokey");
+			HashMap<String, DataHolder> vigenereAutokey = createOrGetList("Autokey", "Vigenere");
 			vigenereAutokey.put(IC_x1000, new DataHolder(39.84, 0.74)); //Min: 36.41 Max: 47.81
 			vigenereAutokey.put(IC_MAX_1to15_x1000, new DataHolder(41.52, 2.01)); //Min: 38.59 Max: 59.92
 			vigenereAutokey.put(IC_2_TRUE_x10000, new DataHolder(16.88, 1.69)); //Min: 8.41 Max: 31.83
@@ -274,7 +274,7 @@ public class CipherStatistics extends StatisticsRef {
 			vigenere.put(LOG_DIGRAPH_VARIANT, new DataHolder(759.74, 6.61)); //Min: 736.09 Max: 774.64
 			vigenere.put(LOG_DIGRAPH_VIGENERE, new DataHolder(759.72, 6.62)); //Min: 736.09 Max: 774.64
 			
-			HashMap<String, DataHolder> beaufortNicodemus = createOrGetList("Beaufort Nicodemus");
+			HashMap<String, DataHolder> beaufortNicodemus = createOrGetList("Nicodemus", "Beaufort");
 			beaufortNicodemus.put(IC_x1000, new DataHolder(41.37, 2.51)); //Min: 35.48 Max: 54.70
 			beaufortNicodemus.put(IC_MAX_1to15_x1000, new DataHolder(46.82, 6.40)); //Min: 38.10 Max: 74.64
 			beaufortNicodemus.put(IC_2_TRUE_x10000, new DataHolder(17.92, 2.70)); //Min: 7.86 Max: 34.54
@@ -288,7 +288,7 @@ public class CipherStatistics extends StatisticsRef {
 			beaufortNicodemus.put(NORMAL_ORDER, new DataHolder(223.57, 31.44)); //Min: 100.00 Max: 320.00
 			beaufortNicodemus.put(NICODEMUS_MAX_3to15, new DataHolder(66.57, 3.23)); //Min: 52.38 Max: 96.97
 			
-			HashMap<String, DataHolder> portaNicodemus = createOrGetList("Porta Nicodemus");
+			HashMap<String, DataHolder> portaNicodemus = createOrGetList("Nicodemus", "Porta");
 			portaNicodemus.put(IC_x1000, new DataHolder(41.49, 2.67)); //Min: 36.02 Max: 58.44
 			portaNicodemus.put(IC_MAX_1to15_x1000, new DataHolder(46.09, 6.67)); //Min: 37.67 Max: 74.35
 			portaNicodemus.put(IC_2_TRUE_x10000, new DataHolder(18.33, 2.81)); //Min: 7.86 Max: 36.76
@@ -302,7 +302,7 @@ public class CipherStatistics extends StatisticsRef {
 			portaNicodemus.put(NORMAL_ORDER, new DataHolder(227.18, 34.74)); //Min: 110.00 Max: 322.00
 			portaNicodemus.put(NICODEMUS_MAX_3to15, new DataHolder(66.53, 3.23)); //Min: 53.33 Max: 80.81
 			
-			HashMap<String, DataHolder> variantNicodemus = createOrGetList("Variant Nicodemus");
+			HashMap<String, DataHolder> variantNicodemus = createOrGetList("Nicodemus", "Variant");
 			variantNicodemus.put(IC_x1000, new DataHolder(41.37, 2.50)); //Min: 35.79 Max: 54.11
 			variantNicodemus.put(IC_MAX_1to15_x1000, new DataHolder(46.90, 6.55)); //Min: 38.35 Max: 75.34
 			variantNicodemus.put(IC_2_TRUE_x10000, new DataHolder(17.93, 2.69)); //Min: 8.65 Max: 38.76
@@ -316,7 +316,7 @@ public class CipherStatistics extends StatisticsRef {
 			variantNicodemus.put(NORMAL_ORDER, new DataHolder(223.26, 32.23)); //Min: 104.00 Max: 327.00
 			variantNicodemus.put(NICODEMUS_MAX_3to15, new DataHolder(66.55, 3.21)); //Min: 52.38 Max: 84.85
 			
-			HashMap<String, DataHolder> vigenereNicodemus = createOrGetList("Vigenere Nicodemus");
+			HashMap<String, DataHolder> vigenereNicodemus = createOrGetList("Nicodemus", "Vigenere");
 			vigenereNicodemus.put(IC_x1000, new DataHolder(41.38, 2.51)); //Min: 35.40 Max: 55.23
 			vigenereNicodemus.put(IC_MAX_1to15_x1000, new DataHolder(46.85, 6.54)); //Min: 36.88 Max: 74.85
 			vigenereNicodemus.put(IC_2_TRUE_x10000, new DataHolder(17.96, 2.69)); //Min: 4.72 Max: 34.96
@@ -329,9 +329,6 @@ public class CipherStatistics extends StatisticsRef {
 			vigenereNicodemus.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.52, 2.78)); //Min: 23.00 Max: 76.00
 			vigenereNicodemus.put(NORMAL_ORDER, new DataHolder(223.68, 31.92)); //Min: 116.00 Max: 322.00
 			vigenereNicodemus.put(NICODEMUS_MAX_3to15, new DataHolder(66.52, 3.19)); //Min: 52.38 Max: 81.48
-			
-			
-			//VARIANT AND VIGENERE NICODEMUS
 			
 			HashMap<String, DataHolder> fractionatedMorse = createOrGetList("Fractionated Morse");
 			fractionatedMorse.put(IC_x1000, new DataHolder(57.53, 1.50)); //Min: 53.84 Max: 61.78
@@ -346,7 +343,7 @@ public class CipherStatistics extends StatisticsRef {
 			fractionatedMorse.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.43, 2.02)); //Min: 37.00 Max: 52.00
 			fractionatedMorse.put(NORMAL_ORDER, new DataHolder(229.47, 26.68)); //Min: 132.00 Max: 324.00
 			
-			HashMap<String, DataHolder> playfair = createOrGetList("Playfair");
+			HashMap<String, DataHolder> playfair = createOrGetList("Digraph Substitution", "Playfair");
 			playfair.put(IC_x1000, new DataHolder(50.37, 2.82)); //Min: 41.15 Max: 62.68
 			playfair.put(IC_MAX_1to15_x1000, new DataHolder(53.45, 3.26)); //Min: 44.97 Max: 73.16
 			playfair.put(IC_2_TRUE_x10000, new DataHolder(39.93, 3.80)); //Min: 25.75 Max: 59.03
@@ -361,7 +358,7 @@ public class CipherStatistics extends StatisticsRef {
 			playfair.put(TEXT_LENGTH_MULTIPLE, new DataHolder(2));
 			playfair.put(DOUBLE_LETTER_EVEN, new DataHolder(false));
 			
-			HashMap<String, DataHolder> fourSquare = createOrGetList("Four Square");
+			HashMap<String, DataHolder> fourSquare = createOrGetList("Digraph Substitution", "Four Square");
 			fourSquare.put(IC_x1000, new DataHolder(46.24, 1.72)); //Min: 39.02 Max: 53.82
 			fourSquare.put(IC_MAX_1to15_x1000, new DataHolder(54.21, 2.44)); //Min: 50.32 Max: 67.92
 			fourSquare.put(IC_2_TRUE_x10000, new DataHolder(35.43, 2.96)); //Min: 22.52 Max: 47.60
@@ -374,7 +371,7 @@ public class CipherStatistics extends StatisticsRef {
 			fourSquare.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(22.08, 3.81)); //Min: 8.00 Max: 43.00
 			fourSquare.put(NORMAL_ORDER, new DataHolder(232.13, 27.10)); //Min: 131.00 Max: 311.00
 			
-			HashMap<String, DataHolder> twoSquare = createOrGetList("Two Square");
+			HashMap<String, DataHolder> twoSquare = createOrGetList("Digraph Substitution", "Two Square");
 			twoSquare.put(IC_x1000, new DataHolder(46.10, 2.25)); //Min: 39.18 Max: 58.37
 			twoSquare.put(IC_MAX_1to15_x1000, new DataHolder(52.91, 3.57)); //Min: 43.62 Max: 78.57
 			twoSquare.put(IC_2_TRUE_x10000, new DataHolder(35.67, 3.10)); //Min: 21.74 Max: 52.37
@@ -488,7 +485,7 @@ public class CipherStatistics extends StatisticsRef {
 			amsco.put(LOG_DIGRAPH_VIGENERE, new DataHolder(693.02, 7.01));
 			amsco.put(LOG_DIGRAPH_PORTA, new DataHolder(565.05, 22.86));
 			
-			HashMap<String, DataHolder> bifid = createOrGetList("Bifid");
+			HashMap<String, DataHolder> bifid = createOrGetList("Bifid", "P:3-15");
 			bifid.put(IC_x1000, new DataHolder(45.71, 3.08));
 			bifid.put(IC_MAX_1to15_x1000, new DataHolder(51.69, 4.42));
 			bifid.put(IC_KAPPA_x1000, new DataHolder(60.60, 8.31));
@@ -509,7 +506,7 @@ public class CipherStatistics extends StatisticsRef {
 			bifid.put(LOG_DIGRAPH_AUTOKEY_VIGENERE, new DataHolder(533.92, 33.35));
 			bifid.put(LOG_DIGRAPH_PORTAX, new DataHolder(150.56, 206.81));
 			
-			HashMap<String, DataHolder> bifid0 = createOrGetList("Bifid P:0");
+			HashMap<String, DataHolder> bifid0 = createOrGetList("Bifid", "P:0");
 			bifid0.put(IC_x1000, new DataHolder(45.71, 3.06));
 			bifid0.put(IC_MAX_1to15_x1000, new DataHolder(47.56, 3.54));
 			bifid0.put(IC_KAPPA_x1000, new DataHolder(64.95, 8.69));
@@ -524,7 +521,7 @@ public class CipherStatistics extends StatisticsRef {
 			bifid0.put(TRIFID_MAX_3to15, new DataHolder(507.17, 266.05));
 			bifid0.put(LOG_DIGRAPH, new DataHolder(485.04, 29.57));
 
-			HashMap<String, DataHolder> enigma = createOrGetList("Enigma NOPLUGBOARD");
+			HashMap<String, DataHolder> enigma = createOrGetList("Enigma", "NOPLUGBOARD");
 			enigma.put(IC_x1000, new DataHolder(38.50, 0.43));
 			enigma.put(IC_MAX_1to15_x1000, new DataHolder(40.07, 1.69));
 			enigma.put(IC_KAPPA_x1000, new DataHolder(49.87, 5.66));
@@ -590,14 +587,31 @@ public class CipherStatistics extends StatisticsRef {
 			normalEnglish.put(new StatisticRange(StatisticType.LONG_REPEAT_ODD, 50.0D, 6.0D));
 			normalEnglish.put(new StatisticRange(StatisticType.LOG_DIGRAPH, 756.0D, 13.0D));
 			normalEnglish.put(new StatisticRange(StatisticType.SINGLE_LETTER_DIGRAPH, 303.0D, 23.0D));**/
-			
+			System.out.println(map);
 		}
 		return map;
 	}
 	
-	public static HashMap<String, DataHolder> createOrGetList(String key) {
-		if(!map.containsKey(key))
-			map.put(key, new HashMap<String, DataHolder>());
-		return map.get(key);
+	@SuppressWarnings("unchecked")
+	public static HashMap<String, DataHolder> createOrGetList(String... keys) {
+		TreeMap<String, Object> last = map;
+		
+		for(int i = 0; i < keys.length; i++) {
+			if(i == keys.length - 1) {//Last Key
+				last.put(keys[i], new HashMap<String, DataHolder>());
+				return (HashMap<String, DataHolder>)last.get(keys[i]);
+			}
+			else {
+				if(last.containsKey(keys[i]))
+					last = (TreeMap<String, Object>)last.get(keys[i]);
+				else {
+					TreeMap<String, Object> newMap = new TreeMap<String, Object>();
+					last.put(keys[i], newMap);
+					last = newMap;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

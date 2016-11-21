@@ -2,13 +2,18 @@ package nationalcipher.cipher.stats;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+
+import javax.swing.JProgressBar;
 
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
+import javalibrary.swing.ProgressValue;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
@@ -58,29 +63,74 @@ public class StatisticHandler {
 		return true;
 	}
 	
-	public static List<List<Object>> orderCipherProbibitly(String text) {
+	public static List<IdentifyOutput> orderCipherProbibitly(String text) {
 		return orderCipherProbibitly(createTextStatistics(text));
 	}
 	
-	public static List<List<Object>> orderCipherProbibitly(HashMap<String, TextStatistic> stats) {
+	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic> stats) {
 		return orderCipherProbibitly(stats, new ArrayList<String>(map.keySet()));
 	}
 	
-	public static List<List<Object>> orderCipherProbibitly(HashMap<String, TextStatistic> stats, List<String> doOnly) {
-		List<List<Object>> num_dev = new ArrayList<List<Object>>();
+	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic> stats, List<String> doOnly) {
+		List<IdentifyOutput> num_dev = new ArrayList<IdentifyOutput>();
 		
-		TreeMap<String, HashMap<String, DataHolder>> statistic = CipherStatistics.getOtherCipherStatistics();
-		
-		for(String cipherName : statistic.keySet()) {
-
-			double value = scoreCipher(stats, statistic.get(cipherName), doOnly);
-			num_dev.add(Arrays.asList(cipherName, value));
-		}
+		TreeMap<String, Object> statistic = CipherStatistics.getOtherCipherStatistics();
+		traverseDataTree(stats, doOnly, num_dev, new ArrayList<String>(), statistic);
 		
 		return num_dev;
 	}
 	
-	public static double scoreCipher(HashMap<String, TextStatistic> stats, HashMap<String, DataHolder> data, List<String> doOnly) {
+	@SuppressWarnings("unchecked")
+	public static void traverseDataTree(HashMap<String, TextStatistic> stats, List<String> doOnly, List<IdentifyOutput> num_dev, List<String> keyBefore, Map<String, Object> toCheck) {
+		for(String key : toCheck.keySet()) {
+			Map<String, ?> next = (Map<String, ?>)toCheck.get(key);
+			List<String> copy = new ArrayList<String>(keyBefore);
+			copy.add(key);
+			
+			//Determines which tree is next (true = end of tree, false = recursive function)
+			boolean type = false;
+			
+			for(String dKey : next.keySet()) {
+				if(next.get(dKey) instanceof DataHolder)
+					type = true;
+				break;
+			}
+			
+			if(type) {
+				double value = scoreCipher(stats, (Map<String, DataHolder>)next, doOnly);
+				
+				IdentifyOutput identifyOutput = null;
+				List<IdentifyOutput> last = num_dev;
+				for(int i = 0; i < copy.size(); i++) {
+					
+						int index = indexOf(copy.get(i), last);
+						if(index != -1) {
+							identifyOutput = last.get(index);
+							if(identifyOutput.score > value)
+								identifyOutput.score = value;
+						}
+						else {
+							identifyOutput = new IdentifyOutput(copy.get(i), value);
+							last.add(identifyOutput);
+	
+						}
+						last = identifyOutput.subOutput;
+			
+				}
+			}
+			else
+				traverseDataTree(stats, doOnly, num_dev, copy, (Map<String, Object>)next);
+		}
+	}
+	
+	public static int indexOf(String key, List<IdentifyOutput> num_dev) {
+		for(int i = 0; i < num_dev.size(); i++)
+			if(num_dev.get(i).id.equals(key))
+				return i;
+		return -1;
+	}
+	
+	public static double scoreCipher(Map<String, TextStatistic> stats, Map<String, DataHolder> data, List<String> doOnly) {
 		double value = 0.0D;
 		
 		for(String id : data.keySet()) 
@@ -97,6 +147,25 @@ public class StatisticHandler {
 				TextStatistic stat = map.get(id).getConstructor(String.class).newInstance(text);
 				stat.calculateStatistic();
 				stats.put(id, stat);
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return stats;
+	}
+	
+	public static HashMap<String, TextStatistic> createTextStatistics(String text, JProgressBar value) {
+		HashMap<String, TextStatistic> stats = new HashMap<String, TextStatistic>();
+		try {
+			value.setMaximum(map.size());
+			for(String id : map.keySet()) {
+				value.setString(shortNameMap.get(id));
+				TextStatistic stat = map.get(id).getConstructor(String.class).newInstance(text);
+				stat.calculateStatistic();
+				stats.put(id, stat);
+				value.setValue(value.getValue() + 1);
 			}
 		}
 		catch(Exception e) {

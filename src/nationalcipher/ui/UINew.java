@@ -20,6 +20,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -47,6 +48,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -129,6 +131,7 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
+import nationalcipher.cipher.stats.IdentifyOutput;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.stats.TextStatistic;
@@ -168,7 +171,8 @@ public class UINew extends JFrame implements IApplication {
     }
     
     public void addDialog(JDialog dialog) {
-    	lastStates.add(dialog);
+    	if(!lastStates.contains(dialog))
+    		lastStates.add(dialog);
     	changeDialog(dialog);
     }
     
@@ -181,6 +185,8 @@ public class UINew extends JFrame implements IApplication {
     	this.menuScreenShot.removeAll();
     	for(final JDialog listDialog : lastStates) {
     		JMenuItem jmi = new JMenuItem(listDialog.getTitle());
+    		if(listDialog.getIconImages() != null && !listDialog.getIconImages().isEmpty())
+    			jmi.setIcon(new ImageIcon(listDialog.getIconImages().get(0)));
     		this.menuScreenShot.add(jmi);
     		jmi.addActionListener(new ActionListener() {
     	        @Override
@@ -1328,7 +1334,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(500, 300));
     		
@@ -1409,7 +1415,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(900, 300));
     		
@@ -1516,7 +1522,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -1693,7 +1699,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -1766,7 +1772,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -1902,7 +1908,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -1975,7 +1981,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2048,7 +2054,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2147,7 +2153,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2270,7 +2276,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2402,7 +2408,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2462,7 +2468,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2529,7 +2535,7 @@ public class UINew extends JFrame implements IApplication {
     	private JBarChart chart;
     	
     	public SwagmanTestAction() {
-    		super("Swagman Test", "image/lock_break.png");
+    		super("Swagman Test", "image/chart_bar.png");
     		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
 
 				@Override
@@ -2621,7 +2627,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -2761,7 +2767,7 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setAlwaysOnTop(true);
     		this.dialog.setModal(false);
     		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
+    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
     		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
     		
@@ -3044,10 +3050,10 @@ public class UINew extends JFrame implements IApplication {
     	private JScrollPane scrollPane;
     	private HashMap<String, JCheckBox> statCheckBoxes;
     	private HashMap<String, TextStatistic> stats;
-    	private List<List<Object>> lastNumDev;
+    	private List<IdentifyOutput> lastNumDev;
     	
     	public IdentifyAction() {
-    		super("Identify Cipher", "image/lock_break.png");
+    		super("Identify Cipher", "image/page_white_find.png");
     		this.statCheckBoxes = new HashMap<String, JCheckBox>();
     		
     		this.dialog.setMinimumSize(new Dimension(500, 700));
@@ -3072,6 +3078,45 @@ public class UINew extends JFrame implements IApplication {
 	            checkBox.setSelected(true);
 	        	optionPanel.add(checkBox);
 	        }
+	        JButton refreshButton = new JButton("Refresh");
+	        refreshButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					((JButton)event.getSource()).setEnabled(false);
+					for(JCheckBox checkBox : statCheckBoxes.values())
+						checkBox.setEnabled(false);
+					
+					optionPanel.remove(refreshButton);
+					JProgressBar progress = new JProgressBar();
+					progress.setStringPainted(true);
+					optionPanel.add(progress);
+					optionPanel.repaint();
+					optionPanel.revalidate();
+					cipherInfoPanel.removeAll();
+		    		cipherScorePanel.removeAll();
+				    cipherScorePanel.revalidate();
+		    		cipherScorePanel.repaint();	
+				    cipherInfoPanel.revalidate();
+				    cipherInfoPanel.repaint();	
+
+					Threads.runTask(new Runnable() {
+
+						@Override
+						public void run() {
+							stats = StatisticHandler.createTextStatistics(getInputText(), progress);
+				     		lastNumDev = null;
+				     		updateDialog();
+				     		optionPanel.remove(progress);
+				     		optionPanel.add(refreshButton);
+							((JButton)event.getSource()).setEnabled(true);
+							for(JCheckBox checkBox : statCheckBoxes.values())
+								checkBox.setEnabled(true);
+						}
+					});
+				}
+	        });
+	        optionPanel.add(refreshButton);
 	        panel.add(optionPanel);
 	        
 	        JPanel basePanel = new JPanel();
@@ -3098,15 +3143,94 @@ public class UINew extends JFrame implements IApplication {
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
      		addDialog(this.dialog);
-     		this.stats = StatisticHandler.createTextStatistics(getInputText());
-     		this.lastNumDev = null;
-     		this.updateDialog();
 		}
     	
-    	public void updateDialog() {
-    		this.cipherInfoPanel.removeAll();
-    		this.cipherScorePanel.removeAll();
+
+	    public Comparator<IdentifyOutput> comparator = new Comparator<IdentifyOutput>() {
+	    	@Override
+	        public int compare(IdentifyOutput c1, IdentifyOutput c2) {
+	        	double diff = c1.score - c2.score;
+	        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
+	        }
+	    };
+	    
+    	public void openDialog(String title, List<IdentifyOutput> num_dev) {
+    		JDialog dialog = new JDialog();
   
+  
+    		JPanel panel = new JPanel();
+    		JPanel cipherInfoPanel = new JPanel();
+        	JPanel cipherScorePanel = new JPanel();
+        	JPanel basePanel = new JPanel();
+        	JScrollPane scrollPane = new JScrollPane(basePanel);
+		    scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+	        basePanel.setLayout(new BoxLayout(basePanel, BoxLayout.X_AXIS));
+	        scrollPane = new JScrollPane(basePanel);
+		    scrollPane.getVerticalScrollBar().setUnitIncrement(12);
+		    cipherInfoPanel.setLayout(new BoxLayout(cipherInfoPanel, BoxLayout.Y_AXIS));
+		    basePanel.add(cipherInfoPanel);
+		    cipherScorePanel.setLayout(new BoxLayout(cipherScorePanel, BoxLayout.Y_AXIS));
+		    basePanel.add(cipherScorePanel);
+		    panel.add(scrollPane);
+		    
+		    Collections.sort(num_dev, this.comparator);
+	
+		    
+		    
+		    JLabel titleLabel = new JLabel("Cipher");
+		    titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
+		    cipherInfoPanel.add(titleLabel);
+		    
+		    JLabel titleScoreLabel = new JLabel("Likelyhood");
+		    titleScoreLabel.setFont(titleScoreLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
+		    cipherScorePanel.add(titleScoreLabel);
+		    
+		    for(int i = 0; i < num_dev.size(); i++) {
+		    	IdentifyOutput identifyOutput = num_dev.get(i);
+		    	
+		    	JLabel cipherInfoLabel = new JLabel(identifyOutput.id + ":            ");
+		    	cipherInfoLabel.addMouseListener(new MouseAdapter() {
+		    		@Override
+		    	    public void mouseClicked(MouseEvent event) {  
+		    			if(!identifyOutput.subOutput.isEmpty())
+		    				openDialog(dialog.getTitle() + " " + identifyOutput.id, identifyOutput.subOutput);
+		    	    }  
+		    	}); 
+		    	cipherInfoLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
+		    	cipherInfoPanel.add(cipherInfoLabel);
+		    	
+		    	String valueStr = String.format("%.2f", identifyOutput.score, 2);
+		    	
+		    	JLabel cipherScoreLabel = new JLabel(valueStr);
+		    	cipherScoreLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
+		    	cipherScorePanel.add(cipherScoreLabel);
+		    }
+		    
+		    
+    		dialog.add(panel);
+    		
+    		dialog.addWindowListener(new JDialogCloseEvent(dialog));
+    		dialog.setTitle(title);
+    		dialog.setAlwaysOnTop(true);
+    		dialog.setModal(false);
+    		dialog.setResizable(false);
+    		dialog.setMinimumSize(new Dimension(320, 200));
+    		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/page_white_find.png")));
+    		dialog.setFocusableWindowState(false);
+    		dialog.setVisible(true);
+    		dialog.revalidate();
+    		dialog.repaint();	
+    		dialog.setLocationRelativeTo(this.dialog);
+    		dialogs.add(dialog);
+    		addDialog(dialog);
+    		
+
+    	}
+    	
+    	public void updateDialog() {
+    		cipherInfoPanel.removeAll();
+    		cipherScorePanel.removeAll();
+    		
     		if(this.stats != null) {
     			ArrayList<String> doOnly = new ArrayList<String>();
     			for(String id : this.statCheckBoxes.keySet()) {
@@ -3114,18 +3238,10 @@ public class UINew extends JFrame implements IApplication {
     					doOnly.add(id);
     			}
     			
-				List<List<Object>> num_dev = StatisticHandler.orderCipherProbibitly(this.stats, doOnly);
-				 
-			    
-			    Comparator<List<Object>> comparator = new Comparator<List<Object>>() {
-			    	@Override
-			        public int compare(List<Object> c1, List<Object> c2) {
-			        	double diff = (double)c1.get(1) - (double)c2.get(1);
-			        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
-			        }
-			    };
+				List<IdentifyOutput> num_dev = StatisticHandler.orderCipherProbibitly(this.stats, doOnly);
+				System.out.println(num_dev);
 
-			    Collections.sort(num_dev, comparator);
+			    Collections.sort(num_dev, this.comparator);
 		
 			    
 			    
@@ -3138,14 +3254,23 @@ public class UINew extends JFrame implements IApplication {
 			    this.cipherScorePanel.add(titleScoreLabel);
 			    
 			    for(int i = 0; i < num_dev.size(); i++) {
-			    	JLabel cipherInfoLabel = new JLabel(num_dev.get(i).get(0) + ":            ");
+			    	IdentifyOutput identifyOutput = num_dev.get(i);
+			    	
+			    	JLabel cipherInfoLabel = new JLabel(identifyOutput.id + ":            ");
+			    	cipherInfoLabel.addMouseListener(new MouseAdapter() {
+			    		@Override
+			    	    public void mouseClicked(MouseEvent event) {  
+			    			if(!identifyOutput.subOutput.isEmpty())
+			    				openDialog(identifyOutput.id, identifyOutput.subOutput);
+			    	    }  
+			    	}); 
 			    	cipherInfoLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
 			    	this.cipherInfoPanel.add(cipherInfoLabel);
 			    	
-			    	String valueStr = String.format("%.2f", (double)num_dev.get(i).get(1), 2);
+			    	String valueStr = String.format("%.2f", identifyOutput.score, 2);
 			    	if(this.lastNumDev != null) {
 			    		for(int l = 0; l < this.lastNumDev.size(); l++) {
-			    			if(this.lastNumDev.get(l).get(0).equals(num_dev.get(i).get(0))) {
+			    			if(this.lastNumDev.get(l).id.equals(identifyOutput.id)) {
 			    				valueStr += " ";
 			    				
 			    				if(i != l) {
@@ -3699,5 +3824,4 @@ public class UINew extends JFrame implements IApplication {
     private JMenu menuCipherAttack;
     private JMenuItem menuCribInput;
     private JMenuItem menuItemCurrentAttack;
-    
 }
