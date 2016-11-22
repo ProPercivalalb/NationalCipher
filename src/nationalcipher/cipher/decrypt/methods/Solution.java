@@ -9,6 +9,7 @@ import javalibrary.util.ArrayUtil;
 public class Solution implements Comparable<Solution> {
 	
 	private byte[] text;
+	private boolean beenBaked;
 	//Could change to float to reduce memory from 64 bits to 32 bits
 	public final double score;
 	public String keyString;
@@ -17,6 +18,7 @@ public class Solution implements Comparable<Solution> {
 	
 	public Solution(byte[] text, double score) {
 		this.text = text;
+		this.beenBaked = false;
 		this.score = score;
 		this.keyString = UNKNOWN_KEY;
 	}
@@ -51,7 +53,10 @@ public class Solution implements Comparable<Solution> {
 	}
 	
 	public Solution bakeSolution() {
-		this.text = ArrayUtil.copyOfRange(this.text, 0, this.text.length);
+		if(!this.beenBaked) {
+			this.beenBaked = true;
+			this.text = ArrayUtil.copyOfRange(this.text, 0, this.text.length);
+		}
 		return this;
 	}
 

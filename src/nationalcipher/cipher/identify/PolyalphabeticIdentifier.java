@@ -31,6 +31,44 @@ public class PolyalphabeticIdentifier {
 		return score * 100 / (text.length() - 1);
 	}
 	
+	public static double calculateCaesarLDI(String text) {
+		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text))
+			return 0.0D;
+		
+		double largestSum = Double.MIN_VALUE;
+		
+		for(int shift = 1; shift <= 25; shift++) {
+			double score = 0.0D;
+			for(int i = 0; i < text.length() - 1; i++)
+			    score += logdi[(26 + text.charAt(i) - shift - 'A') % 26][(26 + text.charAt(i + 1) - shift - 'A') % 26];
+			score *= 100;
+			score /= (text.length() - 1);
+			largestSum = Math.max(largestSum, score);
+		}
+		
+		return largestSum;
+	}
+	
+	public static double calculateAffineLDI(String text) {
+		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text))
+			return 0.0D;
+		
+		double largestSum = Double.MIN_VALUE;
+		
+		for(int a : new int[] {3,5,7,9,11,15,17,19,21,23,25}) {
+  			for(int b = 0; b < 26; b++) {
+				double score = 0.0D;
+				for(int i = 0; i < text.length() - 1; i++)
+				    score += logdi[(((25 - b) + (text.charAt(i) - 'A')) * a) % 26][(((25 - b) + (text.charAt(i + 1) - 'A')) * a) % 26];
+				score *= 100;
+				score /= (text.length() - 1);
+				largestSum = Math.max(largestSum, score);
+  			}
+		}
+		
+		return largestSum;
+	}
+	
 	public static double calculateSubTypeLDI(String text, SubType type) {
 		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text))
 			return 0.0D;

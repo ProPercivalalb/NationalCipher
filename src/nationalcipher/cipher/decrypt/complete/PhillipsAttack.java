@@ -12,6 +12,8 @@ import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -69,11 +71,12 @@ public class PhillipsAttack extends CipherAttack {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Phillips.decode(this.cipherText, key, this.orderRows, this.orderColumns), this.getLanguage());
+			this.lastSolution = new Solution(Phillips.decode(this.cipherText, this.plainText, key, this.orderRows, this.orderColumns), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString("%s, r: %b, c: %b", key, this.orderRows, this.orderColumns);
+				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
@@ -84,14 +87,14 @@ public class PhillipsAttack extends CipherAttack {
 		
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey = KeySquareManipulation.generateRandKeySquare();
-			return new Solution(Phillips.decode(this.cipherText, this.bestMaximaKey, this.orderRows, this.orderColumns), this.getLanguage());
+			this.bestMaximaKey = KeyGeneration.createLongKey25();
+			return new Solution(Phillips.decode(this.cipherText, this.plainText, this.bestMaximaKey, this.orderRows, this.orderColumns), this.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
-			return new Solution(Phillips.decode(this.cipherText, this.lastKey, this.orderRows, this.orderColumns), this.getLanguage());
+			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 5, 5);
+			return new Solution(Phillips.decode(this.cipherText, this.plainText, this.lastKey, this.orderRows, this.orderColumns), this.getLanguage());
 		}
 
 		@Override
@@ -103,6 +106,7 @@ public class PhillipsAttack extends CipherAttack {
 		public void solutionFound() {
 			this.bestKey = this.bestMaximaKey;
 			this.bestSolution.setKeyString("%s, r: %b, c: %b", this.bestKey, this.orderRows, this.orderColumns);
+			this.bestSolution.bakeSolution();
 			this.getKeyPanel().updateSolution(this.bestSolution);
 		}
 		

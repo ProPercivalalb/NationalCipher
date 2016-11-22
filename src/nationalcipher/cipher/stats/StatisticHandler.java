@@ -22,11 +22,13 @@ import nationalcipher.cipher.stats.types.StatisticEvenDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticICx1000;
 import nationalcipher.cipher.stats.types.StatisticKappaICx1000;
 import nationalcipher.cipher.stats.types.StatisticLogDigraph;
+import nationalcipher.cipher.stats.types.StatisticLogDigraphAffine;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphAutokeyBeaufort;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphAutokeyPorta;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphAutokeyVariant;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphAutokeyVigenere;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphBeaufort;
+import nationalcipher.cipher.stats.types.StatisticLogDigraphCaesar;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphPorta;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphPortax;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphReversed;
@@ -41,6 +43,7 @@ import nationalcipher.cipher.stats.types.StatisticMaxBifid3to15;
 import nationalcipher.cipher.stats.types.StatisticMaxICx1000;
 import nationalcipher.cipher.stats.types.StatisticMaxNicodemus3to15;
 import nationalcipher.cipher.stats.types.StatisticMaxTrifid3to15;
+import nationalcipher.cipher.stats.types.StatisticMaxUniqueCharacters;
 import nationalcipher.cipher.stats.types.StatisticNormalOrder;
 import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTextLengthMultiple;
@@ -237,6 +240,9 @@ public class StatisticHandler {
 		registerStatistic(StatisticsRef.NICODEMUS_MAX_3to15, StatisticMaxNicodemus3to15.class, "NIC");
 		registerStatistic(StatisticsRef.TRIFID_MAX_3to15, StatisticMaxTrifid3to15.class, "TIC");
 		
+		registerStatistic(StatisticsRef.LOG_DIGRAPH_CAESAR, StatisticLogDigraphCaesar.class, "LDI_CAE");
+		registerStatistic(StatisticsRef.LOG_DIGRAPH_AFFINE, StatisticLogDigraphAffine.class, "LDI_AFF");
+		
 		//Vigenere Family
 		registerStatistic(StatisticsRef.LOG_DIGRAPH_BEAUFORT, StatisticLogDigraphBeaufort.class, "LDI_BEU");
 		registerStatistic(StatisticsRef.LOG_DIGRAPH_PORTA, StatisticLogDigraphPorta.class, "LDI_POR");
@@ -256,6 +262,7 @@ public class StatisticHandler {
 		//Boolean statitics
 		registerStatistic(StatisticsRef.DOUBLE_LETTER_EVEN, StatisticDoubleLetter.class, "DBL_PLAY");
 		registerStatistic(StatisticsRef.DOUBLE_LETTER_EVEN_2to40, StatisticDoubleLetter2to40.class, "DBL_SERP");
+		registerStatistic(StatisticsRef.MAX_UNIQUE_CHARACTERS, StatisticMaxUniqueCharacters.class, "MAX_UNIQUE");
 		registerStatistic(StatisticsRef.TEXT_LENGTH_MULTIPLE, StatisticTextLengthMultiple.class, "DIV_N");
 	}
 }

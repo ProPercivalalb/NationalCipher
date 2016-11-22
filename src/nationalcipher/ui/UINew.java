@@ -3177,7 +3177,7 @@ public class UINew extends JFrame implements IApplication {
 	
 		    
 		    
-		    JLabel titleLabel = new JLabel("Cipher");
+		    JLabel titleLabel = new JLabel("Cipher" + StringTransformer.repeat(" ", 15));
 		    titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
 		    cipherInfoPanel.add(titleLabel);
 		    
@@ -3187,17 +3187,30 @@ public class UINew extends JFrame implements IApplication {
 		    
 		    for(int i = 0; i < num_dev.size(); i++) {
 		    	IdentifyOutput identifyOutput = num_dev.get(i);
+		    	JPanel infoPanel = new JPanel();
+		    	infoPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+		    	infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.X_AXIS));
+		    	JLabel cipherInfoLabel = new JLabel(identifyOutput.id + " ");
 		    	
-		    	JLabel cipherInfoLabel = new JLabel(identifyOutput.id + ":            ");
-		    	cipherInfoLabel.addMouseListener(new MouseAdapter() {
-		    		@Override
-		    	    public void mouseClicked(MouseEvent event) {  
-		    			if(!identifyOutput.subOutput.isEmpty())
-		    				openDialog(dialog.getTitle() + " " + identifyOutput.id, identifyOutput.subOutput);
-		    	    }  
-		    	}); 
 		    	cipherInfoLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
-		    	cipherInfoPanel.add(cipherInfoLabel);
+		    	infoPanel.add(cipherInfoLabel);
+		    	
+		    	if(!identifyOutput.subOutput.isEmpty()) {
+		    		JButton zoomIcon = new JButton();
+		    		zoomIcon.setIcon(ImageUtil.createImageIcon("/image/page_white_magnify.png", "Sublist"));
+		    		zoomIcon.setBorderPainted(false);
+		    		zoomIcon.setFocusPainted(false);
+		    		ButtonUtil.setButtonSizeToIconSize(zoomIcon, zoomIcon.getIcon(), 4);
+		    		zoomIcon.addMouseListener(new MouseAdapter() {
+			    		@Override
+			    	    public void mouseClicked(MouseEvent event) {  
+			    			openDialog(dialog.getTitle() + " " + identifyOutput.id, identifyOutput.subOutput);
+			    	    }  
+			    	});
+		    		infoPanel.add(zoomIcon);
+		    	}
+		    	
+		    	cipherInfoPanel.add(infoPanel);
 		    	
 		    	String valueStr = String.format("%.2f", identifyOutput.score, 2);
 		    	
@@ -3245,7 +3258,7 @@ public class UINew extends JFrame implements IApplication {
 		
 			    
 			    
-			    JLabel titleLabel = new JLabel("Cipher");
+			    JLabel titleLabel = new JLabel("Cipher" + StringTransformer.repeat(" ", 40));
 			    titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD).deriveFont(20F));
 			    this.cipherInfoPanel.add(titleLabel);
 			    
@@ -3256,16 +3269,30 @@ public class UINew extends JFrame implements IApplication {
 			    for(int i = 0; i < num_dev.size(); i++) {
 			    	IdentifyOutput identifyOutput = num_dev.get(i);
 			    	
-			    	JLabel cipherInfoLabel = new JLabel(identifyOutput.id + ":            ");
-			    	cipherInfoLabel.addMouseListener(new MouseAdapter() {
-			    		@Override
-			    	    public void mouseClicked(MouseEvent event) {  
-			    			if(!identifyOutput.subOutput.isEmpty())
-			    				openDialog(identifyOutput.id, identifyOutput.subOutput);
-			    	    }  
-			    	}); 
+			    	JPanel infoPanel = new JPanel();
+			    	infoPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+			    	infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.X_AXIS));
+			    	JLabel cipherInfoLabel = new JLabel(identifyOutput.id + " ");
+			    	
 			    	cipherInfoLabel.setFont(cipherInfoLabel.getFont().deriveFont(20F));
-			    	this.cipherInfoPanel.add(cipherInfoLabel);
+			    	infoPanel.add(cipherInfoLabel);
+			    	
+			    	if(!identifyOutput.subOutput.isEmpty()) {
+			    		JButton zoomIcon = new JButton();
+			    		zoomIcon.setIcon(ImageUtil.createImageIcon("/image/page_white_magnify.png", "Sublist"));
+			    		zoomIcon.setBorderPainted(false);
+			    		zoomIcon.setFocusPainted(false);
+			    		ButtonUtil.setButtonSizeToIconSize(zoomIcon, zoomIcon.getIcon(), 4);
+			    		zoomIcon.addMouseListener(new MouseAdapter() {
+				    		@Override
+				    	    public void mouseClicked(MouseEvent event) {  
+				    			openDialog(identifyOutput.id, identifyOutput.subOutput);
+				    	    }  
+				    	});
+			    		infoPanel.add(zoomIcon);
+			    	}
+			    	
+			    	this.cipherInfoPanel.add(infoPanel);
 			    	
 			    	String valueStr = String.format("%.2f", identifyOutput.score, 2);
 			    	if(this.lastNumDev != null) {

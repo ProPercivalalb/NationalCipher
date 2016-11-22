@@ -22,6 +22,8 @@ public class StatisticsRef {
 	public static final String LOG_DIGRAPH_SLIDEFAIR_VIGENERE = "log_digraph_slidefair_vigenere";
 	public static final String LOG_DIGRAPH_VARIANT = "log_digraph_variant";
 	public static final String LOG_DIGRAPH_VIGENERE = "log_digraph_vigenere";
+	public static final String LOG_DIGRAPH_CAESAR = "log_digraph_caesar";
+	public static final String LOG_DIGRAPH_AFFINE = "log_digraph_affine";
 	public static final String LONG_REPEAT = "long_repeat";
 	public static final String LONG_REPEAT_ODD_PERCENTAGE = "long_repeat_odd_percentage";
 	public static final String BIFID_0 = "bifid_0";
@@ -33,6 +35,7 @@ public class StatisticsRef {
 	
 	public static final String DOUBLE_LETTER_EVEN = "double_letter_even";
 	public static final String DOUBLE_LETTER_EVEN_2to40 = "double_letter_even_2to40";
+	public static final String MAX_UNIQUE_CHARACTERS = "max_unique_characters";
 	public static final String TEXT_LENGTH_MULTIPLE = "text_length_multiple";
 	
 }

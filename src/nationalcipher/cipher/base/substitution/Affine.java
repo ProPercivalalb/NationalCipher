@@ -9,7 +9,6 @@ import nationalcipher.cipher.base.IRandEncrypter;
 public class Affine implements IRandEncrypter {
 
 	public static String encode(String plainText, int a, int b) {
-		System.out.println(a + " " + b);
 		String cipherText = "";
 		
 		String tempAlphabet = "";
@@ -42,6 +41,6 @@ public class Affine implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, RandomUtil.pickRandomElement(1,3,5,7,9,11,15,17,19,21,23,25), RandomUtil.pickRandomInt(26));
+		return encode(plainText, RandomUtil.pickRandomElement(3,5,7,9,11,15,17,19,21,23,25), RandomUtil.pickRandomInt(26));
 	}
 }

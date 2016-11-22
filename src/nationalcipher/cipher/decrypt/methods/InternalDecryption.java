@@ -17,7 +17,6 @@ public class InternalDecryption {
 	public Solution bestSolution, lastSolution;
 	public int iteration;
 	
-	
 	public char[] cipherText;
 	public byte[] plainText;
 	public IApplication app;
@@ -39,8 +38,10 @@ public class InternalDecryption {
 	
 	public void addSolution(Solution solution) {
 		if(this.getSettings().collectSolutions())
-			if(solution.score > Math.max(this.UPPER_ESTIMATE, this.bestSolution.score * 1.1))
+			if(solution.score > Math.max(this.UPPER_ESTIMATE, this.bestSolution.score * 1.1)) {
+				solution.bakeSolution();
 				UINew.topSolutions.addSolution(solution);
+			}
 	}
 	
 	public void resetSolution() {

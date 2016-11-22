@@ -45,9 +45,7 @@ public class Phillips implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare, boolean orderRows, boolean orderColumns) {
-		char[] plainText = new char[cipherText.length];
-		
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare, boolean orderRows, boolean orderColumns) {
 		for(int i = 0; i < cipherText.length; i++) {
 			int squareIndex = ((int)(i / 5) % rows.length);
 			
@@ -72,7 +70,7 @@ public class Phillips implements IRandEncrypter {
 			else
 				newColumn = (column + 4) % 5;
 	
-			plainText[i] = keysquare.charAt(newRow * 5 + newColumn);
+			plainText[i] = (byte)keysquare.charAt(newRow * 5 + newColumn);
 		}
 		
 		return plainText;

@@ -357,6 +357,7 @@ public class CipherStatistics extends StatisticsRef {
 			playfair.put(NORMAL_ORDER, new DataHolder(232.68, 33.07)); //Min: 123.00 Max: 331.00
 			playfair.put(TEXT_LENGTH_MULTIPLE, new DataHolder(2));
 			playfair.put(DOUBLE_LETTER_EVEN, new DataHolder(false));
+			playfair.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
 			
 			HashMap<String, DataHolder> fourSquare = createOrGetList("Digraph Substitution", "Four Square");
 			fourSquare.put(IC_x1000, new DataHolder(46.24, 1.72)); //Min: 39.02 Max: 53.82
@@ -370,6 +371,7 @@ public class CipherStatistics extends StatisticsRef {
 			fourSquare.put(LONG_REPEAT, new DataHolder(12.33, 1.18)); //Min: 7.69 Max: 15.25
 			fourSquare.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(22.08, 3.81)); //Min: 8.00 Max: 43.00
 			fourSquare.put(NORMAL_ORDER, new DataHolder(232.13, 27.10)); //Min: 131.00 Max: 311.00
+			fourSquare.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
 			
 			HashMap<String, DataHolder> twoSquare = createOrGetList("Digraph Substitution", "Two Square");
 			twoSquare.put(IC_x1000, new DataHolder(46.10, 2.25)); //Min: 39.18 Max: 58.37
@@ -383,6 +385,7 @@ public class CipherStatistics extends StatisticsRef {
 			twoSquare.put(LONG_REPEAT, new DataHolder(12.33, 1.15)); //Min: 0.00 Max: 16.30
 			twoSquare.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(22.94, 3.75)); //Min: 5.00 Max: 43.00
 			twoSquare.put(NORMAL_ORDER, new DataHolder(190.71, 33.16)); //Min: 86.00 Max: 325.00
+			twoSquare.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
 			
 			HashMap<String, DataHolder> triSquare = createOrGetList("Tri Square");
 			triSquare.put(IC_x1000, new DataHolder(42.41, 1.05)); //Min: 38.67 Max: 49.55
@@ -397,6 +400,7 @@ public class CipherStatistics extends StatisticsRef {
 			triSquare.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.45, 1.76)); //Min: 27.00 Max: 65.00
 			triSquare.put(NORMAL_ORDER, new DataHolder(194.46, 28.14)); //Min: 107.00 Max: 291.00
 			triSquare.put(TEXT_LENGTH_MULTIPLE, new DataHolder(3));
+			triSquare.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
 			
 			HashMap<String, DataHolder> railfence = createOrGetList("Transposition", "Railfence");
 			railfence.put(IC_x1000, new DataHolder(66.05, 2.72)); //Min: 60.87 Max: 74.50
@@ -423,6 +427,93 @@ public class CipherStatistics extends StatisticsRef {
 			myszkowski.put(LONG_REPEAT, new DataHolder(12.13, 1.66)); //Min: 0.00 Max: 27.93
 			myszkowski.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.33, 2.04)); //Min: 24.00 Max: 68.00
 			myszkowski.put(NORMAL_ORDER, new DataHolder(73.71, 28.63)); //Min: 22.00 Max: 140.00
+			
+			HashMap<String, DataHolder> phillipsRow = createOrGetList("Phillips", "Rows");
+			phillipsRow.put(IC_x1000, new DataHolder(51.88, 2.75)); //Min: 42.24 Max: 65.21
+			phillipsRow.put(IC_MAX_1to15_x1000, new DataHolder(55.24, 3.04)); //Min: 46.29 Max: 76.39
+			phillipsRow.put(IC_2_TRUE_x10000, new DataHolder(35.64, 3.92)); //Min: 15.61 Max: 52.63
+			phillipsRow.put(IC_2_FALSE_x10000, new DataHolder(35.81, 4.66)); //Min: 3.16 Max: 66.89
+			phillipsRow.put(IC_3_FALSE_x100000, new DataHolder(38.88, 18.28)); //Min: 0.00 Max: 190.82
+			phillipsRow.put(IC_KAPPA_x1000, new DataHolder(63.32, 7.15)); //Min: 47.26 Max: 125.00
+			phillipsRow.put(LOG_DIGRAPH, new DataHolder(439.30, 37.10)); //Min: 291.00 Max: 561.00
+			phillipsRow.put(LOG_DIGRAPH_REVERSED, new DataHolder(150.22, 209.12)); //Min: 0.00 Max: 545.00
+			phillipsRow.put(LONG_REPEAT, new DataHolder(12.48, 1.61)); //Min: 0.00 Max: 20.17
+			phillipsRow.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.28, 1.94)); //Min: 32.00 Max: 65.00
+			phillipsRow.put(NORMAL_ORDER, new DataHolder(240.00, 25.53)); //Min: 147.00 Max: 327.00
+			phillipsRow.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
+			
+			HashMap<String, DataHolder> phillipsCol = createOrGetList("Phillips", "Columns");
+			phillipsCol.put(IC_x1000, new DataHolder(51.88, 2.78)); //Min: 41.54 Max: 63.24
+			phillipsCol.put(IC_MAX_1to15_x1000, new DataHolder(55.24, 3.01)); //Min: 46.29 Max: 74.80
+			phillipsCol.put(IC_2_TRUE_x10000, new DataHolder(35.58, 3.90)); //Min: 19.82 Max: 54.57
+			phillipsCol.put(IC_2_FALSE_x10000, new DataHolder(35.78, 4.55)); //Min: 9.49 Max: 55.09
+			phillipsCol.put(IC_3_FALSE_x100000, new DataHolder(38.96, 18.47)); //Min: 0.00 Max: 214.67
+			phillipsCol.put(IC_KAPPA_x1000, new DataHolder(63.29, 7.18)); //Min: 47.99 Max: 135.87
+			phillipsCol.put(LOG_DIGRAPH, new DataHolder(439.49, 36.29)); //Min: 312.00 Max: 558.00
+			phillipsCol.put(LOG_DIGRAPH_REVERSED, new DataHolder(151.08, 210.30)); //Min: 0.00 Max: 551.00
+			phillipsCol.put(LONG_REPEAT, new DataHolder(12.48, 1.63)); //Min: 0.00 Max: 19.19
+			phillipsCol.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.32, 1.96)); //Min: 30.00 Max: 68.00
+			phillipsCol.put(NORMAL_ORDER, new DataHolder(239.62, 25.92)); //Min: 143.00 Max: 323.00
+			phillipsCol.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
+			
+			HashMap<String, DataHolder> phillipsRowCol = createOrGetList("Phillips", "Rows & Columns");
+			phillipsRowCol.put(IC_x1000, new DataHolder(47.06, 2.16)); //Min: 39.75 Max: 63.42
+			phillipsRowCol.put(IC_MAX_1to15_x1000, new DataHolder(51.66, 2.79)); //Min: 43.84 Max: 78.27
+			phillipsRowCol.put(IC_2_TRUE_x10000, new DataHolder(27.45, 2.71)); //Min: 15.01 Max: 41.13
+			phillipsRowCol.put(IC_2_FALSE_x10000, new DataHolder(27.73, 3.45)); //Min: 0.00 Max: 50.17
+			phillipsRowCol.put(IC_3_FALSE_x100000, new DataHolder(24.71, 13.79)); //Min: 0.00 Max: 217.71
+			phillipsRowCol.put(IC_KAPPA_x1000, new DataHolder(57.99, 6.68)); //Min: 43.69 Max: 124.22
+			phillipsRowCol.put(LOG_DIGRAPH, new DataHolder(439.81, 29.37)); //Min: 312.00 Max: 546.00
+			phillipsRowCol.put(LOG_DIGRAPH_REVERSED, new DataHolder(150.74, 209.46)); //Min: 0.00 Max: 557.00
+			phillipsRowCol.put(LONG_REPEAT, new DataHolder(10.12, 1.43)); //Min: 0.00 Max: 15.13
+			phillipsRowCol.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.10, 2.21)); //Min: 21.00 Max: 72.00
+			phillipsRowCol.put(NORMAL_ORDER, new DataHolder(241.57, 25.93)); //Min: 139.00 Max: 323.00
+			phillipsRowCol.put(MAX_UNIQUE_CHARACTERS, new DataHolder(25));
+			
+			HashMap<String, DataHolder> caesar = createOrGetList("Simple Substitution", "Caesar Shift");
+			caesar.put(IC_x1000, new DataHolder(66.05, 2.72)); //Min: 60.87 Max: 74.50
+			caesar.put(IC_MAX_1to15_x1000, new DataHolder(68.38, 3.08)); //Min: 62.30 Max: 76.97
+			caesar.put(IC_2_TRUE_x10000, new DataHolder(76.71, 6.70)); //Min: 63.11 Max: 94.06
+			caesar.put(IC_2_FALSE_x10000, new DataHolder(76.99, 7.24)); //Min: 60.13 Max: 92.01
+			caesar.put(IC_3_FALSE_x100000, new DataHolder(168.14, 61.95)); //Min: 0.00 Max: 380.39
+			caesar.put(IC_KAPPA_x1000, new DataHolder(80.69, 8.86)); //Min: 67.38 Max: 118.01
+			caesar.put(LOG_DIGRAPH, new DataHolder(419.22, 49.38)); //Min: 303.00 Max: 536.00
+			caesar.put(LOG_DIGRAPH_REVERSED, new DataHolder(144.43, 201.92)); //Min: 0.00 Max: 525.00
+			caesar.put(LONG_REPEAT, new DataHolder(23.91, 2.04)); //Min: 20.26 Max: 29.59
+			caesar.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.67, 1.56)); //Min: 45.00 Max: 56.00
+			caesar.put(NORMAL_ORDER, new DataHolder(232.01, 24.12)); //Min: 149.00 Max: 297.00
+			caesar.put(LOG_DIGRAPH_CAESAR, new DataHolder(760.04, 6.70)); //Min: 736.92 Max: 774.11
+			caesar.put(LOG_DIGRAPH_AFFINE, new DataHolder(602.31, 9.15)); //Min: 585.63 Max: 621.52
+			
+			HashMap<String, DataHolder> keyword = createOrGetList("Simple Substitution", "Generic");
+			keyword.put(IC_x1000, new DataHolder(66.05, 2.72)); //Min: 60.87 Max: 74.50
+			keyword.put(IC_MAX_1to15_x1000, new DataHolder(68.38, 3.08)); //Min: 62.30 Max: 76.97
+			keyword.put(IC_2_TRUE_x10000, new DataHolder(76.71, 6.70)); //Min: 63.11 Max: 94.06
+			keyword.put(IC_2_FALSE_x10000, new DataHolder(76.99, 7.24)); //Min: 60.13 Max: 92.01
+			keyword.put(IC_3_FALSE_x100000, new DataHolder(168.14, 61.95)); //Min: 0.00 Max: 380.39
+			keyword.put(IC_KAPPA_x1000, new DataHolder(80.69, 8.86)); //Min: 67.38 Max: 118.01
+			keyword.put(LOG_DIGRAPH, new DataHolder(426.40, 58.37)); //Min: 218.00 Max: 594.00
+			keyword.put(LOG_DIGRAPH_REVERSED, new DataHolder(147.15, 206.55)); //Min: 0.00 Max: 616.00
+			keyword.put(LONG_REPEAT, new DataHolder(23.91, 2.04)); //Min: 20.26 Max: 29.59
+			keyword.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.67, 1.56)); //Min: 45.00 Max: 56.00
+			keyword.put(NORMAL_ORDER, new DataHolder(225.46, 28.28)); //Min: 113.00 Max: 312.00
+			keyword.put(LOG_DIGRAPH_CAESAR, new DataHolder(539.81, 22.21)); //Min: 479.52 Max: 623.87
+			keyword.put(LOG_DIGRAPH_AFFINE, new DataHolder(576.99, 15.98)); //Min: 535.98 Max: 643.21
+			
+			HashMap<String, DataHolder> affine = createOrGetList("Simple Substitution", "Affine");
+			affine.put(IC_x1000, new DataHolder(66.05, 2.72)); //Min: 60.87 Max: 74.50
+			affine.put(IC_MAX_1to15_x1000, new DataHolder(68.38, 3.08)); //Min: 62.30 Max: 76.97
+			affine.put(IC_2_TRUE_x10000, new DataHolder(76.71, 6.70)); //Min: 63.11 Max: 94.06
+			affine.put(IC_2_FALSE_x10000, new DataHolder(76.99, 7.24)); //Min: 60.13 Max: 92.01
+			affine.put(IC_3_FALSE_x100000, new DataHolder(168.14, 61.95)); //Min: 0.00 Max: 380.39
+			affine.put(IC_KAPPA_x1000, new DataHolder(80.69, 8.86)); //Min: 67.38 Max: 118.01
+			affine.put(LOG_DIGRAPH, new DataHolder(429.37, 59.85)); //Min: 248.00 Max: 618.00
+			affine.put(LOG_DIGRAPH_REVERSED, new DataHolder(147.42, 207.11)); //Min: 0.00 Max: 612.00
+			affine.put(LONG_REPEAT, new DataHolder(23.91, 2.04)); //Min: 20.26 Max: 29.59
+			affine.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.67, 1.56)); //Min: 45.00 Max: 56.00
+			affine.put(NORMAL_ORDER, new DataHolder(225.51, 27.86)); //Min: 117.00 Max: 319.00
+			affine.put(LOG_DIGRAPH_CAESAR, new DataHolder(543.08, 24.88)); //Min: 494.98 Max: 621.52
+			affine.put(LOG_DIGRAPH_AFFINE, new DataHolder(760.04, 6.70)); //Min: 736.92 Max: 774.11
 			
 			HashMap<String, DataHolder> substitution = createOrGetList("Substitution");
 			substitution.put(IC_x1000, new DataHolder(66.01, 2.71));
