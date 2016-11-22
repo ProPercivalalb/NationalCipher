@@ -59,7 +59,6 @@ public class RailFence implements IRandEncrypter {
 				if(row < rows && row + (rows - row) * 2 <= startingOffset)
 					occurs -= 1;
 			}
-			System.out.println("Occurs: " + occurs);
 
 			for(int i = 0; i < occurs; i++) {
 				int newIndex = 0;
@@ -67,16 +66,15 @@ public class RailFence implements IRandEncrypter {
 				if(row > 1 && row < rows) {
 					int branch2 = i;
 					if(startingOffset >= row) {
-						System.out.println("ADD");
 						branch2 += 1;
+						if(row < rows && row + (rows - row) * 2 <= startingOffset)
+							branch2 += 1;
 					}
 	
 					int branch = (int)(branch2 / 2);
-					newIndex = branch * branchTotal + row - 1 - startingOffset + (row == 3 ? 3 : 0);
-					System.out.println("" + newIndex);
+					newIndex = branch * branchTotal + row - 1 - startingOffset;
 					if(branch2 % 2 == 1)
 						newIndex += (rows - row) * 2;
-					System.out.println(plainText);
 					plainText[newIndex] = cipherText[index++];
 				}
 				else {
@@ -84,7 +82,6 @@ public class RailFence implements IRandEncrypter {
 					if(startingOffset >= row)
 						branch += 1;
 					newIndex = branch * branchTotal + row - 1 - startingOffset;
-					System.out.println(plainText);
 					plainText[newIndex] = cipherText[index++];
 				}
 				

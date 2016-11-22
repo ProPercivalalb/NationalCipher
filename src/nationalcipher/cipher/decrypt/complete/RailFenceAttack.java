@@ -64,6 +64,7 @@ public class RailFenceAttack extends CipherAttack {
 					this.getKeyPanel().updateSolution(this.bestSolution);
 				}
 				
+				this.addSolution(this.lastSolution);
 				this.getKeyPanel().updateIteration(this.iteration++);
 				this.getProgress().increase();
 			}
