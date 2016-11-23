@@ -37,10 +37,10 @@ public class ConjugatedBifid implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare1, String keysquare2, int period) {
+	public static byte[] decode(char[] cipherText, String keysquare1, String keysquare2, int period) {
 		if(period == 0) period = cipherText.length;
 		
-		char[] plainText = new char[cipherText.length];
+		byte[] plainText = new byte[cipherText.length];
 		
 		int[] numberText = new int[cipherText.length * 2];
 		for(int i = 0; i < cipherText.length; i++) {
@@ -74,7 +74,7 @@ public class ConjugatedBifid implements IRandEncrypter {
 		for(int i = 0; i < numberText.length; i += 2) {
 			int a = numberText[i];
 			int b = numberText[i + 1];
-			plainText[index++] = keysquare1.charAt(a * 5 + b);
+			plainText[index++] = (byte)keysquare1.charAt(a * 5 + b);
 		}
 		
 		return plainText;

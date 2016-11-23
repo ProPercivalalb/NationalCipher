@@ -84,9 +84,9 @@ public class SeriatedPlayfair implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare, int period) {
+	public static byte[] decode(char[] cipherText, String keysquare, int period) {
 		if(period == 0) period = cipherText.length / 2;
-		char[] plainText = new char[cipherText.length];
+		byte[] plainText = new byte[cipherText.length];
 		
 		for(int i = 0; i < cipherText.length; i += period * 2) {
 			int min = Math.min(period, (cipherText.length - i) / 2);
@@ -117,8 +117,8 @@ public class SeriatedPlayfair implements IRandEncrypter {
 			        d = keysquare.charAt(row2 * 5 + col1);
 			    }
 			        
-			    plainText[i + j] = c;
-			    plainText[i + j + min] = d;
+			    plainText[i + j] = (byte)c;
+			    plainText[i + j + min] = (byte)d;
 			}
 		}
 		

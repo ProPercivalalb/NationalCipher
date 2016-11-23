@@ -71,7 +71,7 @@ public abstract class ProgressiveKeyAttack extends CipherAttack {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(ProgressiveKeyAttack.this.decode(this.cipherText, key, this.progPeriod, this.progKey), this.getLanguage()).setKeyString("%s, pp: %d, pk: %d", key, this.progPeriod, this.progKey);
+			return new Solution(ProgressiveKeyAttack.this.decode(this.cipherText, this.plainText, key, this.progPeriod, this.progKey), this.getLanguage()).setKeyString("%s, pp: %d, pk: %d", key, this.progPeriod, this.progKey).bakeSolution();
 		}
 		
 		@Override
@@ -104,7 +104,7 @@ public abstract class ProgressiveKeyAttack extends CipherAttack {
 		this.rangeSpinner3[1].setValue(SettingsUtil.getSetting("prog_key_max", map, Integer.TYPE, 30));
 	}
 	
-	public abstract char[] decode(char[] cipherText, String key, int progPeriod, int progKey);
+	public abstract byte[] decode(char[] cipherText, byte[] plainText, String key, int progPeriod, int progKey);
 	
 	public int alphaIncrease() { return 1; }
 }

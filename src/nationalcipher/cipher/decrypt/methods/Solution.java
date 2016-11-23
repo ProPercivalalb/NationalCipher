@@ -27,9 +27,9 @@ public class Solution implements Comparable<Solution> {
 		this(new byte[0], Double.NEGATIVE_INFINITY);
 	}
 	
-	public Solution(char[] text, ILanguage language) {
-		this(ArrayUtil.convertCharType(text), language);
-	}
+	//public Solution(char[] text, ILanguage language) {
+	//	this(ArrayUtil.convertCharType(text), language);
+	//}
 	
 	public Solution(byte[] text, ILanguage language) {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));

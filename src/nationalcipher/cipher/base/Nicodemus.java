@@ -1,50 +1,50 @@
 package nationalcipher.cipher.base;
 
-public class Nicodemus {
+import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.tools.KeyGeneration;
 
-	public static String encodeBase(String plainText, String keyword) {
+public class Nicodemus implements IRandEncrypter {
+
+	public static String encode(String plainText, String key, VigenereType type) {
 		//Possible settings
 		int READ_OFF = 5;
 		
 		String cipherText = "";
 		
-		int[] order = new int[keyword.length()];
+		int[] order = new int[key.length()];
 		
 		int p = 0;
 		for(char ch = 'A'; ch <= 'Z'; ++ch) {
-			int keyindex = keyword.indexOf(ch);
+			int keyindex = key.indexOf(ch);
 			if(keyindex != -1)
 				order[p++] = keyindex;
 		}
 		
 		int start_row = 0;
-		int total_row = (int)Math.ceil(plainText.length() / (double)keyword.length());
+		int total_row = (int)Math.ceil(plainText.length() / (double)key.length());
 		
 		while(start_row < total_row) {
 			int end_row = start_row + READ_OFF >= total_row ? total_row : start_row + READ_OFF;
 			
-			for(int i = 0; i < keyword.length(); i++) 
+			for(int i = 0; i < key.length(); i++) 
 				for(int j = start_row; j < end_row; j++)
-					if(j * keyword.length() + order[i] < plainText.length())
-						cipherText += plainText.charAt(j * keyword.length() + order[i]);
+					if(j * key.length() + order[i] < plainText.length())
+						cipherText += type.encode((byte)plainText.charAt(j * key.length() + order[i]), (byte)key.charAt(i % key.length()));
 
 			start_row = end_row;
 		}
 		return cipherText;
 	}
 	
-	public static char[] decodeBase(char[] cipherText, String key) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String key, VigenereType type) {
 		//Possible settings
 		int READ_OFF = 5;
-		
-		
-		char[] plainText = new char[cipherText.length];
-		
-		int[] order = new int[key.length()];
+
+		byte[] order = new byte[key.length()];
 		
 		int q = 0;
 		for(char ch = 'A'; ch <= 'Z'; ++ch)
-			for(int i = 0; i < order.length; i++)
+			for(byte i = 0; i < order.length; i++)
 				if(ch == key.charAt(i))
 					order[q++] = i;
 		
@@ -60,8 +60,7 @@ public class Nicodemus {
 
 					if(complete || blocks - 1 != b) {
 						int row = index % key.length();
-						plainText[order[p] - row + index++] = cipherText[b * blockSize + p * READ_OFF + r];
-
+						plainText[order[p] - row + index++] = type.decode((byte)cipherText[b * blockSize + p * READ_OFF + r], (byte)key.charAt(order[p] % key.length()));
 					}
 					else {
 						int charactersLeft = cipherText.length - b * blockSize;
@@ -75,8 +74,8 @@ public class Nicodemus {
 								total += 1;
 							
 							for(int j = 0; j < total; j++) {
-								int place = order[i];
-								plainText[b * blockSize + j * key.length() + place] = cipherText[b * blockSize + index + j];
+								byte place = order[i];
+								plainText[b * blockSize + j * key.length() + place] = type.decode((byte)cipherText[b * blockSize + index + j], (byte)key.charAt(place % key.length()));
 							}
 							
 							index += total;
@@ -89,5 +88,10 @@ public class Nicodemus {
 			}
 		}
 		return plainText;
+	}
+	
+	@Override
+	public String randomlyEncrypt(String plainText) {
+		return encode(plainText, KeyGeneration.createShortKey26(3, 15), RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
 	}
 }

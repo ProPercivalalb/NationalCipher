@@ -97,7 +97,7 @@ public class QuagmireIIAttack extends CipherAttack {
 			return false;
 		}
 		
-		public char[] decode(String key) {
+		public byte[] decode(String key) {
 			String indicatorKey = "";
 			int[] keyIndex = new int[26];
 			for(int i = 0; i < 26; i++)

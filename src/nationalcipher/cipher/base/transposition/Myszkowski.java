@@ -24,8 +24,8 @@ public class Myszkowski implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String keyword) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, String keyword) {
+		byte[] plainText = new byte[cipherText.length];
 		
 		int rows = (int)Math.ceil(cipherText.length / (double)keyword.length());
 		
@@ -38,7 +38,7 @@ public class Myszkowski implements IRandEncrypter {
 				for(int i = 0; i < keyword.length(); i++) 
 					if(c == keyword.charAt(i))
 						if(row * keyword.length() + i < cipherText.length)
-							plainText[row * keyword.length() + i] = cipherText[index++];
+							plainText[row * keyword.length() + i] = (byte)cipherText[index++];
 		}
 		
 		return plainText;	

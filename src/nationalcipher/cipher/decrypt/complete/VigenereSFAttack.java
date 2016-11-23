@@ -10,7 +10,7 @@ public class VigenereSFAttack extends SlidefairAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
+	public byte[] decode(char[] cipherText, String key) {
 		return VigenereSlidefair.decode(cipherText, key);
 	}
 }

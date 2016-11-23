@@ -13,7 +13,8 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
-import nationalcipher.cipher.base.substitution.Porta;
+import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -104,11 +105,12 @@ public class PortaAttack extends CipherAttack {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Porta.decode(this.cipherText, key, this.shiftRight), this.getLanguage());
+			this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.PORTA), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString(key);
+				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
@@ -119,7 +121,7 @@ public class PortaAttack extends CipherAttack {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(Porta.decode(this.cipherText, key, this.shiftRight), this.getLanguage()).setKeyString(key);
+			return new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.PORTA), this.getLanguage()).setKeyString(key).bakeSolution();
 		}
 		
 		@Override

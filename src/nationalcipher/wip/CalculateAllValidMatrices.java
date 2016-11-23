@@ -4,14 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
@@ -19,10 +15,7 @@ import javalibrary.lib.Timer;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringTransformer;
-import javalibrary.util.ArrayUtil;
 import javalibrary.util.MapHelper;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.SquareMatrixKey;
 
 public class CalculateAllValidMatrices {

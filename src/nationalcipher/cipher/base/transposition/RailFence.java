@@ -32,8 +32,8 @@ public class RailFence implements IRandEncrypter {
 		return last;
 	}
 	
-	public static char[] decode(char[] cipherText, int rows, int startingOffset) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, int rows, int startingOffset) {
+		byte[] plainText = new byte[cipherText.length];
 		int ghostLength = cipherText.length + startingOffset;
 		
 		int branchTotal = 2 * (rows - 1);
@@ -75,14 +75,14 @@ public class RailFence implements IRandEncrypter {
 					newIndex = branch * branchTotal + row - 1 - startingOffset;
 					if(branch2 % 2 == 1)
 						newIndex += (rows - row) * 2;
-					plainText[newIndex] = cipherText[index++];
+					plainText[newIndex] = (byte)cipherText[index++];
 				}
 				else {
 					int branch = i;
 					if(startingOffset >= row)
 						branch += 1;
 					newIndex = branch * branchTotal + row - 1 - startingOffset;
-					plainText[newIndex] = cipherText[index++];
+					plainText[newIndex] = (byte)cipherText[index++];
 				}
 				
 			}

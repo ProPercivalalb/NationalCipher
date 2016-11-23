@@ -3,7 +3,6 @@ package nationalcipher.cipher.decrypt.complete;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javalibrary.string.StringAnalyzer;
 import nationalcipher.cipher.decrypt.CipherAttack;

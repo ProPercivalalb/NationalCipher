@@ -27,8 +27,8 @@ public class Quagmire {
 	
 	
 	//Assuming the topKey is the ABCDEFGHIJKLMNPQRSTUVWXYZ
-	public static char[] decode(char[] cipherText, String gridKey, String indicatorKey, char indicatorBelow) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, String gridKey, String indicatorKey, char indicatorBelow) {
+		byte[] plainText = new byte[cipherText.length];
 		int indicatorIndex = indicatorBelow - 'A';
 		
 		int[][] keyAlpha = new int[indicatorKey.length()][26];
@@ -38,14 +38,14 @@ public class Quagmire {
 				keyAlpha[i][gridKey.charAt((26 - indicatorIndex + gridKey.indexOf(indicatorKey.charAt(i)) + k) % 26) - 'A'] = k;
 		
 		for(int i = 0; i < cipherText.length; i++) {
-			plainText[i] = (char)(keyAlpha[i % indicatorKey.length()][cipherText[i] - 'A'] + 'A');
+			plainText[i] = (byte)(keyAlpha[i % indicatorKey.length()][cipherText[i] - 'A'] + 'A');
 		}
 		
 		return plainText;
 	}
 	
-	public static char[] decode(char[] cipherText, String topKey, String gridKey, String indicatorKey, char indicatorBelow) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, String topKey, String gridKey, String indicatorKey, char indicatorBelow) {
+		byte[] plainText = new byte[cipherText.length];
 		int indicatorIndex = topKey.indexOf(indicatorBelow);
 		
 		int[][] keyAlpha = new int[indicatorKey.length()][26];
@@ -55,7 +55,7 @@ public class Quagmire {
 				keyAlpha[i][gridKey.charAt((26 - indicatorIndex + gridKey.indexOf(indicatorKey.charAt(i)) + k) % 26) - 'A'] += k;
 		
 		for(int i = 0; i < cipherText.length; i++) {
-			plainText[i] = topKey.charAt(keyAlpha[i % indicatorKey.length()][cipherText[i] - 'A']);
+			plainText[i] = (byte)topKey.charAt(keyAlpha[i % indicatorKey.length()][cipherText[i] - 'A']);
 		}
 		
 		return plainText;

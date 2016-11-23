@@ -21,10 +21,10 @@ public class Redefence implements IRandEncrypter {
 		return decode(cipherText, order);
 	}
 	
-	public static char[] decode(char[] cipherText, int[] order) {
+	public static byte[] decode(char[] cipherText, int[] order) {
 		int rows = order.length;
 		
-		char[] plainText = new char[cipherText.length];
+		byte[] plainText = new byte[cipherText.length];
 		
 		int branchTotal = 2 * (rows - 1);
 		int branchs = cipherText.length / branchTotal;
@@ -59,7 +59,7 @@ public class Redefence implements IRandEncrypter {
 				else
 					newIndex = i * branchTotal + row - 1;
 				
-				plainText[newIndex] = cipherText[index];
+				plainText[newIndex] = (byte)cipherText[index];
 				index++;
 			}
 		}

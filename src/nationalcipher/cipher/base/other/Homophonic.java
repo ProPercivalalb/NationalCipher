@@ -37,8 +37,8 @@ public class Homophonic implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String key) {
-		char[] plainText = new char[cipherText.length / 2];
+	public static byte[] decode(char[] cipherText, String key) {
+		byte[] plainText = new byte[cipherText.length / 2];
 		
 		int[] rows = new int[100];
 		String shortAlpha = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
@@ -56,7 +56,7 @@ public class Homophonic implements IRandEncrypter {
 		
 		for(int i = 0; i < plainText.length; i++) {
 			int col = rows[10 * (cipherText[i * 2] - '0') + (cipherText[i * 2 + 1] - '0')];
-			plainText[i] = shortAlpha.charAt(col);
+			plainText[i] = (byte)shortAlpha.charAt(col);
 		}
 		
 		return plainText;

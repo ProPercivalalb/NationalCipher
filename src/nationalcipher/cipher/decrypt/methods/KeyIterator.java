@@ -154,10 +154,10 @@ public class KeyIterator {
 	
 	private static void permutateString(PermutateString task, String str, int[] arr, int pos) {
 	    if(arr.length - pos == 1) {
-	    	String newStr = "";
-	    	for(int i =0; i < arr.length; i++)
-	    		newStr += str.charAt(arr[i]);
-	    	task.onPermutate(newStr);
+	    	char[] newStr = new char[str.length()];
+	    	for(int i = 0; i < arr.length; i++)
+	    		newStr[i] = str.charAt(arr[i]);
+	    	task.onPermutate(new String(newStr));
 	    }
 	    else
 	        for(int i = pos; i < arr.length; i++) {

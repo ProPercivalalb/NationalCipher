@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.substitution.BeaufortNicodemus;
+import nationalcipher.cipher.base.Nicodemus;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.decrypt.NicodemusAttack;
 
 public class BeaufortNCAttack extends NicodemusAttack {
@@ -10,7 +11,7 @@ public class BeaufortNCAttack extends NicodemusAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return BeaufortNicodemus.decode(cipherText, key);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Nicodemus.decode(cipherText, plainText, key, VigenereType.BEAUFORT);
 	}
 }

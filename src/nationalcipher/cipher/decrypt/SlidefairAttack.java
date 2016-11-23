@@ -100,5 +100,5 @@ public abstract class SlidefairAttack extends CipherAttack {
 		this.rangeSpinner[1].setValue(SettingsUtil.getSetting("period_max", map, Integer.TYPE, 15));
 	}
 	
-	public abstract char[] decode(char[] cipherText, String key);
+	public abstract byte[] decode(char[] cipherText, String key);
 }

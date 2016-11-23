@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.substitution.BeaufortAutokey;
+import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Autokey;
 import nationalcipher.cipher.decrypt.AutokeyAttack;
 
 public class BeaufortAKAttack extends AutokeyAttack {
@@ -10,7 +11,7 @@ public class BeaufortAKAttack extends AutokeyAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return BeaufortAutokey.decode(cipherText, key);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Autokey.decode(cipherText, plainText, key, VigenereType.BEAUFORT);
 	}
 }

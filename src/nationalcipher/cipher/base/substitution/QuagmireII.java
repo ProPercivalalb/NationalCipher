@@ -16,7 +16,7 @@ public class QuagmireII implements IRandEncrypter {
 		return Quagmire.encode(plainText, Alphabet.getUpperCase(), key, indicatorKey, indicatorBelow);
 	}
 	
-	public static char[] decode(char[] cipherText, String key, String indicatorKey, char indicatorBelow) {
+	public static byte[] decode(char[] cipherText, String key, String indicatorKey, char indicatorBelow) {
 		return Quagmire.decode(cipherText, Alphabet.getUpperCase(), key, indicatorKey, indicatorBelow);
 	}
 

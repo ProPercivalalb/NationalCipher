@@ -19,7 +19,7 @@ public class CipherStatistics extends StatisticsRef {
 			hill2x2.put(IC_3_FALSE_x100000, new DataHolder(40.67, 16.80)); //Min: 4.23 Max: 209.64
 			hill2x2.put(IC_KAPPA_x1000, new DataHolder(56.24, 8.47)); //Min: 39.01 Max: 117.28
 			hill2x2.put(LOG_DIGRAPH, new DataHolder(435.93, 26.44)); //Min: 337.00 Max: 671.00
-			hill2x2.put(LOG_DIGRAPH_REVERSED, new DataHolder(435.41, 29.07)); //Min: 320.00 Max: 661.00
+			//hill2x2.put(LOG_DIGRAPH_REVERSED, new DataHolder(435.41, 29.07)); //Min: 320.00 Max: 661.00
 			hill2x2.put(LONG_REPEAT, new DataHolder(11.07, 1.48)); //Min: 4.84 Max: 24.11
 			hill2x2.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(21.86, 3.43)); //Min: 7.00 Max: 47.00
 			hill2x2.put(NORMAL_ORDER, new DataHolder(215.51, 30.18)); //Min: 40.00 Max: 306.00
@@ -33,7 +33,7 @@ public class CipherStatistics extends StatisticsRef {
 			hill3x3.put(IC_3_FALSE_x100000, new DataHolder(169.82, 58.61)); //Min: 80.33 Max: 375.91
 			hill3x3.put(IC_KAPPA_x1000, new DataHolder(51.43, 6.54)); //Min: 39.60 Max: 112.90
 			hill3x3.put(LOG_DIGRAPH, new DataHolder(428.97, 16.43)); //Min: 337.00 Max: 538.00
-			hill3x3.put(LOG_DIGRAPH_REVERSED, new DataHolder(429.12, 18.01)); //Min: 326.00 Max: 517.00
+			//hill3x3.put(LOG_DIGRAPH_REVERSED, new DataHolder(429.12, 18.01)); //Min: 326.00 Max: 517.00
 			hill3x3.put(LONG_REPEAT, new DataHolder(10.46, 1.35)); //Min: 6.17 Max: 16.41
 			hill3x3.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.89, 3.07)); //Min: 20.00 Max: 81.00
 			hill3x3.put(NORMAL_ORDER, new DataHolder(221.35, 28.74)); //Min: 68.00 Max: 316.00

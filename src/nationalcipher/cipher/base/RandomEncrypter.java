@@ -19,11 +19,8 @@ import nationalcipher.cipher.base.other.SeriatedPlayfair;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Trifid;
 import nationalcipher.cipher.base.substitution.Affine;
+import nationalcipher.cipher.base.substitution.Autokey;
 import nationalcipher.cipher.base.substitution.Bazeries;
-import nationalcipher.cipher.base.substitution.Beaufort;
-import nationalcipher.cipher.base.substitution.BeaufortAutokey;
-import nationalcipher.cipher.base.substitution.BeaufortNicodemus;
-import nationalcipher.cipher.base.substitution.BeaufortProgressiveKey;
 import nationalcipher.cipher.base.substitution.BeaufortSlidefair;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Enigma;
@@ -32,9 +29,6 @@ import nationalcipher.cipher.base.substitution.FractionatedMorse;
 import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.base.substitution.NihilistSubstitution;
 import nationalcipher.cipher.base.substitution.Porta;
-import nationalcipher.cipher.base.substitution.PortaAutokey;
-import nationalcipher.cipher.base.substitution.PortaNicodemus;
-import nationalcipher.cipher.base.substitution.PortaProgressiveKey;
 import nationalcipher.cipher.base.substitution.Portax;
 import nationalcipher.cipher.base.substitution.QuagmireI;
 import nationalcipher.cipher.base.substitution.QuagmireII;
@@ -43,15 +37,8 @@ import nationalcipher.cipher.base.substitution.QuagmireIV;
 import nationalcipher.cipher.base.substitution.RunningKey;
 import nationalcipher.cipher.base.substitution.TriSquare;
 import nationalcipher.cipher.base.substitution.TwoSquare;
-import nationalcipher.cipher.base.substitution.Variant;
-import nationalcipher.cipher.base.substitution.VariantAutokey;
-import nationalcipher.cipher.base.substitution.VariantNicodemus;
-import nationalcipher.cipher.base.substitution.VariantProgressiveKey;
 import nationalcipher.cipher.base.substitution.VariantSlidefair;
-import nationalcipher.cipher.base.substitution.Vigenere;
-import nationalcipher.cipher.base.substitution.VigenereAutokey;
-import nationalcipher.cipher.base.substitution.VigenereNicodemus;
-import nationalcipher.cipher.base.substitution.VigenereProgressiveKey;
+import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.base.substitution.VigenereSlidefair;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.base.transposition.Cadenus;
@@ -60,7 +47,6 @@ import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
-import nationalcipher.cipher.base.transposition.Redefence;
 import nationalcipher.cipher.transposition.RouteTransposition;
 
 public class RandomEncrypter {
@@ -104,12 +90,9 @@ public class RandomEncrypter {
 	static {
 		registerEncrypter(new ADFGX(), 10);
 		registerEncrypter(new Affine(), 1);
+		registerEncrypter(new Autokey(), 2);
 		registerEncrypter(new AMSCO(), 3);	
 		registerEncrypter(new Bazeries(), 3);
-		registerEncrypter(new Beaufort(), 2);
-		registerEncrypter(new BeaufortAutokey(), 2);
-		registerEncrypter(new BeaufortNicodemus(), 3);
-		registerEncrypter(new BeaufortProgressiveKey(), 4);
 		registerEncrypter(new BeaufortSlidefair(), 2);
 		registerEncrypter(new Bifid(), 5);
 		registerEncrypter(new Caesar(), 1);
@@ -125,6 +108,7 @@ public class RandomEncrypter {
 		registerEncrypter(new Keyword(), 1);
 		registerEncrypter(new Morbit());
 		registerEncrypter(new Myszkowski(), 3);
+		registerEncrypter(new Nicodemus(), 3);
 		registerEncrypter(new NihilistSubstitution(), 4);
 		registerEncrypter(new NihilistTransposition(), 6);
 		registerEncrypter(new PeriodicGromark());
@@ -132,10 +116,8 @@ public class RandomEncrypter {
 		registerEncrypter(new Playfair(), 8);
 		registerEncrypter(new Pollux(), 5);
 		registerEncrypter(new Porta(), 2);
-		registerEncrypter(new PortaAutokey(), 2);
-		registerEncrypter(new PortaNicodemus(), 3);
-		registerEncrypter(new PortaProgressiveKey(), 4);
 		registerEncrypter(new Portax(), 3);
+		registerEncrypter(new ProgressiveKey(), 4);
 		registerEncrypter(new QuagmireI(), 6);
 		registerEncrypter(new QuagmireII(), 6);
 		registerEncrypter(new QuagmireIII(), 7);
@@ -150,15 +132,9 @@ public class RandomEncrypter {
 		registerEncrypter(new Trifid(), 8);
 		registerEncrypter(new TwoSquare(), 7);
 		registerEncrypter(new TriSquare(), 9);
-		registerEncrypter(new Variant(), 2);
-		registerEncrypter(new VariantAutokey(), 2);
-		registerEncrypter(new VariantNicodemus(), 3);
-		registerEncrypter(new VariantProgressiveKey(), 4);
 		registerEncrypter(new VariantSlidefair(), 2);
-		registerEncrypter(new Vigenere(), 2);
-		registerEncrypter(new VigenereAutokey(), 2);
-		registerEncrypter(new VigenereNicodemus(), 3);
-		registerEncrypter(new VigenereProgressiveKey(), 4);
+		registerEncrypter(new VigenereFamily(), 2);
+
 		registerEncrypter(new VigenereSlidefair(), 2);
 	}
 }

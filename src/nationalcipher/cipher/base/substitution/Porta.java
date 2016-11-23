@@ -22,8 +22,8 @@ public class Porta implements IRandEncrypter {
 	 * ZNOPQRSTUVWXY  OPQRSTUVWXYZN
 	 * YZNOPQRSTUVWX  PQRSTUVWXYZNO
 	 */
-	public static char[] decode(char[] cipherText, String keyword, boolean shiftRight) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, String keyword, boolean shiftRight) {
+		byte[] plainText = new byte[cipherText.length];
 		
 		for(int pos = 0; pos < cipherText.length; pos++){
 			int rowNo = (int)Math.floor((keyword.charAt(pos % keyword.length()) - 'A') / 2);
@@ -31,9 +31,9 @@ public class Porta implements IRandEncrypter {
 			
 			int inGrid = row.indexOf(cipherText[pos]);
 			if(inGrid >= 0)
-				plainText[pos] = (char)(inGrid + 'A');
+				plainText[pos] = (byte)(inGrid + 'A');
 			else
-				plainText[pos] = row.charAt(cipherText[pos] - 'A');
+				plainText[pos] = (byte)row.charAt(cipherText[pos] - 'A');
 		}
 	 
 		return plainText;
@@ -41,6 +41,6 @@ public class Porta implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createShortKey26(2, 15), RandomUtil.pickBoolean());
+		return encode(plainText, KeyGeneration.createShortKey26(2, 15), true);
 	}
 }

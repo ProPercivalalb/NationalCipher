@@ -10,7 +10,7 @@ public class VariantSFAttack extends SlidefairAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
+	public byte[] decode(char[] cipherText, String key) {
 		return VariantSlidefair.decode(cipherText, key);
 	}
 }

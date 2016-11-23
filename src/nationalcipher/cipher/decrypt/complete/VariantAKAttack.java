@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.substitution.VariantAutokey;
+import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Autokey;
 import nationalcipher.cipher.decrypt.AutokeyAttack;
 
 public class VariantAKAttack extends AutokeyAttack {
@@ -10,7 +11,7 @@ public class VariantAKAttack extends AutokeyAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return VariantAutokey.decode(cipherText, key);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Autokey.decode(cipherText, plainText, key, VigenereType.VARIANT);
 	}
 }

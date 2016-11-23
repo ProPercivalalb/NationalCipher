@@ -15,7 +15,7 @@ public class QuagmireIV implements IRandEncrypter {
 		return Quagmire.encode(plainText, topKey, gridKey, indicatorKey, indicatorBelow);
 	}
 	
-	public static char[] decode(char[] cipherText,  String topKey, String gridKey, String indicatorKey, char indicatorBelow) {
+	public static byte[] decode(char[] cipherText,  String topKey, String gridKey, String indicatorKey, char indicatorBelow) {
 		return Quagmire.decode(cipherText, topKey, gridKey, indicatorKey, indicatorBelow);
 	}
 

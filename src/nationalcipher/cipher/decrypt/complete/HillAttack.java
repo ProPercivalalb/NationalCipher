@@ -168,11 +168,12 @@ public class HillAttack extends CipherAttack {
 		@Override
 		public void onIteration(Matrix matrix) {
 			try {
-				this.lastSolution = new Solution(Hill.decode(this.cipherText, matrix), this.getLanguage());
+				this.lastSolution = new Solution(Hill.decode(this.cipherText, this.plainText, matrix), this.getLanguage());
 				
 				if(this.lastSolution.score >= this.bestSolution.score) {
 					this.bestSolution = this.lastSolution;
 					this.bestSolution.setKeyString(matrix.toString());
+					this.bestSolution.bakeSolution();
 					this.out().println("%s", this.bestSolution);	
 					this.getKeyPanel().updateSolution(this.bestSolution);
 				}

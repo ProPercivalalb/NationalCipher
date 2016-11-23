@@ -14,10 +14,10 @@ public class Portax implements IRandEncrypter {
 		return new String(decode(plainText.toCharArray(), keyword));
 	}
 
-	public static char[] decode(char[] cipherText, String keyword) {
+	public static byte[] decode(char[] cipherText, String keyword) {
 		int period = keyword.length();
 		
-		char[] plainText = new char[cipherText.length];
+		byte[] plainText = new byte[cipherText.length];
 		String[] slidingKey = new String[period];
 		Arrays.fill(slidingKey, "");
 		
@@ -62,8 +62,8 @@ public class Portax implements IRandEncrypter {
 					}
 				}
 				
-				plainText[i + j] = c;
-				plainText[i + j + actingPeriod] = d;
+				plainText[i + j] = (byte)c;
+				plainText[i + j + actingPeriod] = (byte)d;
 			}
 		}
 		

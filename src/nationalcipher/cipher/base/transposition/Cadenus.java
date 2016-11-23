@@ -41,7 +41,7 @@ public class Cadenus implements IRandEncrypter {
 
 	}
 	
-	public static char[] decode(char[] cipherText, String key) {
+	public static byte[] decode(char[] cipherText, String key) {
 		int keyLength = key.length();
 
 	
@@ -56,13 +56,13 @@ public class Cadenus implements IRandEncrypter {
 		
 
 		//Creates grid
-		char[] grid = new char[cipherText.length];
+		byte[] grid = new byte[cipherText.length];
 		
 		for(int j = 0; j < 25; j++) {
 			for(int i = 0; i < keyLength; i++) {
 				int newColumn = order[i];
 				int newIndex = (j + charValue(key.charAt(newColumn))) % 25;
-				grid[newIndex * keyLength + newColumn] = cipherText[j * keyLength + i];
+				grid[newIndex * keyLength + newColumn] = (byte)cipherText[j * keyLength + i];
 			}
 		}
 

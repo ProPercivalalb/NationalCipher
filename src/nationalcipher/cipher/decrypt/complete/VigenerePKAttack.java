@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.substitution.VigenereProgressiveKey;
+import nationalcipher.cipher.base.ProgressiveKey;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.decrypt.ProgressiveKeyAttack;
 
 public class VigenerePKAttack extends ProgressiveKeyAttack {
@@ -10,7 +11,7 @@ public class VigenerePKAttack extends ProgressiveKeyAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key, int progPeriod, int progKey) {
-		return VigenereProgressiveKey.decode(cipherText, key, progPeriod, progKey);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key, int progPeriod, int progKey) {
+		return ProgressiveKey.decode(cipherText, plainText, key, progPeriod, progKey, VigenereType.VIGENERE);
 	}
 }

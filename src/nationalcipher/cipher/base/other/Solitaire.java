@@ -441,16 +441,16 @@ public class Solitaire implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static char[] decode(char[] cipherText, int[] cardOrder) {
+	public static byte[] decode(char[] cipherText, int[] cardOrder) {
 		return decode(cipherText, 0, cardOrder);
 	}
 	
-	public static char[] decode(char[] cipherText, int startingIndex, int[] cardOrder) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, int startingIndex, int[] cardOrder) {
+		byte[] plainText = new byte[cipherText.length];
 		int index = startingIndex;
 		
 		for(int i = 0; i < index; i++)
-			plainText[i] = cipherText[i];
+			plainText[i] = (byte)cipherText[i];
 		
 		while(index < cipherText.length) {
 
@@ -468,7 +468,7 @@ public class Solitaire implements IRandEncrypter {
 			if(isJoker(keyStreamNumber))
 				continue;
 			
-			plainText[index] = (char)((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
+			plainText[index] = (byte)((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
 			index += 1;
 		}
 

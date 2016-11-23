@@ -55,13 +55,13 @@ public class Swagman implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static char[] decode(char[] cipherText, int[] key, int size) {
+	public static byte[] decode(char[] cipherText, int[] key, int size) {
 		int[] inKey = new int[key.length];
 		for(int c = 0; c < size; c++) for(int r = 0; r < size; r++) inKey[key[r * size + c] * size + c] = r;
 
 		
-		char[] tempText = new char[cipherText.length];
-		char[] plainText = new char[cipherText.length];
+		byte[] tempText = new byte[cipherText.length];
+		byte[] plainText = new byte[cipherText.length];
 		
 		int squareMag = (int)Math.pow(size, 2);
 		int noSquares = (int)Math.ceil(cipherText.length / (double)squareMag);
@@ -74,7 +74,7 @@ public class Swagman implements IRandEncrypter {
 		for(int s = 0; s < noSquares; s++)
 			for(int r = 0; r < size; r++)
 				for(int c = 0; c < colInSquare[s]; c++)
-					tempText[s * squareMag + c + colInSquare[s] * inKey[r * size + c % size]] = cipherText[s * squareMag + c * size + r];
+					tempText[s * squareMag + c + colInSquare[s] * inKey[r * size + c % size]] = (byte)cipherText[s * squareMag + c * size + r];
 		
 		int i = 0;
 

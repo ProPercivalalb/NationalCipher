@@ -12,9 +12,9 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
-import nationalcipher.cipher.base.substitution.PortaAutokey;
+import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Autokey;
 import nationalcipher.cipher.decrypt.AutokeyAttack;
-import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
 //TODO Quite often can produce result that has better score but is not real answer
@@ -63,8 +63,8 @@ public class PortaAKAttack extends AutokeyAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return PortaAutokey.decode(cipherText, key, SettingParse.getBooleanValue(this.directionOption));
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Autokey.decode(cipherText, plainText, key, VigenereType.PORTA);//TODO, SettingParse.getBooleanValue(this.directionOption));
 	}
 	
 	@Override

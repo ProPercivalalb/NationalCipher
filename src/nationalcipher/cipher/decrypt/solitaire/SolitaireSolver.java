@@ -7,17 +7,13 @@ import java.util.List;
 import javalibrary.Output;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.Languages;
-import javalibrary.lib.Timer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
-import nationalcipher.SOLVER.SolitaireSolution;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.tools.Creator;
-import nationalcipher.cipher.tools.Creator.AMSCOKey;
 
 public class SolitaireSolver {
 

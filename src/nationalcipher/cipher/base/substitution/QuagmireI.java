@@ -20,7 +20,7 @@ public class QuagmireI implements IRandEncrypter {
 		System.out.println(new String(decode(en, "AUTOMBILECDFGHJKNPQRSVWXYZ")));
 	}
 	
-	public static char[] decode(String text, String key) {
+	public static byte[] decode(String text, String key) {
 		String indicatorKey = "";
 		int[] keyIndex = new int[26];
 		for(int i = 0; i < 26; i++)
@@ -33,7 +33,7 @@ public class QuagmireI implements IRandEncrypter {
         }
         System.out.println("Keyword: " + indicatorKey);
 		
-        char[] plainText = Quagmire.decode(text.toCharArray(), key, key, indicatorKey, 'A');
+        byte[] plainText = Quagmire.decode(text.toCharArray(), key, key, indicatorKey, 'A');
         return plainText;
 	}
 	
@@ -69,7 +69,7 @@ public class QuagmireI implements IRandEncrypter {
 		return Quagmire.encode(plainText, keyTop, Alphabet.getUpperCase(), indicatorKey, indicatorBelow);
 	}
 	
-	public static char[] decode(char[] cipherText, String key, String indicatorKey, char indicatorBelow) {
+	public static byte[] decode(char[] cipherText, String key, String indicatorKey, char indicatorBelow) {
 		return Quagmire.decode(cipherText, key, Alphabet.getUpperCase(), indicatorKey, indicatorBelow);
 	}
 

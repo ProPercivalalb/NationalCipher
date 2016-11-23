@@ -57,11 +57,11 @@ public class Caesar implements IRandEncrypter {
 		//t.restart();
 	}
 	
-	public static char[] decode(char[] cipherText, int shift) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, int shift) {
+		byte[] plainText = new byte[cipherText.length];
 		
 		for(int i = 0; i < cipherText.length; i++)
-			plainText[i] = (char)((26 + cipherText[i] - shift - 'A') % 26 + 'A');
+			plainText[i] = (byte)((26 + cipherText[i] - shift - 'A') % 26 + 'A');
 		
 		return plainText;
 	}

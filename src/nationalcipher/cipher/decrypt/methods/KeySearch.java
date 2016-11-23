@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt.methods;
 
-import javalibrary.string.StringTransformer;
+import java.util.Arrays;
+
 import nationalcipher.ui.IApplication;
 
 public abstract class KeySearch extends InternalDecryption {
@@ -12,29 +13,33 @@ public abstract class KeySearch extends InternalDecryption {
 	public void run(int minLength, int maxLength) {
 		for(int length = minLength; length <= maxLength; length++) {
 			
-			String parent = StringTransformer.repeat("A", length);
+			byte[] parent = new byte[length];
+			Arrays.fill(parent, (byte)'A');
 
 			Solution currentBestSolution = new Solution();
 			
 			while(true) {
-				String startParent = parent;
+				boolean change = false;
 				for(int i = 0; i < length; i++) {
 					for(char j = 'A'; j <= 'Z'; j += alphaIncrease()) {
-						String child = parent.substring(0, i) + j + parent.substring(i + 1, length);
+						byte previous = parent[i];
+						parent[i] = (byte)j;
 						
-						this.lastSolution = this.tryModifiedKey(child);
+						this.lastSolution = this.tryModifiedKey(new String(parent));
 						this.addSolution(this.lastSolution);
 						
 						if(this.lastSolution.score >= currentBestSolution.score) {
-							parent = child;
 							currentBestSolution = this.lastSolution;
+							change = previous != j;
 						}
+						else //Last solution is worst so revert key
+							parent[i] = previous;
 						
 						this.onIteration();
 					}
 				}
 				
-				if(startParent.equals(parent)) 
+				if(!change) 
 					break;
 			}
 			

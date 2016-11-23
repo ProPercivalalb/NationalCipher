@@ -12,9 +12,9 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
-import nationalcipher.cipher.base.substitution.PortaProgressiveKey;
+import nationalcipher.cipher.base.ProgressiveKey;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.decrypt.ProgressiveKeyAttack;
-import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class PortaPKAttack extends ProgressiveKeyAttack {
@@ -62,8 +62,8 @@ public class PortaPKAttack extends ProgressiveKeyAttack {
 	}
 		
 	@Override
-	public char[] decode(char[] cipherText, String key, int progPeriod, int progKey) {
-		return PortaProgressiveKey.decode(cipherText, key, SettingParse.getBooleanValue(this.directionOption), progPeriod, progKey);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key, int progPeriod, int progKey) {
+		return ProgressiveKey.decode(cipherText, plainText, key, progPeriod, progKey, VigenereType.PORTA);
 	}
 	
 	@Override

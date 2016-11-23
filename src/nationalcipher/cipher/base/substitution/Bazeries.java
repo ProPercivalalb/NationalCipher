@@ -43,7 +43,7 @@ public class Bazeries implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, int numberKey) {
+	public static byte[] decode(char[] cipherText, int numberKey) {
 		String alphabetSquare = "AFLQVBGMRWCHNSXDIOTYEKPUZ";
 		
 		String numberSquare = "";
@@ -77,7 +77,7 @@ public class Bazeries implements IRandEncrypter {
 			count += 1;
 			split = s.charAt(count % s.length()) - '0';
 		}
-		return plainText.toCharArray();
+		return plainText.getBytes(); //TODO Unchecked
 	}
 
 	@Override

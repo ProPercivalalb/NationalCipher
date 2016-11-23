@@ -30,7 +30,7 @@ public class RouteTransposition implements IRandEncrypter {
 		return new String(gridString2);
 	}
 	
-	public static char[] decode(char[] cipherText, int columns, int rows, RouteCipherType writtenOn, RouteCipherType readOff) {
+	public static byte[] decode(char[] cipherText, int columns, int rows, RouteCipherType writtenOn, RouteCipherType readOff) {
 
 		int length = cipherText.length;
 		
@@ -38,11 +38,11 @@ public class RouteTransposition implements IRandEncrypter {
 		int[] gridWrite = writtenOn.getPattern(columns, rows, length);
 		int[] gridRead = readOff.getPattern(columns, rows, length);
 
-		char[] gridString = new char[length];
+		byte[] gridString = new byte[length];
 		for(int i = 0; i < length; i++)
-			gridString[gridRead[i]] = cipherText[i];
+			gridString[gridRead[i]] = (byte)cipherText[i];
 				
-		char[] gridString2 = new char[length];
+		byte[] gridString2 = new byte[length];
 		for(int i = 0; i < length; i++)
 			gridString2[i] = gridString[gridWrite[i]];
 		

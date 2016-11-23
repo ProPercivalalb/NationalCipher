@@ -12,9 +12,9 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
-import nationalcipher.cipher.base.substitution.PortaNicodemus;
+import nationalcipher.cipher.base.Nicodemus;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.decrypt.NicodemusAttack;
-import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
 //TODO Quite often can produce 
@@ -63,8 +63,8 @@ public class PortaNCAttack extends NicodemusAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
-		return PortaNicodemus.decode(cipherText, key, SettingParse.getBooleanValue(this.directionOption));
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Nicodemus.decode(cipherText, plainText, key, VigenereType.PORTA);//TODO, SettingParse.getBooleanValue(this.directionOption));
 	}
 	
 	

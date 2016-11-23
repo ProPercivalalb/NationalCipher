@@ -1,8 +1,6 @@
 package nationalcipher.cipher.stats;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,8 +11,8 @@ import javax.swing.JProgressBar;
 
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import javalibrary.swing.ProgressValue;
 import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter2to40;
@@ -38,7 +36,6 @@ import nationalcipher.cipher.stats.types.StatisticLogDigraphSlidefairVigenere;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphVariant;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphVigenere;
 import nationalcipher.cipher.stats.types.StatisticLongRepeat;
-import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticMaxBifid3to15;
 import nationalcipher.cipher.stats.types.StatisticMaxICx1000;
 import nationalcipher.cipher.stats.types.StatisticMaxNicodemus3to15;

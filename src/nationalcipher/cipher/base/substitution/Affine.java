@@ -26,15 +26,15 @@ public class Affine implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, int a, int b) {
+	public static byte[] decode(char[] cipherText, int a, int b) {
 		
-		char[] plainText = new char[cipherText.length];
+		byte[] plainText = new byte[cipherText.length];
 		
 		int multiplicativeInverse = BigInteger.valueOf((int)a).modInverse(BigInteger.valueOf(26)).intValue();
 		
 		//Runs through all the characters from the array
 		for(int i = 0; i < cipherText.length; i++)
-			plainText[i] = (char) (MathUtil.mod(multiplicativeInverse * (cipherText[i] - 'A' - b), 26) + 'A');
+			plainText[i] = (byte)(MathUtil.mod(multiplicativeInverse * (cipherText[i] - 'A' - b), 26) + 'A');
 
 		return plainText;
 	}

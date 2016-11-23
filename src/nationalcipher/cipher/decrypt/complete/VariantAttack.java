@@ -12,8 +12,9 @@ import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.swing.ProgressValue;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Variant;
+import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -79,7 +80,7 @@ public class VariantAttack extends CipherAttack {
 		int best = 0;
 	    double smallestSum = Double.MAX_VALUE;
 	    for(int shift = 0; shift < 26; ++shift) {
-	    	char[] encodedText = Caesar.decode(text, shift);
+	    	byte[] encodedText = Caesar.decode(text, shift);
 	        double currentSum = ChiSquared.calculate(encodedText, language);
 	    
 	        if(currentSum < smallestSum) {
@@ -100,11 +101,12 @@ public class VariantAttack extends CipherAttack {
 
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(Variant.decode(this.cipherText, key), this.getLanguage());
+			this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.VARIANT), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString("%s", key);
+				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
@@ -115,7 +117,7 @@ public class VariantAttack extends CipherAttack {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(Variant.decode(this.cipherText, key), this.getLanguage()).setKeyString(key);
+			return new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.VARIANT), this.getLanguage()).setKeyString(key).bakeSolution();
 		}
 	}
 	

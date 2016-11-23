@@ -60,7 +60,7 @@ public class CadenusAttack extends CipherAttack {
 		@Override
 		public void onIteration(String key) {
 			int blockSize = key.length() * 25;
-			char[] plainText = new char[0];
+			byte[] plainText = new byte[0];
 			for(int i = 0; i < this.cipherText.length / blockSize; i++)
 				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.cipherText, i * blockSize, blockSize), key));
 

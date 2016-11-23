@@ -1,7 +1,5 @@
 package nationalcipher.cipher.stats;
 
-import java.util.HashMap;
-
 public class StatsOld {
 
 	

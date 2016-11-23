@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
-import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 

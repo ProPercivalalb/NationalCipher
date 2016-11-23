@@ -1,13 +1,9 @@
 package nationalcipher.cipher.decrypt.methods;
 
-import java.util.Arrays;
-
 import javalibrary.lib.Timer;
 import javalibrary.math.Units;
-import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.ui.IApplication;
-import nationalcipher.ui.UINew;
 
 public abstract class SimulatedAnnealing extends InternalDecryption {
 

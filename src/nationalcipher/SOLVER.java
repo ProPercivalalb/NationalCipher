@@ -12,12 +12,8 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.other.Digrafid;
-import nationalcipher.cipher.base.other.Playfair;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
-import nationalcipher.cipher.base.other.Trifid;
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.PortaAutokey;
 import nationalcipher.cipher.base.substitution.QuagmireI;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
@@ -27,7 +23,6 @@ import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
 import nationalcipher.cipher.tools.Creator;
 import nationalcipher.cipher.tools.Creator.AMSCOKey;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeyManipulation;
 
 public class SOLVER {
 

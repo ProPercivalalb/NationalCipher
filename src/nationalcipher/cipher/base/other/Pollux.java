@@ -24,7 +24,7 @@ public class Pollux implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, char[] key) {
+	public static byte[] decode(char[] cipherText, char[] key) {
 
 		char[] morseText = new char[cipherText.length];
 		
@@ -54,7 +54,7 @@ public class Pollux implements IRandEncrypter {
 			}
 		}
 		
-		return plainText.toCharArray();
+		return plainText.getBytes(); //TODO Unchecked
 	}
 
 	@Override

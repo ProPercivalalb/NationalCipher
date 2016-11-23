@@ -38,8 +38,8 @@ public class VigenereSlidefair implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String key) {
-		char[] plainText = new char[cipherText.length];
+	public static byte[] decode(char[] cipherText, String key) {
+		byte[] plainText = new byte[cipherText.length];
 		
 		String[] keyAlpha = new String[key.length()];
 		Arrays.fill(keyAlpha, "");
@@ -56,12 +56,12 @@ public class VigenereSlidefair implements IRandEncrypter {
 
 			int index = alpha.indexOf(b);
 			if(a - 'A' == index) {
-				plainText[i * 2] = (char)((index + 25) % 26 + 'A');
-				plainText[i * 2 + 1] = alpha.charAt((index + 25) % 26);
+				plainText[i * 2] = (byte)((index + 25) % 26 + 'A');
+				plainText[i * 2 + 1] = (byte)alpha.charAt((index + 25) % 26);
 			}
 			else {
-				plainText[i * 2] = (char)(index + 'A');
-				plainText[i * 2 + 1] = alpha.charAt(a - 'A');
+				plainText[i * 2] = (byte)(index + 'A');
+				plainText[i * 2 + 1] = (byte)alpha.charAt(a - 'A');
 			}
 		}
 		

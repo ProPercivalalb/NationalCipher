@@ -200,7 +200,7 @@ public class PolyalphabeticIdentifier {
 		        	break;
 		         int cl = text.charAt(posn) - 'A';
 		         int cr = text.charAt(posn + 1) - 'A';
-		         int [] result = decodeSL(cl, cr, k, type);
+		         int[] result = decodeSL(cl, cr, k, type);
 		         int pl = result[0];
 		         int pr = result[1];
 		         score += logdi[pl][pr];

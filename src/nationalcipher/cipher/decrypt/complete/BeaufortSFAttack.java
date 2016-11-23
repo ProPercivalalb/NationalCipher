@@ -10,7 +10,7 @@ public class BeaufortSFAttack extends SlidefairAttack {
 	}
 
 	@Override
-	public char[] decode(char[] cipherText, String key) {
+	public byte[] decode(char[] cipherText, String key) {
 		return BeaufortSlidefair.decode(cipherText, key);
 	}
 }

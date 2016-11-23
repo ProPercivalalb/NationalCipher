@@ -20,15 +20,14 @@ public class Hill implements IRandEncrypter {
 		System.out.println("CipherText: " + cipherText);
 		
 		
-		System.out.println("PlainText: " + new String(decode(cipherText.toCharArray(), key)));
+		System.out.println("PlainText: " + new String(decode(cipherText.toCharArray(), new byte[cipherText.length()], key)));
 	}
 	
-	public static char[] decode(char[] cipherText, Matrix keyMatrix) throws MatrixNotSquareException, MatrixNoInverse { 
+	public static byte[] decode(char[] cipherText, byte[] plainText, Matrix keyMatrix) throws MatrixNotSquareException, MatrixNoInverse { 
 	    Matrix inverseMatrix = keyMatrix.inverseMod(26);
 
 		int size = inverseMatrix.squareSize();
-	    char[] plainText = new char[cipherText.length]; 
-	    for(int i = 0; i < cipherText.length; i += size){
+	    for(int i = 0; i < cipherText.length; i += size) {
 	    	
 	    	int[] let = new int[size];
 	    	for(int j = 0; j < size; j++)
@@ -38,7 +37,7 @@ public class Hill implements IRandEncrypter {
 	    	Matrix plainMatrix = inverseMatrix.multiply(cipherMatrix).modular(26);
 	    	
 	    	for(int j = 0; j < size; j++)
-	    		plainText[i + j] = (char)(plainMatrix.data[j] + 'A');
+	    		plainText[i + j] = (byte)(plainMatrix.data[j] + 'A');
 	    		
 	    }
 	    
