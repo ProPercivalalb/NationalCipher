@@ -375,8 +375,10 @@ public class StatCalculator {
 		for(int i = 0; i < text.length(); i++) {
 			for(int j = i + 1 ; j < text.length(); j++) {
 				int n = 0;
-				while(j + n < text.length() && text.charAt(i + n) == text.charAt(j + n))
+				while(j + n < text.length() && text.charAt(i + n) == text.charAt(j + n)) {
 					n++;
+					if(n > 3) break;
+				}
 				
 				if(n == 3)
 					count += 1;
