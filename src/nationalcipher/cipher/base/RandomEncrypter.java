@@ -21,7 +21,6 @@ import nationalcipher.cipher.base.other.Trifid;
 import nationalcipher.cipher.base.substitution.Affine;
 import nationalcipher.cipher.base.substitution.Autokey;
 import nationalcipher.cipher.base.substitution.Bazeries;
-import nationalcipher.cipher.base.substitution.BeaufortSlidefair;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.base.substitution.FourSquare;
@@ -35,11 +34,10 @@ import nationalcipher.cipher.base.substitution.QuagmireII;
 import nationalcipher.cipher.base.substitution.QuagmireIII;
 import nationalcipher.cipher.base.substitution.QuagmireIV;
 import nationalcipher.cipher.base.substitution.RunningKey;
+import nationalcipher.cipher.base.substitution.Slidefair;
 import nationalcipher.cipher.base.substitution.TriSquare;
 import nationalcipher.cipher.base.substitution.TwoSquare;
-import nationalcipher.cipher.base.substitution.VariantSlidefair;
 import nationalcipher.cipher.base.substitution.VigenereFamily;
-import nationalcipher.cipher.base.substitution.VigenereSlidefair;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.base.transposition.Cadenus;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
@@ -93,7 +91,6 @@ public class RandomEncrypter {
 		registerEncrypter(new Autokey(), 2);
 		registerEncrypter(new AMSCO(), 3);	
 		registerEncrypter(new Bazeries(), 3);
-		registerEncrypter(new BeaufortSlidefair(), 2);
 		registerEncrypter(new Bifid(), 5);
 		registerEncrypter(new Caesar(), 1);
 		registerEncrypter(new Cadenus(), 7);
@@ -128,13 +125,11 @@ public class RandomEncrypter {
 		registerEncrypter(new RunningKey(), 10);
 		registerEncrypter(new SeriatedPlayfair(), 8);
 		registerEncrypter(new Solitaire(), 10);
+		registerEncrypter(new Slidefair(), 2);
 		//TODO registerEncrypter(new Swagman());
 		registerEncrypter(new Trifid(), 8);
 		registerEncrypter(new TwoSquare(), 7);
 		registerEncrypter(new TriSquare(), 9);
-		registerEncrypter(new VariantSlidefair(), 2);
 		registerEncrypter(new VigenereFamily(), 2);
-
-		registerEncrypter(new VigenereSlidefair(), 2);
 	}
 }

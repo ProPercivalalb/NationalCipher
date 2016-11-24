@@ -69,11 +69,12 @@ public abstract class SlidefairAttack extends CipherAttack {
 		
 		@Override
 		public void onIteration(String key) {
-			this.lastSolution = new Solution(SlidefairAttack.this.decode(this.cipherText, key), this.getLanguage());
+			this.lastSolution = new Solution(SlidefairAttack.this.decode(this.cipherText, this.plainText, key), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString(key);
+				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
@@ -84,7 +85,7 @@ public abstract class SlidefairAttack extends CipherAttack {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(SlidefairAttack.this.decode(this.cipherText, key), this.getLanguage()).setKeyString(key);
+			return new Solution(SlidefairAttack.this.decode(this.cipherText, this.plainText, key), this.getLanguage()).setKeyString(key).bakeSolution();
 		}
 	}
 	
@@ -100,5 +101,5 @@ public abstract class SlidefairAttack extends CipherAttack {
 		this.rangeSpinner[1].setValue(SettingsUtil.getSetting("period_max", map, Integer.TYPE, 15));
 	}
 	
-	public abstract byte[] decode(char[] cipherText, String key);
+	public abstract byte[] decode(char[] cipherText, byte[] plainText, String key);
 }

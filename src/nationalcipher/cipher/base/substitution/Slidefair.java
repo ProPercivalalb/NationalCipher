@@ -2,11 +2,14 @@ package nationalcipher.cipher.base.substitution;
 
 import java.util.Arrays;
 
+import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.tools.KeyGeneration;
 
-public class Slidefair {
+public class Slidefair implements IRandEncrypter {
 
-	//TODO
 	public static String encode(String plainText, String key, VigenereType type) {
 		String cipherText = "";
 		
@@ -15,7 +18,7 @@ public class Slidefair {
 		
 		for(int i = 0; i < key.length(); i++)
 			for(int k = 0; k < 26; k++) 
-				keyAlpha[i] += (char)((26 + k - (key.charAt(i) - 'A')) % 26 + 'A');
+				keyAlpha[i] += (char)type.encode((byte)(k + 'A'), (byte)key.charAt(i));
 		
 		
 		for(int i = 0; i < plainText.length() / 2; i++) {
@@ -38,33 +41,39 @@ public class Slidefair {
 		return cipherText;
 	}
 	
-	public static byte[] decode(char[] cipherText, String key, VigenereType type) {
-		byte[] plainText = new byte[cipherText.length];
-		
-		String[] keyAlpha = new String[key.length()];
-		Arrays.fill(keyAlpha, "");
+	public static byte[] decode(char[] cipherText, byte[] plainText, String key, VigenereType type) {
+		byte[][] keyAlpha = new byte[key.length()][26];
+		byte[][] keyAlphaIndex = new byte[key.length()][26];
 		
 		for(int i = 0; i < key.length(); i++)
-			for(int k = 0; k < 26; k++) 
-				keyAlpha[i] += (char)((26 + k - (key.charAt(i) - 'A')) % 26 + 'A');
+			for(int k = 0; k < 26; k++) {
+				byte a = type.encode((byte)(k + 'A'), (byte)key.charAt(i));
+				keyAlpha[i][k] = a;
+				keyAlphaIndex[i][a - 'A'] = (byte)k;
+			}
 		
 		for(int i = 0; i < cipherText.length / 2; i++) {
 			char a = cipherText[i * 2];
 			char b = cipherText[i * 2 + 1];
 			
-			String alpha = keyAlpha[i % key.length()];
+			byte[] alpha = keyAlpha[i % key.length()];
 
-			int index = alpha.indexOf(b);
+			byte index = keyAlphaIndex[i % key.length()][b - 'A'];
 			if(a - 'A' == index) {
 				plainText[i * 2] = (byte)((index + 25) % 26 + 'A');
-				plainText[i * 2 + 1] = (byte)alpha.charAt((index + 25) % 26);
+				plainText[i * 2 + 1] = alpha[(index + 25) % 26];
 			}
 			else {
 				plainText[i * 2] = (byte)(index + 'A');
-				plainText[i * 2 + 1] = (byte)alpha.charAt(a - 'A');
+				plainText[i * 2 + 1] = alpha[a - 'A'];
 			}
 		}
 		
 		return plainText;
+	}
+	
+	@Override
+	public String randomlyEncrypt(String plainText) {
+		return encode(plainText, KeyGeneration.createShortKey26(2, 15), RandomUtil.pickRandomElement(VigenereType.SLIDEFAIR_LIST));
 	}
 }

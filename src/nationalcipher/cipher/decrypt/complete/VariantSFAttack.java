@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.substitution.VariantSlidefair;
+import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Slidefair;
 import nationalcipher.cipher.decrypt.SlidefairAttack;
 
 public class VariantSFAttack extends SlidefairAttack {
@@ -10,7 +11,7 @@ public class VariantSFAttack extends SlidefairAttack {
 	}
 
 	@Override
-	public byte[] decode(char[] cipherText, String key) {
-		return VariantSlidefair.decode(cipherText, key);
+	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return Slidefair.decode(cipherText, plainText, key, VigenereType.VARIANT);
 	}
 }

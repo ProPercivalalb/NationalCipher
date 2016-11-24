@@ -7,6 +7,7 @@ public abstract class VigenereType {
 	public static final VigenereType PORTA_VARIANT = new PortaVariant();
 	public static final VigenereType VARIANT = new Variant();
 	public static final VigenereType VIGENERE = new Vigenere();
+	public static final VigenereType[] SLIDEFAIR_LIST = new VigenereType[] {BEAUFORT, VARIANT, VIGENERE};
 	public static final VigenereType[] NORMAL_LIST = new VigenereType[] {BEAUFORT, PORTA, VARIANT, VIGENERE};
 	
 	private VigenereType() {} //Can't create any more instances
