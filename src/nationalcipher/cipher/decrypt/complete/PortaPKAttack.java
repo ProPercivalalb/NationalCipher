@@ -12,8 +12,8 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
-import nationalcipher.cipher.base.ProgressiveKey;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.decrypt.ProgressiveKeyAttack;
 import nationalcipher.cipher.tools.SubOptionPanel;
 

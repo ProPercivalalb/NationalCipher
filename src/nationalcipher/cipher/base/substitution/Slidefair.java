@@ -2,7 +2,6 @@ package nationalcipher.cipher.base.substitution;
 
 import java.util.Arrays;
 
-import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.VigenereType;

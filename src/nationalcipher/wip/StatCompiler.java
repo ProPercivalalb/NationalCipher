@@ -3,11 +3,11 @@ package nationalcipher.wip;
 import java.util.LinkedHashMap;
 
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.ProgressiveKey;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Affine;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Keyword;
+import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;

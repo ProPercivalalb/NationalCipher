@@ -12,8 +12,8 @@ import javax.swing.JTextArea;
 
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
-import nationalcipher.cipher.base.Nicodemus;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Nicodemus;
 import nationalcipher.cipher.decrypt.NicodemusAttack;
 import nationalcipher.cipher.tools.SubOptionPanel;
 

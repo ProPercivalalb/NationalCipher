@@ -1,6 +1,8 @@
-package nationalcipher.cipher.base;
+package nationalcipher.cipher.base.substitution;
 
 import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Nicodemus implements IRandEncrypter {

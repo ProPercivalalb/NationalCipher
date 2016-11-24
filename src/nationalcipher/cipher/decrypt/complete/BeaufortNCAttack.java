@@ -1,7 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.Nicodemus;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Nicodemus;
 import nationalcipher.cipher.decrypt.NicodemusAttack;
 
 public class BeaufortNCAttack extends NicodemusAttack {

@@ -1,7 +1,7 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import nationalcipher.cipher.base.ProgressiveKey;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.decrypt.ProgressiveKeyAttack;
 
 public class VariantPKAttack extends ProgressiveKeyAttack {
