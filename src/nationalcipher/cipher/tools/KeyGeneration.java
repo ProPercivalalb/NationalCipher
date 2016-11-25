@@ -12,6 +12,7 @@ public class KeyGeneration {
 
 	private static char[] allPolluxChars = "X.-".toCharArray();
 	
+	private static char[] all36Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 	private static char[] all27Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
 	private static char[] all26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	private static char[] all25Chars = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
@@ -50,6 +51,10 @@ public class KeyGeneration {
 		return createLongKeyUniversal(all27Chars);
 	}
 	
+	public static String createLongKey36() {
+		return createLongKeyUniversal(all36Chars);
+	}
+	
 	private static String createLongKeyUniversal(char[] charList) {
 		List<Character> characters = ListUtil.toList(charList);
 		
@@ -71,10 +76,14 @@ public class KeyGeneration {
 		return order;
 	}
 	
-	public static Matrix createMatrix(int size, int limit) {
-		Matrix matrix = new Matrix(size, size);
+	public static Matrix createMatrix(int size, int range) {
+		return createMatrix(size, size, range);
+	}
+	
+	public static Matrix createMatrix(int rows, int columns, int range) {
+		Matrix matrix = new Matrix(rows, columns);
 		for(int i = 0; i < matrix.data.length; i++)
-			matrix.data[i] = RandomUtil.pickRandomInt(limit);
+			matrix.data[i] = RandomUtil.pickRandomInt(range);
 		
 		return matrix;
 	}

@@ -84,6 +84,6 @@ public class ColumnarTransposition implements IRandEncrypter {
 	
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createOrder(14, 14), true);
+		return encode(plainText, KeyGeneration.createOrder(1, 8), true);
 	}
 }

@@ -214,4 +214,50 @@ public class KeyIterator {
 	            arr[pos] = h;
 			}
 	}
+	
+	public static interface ArrayPermutations {
+		
+		/**
+		 * @param id An arbitrary incase the same class needs to implement this method twice you can specify which part should run
+		 * @param data The int array, this is changed each iteration so make a copy if you need to refer to it again
+		 */
+		public void onList(byte id, int[] data);
+	}
+	
+	/**
+	 * 
+	 * @param task
+	 * @param size
+	 * @param range The possible range of values from 0 to range (not including range)
+	 * @param duplicates
+	 */
+	public static void permutateArray(ArrayPermutations task, int size, int range, boolean duplicates) {
+		permutateArray(task, (byte)-1, size, range, duplicates, 0, new int[size]);
+	}
+	
+	public static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates) {
+		permutateArray(task, id, size, range, duplicates, 0, new int[size]);
+	}
+	
+	private static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates, int count, int[] pattern) {
+		hasDuplicate:
+		for(int i = 0; i < range; i++) {
+			int previous = pattern[count];
+			pattern[count] = i;
+			
+			//If can't have duplicates
+			if(!duplicates)
+				for(int j = 0; j < count; j++) 
+					if(pattern[j] == i)
+						continue hasDuplicate;
+			
+			if(count + 1 == size) 
+				task.onList(id, pattern);
+			else
+				permutateArray(task, id, size, range, duplicates, count + 1, pattern);
+			
+			pattern[count] = previous;
+		}
+			
+	}
 }

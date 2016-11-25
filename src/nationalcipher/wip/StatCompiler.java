@@ -2,6 +2,9 @@ package nationalcipher.wip;
 
 import java.util.LinkedHashMap;
 
+import javalibrary.fitness.ChiSquared;
+import javalibrary.language.Languages;
+import javalibrary.math.matrics.Matrix;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Affine;
@@ -28,7 +31,10 @@ public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
 	public static void main(String[] args) {
-		System.out.println(new String(ProgressiveKey.decode("BCNPSNXNBECEMAISHPZAKGQYLLZTJNAONVSGQCDQ".toCharArray(), new byte[3179], "POLITICS", 8, 3, VigenereType.PORTA)));
+		Matrix matrix = new Matrix(new int[] {7, 21, 16, 5}, 2, 2);
+		System.out.println(matrix.inverseMod(26));
+		System.out.println("" + ChiSquared.calculate("GNCUHKLWULXNNGCKAOYMKAUEMYSYCJWHZNLUBPIBHHOIXICGGKNNELXQOGULPWSOYWGYHSHSNDCYUVYKIGOCEUN".toCharArray(), Languages.english));
+		//System.out.println(new String(ProgressiveKey.decode("BCNPSNXNBECEMAISHPZAKGQYLLZTJNAONVSGQCDQ".toCharArray(), new byte[3179], "POLITICS", 8, 3, VigenereType.PORTA)));
 		//System.out.println(RailFence.decode("ERIPHINOTLAFHVTDIATLNOWSIPTIOSEEYEHMROTNSIDSHEECNATROLOINYHNMPBRTTTLEUEYNDNAHDFDSIIOIHNAOGDELONOIHEERSEEBEOTESOVAPCAHEMTASAIFEERSOILRETEOEYWMOEBTIEIDIESWSAMTORASOEHPSSSEIFRSTTTFODELMOWDTAFOOESUINAEOSETLYHAOAALRHNVIERLRHREITSHRTARTIFYUTHRSHSNOSEIIIHNORNPRNOLEGERMONETTOAPSHHSDLIABRHFLTSRTEAOAALWEAIAAAFNNENISIHRTSERADRVNTAALAOLINSSETLOTEUKNARISYGESASSIWEETDOGTUEEOELEUDTNWELHAFETOTULGTCNTOTSADFMCUUGAIRNPAINETCLTOYAENGDOEICRDRMALLNWUOHBESITBEETNEENOMSTELSOAFHETITDCPROABRGRPOEUCLTOUDEHBEPARTSLWDTEOWHERFRMALETMLRSSBNMSRMEIYGOIIESYYDODUMETNUEMRTNTOFEAIETETHRCOITUATAACGHASEUTTOIVRESEAWRGIEAOAOCEAYFGNIRAERNANOCHVCSSMEHRSUILBSTEEPTOUNDTGILOMTEETAEGRDRTOIHERONIWTIETWEOOMTAEIAABEUDILNWAOLEAATENASARFORIVIANTERATGNIRMMOTAIHTVDIFUCVLHSSERWSEEAXEVASTTSWRUEETAAHCVLRCETCNTDIEFIRONWSEEETEAERIADACBATRHURPTOCUVRESDOCUAEODHCOBDNTENCNIAAHRIYLSETFETXNTTEIELCNAVBFRBFWDOEHRAKEATTLNAENOBEEITAYNROUDTRSYOSNOERATSNOSAYNMFRSODCCALCNONVAENESCFROGOOTNHCMETEAKEHOAYSPNLAYEEOTHONMNNREBNEFNTALCTOOREOTEDORUOLWDRYPEUGSOGNRWHNEOCRLYRTSOWOEHYEKNTWRNPRHHMLTEDLICSESGBTEEECSOENEAAOTIEAOSRMHTRWVNEWIFYUMMWHTELNCNLEILGGIDITRHGRENSGGINMCTIUNGIATOEEFMAENSEOTTRDPEOAEDXGEETCOERHTOTCHTTNSRHOONOERHOVREFIHEWRELDSFEAHREMEOEEVERTIDVPLLHOSLETFYGRANCUOTUHECEVKEONNKIBHRGFIOEDTTUACDEIIUTUPMSSNEORSOEEIBALYCHSBIHEPTIHONHAUWATOCBWEUEYOAINOOEHUOHT".toCharArray(), 4, 5));
 		registerStatistics();
 		//for(IRandEncrypter en : new IRandEncrypter[] {new Caesar(), new Keyword(), new Affine()})
@@ -36,9 +42,9 @@ public class StatCompiler {
 		//		StatisticHandler.calculateStatPrint(en, clz, 100);
 		
 		//TODO
-		for(IRandEncrypter en : new IRandEncrypter[] {new Caesar(), new Keyword(), new Affine()})
-			for(Class<? extends TextStatistic> clz : new Class[] {StatisticLogDigraphAffine.class}) 
-				StatisticHandler.calculateStatPrint(en, clz, 50);
+		//for(IRandEncrypter en : new IRandEncrypter[] {new Caesar(), new Keyword(), new Affine()})
+		//	for(Class<? extends TextStatistic> clz : new Class[] {StatisticLogDigraphAffine.class}) 
+		//		StatisticHandler.calculateStatPrint(en, clz, 50);
 	}
 	
 	private static void registerStatistics() {

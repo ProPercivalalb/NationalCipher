@@ -2,6 +2,7 @@ package nationalcipher.cipher.decrypt.complete;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javax.swing.JSpinner;
 import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
+import javalibrary.fitness.ChiSquared;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringAnalyzer;
@@ -25,6 +27,7 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.SquareMatrixKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -42,8 +45,8 @@ public class HillAttack extends CipherAttack {
 	
 	public HillAttack() {
 		super("Hill");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED);
-		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 3, 2, 3, 1);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
+		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 3, 2, 5, 1);
 		this.gramSearchRange = JSpinnerUtil.createSpinner(20, 3, 100, 1);
 		this.trigramSets = new JComboBox<String>(this.TRI_GRAM_DISPLAY);
 	}
@@ -118,10 +121,27 @@ public class HillAttack extends CipherAttack {
 				}
 			}
 		}
+		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+			for(int size = sizeRange[0]; size <= sizeRange[1]; size++) {
+				if(task.cipherText.length % size != 0) {
+					app.out().println("Matrix size of %d is not possible, length of text is not a multiple.", size);
+					continue;
+				}
+				task.size = size;
+				task.lengthSub = task.cipherText.length / size;
+				
+				KeyIterator.permutateArray(task, (byte)0, size, 26, true);
+				
+				if(task.best.size() < size)
+					app.out().println("Did not find enought key columns that produces good characters %d/%d", task.best.size(), size);
+				else
+					KeyIterator.permutateArray(task, (byte)1, size, task.best.size(), false);
+			}
+		}
 		
 		app.out().println(task.getBestSolution());
 	}
-	
+
 	public int[][] generatePickPattern(int size, int times) { //MathUtil.factorial(times)
 		int[][] patterns = new int[(int)Math.pow(times, size)][size];
 
@@ -159,8 +179,12 @@ public class HillAttack extends CipherAttack {
 		return equation;
 	}
 	
-	public class HillTask extends InternalDecryption implements SquareMatrixKey {
+	public class HillTask extends InternalDecryption implements SquareMatrixKey, ArrayPermutations {
 
+		private int size;
+		private int lengthSub;
+		private List<HillSection> best = new ArrayList<HillSection>();
+		
 		public HillTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
@@ -188,6 +212,78 @@ public class HillAttack extends CipherAttack {
 				this.getKeyPanel().updateIteration(this.iteration++);
 				this.getProgress().increase();
 			}
+		}
+		
+		
+		@Override
+		public void onList(byte id, int[] data) {
+			if(id == 0) {
+				boolean invalidDeterminate = false;
+				for(int d : new int[] {2, 13}) {
+					boolean divides = true;
+					for(int s = 0; s < this.size; s++) 
+						if(data[s] % d != 0)
+							divides = false;
+
+					invalidDeterminate = divides;
+					if(divides) break;
+				}
+				
+				if(invalidDeterminate)
+					return;
+				
+				char[] decrypted = new char[this.lengthSub];
+		
+				for(int i = 0; i < this.cipherText.length; i += this.size) {	
+					int total = 0;
+					for(int s = 0; s < this.size; s++)
+						total += data[s] * (this.cipherText[i + s] - 'A');
+	
+					decrypted[i / this.size] = (char)(total % 26 + 'A');
+				}
+				
+				double currentSum = ChiSquared.calculate(decrypted, this.app.getLanguage());
+		
+				if(currentSum < 200) {
+					this.app.out().println("%s, %f, %s", Arrays.toString(data), currentSum, Arrays.toString(decrypted));
+					this.best.add(new HillSection(decrypted, Arrays.copyOf(data, data.length)));
+				}
+			}
+			else {
+				for(int s = 0; s < this.size; s++) {
+					HillSection hillSection = this.best.get(data[s]);
+					for(int i = 0; i < this.lengthSub; i++)
+						this.plainText[i * this.size + s] = (byte)hillSection.decrypted[i];
+				}
+				
+				this.lastSolution = new Solution(this.plainText, this.getLanguage());
+				
+				if(this.lastSolution.score >= this.bestSolution.score) {
+					this.bestSolution = this.lastSolution;
+					int[] inverseMatrix = new int[this.size * this.size];
+					for(int s = 0; s < this.size; s++)
+						for(int n = 0; n < this.size; n++)
+							inverseMatrix[s * this.size + n] = this.best.get(data[s]).inverseCol[n];
+					
+					try {
+						this.bestSolution.setKeyString(new Matrix(inverseMatrix, this.size).inverseMod(26).toString());
+					}
+					catch(MatrixNoInverse e) {}
+					
+					this.bestSolution.bakeSolution();
+					this.out().println("%s", this.bestSolution);	
+					this.getKeyPanel().updateSolution(this.bestSolution);
+				}
+			}
+		}
+	}
+	
+	public static class HillSection {
+		public char[] decrypted;
+		public int[] inverseCol;
+		public HillSection(char[] decrypted, int[] inverseCol) {
+			this.decrypted = decrypted;
+			this.inverseCol = inverseCol;
 		}
 	}
 }

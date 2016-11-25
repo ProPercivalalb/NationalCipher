@@ -34,6 +34,23 @@ public class Keyword implements IRandEncrypter {
 
 		return plainText;
 	}
+	
+	
+	public static byte[] decodeWithAlphabet(char[] cipherText, byte[] plainText, String alphabet, String keyword) {
+		
+		for(int i = 0; i < cipherText.length; i++) {
+			int index = keyword.indexOf(cipherText[i]);
+			if(index == -1) {
+				System.out.println(i + " " + cipherText[i]);
+				plainText[i] = '@';
+			}
+			else
+				plainText[i] = (byte)alphabet.charAt(index);
+		}
+			
+
+		return plainText;
+	}
 
 	@Override
 	public String randomlyEncrypt(String plainText) {

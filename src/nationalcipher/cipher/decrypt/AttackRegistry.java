@@ -23,6 +23,8 @@ import nationalcipher.cipher.decrypt.complete.DoubleTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.FourSquareAttack;
 import nationalcipher.cipher.decrypt.complete.FractionatedMorseAttack;
 import nationalcipher.cipher.decrypt.complete.HillAttack;
+import nationalcipher.cipher.decrypt.complete.HillExtendedAttack;
+import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.HomophonicAttack;
 import nationalcipher.cipher.decrypt.complete.MyszkowskiAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistSubstitutionAttack;
@@ -141,6 +143,8 @@ public class AttackRegistry {
 		registerCipher(new ConjugatedBifidAttack(), settings);
 		registerCipher(new TrifidAttack(), settings);
 		registerCipher(new HillAttack(), settings);
+		registerCipher(new HillExtendedAttack(), settings);
+		registerCipher(new HillSubstitutionAttack(), settings);
 		registerCipher(new SeriatedPlayfairAttack(), settings);
 		registerCipher(new PolluxAttack(), settings);
 		registerCipher(new ADFGXAttack(), settings);
@@ -150,7 +154,7 @@ public class AttackRegistry {
 		registerCipher(new StraddleCheckerboardAttack(), settings);
 		
 		//
-		//registerCipher(new StraddleCheckerboardAttack(), settings);
+		//registerCipher(new HillSubstitution(), settings);
 		//registerCipher(new SeriatedPlayfairAttack(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);

@@ -10,6 +10,8 @@ import nationalcipher.cipher.base.other.Bifid;
 import nationalcipher.cipher.base.other.ConjugatedBifid;
 import nationalcipher.cipher.base.other.Digrafid;
 import nationalcipher.cipher.base.other.Hill;
+import nationalcipher.cipher.base.other.HillExtended;
+import nationalcipher.cipher.base.other.HillSubstitution;
 import nationalcipher.cipher.base.other.Homophonic;
 import nationalcipher.cipher.base.other.Morbit;
 import nationalcipher.cipher.base.other.PeriodicGromark;
@@ -103,6 +105,8 @@ public class RandomEncrypter {
 		registerEncrypter(new FourSquare(), 7);
 		registerEncrypter(new FractionatedMorse(), 5);
 		registerEncrypter(new Hill(), 7);
+		registerEncrypter(new HillExtended(), 7);
+		registerEncrypter(new HillSubstitution(), 8);
 		registerEncrypter(new Homophonic(), 5);
 		registerEncrypter(new Keyword(), 1);
 		registerEncrypter(new Morbit());

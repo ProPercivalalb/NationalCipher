@@ -1009,7 +1009,7 @@ public class UINew extends JFrame implements IApplication {
 				CipherAttack force = getCipherAttack();
 				force.onTermination(true);
 				DecimalFormat df = new DecimalFormat("#.#");
-				output.println("Time Running: %sms - %ss\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)));
+				output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
 				toolBarStart.setEnabled(true);
 				toolBarStop.setEnabled(false);
 				menuItemSettings.setEnabled(true);
@@ -3138,7 +3138,6 @@ public class UINew extends JFrame implements IApplication {
      		addDialog(this.dialog);
 		}
     	
-
 	    public Comparator<IdentifyOutput> comparator = new Comparator<IdentifyOutput>() {
 	    	@Override
 	        public int compare(IdentifyOutput c1, IdentifyOutput c2) {
