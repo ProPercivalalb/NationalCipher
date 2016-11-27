@@ -90,6 +90,7 @@ import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.OSIdentifier;
 import javalibrary.lib.Timer;
+import javalibrary.list.DynamicResultList;
 import javalibrary.listener.CustomMouseListener;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Rounder;
@@ -1089,7 +1090,7 @@ public class UINew extends JFrame implements IApplication {
     public class ShowTopSolutionsAction extends NCCDialog implements ActionListener {
     	
     	private JTextArea textOutput;
-    	public Solution[] solutions; //Can sort up to 10 Million
+    	public DynamicResultList<Solution> solutions; //Can sort up to 10 Million
     	public int i = 0;
     	private boolean updateNeed;
     	
@@ -1123,7 +1124,7 @@ public class UINew extends JFrame implements IApplication {
 	        
     		this.dialog.add(panel);
     		
-    		this.solutions = new Solution[1000000];
+    		this.solutions = new DynamicResultList<Solution>(256);
     	}
     	
     	@Override
@@ -1133,16 +1134,11 @@ public class UINew extends JFrame implements IApplication {
 		}
     	
     	public void sortSolutions() {
-    		Set<Solution> hs = new HashSet<Solution>();
-    		hs.addAll(Arrays.asList(Arrays.copyOf(this.solutions, ArrayUtil.indexOf(solutions, null))));
-    		List<Solution> sorted = new ArrayList<Solution>();
-    		sorted.addAll(hs);
-    		Collections.sort(sorted);
+    		this.solutions.sort();
     		
     		String text = "";
-    		int min = Math.min(250, sorted.size());
-    		for(int i = 0; i < min; i++)
-    			text += String.format(i + " %s\n", sorted.get(i));
+    		for(int i = 0; i < this.solutions.size(); i++)
+    			text += String.format(i + " %s\n", this.solutions.get(i));
 
     		textOutput.setText(text);
     		textOutput.revalidate();
@@ -1150,14 +1146,12 @@ public class UINew extends JFrame implements IApplication {
     	}
 
     	public void addSolution(Solution solution) {
-    		this.solutions[i++] = solution;
+    		this.solutions.addResult(solution);
     		updateNeed = true;
     	}
     	
     	public void reset() {
-    		for(int j = 0; j < this.solutions.length; j++)
-    			this.solutions[j] = null;
-    		this.i = 0;
+    		this.solutions.clear();
     	}
     }
     

@@ -20,6 +20,8 @@ import nationalcipher.cipher.decrypt.complete.ColumnarTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.ConjugatedBifidAttack;
 import nationalcipher.cipher.decrypt.complete.DigrafidAttack;
 import nationalcipher.cipher.decrypt.complete.DoubleTranspositionAttack;
+import nationalcipher.cipher.decrypt.complete.EnigmaAttack;
+import nationalcipher.cipher.decrypt.complete.EnigmaNoPlugboardAttack;
 import nationalcipher.cipher.decrypt.complete.FourSquareAttack;
 import nationalcipher.cipher.decrypt.complete.FractionatedMorseAttack;
 import nationalcipher.cipher.decrypt.complete.HillAttack;
@@ -60,6 +62,7 @@ import nationalcipher.cipher.decrypt.complete.VigenereAttack;
 import nationalcipher.cipher.decrypt.complete.VigenereNCAttack;
 import nationalcipher.cipher.decrypt.complete.VigenerePKAttack;
 import nationalcipher.cipher.decrypt.complete.VigenereSFAttack;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 public class AttackRegistry {
 
@@ -147,14 +150,17 @@ public class AttackRegistry {
 		registerCipher(new HillSubstitutionAttack(), settings);
 		registerCipher(new SeriatedPlayfairAttack(), settings);
 		registerCipher(new PolluxAttack(), settings);
-		registerCipher(new ADFGXAttack(), settings);
+		registerCipher(new ADFGXAttack("ADFGX", "ADFGX", KeyGeneration.ALL_26_CHARS), settings);
+		registerCipher(new ADFGXAttack("ADFGVX", "ADFGVX", KeyGeneration.ALL_36_CHARS), settings);
+		registerCipher(new EnigmaAttack(), settings);
+		registerCipher(new EnigmaNoPlugboardAttack(), settings);
 		registerCipher(new HomophonicAttack(), settings);
 		registerCipher(new DigrafidAttack(), settings);
 		registerCipher(new SolitaireAttack(), settings);
 		registerCipher(new StraddleCheckerboardAttack(), settings);
 		
 		//
-		//registerCipher(new HillSubstitution(), settings);
+		//registerCipher(new EnigmaNoPlugboardAttack(), settings);
 		//registerCipher(new SeriatedPlayfairAttack(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);

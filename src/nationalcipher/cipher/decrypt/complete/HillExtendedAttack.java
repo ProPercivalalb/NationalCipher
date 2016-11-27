@@ -12,9 +12,7 @@ import javalibrary.exception.MatrixNoInverse;
 import javalibrary.fitness.ChiSquared;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.swing.JSpinnerUtil;
-import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack.HillSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -77,7 +75,7 @@ public class HillExtendedAttack extends CipherAttack {
 		}
 		
 		@Override
-		public void onList(byte id, int[] data) {
+		public void onList(byte id, int[] data, Object... extra) {
 			if(id == 0) {
 				boolean invalidDeterminate = false;
 				for(int d : new int[] {2, 13}) {

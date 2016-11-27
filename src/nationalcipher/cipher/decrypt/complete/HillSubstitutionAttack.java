@@ -11,21 +11,18 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
 import javalibrary.exception.MatrixNoInverse;
+import javalibrary.list.ResultPositive;
 import javalibrary.math.MathUtil;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -88,13 +85,12 @@ public class HillSubstitutionAttack extends CipherAttack {
 				for(int i = 0; i < task.bestNext.size(); i++) {
 					HillSection section = task.bestNext.get(i);
 					 
-					LongKeyTask task2 = new LongKeyTask(section.decrypted, app);
-					task2.run();
+					SubstitutionHack substitutionHack = new SubstitutionHack(ArrayUtil.convertCharType(section.decrypted), app);
 					
-					task.lastSolution = task2.bestSolution;
-					
-					if(task.lastSolution.score >= task.bestSolution.score) {
-						task.bestSolution = task.lastSolution;
+					substitutionHack.run();
+	
+					if(substitutionHack.bestSolution.score >= task.bestSolution.score) {
+						task.bestSolution = substitutionHack.bestSolution;
 		
 						try {
 							task.bestSolution.setKeyString("%s, %s", task.bestSolution.keyString, new Matrix(section.inverseCol, size).inverseMod(26));
@@ -132,7 +128,7 @@ public class HillSubstitutionAttack extends CipherAttack {
 		}
 		
 		@Override
-		public void onList(byte id, int[] data) {
+		public void onList(byte id, int[] data, Object... extra) {
 			if(id == 0) {
 				boolean invalidDeterminate = false;
 				for(int d : new int[] {2, 13}) {
@@ -186,56 +182,14 @@ public class HillSubstitutionAttack extends CipherAttack {
 		}
 	}
 	
-	public class LongKeyTask extends SimulatedAnnealing {
-
-		public String bestKey, bestMaximaKey, lastKey;
+	public static class HillSection extends ResultPositive {
 		
-		public LongKeyTask(byte[] text, IApplication app) {
-			super(ArrayUtil.convertCharType(text), app);
-		}
-		
-		@Override
-		public Solution generateKey() {
-			this.bestMaximaKey = KeyGeneration.createLongKey26();
-			return new Solution(Keyword.decode(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
-		}
-
-		@Override
-		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
-			return new Solution(Keyword.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
-		}
-
-		@Override
-		public void storeKey() {
-			this.bestMaximaKey = this.lastKey;
-		}
-
-		@Override
-		public void solutionFound() {
-			this.bestKey = this.bestMaximaKey;
-			this.bestSolution.setKeyString(this.bestKey);
-			this.bestSolution.bakeSolution();
-		}
-
-		@Override
-		public boolean endIteration() {
-			return true;
-		}
-
-		@Override
-		public void onIteration() {
-			
-		}
-	}
-	
-	public static class HillSection {
 		public byte[] decrypted;
-		public double score;
 		public int[] inverseCol;
+		
 		public HillSection(byte[] decrypted, double score, int[] inverseCol) {
+			super(score);
 			this.decrypted = decrypted;
-			this.score = score;
 			this.inverseCol = inverseCol;
 		}
 	}

@@ -1,16 +1,22 @@
 package nationalcipher.wip;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 import javalibrary.fitness.ChiSquared;
 import javalibrary.language.Languages;
+import javalibrary.lib.Timer;
+import javalibrary.list.DynamicResultList;
 import javalibrary.math.matrics.Matrix;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Affine;
 import nationalcipher.cipher.base.substitution.Caesar;
+import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.base.substitution.ProgressiveKey;
+import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.decrypt.methods.SolutionCollection2;
 import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;
@@ -31,9 +37,49 @@ public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
 	public static void main(String[] args) {
-		Matrix matrix = new Matrix(new int[] {7, 21, 16, 5}, 2, 2);
-		System.out.println(matrix.inverseMod(26));
-		System.out.println("" + ChiSquared.calculate("GNCUHKLWULXNNGCKAOYMKAUEMYSYCJWHZNLUBPIBHHOIXICGGKNNELXQOGULPWSOYWGYHSHSNDCYUVYKIGOCEUN".toCharArray(), Languages.english));
+		Solution[] solutionsPut = new Solution[128];
+
+		for(int b = 0; b < 128; b++)
+			solutionsPut[b] = new Solution(new byte[] {(byte)b}, -64 - b);
+		
+		DynamicResultList solutions = new DynamicResultList(7);
+		Timer timer = new Timer();
+		for(Solution solution : solutionsPut)
+			solutions.addResult(solution);
+		timer.displayTime();
+		System.out.println(solutions);
+		
+		DynamicResultList solutions2 = new DynamicResultList(7);
+		timer.restart();
+		for(Solution solution : solutionsPut)
+			solutions2.addResult(solution);
+		timer.displayTime();
+		System.out.println(solutions2);
+		
+		DynamicResultList solutions3 = new DynamicResultList(7);
+		timer.restart();
+		for(Solution solution : solutionsPut)
+			solutions3.addResult(solution);
+		timer.displayTime();
+		System.out.println(solutions3);
+		
+		SolutionCollection2 solutions4 = new SolutionCollection2(7);
+		timer.restart();
+		for(Solution solution : solutionsPut)
+			solutions4.addResult(solution);
+		timer.displayTime();
+		System.out.println(Arrays.toString(solutions4.solutions));
+		
+		SolutionCollection2 solutions5 = new SolutionCollection2(7);
+		timer.restart();
+		for(Solution solution : solutionsPut)
+			solutions5.addResult(solution);
+		timer.displayTime();
+		System.out.println(Arrays.toString(solutions5.solutions));
+		
+		//Matrix matrix = new Matrix(new int[] {7, 21, 16, 5}, 2, 2);
+		//System.out.println(matrix.inverseMod(26));
+		//System.out.println("" + new String(Enigma.decode("NPNKANVHWKPXORCDDTRJRXSJFLCIUAIIBUNQIUQFTHLOZOIMENDNGPCB".toCharArray(), new byte[56], stringToOrder("DWG"), stringToOrder("AAP"), new int[] {1, 4, 3})));
 		//System.out.println(new String(ProgressiveKey.decode("BCNPSNXNBECEMAISHPZAKGQYLLZTJNAONVSGQCDQ".toCharArray(), new byte[3179], "POLITICS", 8, 3, VigenereType.PORTA)));
 		//System.out.println(RailFence.decode("ERIPHINOTLAFHVTDIATLNOWSIPTIOSEEYEHMROTNSIDSHEECNATROLOINYHNMPBRTTTLEUEYNDNAHDFDSIIOIHNAOGDELONOIHEERSEEBEOTESOVAPCAHEMTASAIFEERSOILRETEOEYWMOEBTIEIDIESWSAMTORASOEHPSSSEIFRSTTTFODELMOWDTAFOOESUINAEOSETLYHAOAALRHNVIERLRHREITSHRTARTIFYUTHRSHSNOSEIIIHNORNPRNOLEGERMONETTOAPSHHSDLIABRHFLTSRTEAOAALWEAIAAAFNNENISIHRTSERADRVNTAALAOLINSSETLOTEUKNARISYGESASSIWEETDOGTUEEOELEUDTNWELHAFETOTULGTCNTOTSADFMCUUGAIRNPAINETCLTOYAENGDOEICRDRMALLNWUOHBESITBEETNEENOMSTELSOAFHETITDCPROABRGRPOEUCLTOUDEHBEPARTSLWDTEOWHERFRMALETMLRSSBNMSRMEIYGOIIESYYDODUMETNUEMRTNTOFEAIETETHRCOITUATAACGHASEUTTOIVRESEAWRGIEAOAOCEAYFGNIRAERNANOCHVCSSMEHRSUILBSTEEPTOUNDTGILOMTEETAEGRDRTOIHERONIWTIETWEOOMTAEIAABEUDILNWAOLEAATENASARFORIVIANTERATGNIRMMOTAIHTVDIFUCVLHSSERWSEEAXEVASTTSWRUEETAAHCVLRCETCNTDIEFIRONWSEEETEAERIADACBATRHURPTOCUVRESDOCUAEODHCOBDNTENCNIAAHRIYLSETFETXNTTEIELCNAVBFRBFWDOEHRAKEATTLNAENOBEEITAYNROUDTRSYOSNOERATSNOSAYNMFRSODCCALCNONVAENESCFROGOOTNHCMETEAKEHOAYSPNLAYEEOTHONMNNREBNEFNTALCTOOREOTEDORUOLWDRYPEUGSOGNRWHNEOCRLYRTSOWOEHYEKNTWRNPRHHMLTEDLICSESGBTEEECSOENEAAOTIEAOSRMHTRWVNEWIFYUMMWHTELNCNLEILGGIDITRHGRENSGGINMCTIUNGIATOEEFMAENSEOTTRDPEOAEDXGEETCOERHTOTCHTTNSRHOONOERHOVREFIHEWRELDSFEAHREMEOEEVERTIDVPLLHOSLETFYGRANCUOTUHECEVKEONNKIBHRGFIOEDTTUACDEIIUTUPMSSNEORSOEEIBALYCHSBIHEPTIHONHAUWATOCBWEUEYOAINOOEHUOHT".toCharArray(), 4, 5));
 		registerStatistics();
@@ -46,7 +92,12 @@ public class StatCompiler {
 		//	for(Class<? extends TextStatistic> clz : new Class[] {StatisticLogDigraphAffine.class}) 
 		//		StatisticHandler.calculateStatPrint(en, clz, 50);
 	}
-	
+	public static int[] stringToOrder(String rotors) {
+		int[] order = new int[3];
+		for(int i = 0; i < order.length; i++)
+			order[i] = rotors.charAt(i) - 'A';
+		return order;
+	}
 	private static void registerStatistics() {
 
 		

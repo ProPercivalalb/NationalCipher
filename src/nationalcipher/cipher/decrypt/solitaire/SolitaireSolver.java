@@ -21,7 +21,7 @@ public class SolitaireSolver {
 	
 	//No known text all ready
 	public static List<Solution> swiftAttack(String cipherText, int n, int offset, DeckParse deck, int noSol, Output out) {
-		return swiftAttack(cipherText, new byte[0], n, offset, deck, noSol, out);
+		return swiftAttack(cipherText, new byte[0], n, offset, deck, noSol, out, 0);
 	}
 	
 	/**
@@ -29,24 +29,24 @@ public class SolitaireSolver {
 	 * 7 chars ~ 30 seconds of processing time
 	 * However as n increases processing time increases n^2
 	 */
-	public static List<Solution> swiftAttack(String cipherText, byte[] prefix, int n, int offset, DeckParse deck, int noSol, Output out) {
+	public static List<Solution> swiftAttack(String cipherText, byte[] prefix, int n, int offset, DeckParse deck, int noSol, Output out, int time) {
 		SoiltaireSwiftAttack attack = new SoiltaireSwiftAttack(cipherText.substring(offset + 0, offset + n), prefix, out);
 		Solitaire.specialAttack(attack, deck.order, deck.unknownCards);
 		Collections.sort(attack.solutions);
 		
 		attack.solutions = attack.solutions.subList(0, Math.min(noSol, attack.solutions.size()));
 		
-		out.println("Completed first round order");
+		out.println("Completed %s round order", new String[]{"first", "second", "third", "fouth", "fifth"}[time]);
 		return attack.solutions;
 	}
 	
-	public static void startCompleteAttack(String cipherText, int n, int solutionsCarryFoward, DeckParse startingDeck, Output out) {
-		completeAttack(cipherText, new byte[0], n, solutionsCarryFoward, 0, startingDeck, out);
+	public static void startCompleteAttack(String cipherText, int n, int solutionsCarryFoward, DeckParse startingDeck, Output out, int time) {
+		completeAttack(cipherText, new byte[0], n, solutionsCarryFoward, 0, startingDeck, out, time);
 	}
 	
-	public static void completeAttack(String cipherText, byte[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out) {
+	public static void completeAttack(String cipherText, byte[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
 		out.println("Starting unknowns: " + startingDeck.countUnknowns());
-		List<Solution> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, solutionsCarryFoward, out);
+		List<Solution> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, solutionsCarryFoward, out, time);
 		
 		
 		SolitaireSolution task = new SolitaireSolution(ArrayUtil.convertCharType(cipherText.substring(offset + n, cipherText.length()).toCharArray()), offset + n, out);
@@ -55,17 +55,17 @@ public class SolitaireSolver {
 			DeckParse deck = new DeckParse(solution.keyString);
 			task.incompleteOrder = deck.order;
 			task.emptyIndex = deck.emptyIndex;
-			out.println(deck.toString());
+			//out.println(deck.toString());
 			
 			if(deck.countUnknowns() > LARGEST_UNKNOWNS_ITERABLE) {
-				completeAttack(cipherText, solution.getText(), n, solutionsCarryFoward, offset + n, deck, out);
+				completeAttack(cipherText, solution.getText(), n, solutionsCarryFoward, offset + n, deck, out, time + 1);
 			}
 			else {
 				for(int k = 0; k < n + offset; k++)
 					task.text[k] = solution.getText()[k];
 				
 				KeyIterator.iterateIntegerOrderedKey(task, deck.unknownCards);
-				
+				//out.println("Completed %s round order", new String[]{"first", "second", "third", "fouth", "fifth"}[time + 1]);
 			}
 		}
 	}
@@ -91,7 +91,7 @@ public class SolitaireSolver {
 			for(int i = 0; i < this.emptyIndex.length; i++)
 				this.incompleteOrder[this.emptyIndex[i]] = order[i];
 			
-			this.lastSolution = new Solution(Solitaire.decode(this.text, this.startingLength, this.incompleteOrder), Languages.english);
+			this.lastSolution = new Solution(Solitaire.decode(this.text, this.startingLength, this.incompleteOrder), Languages.english.getTrigramData());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
@@ -116,13 +116,13 @@ public class SolitaireSolver {
     		this.intText = new byte[cipherText.length() + prefix.length];
     		this.prefix = prefix;
     		int i = 0;
-    		
     		for(; i < prefix.length; i++)
     			this.intText[i] = (byte)(prefix[i] - 'A');
     		
     		for(; i < this.intText.length; i++)
     			this.intText[i] = (byte)(cipherText.charAt(i - prefix.length) - 'A');
-    		this.minFitness = TextFitness.getEstimatedFitness(this.intText.length, Languages.english) * 1.1D;
+    		this.minFitness = TextFitness.getEstimatedFitness(this.intText.length, Languages.english.getTrigramData()) * 1.5D;
+    		System.out.println("Min fitness: " + this.minFitness);
     		this.out = out;
     	}
    
@@ -131,9 +131,9 @@ public class SolitaireSolver {
 			
 			byte[] chars = Solitaire.decodeWithKeyStream(this.intText, this.prefix.length, keyStream);
 
-			Solution last = new Solution(chars, Languages.english);
+			Solution last = new Solution(chars, Languages.english.getTrigramData());
 			
-			if(last.score > minFitness) {
+			if(last.score > this.minFitness) {
 				last.setKeyString(ListUtil.toCardString(lastOrder, 0));
 				this.solutions.add(last);
 			}

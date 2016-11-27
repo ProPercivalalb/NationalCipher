@@ -4,85 +4,94 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-import javalibrary.exception.MatrixNoInverse;
-import javalibrary.lib.Alphabet;
-import javalibrary.math.matrics.Matrix;
-import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Keyword;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+
+import javalibrary.list.DynamicResultList;
+import javalibrary.list.ResultPositive;
+import javalibrary.swing.JSpinnerUtil;
+import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
-import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack.HillSection;
-import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack.LongKeyTask;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
-import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.tools.SettingParse;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
 
 public class ADFGXAttack extends CipherAttack {
 
-	public ADFGXAttack() {
-		super("ADFGX");
+	public final char[] alphaChar;
+	public final int alphaCount;
+	public final char[] alphabet;
+	public JSpinner[] rangeSpinner;
+	public JComboBox<Boolean> directionOption;
+	
+	public ADFGXAttack(String displayName, String alphaChar, char[] alphabet) {
+		super(displayName);
 		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION);
+		this.alphaChar = alphaChar.toCharArray();
+		this.alphaCount = this.alphaChar.length;
+		this.alphabet = alphabet;
+		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 12, 1);
+		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
+	}
+	
+	@Override
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
+		panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
+		panel.add(new SubOptionPanel("Read down (T) - Read across (F)", this.directionOption));
 	}
 	
 	@Override
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		ADFGXTask task = new ADFGXTask(text, app);
 		
+		//Settings grab
+		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
+		task.readDefault = SettingParse.getBooleanValue(this.directionOption);
+		
 		if(method == DecryptionMethod.KEY_MANIPULATION) {
-			app.getProgress().addMaxValue(26);
-			for(int length = 2; length <= 8; length++)
+			for(int length = periodRange[0]; length <= periodRange[1]; length++)
 				KeyIterator.permutateArray(task, length, length, false);
 			
-			for(int i = 0; i < task.best.size(); i++) {
-				ADFGXSection section = task.best.get(i);
-				app.out().println("%s, %f, %s", Arrays.toString(section.order), section.score, new String(section.decrypted));
+			if(task.best.size() < 1) {
+				app.out().println("No transposition order with good digraph %cIC found.", (char)916);
+				return;
 			}
 			
-			Collections.sort(task.best, this.comparator);
+			app.out().println("Found %d transposition orders with good digraph %cIC.", task.best.size(), (char)916);
+			task.best.sort();
 
 			
+			
 			for(int i = 0; i < task.best.size(); i++) {
-				ADFGXSection section = task.best.get(i);
+				ADFGXResult section = task.best.get(i);
 
 				char[] tempText = new char[section.decrypted.length / 2];
 
+				for(int r = 0; r < this.alphaCount; r++) 
+					for(int c = 0; c < this.alphaCount; c++) 
+						for(int d = 0; d < section.decrypted.length; d += 2)
+							if(section.decrypted[d] == this.alphaChar[r] && section.decrypted[d + 1] == this.alphaChar[c])
+								tempText[d / 2] = this.alphabet[r * this.alphaCount + c];
+
+				
 				SubstitutionHack substitutionHack = new SubstitutionHack(tempText, app) {
 					@Override
-					public String genRandomStartKey() {
-						return KeyGeneration.createLongKey36();
-					}
-					
-					@Override
-					public String getAlphabet() {
-						return "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+					public char[] getAlphabet() {
+						return ADFGXAttack.this.alphabet;
 					}
 				};
-				
-				char[] alpha = new char[] {'A', 'D', 'F', 'G', 'V', 'X'};
-				
-				for(int r = 0; r < alpha.length; r++) {
-					for(int c = 0; c < alpha.length; c++) {
-						for(int d = 0; d < section.decrypted.length; d += 2)
-							if(section.decrypted[d] == alpha[r] && section.decrypted[d + 1] == alpha[c])
-								tempText[d / 2] = substitutionHack.getAlphabet().charAt(r * alpha.length + c);
-					}
-					
-				}
-				
 				substitutionHack.run();
 				
 				if(substitutionHack.bestSolution.score >= task.bestSolution.score) {
@@ -98,43 +107,75 @@ public class ADFGXAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	 public Comparator<ADFGXSection> comparator = new Comparator<ADFGXSection>() {
-	    	@Override
-	        public int compare(ADFGXSection c1, ADFGXSection c2) {
-	        	double diff = c1.score - c2.score;
-	        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
-	        }
-	    };
-	
 	public class ADFGXTask extends InternalDecryption implements ArrayPermutations {
 
-		private List<ADFGXSection> best = new ArrayList<ADFGXSection>();
+		public boolean readDefault;
+		private DynamicResultList<ADFGXResult> best;
 		
 		public ADFGXTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
+			this.best = new DynamicResultList<ADFGXResult>(256);
 		}
 
 		@Override
-		public void onList(byte id, int[] data) {
+		public void onList(byte id, int[] data, Object... extra) {
 			byte[] decrypted = new byte[this.cipherText.length];
-			decrypted = ColumnarTransposition.decode(this.cipherText, decrypted, data, false);
+			decrypted = ColumnarTransposition.decode(this.cipherText, decrypted, data, this.readDefault);
 			
 			double currentSum = Math.abs(StatCalculator.calculateIC(decrypted, 2, false) - this.getLanguage().getNormalCoincidence()) * 1000;
 	
-			if(currentSum < 10D)
-				this.best.add(new ADFGXSection(decrypted, currentSum, Arrays.copyOf(data, data.length)));
+			ADFGXResult section = new ADFGXResult(decrypted, currentSum, Arrays.copyOf(data, data.length));
 			
+			if(this.best.addResult(section))
+				if(currentSum < 10D)
+					this.out().println(section.toString());
+	
 		}
 	}
 	
-	public static class ADFGXSection {
+	public static class ADFGXResult extends ResultPositive {
+		
 		public byte[] decrypted;
-		public double score;
 		public int[] order;
-		public ADFGXSection(byte[] decrypted, double score, int[] inverseCol) {
+		
+		public ADFGXResult(byte[] decrypted, double score, int[] inverseCol) {
+			super(score);
 			this.decrypted = decrypted;
-			this.score = score;
 			this.order = inverseCol;
 		}
+		
+		@Override
+		public String toString() {
+			if(this.decrypted.length > 100) {
+				byte[] printDecrypt = new byte[105];
+				for(int i = 0; i < 50; i++)
+					printDecrypt[i] = this.decrypted[i];
+				printDecrypt[50] = ' ';
+				printDecrypt[51] = '.';
+				printDecrypt[52] = '.';
+				printDecrypt[53] = '.';
+				printDecrypt[54] = ' ';
+				for(int i = 0; i < 50; i++)
+					printDecrypt[i + 55] = this.decrypted[this.decrypted.length - 51 + i];
+				
+				return String.format("%s, %f, %s", Arrays.toString(this.order), this.score, new String(printDecrypt));
+			}
+			else
+				return String.format("%s, %f, %s", Arrays.toString(this.order), this.score, new String(this.decrypted));
+		}
+	}
+	
+	@Override
+	public void writeTo(Map<String, Object> map) {
+		map.put("period_min", this.rangeSpinner[0].getValue());
+		map.put("period_max", this.rangeSpinner[1].getValue());
+		map.put("default_read", this.directionOption.getSelectedItem());
+	}
+
+	@Override
+	public void readFrom(Map<String, Object> map) {
+		this.rangeSpinner[0].setValue(SettingsUtil.getSetting("period_min", map, Integer.TYPE, 2));
+		this.rangeSpinner[1].setValue(SettingsUtil.getSetting("period_max", map, Integer.TYPE, 8));
+		this.directionOption.setSelectedItem(SettingsUtil.getSetting("default_read", map, Boolean.TYPE, true));
 	}
 }

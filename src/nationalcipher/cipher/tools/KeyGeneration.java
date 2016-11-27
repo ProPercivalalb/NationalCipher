@@ -10,24 +10,24 @@ import javalibrary.util.RandomUtil;
 
 public class KeyGeneration {
 
-	private static char[] allPolluxChars = "X.-".toCharArray();
+	private final static char[] allPolluxChars = "X.-".toCharArray();
 	
-	private static char[] all36Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-	private static char[] all27Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
-	private static char[] all26Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-	private static char[] all25Chars = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
+	public final static char[] ALL_36_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+	public final static char[] ALL_27_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
+	public final static char[] ALL_26_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+	public final static char[] ALL_25_CHARS = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
 	
 	public static String createRepeatingShortKey26(int length) {
 		char[] key = new char[length];
 		
 		for(int i = 0; i < length; i++)
-			key[i] = RandomUtil.pickRandomChar(all26Chars);
+			key[i] = RandomUtil.pickRandomChar(ALL_26_CHARS);
 		
 		return new String(key);
 	}
 	
 	public static String createShortKey26(int length) {
-		List<Character> characters = ListUtil.toList(all26Chars);
+		List<Character> characters = ListUtil.toList(ALL_26_CHARS);
 		
 		char[] key = new char[length];
 		
@@ -40,22 +40,22 @@ public class KeyGeneration {
 	}
 	
 	public static String createLongKey25() {
-		return createLongKeyUniversal(all25Chars);
+		return createLongKeyUniversal(ALL_25_CHARS);
 	}
 	
 	public static String createLongKey26() {
-		return createLongKeyUniversal(all26Chars);
+		return createLongKeyUniversal(ALL_26_CHARS);
 	}
 	
 	public static String createLongKey27() {
-		return createLongKeyUniversal(all27Chars);
+		return createLongKeyUniversal(ALL_27_CHARS);
 	}
 	
 	public static String createLongKey36() {
-		return createLongKeyUniversal(all36Chars);
+		return createLongKeyUniversal(ALL_36_CHARS);
 	}
 	
-	private static String createLongKeyUniversal(char[] charList) {
+	public static String createLongKeyUniversal(char[] charList) {
 		List<Character> characters = ListUtil.toList(charList);
 		
 		char[] key = new char[characters.size()];

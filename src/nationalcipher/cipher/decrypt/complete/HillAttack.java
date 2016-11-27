@@ -216,7 +216,7 @@ public class HillAttack extends CipherAttack {
 		
 		
 		@Override
-		public void onList(byte id, int[] data) {
+		public void onList(byte id, int[] data, Object... extra) {
 			if(id == 0) {
 				boolean invalidDeterminate = false;
 				for(int d : new int[] {2, 13}) {

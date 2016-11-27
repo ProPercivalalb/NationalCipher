@@ -2,24 +2,24 @@ package nationalcipher.cipher.decrypt.methods;
 
 import java.util.Arrays;
 
+import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
+import javalibrary.list.Result;
+import javalibrary.list.ResultNegative;
 import javalibrary.util.ArrayUtil;
 
-public class Solution implements Comparable<Solution> {
+public class Solution extends ResultNegative {
 	
 	private byte[] text;
 	private boolean beenBaked;
-	//Could change to float to reduce memory from 64 bits to 32 bits
-	public final double score;
 	public String keyString;
 	public static final String UNKNOWN_KEY = "UNKNOWN";
 	
-	
 	public Solution(byte[] text, double score) {
+		super(score);
 		this.text = text;
 		this.beenBaked = false;
-		this.score = score;
 		this.keyString = UNKNOWN_KEY;
 	}
 	
@@ -33,6 +33,10 @@ public class Solution implements Comparable<Solution> {
 	
 	public Solution(byte[] text, ILanguage language) {
 		this(text, TextFitness.scoreFitnessQuadgrams(text, language));
+	}
+	
+	public Solution(byte[] text, NGramData nGramData) {
+		this(text, TextFitness.scoreFitness(text, nGramData));
 	}
 	
 	//public Solution(char[] text, ILanguage language, Solution bestSolution) {
@@ -59,12 +63,6 @@ public class Solution implements Comparable<Solution> {
 		}
 		return this;
 	}
-
-	@Override
-	public int compareTo(Solution o) {
-		double dF = o.score - this.score;
-		return dF == 0 ? 0 : dF > 0 ? 1 : -1;
-	}
 	
 	@Override
 	public int hashCode() {
@@ -77,7 +75,7 @@ public class Solution implements Comparable<Solution> {
 			return true;
 		if(obj == null)
 			return false;
-	    if(this.getClass() != obj.getClass())
+		if(this.getClass() != obj.getClass())
 	    	return false;
 	    Solution other = (Solution)obj;
 	    if(!Arrays.equals(this.getText(), other.getText()))

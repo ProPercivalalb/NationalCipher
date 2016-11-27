@@ -92,10 +92,10 @@ public class Enigma implements IRandEncrypter {
 	}
 	
 	public static int[][] NOTCHES = new int[][] {{16},{4},{21},{9},{25},{25,12},{25,12},{25,12}};
-	public static String[] KEYS = new String[] {"EKMFLGDQVZNTOWYHXUSPAIBRCJ","AJDKSIRUXBLHWTMCQGZNPYFVOE","BDFHJLCPRTXVZNYEIWGAKMUSQO","ESOVPZJAYQUIRHXLNFTGKDCMWB","VZBRGITYUPSDNHLXAWMJQOFECK","JPGVOUMFYQBENHZRDKASXLICTW","NZJHGRCXMYSWBOUFAIVLPEKQDT","FKQHTLXOCBJSPDZRAMEWNIUYGV"};
-	public static String[] KEYS_INVERSE = new String[] {"UWYGADFPVZBECKMTHXSLRINQOJ","AJPCZWRLFBDKOTYUQGENHXMIVS","TAGBPCSDQEUFVNZHYIXJWLRKOM","HZWVARTNLGUPXQCEJMBSKDYOIF","QCYLXWENFTZOSMVJUDKGIARPHB","SKXQLHCNWARVGMEBJPTYFDZUIO","QMGYVPEDRCWTIANUXFKZOSLHJB","QJINSAYDVKBFRUHMCPLEWZTGXO"};
+	public static char[][] KEYS = new char[][] {"EKMFLGDQVZNTOWYHXUSPAIBRCJ".toCharArray(),"AJDKSIRUXBLHWTMCQGZNPYFVOE".toCharArray(),"BDFHJLCPRTXVZNYEIWGAKMUSQO".toCharArray(),"ESOVPZJAYQUIRHXLNFTGKDCMWB".toCharArray(),"VZBRGITYUPSDNHLXAWMJQOFECK".toCharArray(),"JPGVOUMFYQBENHZRDKASXLICTW".toCharArray(),"NZJHGRCXMYSWBOUFAIVLPEKQDT".toCharArray(),"FKQHTLXOCBJSPDZRAMEWNIUYGV".toCharArray()};
+	public static char[][] KEYS_INVERSE = new char[][] {"UWYGADFPVZBECKMTHXSLRINQOJ".toCharArray(),"AJPCZWRLFBDKOTYUQGENHXMIVS".toCharArray(),"TAGBPCSDQEUFVNZHYIXJWLRKOM".toCharArray(),"HZWVARTNLGUPXQCEJMBSKDYOIF".toCharArray(),"QCYLXWENFTZOSMVJUDKGIARPHB".toCharArray(),"SKXQLHCNWARVGMEBJPTYFDZUIO".toCharArray(),"QMGYVPEDRCWTIANUXFKZOSLHJB".toCharArray(),"QJINSAYDVKBFRUHMCPLEWZTGXO".toCharArray()};
 	
-	public static String REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT";
+	public static char[] REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT".toCharArray();
 	
 	public static String encode(String plainText, String notchSetting, String ringSetting, int[] rotors, String... plugBoardSettings) {
 		int[] notchKey = new int[3];
@@ -106,63 +106,103 @@ public class Enigma implements IRandEncrypter {
 		for(int i = 0; i < ring.length; i++)
 			ring[i] = ringSetting.charAt(i) - 'A';
 		
-		return encode(plainText, notchKey, ring, rotors, plugBoardSettings);
+		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], notchKey, ring, rotors));//TODO, plugBoardSettings));
 	}
 	
-	public static String encode(String plainText, int[] notchKey, int[] ring, int[] rotors, String... plugBoardSettings) {
-		String cipherText = "";
+	public static byte[] decode(char[] cipherText, byte[] plainText, int[] indicator, int[] ring, int[] rotors, char[]... plugBoardSettings) {
 		
 		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 		
-		for(String swap : plugBoardSettings) {
-			int ichar = ArrayUtil.indexOf(plugBoardArray, swap.charAt(0));
-			int jchar = ArrayUtil.indexOf(plugBoardArray, swap.charAt(1));
+		for(char[] swap : plugBoardSettings) {
+			if(swap[0] == 0 || swap[1] == 0) continue;
+			int ichar = ArrayUtil.indexOf(plugBoardArray, swap[0]);
+			int jchar = ArrayUtil.indexOf(plugBoardArray, swap[1]);
 			char temp = plugBoardArray[jchar]; 
 			plugBoardArray[jchar] = plugBoardArray[ichar];
 			plugBoardArray[ichar] = temp;
 		}
-		
-		String plugBoard = new String(plugBoardArray);
 		 
-		for(char ch : plainText.toCharArray()) {
+		for(int i = 0; i < cipherText.length; i++) {
 			//Next settings
 			int[] middleNotches = NOTCHES[rotors[1]];
 			int[] endNotches = NOTCHES[rotors[2]];
 			
-			if(ArrayUtil.contains(middleNotches, notchKey[1])) {
-				notchKey[0] = (notchKey[0] + 1) % 26;
-			    notchKey[1] = (notchKey[1] + 1) % 26;
+			if(ArrayUtil.contains(middleNotches, indicator[1])) {
+				indicator[0] = (indicator[0] + 1) % 26;
+			    indicator[1] = (indicator[1] + 1) % 26;
 			}
 	
-			if(ArrayUtil.contains(endNotches, notchKey[2]))
-				notchKey[1] = (notchKey[1] + 1) % 26;
+			if(ArrayUtil.contains(endNotches, indicator[2]))
+				indicator[1] = (indicator[1] + 1) % 26;
 			
-		    notchKey[2] = (notchKey[2] + 1) % 26;
+		    indicator[2] = (indicator[2] + 1) % 26;
 			
-		    ch = nextCharacter(ch, plugBoard);
+		    char ch = cipherText[i];
 		    
-		    for(int i = 2; i >= 0; i--)
-		    	ch = nextCharacter(ch, KEYS[rotors[i]], notchKey[i] - ring[i]);
+		    if(plugBoardSettings.length > 0)
+		    	ch = nextCharacter(ch, plugBoardArray);
+		    
+		    for(int r = 2; r >= 0; r--)
+		    	ch = nextCharacter(ch, KEYS[rotors[r]], indicator[r] - ring[r]);
 		    
 		    ch = nextCharacter(ch, REFLECTOR);
 	
-		    for(int i = 0; i < 3; i++)
-		    	ch = nextCharacter(ch, KEYS_INVERSE[rotors[i]], notchKey[i] - ring[i]);
+		    for(int r = 0; r < 3; r++)
+		    	ch = nextCharacter(ch, KEYS_INVERSE[rotors[r]], indicator[r] - ring[r]);
+		    
+		    if(plugBoardSettings.length > 0)
+		    	ch = nextCharacter(ch, plugBoardArray);
+		    
+		    plainText[i] = (byte)ch;
+		}
+		
+		return plainText;
+	}
+	
+	//Used for a plugboard
+	public static byte[] decode(char[] cipherText, byte[] plainText, int[] indicator, int[] ring, int[] rotors, char[] plugBoard) {
+		 
+		for(int i = 0; i < cipherText.length; i++) {
+			//Next settings
+			int[] middleNotches = NOTCHES[rotors[1]];
+			int[] endNotches = NOTCHES[rotors[2]];
+			
+			if(ArrayUtil.contains(middleNotches, indicator[1])) {
+				indicator[0] = (indicator[0] + 1) % 26;
+			    indicator[1] = (indicator[1] + 1) % 26;
+			}
+	
+			if(ArrayUtil.contains(endNotches, indicator[2]))
+				indicator[1] = (indicator[1] + 1) % 26;
+			
+		    indicator[2] = (indicator[2] + 1) % 26;
+			
+		    char ch = cipherText[i];
 		    
 		    ch = nextCharacter(ch, plugBoard);
 		    
-		    cipherText += ch;
+		    for(int r = 2; r >= 0; r--)
+		    	ch = nextCharacter(ch, KEYS[rotors[r]], indicator[r] - ring[r]);
+		    
+		    ch = nextCharacter(ch, REFLECTOR);
+	
+		    for(int r = 0; r < 3; r++)
+		    	ch = nextCharacter(ch, KEYS_INVERSE[rotors[r]], indicator[r] - ring[r]);
+		    
+		    ch = nextCharacter(ch, plugBoard);
+		    
+		    plainText[i] = (byte)ch;
 		}
 		
-		return cipherText;
+		return plainText;
 	}
 	
-	public static char nextCharacter(char ch, String key) {
-		return key.charAt(ch - 'A');
+	public static char nextCharacter(char ch, char[] key) {
+		return key[ch - 'A'];
 	}
 	
-	public static char nextCharacter(char ch, String key, int offset) {
-		return (char)(((key.charAt(((ch - 'A') + 26 + offset) % 26) - 'A') + 26 - offset) % 26 + 'A');
+	public static char nextCharacter(char ch, char[] key, int offset) {
+		return (char)(((key[((ch - 'A') + 26 + offset) % 26] - 'A') + 26 - offset) % 26 + 'A');
 	}
 
 	@Override

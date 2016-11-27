@@ -221,7 +221,7 @@ public class KeyIterator {
 		 * @param id An arbitrary incase the same class needs to implement this method twice you can specify which part should run
 		 * @param data The int array, this is changed each iteration so make a copy if you need to refer to it again
 		 */
-		public void onList(byte id, int[] data);
+		public void onList(byte id, int[] data, Object... extra);
 	}
 	
 	/**
@@ -231,19 +231,18 @@ public class KeyIterator {
 	 * @param range The possible range of values from 0 to range (not including range)
 	 * @param duplicates
 	 */
-	public static void permutateArray(ArrayPermutations task, int size, int range, boolean duplicates) {
-		permutateArray(task, (byte)-1, size, range, duplicates, 0, new int[size]);
+	public static void permutateArray(ArrayPermutations task, int size, int range, boolean duplicates, Object... extra) {
+		permutateArray(task, (byte)-1, size, range, duplicates, 0, new int[size], extra);
 	}
 	
-	public static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates) {
-		permutateArray(task, id, size, range, duplicates, 0, new int[size]);
+	public static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates, Object... extra) {
+		permutateArray(task, id, size, range, duplicates, 0, new int[size], extra);
 	}
 	
-	private static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates, int count, int[] pattern) {
+	private static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates, int count, int[] pattern, Object... extra) {
 		hasDuplicate:
 		for(int i = 0; i < range; i++) {
 			int previous = pattern[count];
-			pattern[count] = i;
 			
 			//If can't have duplicates
 			if(!duplicates)
@@ -251,10 +250,12 @@ public class KeyIterator {
 					if(pattern[j] == i)
 						continue hasDuplicate;
 			
+			pattern[count] = i;
+			
 			if(count + 1 == size) 
-				task.onList(id, pattern);
+				task.onList(id, pattern, extra);
 			else
-				permutateArray(task, id, size, range, duplicates, count + 1, pattern);
+				permutateArray(task, id, size, range, duplicates, count + 1, pattern, extra);
 			
 			pattern[count] = previous;
 		}

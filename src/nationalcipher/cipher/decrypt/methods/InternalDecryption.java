@@ -24,7 +24,7 @@ public class InternalDecryption {
 		this.plainText = new byte[this.getOutputTextLength(cipherText.length)];
 		this.app = app;
 		
-		this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage()) * 1.1;
+		this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage().getQuadgramData()) * 1.1;
 		this.iteration = 1;
 		this.bestSolution = new Solution();
 	}
@@ -35,7 +35,7 @@ public class InternalDecryption {
 	
 	public void addSolution(Solution solution) {
 		if(this.getSettings().collectSolutions())
-			if(solution.score > Math.max(this.UPPER_ESTIMATE, this.bestSolution.score * 1.1)) {
+			if(solution.score > this.UPPER_ESTIMATE) {
 				solution.bakeSolution();
 				UINew.topSolutions.addSolution(solution);
 			}

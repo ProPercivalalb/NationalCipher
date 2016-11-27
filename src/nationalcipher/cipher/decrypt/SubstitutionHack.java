@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt;
 
-import javalibrary.lib.Alphabet;
 import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -22,7 +21,7 @@ public class SubstitutionHack extends SimulatedAnnealing {
 	
 	@Override
 	public Solution generateKey() {
-		this.bestMaximaKey = this.genRandomStartKey();
+		this.bestMaximaKey = KeyGeneration.createLongKeyUniversal(this.getAlphabet());
 		return new Solution(Keyword.decodeWithAlphabet(this.cipherText, this.plainText, this.getAlphabet(), this.bestMaximaKey), this.getLanguage());
 	}
 
@@ -54,11 +53,7 @@ public class SubstitutionHack extends SimulatedAnnealing {
 		
 	}
 	
-	public String genRandomStartKey() {
-		return KeyGeneration.createLongKey26();
-	}
-	
-	public String getAlphabet() {
-		return Alphabet.getUpperCase();
+	public char[] getAlphabet() {
+		return KeyGeneration.ALL_26_CHARS;
 	}
 }
