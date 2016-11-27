@@ -5,7 +5,6 @@ import java.util.Arrays;
 import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
-import javalibrary.list.Result;
 import javalibrary.list.ResultNegative;
 import javalibrary.util.ArrayUtil;
 
@@ -76,7 +75,7 @@ public class Solution extends ResultNegative {
 		if(obj == null)
 			return false;
 		if(this.getClass() != obj.getClass())
-	    	return false;
+			return false;
 	    Solution other = (Solution)obj;
 	    if(!Arrays.equals(this.getText(), other.getText()))
 	    	return false;
