@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -301,6 +302,7 @@ public class UINew extends JFrame implements IApplication {
         this.toolBarStop = new JButton();
         this.menuBar = new JMenuBar();
         this.menuItemFile = new JMenu();
+        this.menuItemClearOutput = new JMenuItem();
         this.menuItemFullScreen = new JMenuItem();
         this.menuScreenShot = new JMenu();
         this.menuItemExit = new JMenuItem();
@@ -493,6 +495,11 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemFullScreen.addActionListener(new FullScreenAction());
         this.menuItemFile.add(this.menuItemFullScreen);
         
+        this.menuItemClearOutput.setText("Clear Output");
+        this.menuItemClearOutput.setIcon(ImageUtil.createImageIcon("/image/page_white.png", "Clear Ouput"));
+        this.menuItemClearOutput.addActionListener(new ClearOutputAction());
+        this.menuItemFile.add(this.menuItemClearOutput);
+        
         this.menuScreenShot.setText("Take Picture");
         this.menuScreenShot.setIcon(ImageUtil.createImageIcon("/image/picture_save.png", "Take Picture"));
         this.menuScreenShot.setEnabled(false);
@@ -640,7 +647,7 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemTools.addSeparator();
         
         this.menuItemWordSplit.setText("Word Split");
-        this.menuItemWordSplit.setIcon(ImageUtil.createImageIcon("/image/spellcheck.png", "Paste"));
+        this.menuItemWordSplit.setIcon(ImageUtil.createImageIcon("/image/book_open.png", "Word Split"));
         this.menuItemWordSplit.addActionListener(new WordSplitAction());
         this.menuItemTools.add(this.menuItemWordSplit);
         
@@ -859,7 +866,63 @@ public class UINew extends JFrame implements IApplication {
 
     		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource(icon)));
     		this.dialog.setFocusableWindowState(false);
-    		dialogs.add(this.dialog);
+    		UINew.this.dialogs.add(this.dialog);
+    		
+    		UINew.this.inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+				@Override
+				public void onUpdate(DocumentEvent event) {
+					if(NCCDialog.this.dialog.isVisible())
+						NCCDialog.this.updateOnWithTextArea();
+				}
+    		});
+    	}
+    	
+    	public void updateOnWithTextArea() {}
+    }
+    
+    private class NCCDialogBarChart extends NCCDialog {
+
+    	public JPanel mainPanel;
+    	public JBarChart[] barCharts;
+    	
+    	public NCCDialogBarChart(String title, int graphs) {
+    		this(title, "image/chart_bar.png", graphs);
+    	}
+    	
+    	public NCCDialogBarChart(String title, String icon, int graphs) {
+    		super(title, icon);
+    		this.barCharts = new JBarChart[graphs];
+    		
+    		this.mainPanel = new JPanel();
+    		JScrollPane scrollPane = new JScrollPane(this.mainPanel);
+    		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    		this.mainPanel.setLayout(new BoxLayout(this.mainPanel, BoxLayout.Y_AXIS));
+	         
+    		
+    		for(int i = 0; i < this.barCharts.length; i++) {
+    			this.barCharts[i] = new JBarChart();
+    			this.initialiseChart(this.barCharts[i], i);
+    			this.mainPanel.add(this.barCharts[i]);
+    		}
+	        
+    		this.mainPanel.revalidate();
+    		this.dialog.add(scrollPane);
+    	}
+    	
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		
+    	}
+    	
+    	public void repaintCharts() {
+    		for(int i = 0; i < this.barCharts.length; i++) {
+    			this.barCharts[i].revalidate();
+    			this.barCharts[i].repaint();
+    		}
+    	}
+    	
+    	public void resetCharts() {
+    		for(int i = 0; i < this.barCharts.length; i++) 
+    			this.barCharts[i].resetAll();
     	}
     }
     
@@ -878,13 +941,14 @@ public class UINew extends JFrame implements IApplication {
 				statText += "\n 0-9: " + StringTransformer.countDigitChars(inputText);
 				statText += "\n ___: " + StringTransformer.countSpacesChars(inputText);
 				statText += "\n *?!: " + StringTransformer.countOtherChars(inputText);
-				statText += "\n Unique Characters: " + StringTransformer.countUniqueChars(inputText);
-				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, settings.getLanguage());
-				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, settings.getLanguage());
-				statTextArea.setText(statText);
+				Set<Character> uniqueChars = StringTransformer.getUniqueCharSet(inputText);
+				statText += "\n Unique Characters: " + uniqueChars.size() + " \n" + uniqueChars;
+				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, UINew.this.getLanguage());
+				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, UINew.this.getLanguage());
+				UINew.this.statTextArea.setText(statText);
 				
-				menuItemBinary.setEnabled(inputText.length() != 0 && inputText.replaceAll("[^0-1]", "").length() == inputText.length());
-				menuItemEncode.setEnabled(inputText.length() != 0);
+				UINew.this.menuItemBinary.setEnabled(inputText.length() != 0 && inputText.replaceAll("[^0-1]", "").length() == inputText.length());
+				UINew.this.menuItemEncode.setEnabled(inputText.length() != 0);
 			} 
 			catch(BadLocationException e) {
 				e.printStackTrace();
@@ -896,16 +960,16 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		DecryptionMethod lastMethod = (DecryptionMethod)decryptionType.getSelectedItem();
-    		decryptionType.removeAllItems();
+    		DecryptionMethod lastMethod = (DecryptionMethod)UINew.this.decryptionType.getSelectedItem();
+    		UINew.this.decryptionType.removeAllItems();
     		CipherAttack decrypt = getCipherAttack();
     		List<DecryptionMethod> methods = decrypt.getAttackMethods();
     		
     		for(DecryptionMethod method : methods)
-    			decryptionType.addItem(method);
+    			UINew.this.decryptionType.addItem(method);
     		
     		if(methods.contains(lastMethod))
-    			decryptionType.setSelectedItem(lastMethod);
+    			UINew.this.decryptionType.setSelectedItem(lastMethod);
     	}
     }
     
@@ -951,24 +1015,24 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-			final String text = inputTextArea.getText();
+			final String text = UINew.this.inputTextArea.getText();
 			
 			if(text == null || text.isEmpty())
 				return;
 			
-			thread = new Thread(new Runnable() {
+			UINew.this.thread = new Thread(new Runnable() {
 
 				@Override
 				public void run() {
-					threadTimer.restart();
+					UINew.this.threadTimer.restart();
 					UINew.BEST_SOULTION = null;
 					UINew.topSolutions.reset();
 					
 					CipherAttack force = getCipherAttack();
-					output.println("Cipher: " + force.getDisplayName());
-					output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
+					UINew.this.output.println("Cipher: " + force.getDisplayName());
+					UINew.this.output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
 					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
-					progressValue = new ProgressValueNC(1000, progressBar, settings);
+					UINew.this.progressValue = new ProgressValueNC(1000, UINew.this.progressBar, UINew.this.getSettings());
 					if(!settings.updateProgress())
 						UINew.this.progressValue.setIndeterminate(true);
 					try {
@@ -980,22 +1044,22 @@ public class UINew extends JFrame implements IApplication {
 					}
 					force.onTermination(false);
 					DecimalFormat df = new DecimalFormat("#.#");
-					output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+					UINew.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
 		
-					toolBarStart.setEnabled(true);
-					toolBarStop.setEnabled(false);
-					menuItemSettings.setEnabled(true);
+					UINew.this.toolBarStart.setEnabled(true);
+					UINew.this.toolBarStop.setEnabled(false);
+					UINew.this.menuItemSettings.setEnabled(true);
 					
 					UINew.this.progressValue.setIndeterminate(false);
-					progressBar.setValue(0);
+					UINew.this.progressBar.setValue(0);
 				}
 				
 			});
-			thread.setDaemon(true);
-			toolBarStart.setEnabled(false);
-			toolBarStop.setEnabled(true);
-			menuItemSettings.setEnabled(false);
-			thread.start();
+			UINew.this.thread.setDaemon(true);
+			UINew.this.toolBarStart.setEnabled(false);
+			UINew.this.toolBarStop.setEnabled(true);
+			UINew.this.menuItemSettings.setEnabled(false);
+			UINew.this.thread.start();
 		}
     }
     
@@ -1003,18 +1067,18 @@ public class UINew extends JFrame implements IApplication {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			if(thread != null) {
-				thread.stop();
-				CipherAttack force = getCipherAttack();
+			if(UINew.this.thread != null) {
+				UINew.this.thread.stop();
+				CipherAttack force = UINew.this.getCipherAttack();
 				force.onTermination(true);
 				DecimalFormat df = new DecimalFormat("#.#");
-				output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
-				toolBarStart.setEnabled(true);
-				toolBarStop.setEnabled(false);
-				menuItemSettings.setEnabled(true);
+				UINew.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+				UINew.this.toolBarStart.setEnabled(true);
+				UINew.this.toolBarStop.setEnabled(false);
+				UINew.this.menuItemSettings.setEnabled(true);
 				
 				UINew.this.progressValue.setIndeterminate(false);
-				progressBar.setValue(0);
+				UINew.this.progressBar.setValue(0);
 			}
 		}
     }
@@ -1031,26 +1095,35 @@ public class UINew extends JFrame implements IApplication {
 
 				@Override
 				public void run() {
-					dispose();
+					UINew.this.dispose();
 					if(!isUndecorated()) {
-						lastSize = getSize();
-						lastLocation = getLocation();
-						lastState = getExtendedState();
-						setExtendedState(Frame.MAXIMIZED_BOTH);
-				    	setUndecorated(true);
+						FullScreenAction.this.lastSize = UINew.this.getSize();
+						FullScreenAction.this.lastLocation = UINew.this.getLocation();
+						FullScreenAction.this.lastState = UINew.this.getExtendedState();
+						UINew.this.setExtendedState(Frame.MAXIMIZED_BOTH);
+						UINew.this.setUndecorated(true);
 					}
 					else {
-						setSize(lastSize);
-						setLocation(lastLocation);
-						setExtendedState(lastState);
-						setUndecorated(false);
+						UINew.this.setSize(lastSize);
+						UINew.this.setLocation(lastLocation);
+						UINew.this.setExtendedState(lastState);
+						UINew.this.setUndecorated(false);
 					}
 					
-					setVisible(true);
+					UINew.this.setVisible(true);
 				}
 			});
 		}
     }
+    
+    private class ClearOutputAction implements ActionListener {
+
+  		@Override
+  		public void actionPerformed(ActionEvent event) {
+  			UINew.this.output.clear();
+  		}
+    }
+    
     
     private class ExitAction implements ActionListener {
 
@@ -1066,7 +1139,7 @@ public class UINew extends JFrame implements IApplication {
 		public void actionPerformed(ActionEvent event) {
     		try {
 				String data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-				inputTextArea.setText(data);
+				UINew.this.inputTextArea.setText(data);
 			} 
     		catch(Exception e) {
 				e.printStackTrace();
@@ -1089,7 +1162,6 @@ public class UINew extends JFrame implements IApplication {
     	
     	private JTextArea textOutput;
     	public DynamicResultList<Solution> solutions; //Can sort up to 10 Million
-    	public int i = 0;
     	private boolean updateNeed;
     	
     	public ShowTopSolutionsAction() {
@@ -1105,8 +1177,6 @@ public class UINew extends JFrame implements IApplication {
 	        panel.add(scrollPane);
 	        
 	        JButton button = new JButton("Sort lastest solutions");
-	        //button.setMinimumSize(new Dimension(20, 0));
-	        
 	        
 	        button.addActionListener(new ActionListener() {
 
@@ -1115,7 +1185,6 @@ public class UINew extends JFrame implements IApplication {
 					sortSolutions();
 					updateNeed = false;
 				}
-	        	
 	        });
 	        
 	        panel.add(button);
@@ -1128,7 +1197,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
 		}
     	
     	public void sortSolutions() {
@@ -1138,14 +1207,14 @@ public class UINew extends JFrame implements IApplication {
     		for(int i = 0; i < this.solutions.size(); i++)
     			text += String.format(i + " %s\n", this.solutions.get(i));
 
-    		textOutput.setText(text);
-    		textOutput.revalidate();
-    		textOutput.setCaretPosition(0);
+    		this.textOutput.setText(text);
+    		this.textOutput.revalidate();
+    		this.textOutput.setCaretPosition(0);
     	}
 
     	public void addSolution(Solution solution) {
     		this.solutions.addResult(solution);
-    		updateNeed = true;
+    		this.updateNeed = true;
     	}
     	
     	public void reset() {
@@ -1157,7 +1226,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = inputTextArea.getText();
+    		String binaryText = UINew.this.inputTextArea.getText();
 			String[] split = StringTransformer.splitInto(binaryText, 5);
 			
 			String cipherText = "";
@@ -1176,7 +1245,7 @@ public class UINew extends JFrame implements IApplication {
 					break;
 				}
 			}
-			inputTextArea.setText(cipherText);
+			UINew.this.inputTextArea.setText(cipherText);
 		}
     }
     
@@ -1184,8 +1253,8 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = inputTextArea.getText();
-			
+    		String binaryText = UINew.this.inputTextArea.getText();
+			//TODO
 			//inputTextArea.setText(cipherText);
 		}
     }
@@ -1194,10 +1263,10 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = inputTextArea.getText();
+    		String binaryText = UINew.this.inputTextArea.getText();
     		char[] chars = binaryText.toCharArray();
     		ArrayUtil.shuffle(chars);
-    		inputTextArea.setText(new String(chars));	
+    		UINew.this.inputTextArea.setText(new String(chars));	
 		}
     }
     
@@ -1205,36 +1274,18 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = StringTransformer.reverseString(inputTextArea.getText());
-    		inputTextArea.setText(binaryText);	
+    		String binaryText = StringTransformer.reverseString(UINew.this.inputTextArea.getText());
+    		UINew.this.inputTextArea.setText(binaryText);	
 		}
     }
     
-    public class WordSplitAction implements ActionListener {
+    public class WordSplitAction extends NCCDialog implements ActionListener {
     	
-    	private JDialog dialog;
     	private JTextArea textOutput;
     	private JButton copyText;
     	
     	public WordSplitAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Word Split");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Word Split", "image/lock_break.png");
     		this.dialog.setMinimumSize(new Dimension(800, 300));
     		
     		JPanel panel = new JPanel();
@@ -1253,30 +1304,27 @@ public class UINew extends JFrame implements IApplication {
 
 				@Override
 				public void actionPerformed(ActionEvent event) {
-					StringSelection selection = new StringSelection(textOutput.getText());
+					StringSelection selection = new StringSelection(WordSplitAction.this.textOutput.getText());
 					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 				}
 	    		
 	    	});
 	    	panel.add(this.copyText, BorderLayout.CENTER);
-	        
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+     		UINew.this.addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
+    	@Override
+    	public void updateOnWithTextArea() {
     		String split = WordSplit.splitText(inputTextArea.getText().replaceAll(" ", ""));
-    		textOutput.setText(split);
-    		textOutput.revalidate();
+    		WordSplitAction.this.textOutput.setText(split);
+    		WordSplitAction.this.textOutput.revalidate();
     	}
     }
     
@@ -1291,70 +1339,39 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void windowClosed(WindowEvent event) {
-			removeDialog(dialog);
+			removeDialog(this.dialog);
 		}
     }
     
-    public class LetterFrequencyAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chartAlphabeticly;
+    public class LetterFrequencyAction extends NCCDialogBarChart implements ActionListener {
     	
     	public LetterFrequencyAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}
-				}
-    			
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Letter Frequency");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Letter Frequency", 2);
     		this.dialog.setMinimumSize(new Dimension(500, 300));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered by Size"));
-	        panel.add(this.chart);
-	        
-	        this.chartAlphabeticly = new JBarChart(new ChartList());
-	        this.chartAlphabeticly.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered Alphabeticly"));
-	        panel.add(this.chartAlphabeticly);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
-	        this.chartAlphabeticly.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Ordered by Size", "Ordered Alphabeticly"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
     		
     		String text = getInputTextOnlyAlpha();
 			
     		if(!text.isEmpty()) {
-	    		
 	    		Map<String, Integer> counts = StringAnalyzer.getEmbeddedStrings(text, 1, 1, false);
 				
 				List<String> asendingOrder = new ArrayList<String>(counts.keySet());
@@ -1362,82 +1379,47 @@ public class UINew extends JFrame implements IApplication {
 				Collections.reverse(asendingOrder);
 				
 		        for(String letterCount : asendingOrder)
-		        	this.chart.values.add(new ChartData(letterCount, (double)counts.get(letterCount)));
+		        	this.barCharts[0].values.add(new ChartData(letterCount, (double)counts.get(letterCount)));
 				
 				
 		        if(!counts.isEmpty())
 		        	for(char ch = 'A'; ch <= 'Z'; ch++)
-		        		this.chartAlphabeticly.values.add(new ChartData("" + ch, (double)(counts.containsKey("" + ch) ? counts.get("" + ch) : 0)));
+		        		this.barCharts[1].values.add(new ChartData("" + ch, (double)(counts.containsKey("" + ch) ? counts.get("" + ch) : 0)));
     		}
     		
-			this.chart.repaint();
-			this.chartAlphabeticly.repaint();
+			this.repaintCharts();
     	}
     }
     
-    private class NGramFrequencyAction implements ActionListener {
+    private class NGramFrequencyAction extends NCCDialogBarChart implements ActionListener {
     	
-    	private JDialog dialog;
-    	private JBarChart chart;
     	private JComboBox<String> comboBox;
     	private JComboBox<String> comboBoxOverlap;
     	
     	public NGramFrequencyAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}
-				}
-    			
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("N-Gram Frequency");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("N-Gram Frequency", 1);
     		this.dialog.setMinimumSize(new Dimension(900, 300));
     		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart();
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered by Size"));
-	        panel.add(this.chart);
-
 	        this.comboBox = new JComboBox<String>(new String[] {"ALL", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"});
 	        this.comboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 	        this.comboBox.addItemListener(new ItemListener() {
-				@Override
+	        	@Override
 			    public void itemStateChanged(ItemEvent event) {
-					if(event.getStateChange() == ItemEvent.SELECTED) {
-						updateDialog();
-			       }
+	        		if(event.getStateChange() == ItemEvent.SELECTED)
+	        			NGramFrequencyAction.this.updateOnWithTextArea();
 			    }       
 			});
-	        panel.add(this.comboBox);
+	        this.mainPanel.add(this.comboBox);
 	        this.comboBoxOverlap = new JComboBox<String>(new String[] {"Overlap", "n-Apart"});
 	        this.comboBoxOverlap.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 	        this.comboBoxOverlap.addItemListener(new ItemListener() {
 				@Override
 			    public void itemStateChanged(ItemEvent event) {
-					if(event.getStateChange() == ItemEvent.SELECTED) {
-						updateDialog();
-			       }
+					if(event.getStateChange() == ItemEvent.SELECTED)
+						NGramFrequencyAction.this.updateOnWithTextArea();
 			    }       
 			});
-	        panel.add(this.comboBoxOverlap);
-	        
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
+	        this.mainPanel.add(this.comboBoxOverlap);
     	}
     	
     	@Override
@@ -1445,17 +1427,22 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setVisible(true);
     		addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+     	@Override
+     	public void initialiseChart(JBarChart barChart, int index) {
+     		barChart.setHasBarText(false);
+     		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Ordered by Size"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
     		
     		String text = getInputTextOnlyAlpha();
 			
     		if(!text.isEmpty()) {
-	    		
-	    		
 	    		String label = (String)this.comboBox.getSelectedItem();
 				int minlength = 2;
 	      		int maxlength = 15;
@@ -1476,70 +1463,39 @@ public class UINew extends JFrame implements IApplication {
 				Collections.reverse(asendingOrder);
 	    		
 		        for(String ngram : asendingOrder)
-		        	if(this.chart.values.size() < 40)
-		        		this.chart.values.add(new ChartData(ngram, (double)counts.get(ngram)));
+		        	if(this.barCharts[0].values.size() < 40)
+		        		this.barCharts[0].values.add(new ChartData(ngram, (double)counts.get(ngram)));
     		}
     		
-			this.chart.repaint();
+			this.repaintCharts();
     	}
     }
     
-    public class ADFGXIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chart2;
+    public class ADFGXIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public ADFGXIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("ADFGX IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("ADFGX IoC", 2);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation"));
-	        panel.add(this.chart);
-	        
-	        this.chart2 = new JBarChart(new ChartList());
-	        this.chart2.setHasBarText(false);
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
-	        panel.add(this.chart2);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-    		this.chart.resetAll();
-    		this.chart2.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Step Calculation", "Periodic IoC Calculation"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+    		this.resetCharts();
 			
     		String text = getInputTextOnlyAlpha();
     		if(!text.isEmpty()) {
@@ -1566,31 +1522,9 @@ public class UINew extends JFrame implements IApplication {
     				output.print(s);
     			  //  output.println(" IoC Calculation: " + bestPeriod);
     			    output.println("");
-    			
-    			/**
-    			int bestPeriod = -1;
-    		    double bestIoC = Double.MAX_VALUE;
-    		    
-    		    for(int period = 2; period <= 20; ++period) {
-    		    	double total = 0.0D;
-    		    	for(int i = 0; i < period; i++)
-    		    		total += StatCalculator.calculateEvenDiagrahpicIC(StringTransformer.getEveryNthBlock(text, 2, i, period));
-    		    	total /= period;
-    		    	
-    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
-    		    	
-    		    	if(sqDiff < bestIoC)
-    		    		bestPeriod = period;
-    		    	this.chart2.values.add(new ChartData("Period: " + period, sqDiff));
-    		    	
-    		    	bestIoC = Math.min(bestIoC, sqDiff);
-    		    }
-    		    
-    		    this.chart2.setSelected(bestPeriod - 2);**/
     		}
     		
-    		this.chart.repaint();
-    		this.chart2.repaint();
+    		this.repaintCharts();
     	}
     }
     
@@ -1662,55 +1596,30 @@ public class UINew extends JFrame implements IApplication {
 		return total;
 	}
     
-    private class NormalIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
+    private class NormalIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public NormalIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Normal IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Normal IoC", 1);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Normal IoC Calculation"));
-	        panel.add(this.chart);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Normal IoC Calculation"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
     		String text = getInputTextOnlyAlpha();
     		if(!text.isEmpty()) {
@@ -1722,74 +1631,43 @@ public class UINew extends JFrame implements IApplication {
     		    	
     		    	if(sqDiff < bestKappa)
     		    		bestPeriod = period;
-    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	this.barCharts[0].values.add(new ChartData("Period: " + period, sqDiff));
     		    	
     		    	bestKappa = Math.min(bestKappa, sqDiff);
     		    }
     			
-    		    this.chart.setSelected(bestPeriod);
+    		    this.barCharts[0].setSelected(bestPeriod);
     		}
     		
-    		this.chart.repaint();
+    		this.repaintCharts();
     	}
     }
     
-    public class BifidIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chart2;
+    public class BifidIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public BifidIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Bifid IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Bifid IoC", 2);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation x2"));
-	        panel.add(this.chart);
-	        
-	        this.chart2 = new JBarChart(new ChartList());
-	        this.chart2.setHasBarText(false);
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
-	        panel.add(this.chart2);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-    		this.chart.resetAll();
-    		this.chart2.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Step Calculation x2", "Periodic IoC Calculation"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+    		this.resetCharts();
 			
     		String text = getInputTextOnlyAlpha();
     		if(!text.isEmpty()) {
@@ -1810,7 +1688,7 @@ public class UINew extends JFrame implements IApplication {
 					Statistics stats = new Statistics(counts.values());
 				    double variance = stats.getVariance();
 				 
-				    this.chart.values.add(new ChartData("Step: " + step, variance));
+				    this.barCharts[0].values.add(new ChartData("Step: " + step, variance));
 					values.put(step, variance);
 					
 					if(variance > maxValue) {
@@ -1823,7 +1701,6 @@ public class UINew extends JFrame implements IApplication {
 					}
 				}
 	
-				
 				int periodGuess = -1;
 	
 				if(maxStep != -1) {
@@ -1843,7 +1720,7 @@ public class UINew extends JFrame implements IApplication {
 								bestStep = step;
 							}
 						}
-						this.chart.setSelected(bestStep - 1);
+						this.barCharts[0].setSelected(bestStep - 1);
 						
 						periodGuess = Math.min(bestStep, maxStep) * 2 + Math.abs(bestStep - maxStep);
 					}
@@ -1855,71 +1732,45 @@ public class UINew extends JFrame implements IApplication {
 			    	if(period == 1) continue;
 			    	
 			        double score = StatCalculator.calculateBifidDiagraphicIC(text, period);
-			        this.chart2.values.add(new ChartData("Period: " + period, score));
+			        this.barCharts[1].values.add(new ChartData("Period: " + period, score));
 			        if(bestIC < score)
 			        	bestPeriod = period;
 			        
 			        bestIC = Math.max(bestIC, score);
 			    }
 			    
-			    this.chart.setSelected(maxStep - 1);
-				this.chart2.setSelected(bestPeriod > 0 ? bestPeriod - 1 : 0);
+			    this.barCharts[0].setSelected(maxStep - 1);
+				this.barCharts[1].setSelected(bestPeriod > 0 ? bestPeriod - 1 : 0);
     		}
     		
-    		this.chart.repaint();
-    		this.chart2.repaint();
+    		this.repaintCharts();
     	}
     }
     
-    private class HillIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
+    private class HillIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public HillIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Hill IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Hill IoC", 1);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart();
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
-	        panel.add(this.chart);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
     		String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty()) {
@@ -1928,91 +1779,67 @@ public class UINew extends JFrame implements IApplication {
 				double bestIC = Double.MIN_VALUE;
 				
 			    for(int period = 2; period <= 10; period++) {
-			    	
 			        double score = StatCalculator.calculateLongIC(text, period, 26);
-			        this.chart.values.add(new ChartData("" + period, score));
+			        this.barCharts[0].values.add(new ChartData("" + period, score));
 			        if(bestIC < score)
 			        	bestPeriod = period;
 			        
 			        bestIC = Math.max(bestIC, score);
 			    }
 			    
-			    this.chart.setSelected(bestPeriod - 2);
+			    this.barCharts[0].setSelected(bestPeriod - 2);
 			}
     		
-    		this.chart.repaint();
+    		this.repaintCharts();
     	}
     }
     
-    private class NicodemusIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
+    private class NicodemusIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public NicodemusIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Nicodemus IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
-    		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
-	        panel.add(this.chart);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
+    		super("Nicodemus IoC", 10);
+    		this.dialog.setMinimumSize(new Dimension(800, 900));
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
-     		
-    		this.updateDialog();
+     		UINew.this.addDialog(this.dialog);
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
-			
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Block Height: " + (index + 1)));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
+    		
     		String text = getInputTextOnlyAlpha();
     		if(!text.isEmpty()) {
-    			int bestPeriod = -1;
-    		    double bestIC = Double.POSITIVE_INFINITY;
     		    
-    		    for(int period = 2; period <= 40; ++period) {
-    		    	double sqDiff = Math.pow(StatCalculator.calculateNicodemusIC(text, 5, period) - settings.getLanguage().getNormalCoincidence(), 2) * 10000;
-    		    	
-    		    	if(sqDiff < bestIC)
-    		    		bestPeriod = period;
-    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
-    		    	
-    		    	bestIC = Math.min(bestIC, sqDiff);
+    		    for(int i = 0; i < this.barCharts.length; i++) {
+        			int bestPeriod = -1;
+        		    double bestIC = Double.POSITIVE_INFINITY;
+    		    
+	    		    for(int period = 2; period <= 40; ++period) {
+	    		    	double sqDiff = Math.abs(StatCalculator.calculateNicodemusIC(text, i + 1, period) - UINew.this.settings.getLanguage().getNormalCoincidence()) * 1000;
+	    		    	
+	    		    	if(sqDiff < bestIC)
+	    		    		bestPeriod = period;
+	    		    	
+	    		    	this.barCharts[i].values.add(new ChartData("Period: " + period, sqDiff));
+	    		    	
+	    		    	bestIC = Math.min(bestIC, sqDiff);
+	    		    }
+	    			this.barCharts[i].setSelected(bestPeriod - 2);
     		    }
-    			
-    		    this.chart.setSelected(bestPeriod - 2);
     		}
     		
-    		this.chart.repaint();
+    		this.repaintCharts();
     	}
     }
     
@@ -2116,56 +1943,30 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
-    public class PortaxIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
+    public class PortaxIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public PortaxIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Portax IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Portax IoC", 1);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Portax IoC Calculation"));
-	        panel.add(this.chart);
-
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Portax IoC Calculation"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
 			String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty() && text.length() % 2 == 0) {
@@ -2174,40 +1975,48 @@ public class UINew extends JFrame implements IApplication {
 				
 				for(int period = 2; period <= 40; period++) {
 			        int step = 2 * period;
-			        
-			 
-			        String string = "";
+			        int[][] counts = new int[period][26 * 26];
 			        for(int j = 0; j < text.length(); j += step) {
 			        	for(int k = 0; k < period; k++) {
 			                if(j + k + period >= text.length()) 
 			                	break;
 			        		int c1 = text.charAt(j + k) - 'A';
-			                int c2 = text.charAt(j + k + period) - 'A';
-			                int[] result = decodePair(k, c1, c2);
-			                if (result[0] == 1) {
-			                	char c3 = (char)(result[1] + 'A');
-			                	char c4 = (char)(result[2] + 'A');
-			                	string += c3 + "" + c4;
-			                }
+			        		int c2 = text.charAt(j + k + period) - 'A';
+			                counts[k][c1 * 26 + c2] += 1;
+			                //string += c1 + "" + c2;
 			        	}
 			        }
-			        double sqDiff = StatCalculator.calculateIC(string, 1, true);
+			       // double sqDiff = StatCalculator.calculateIC(string.toCharArray(), 2, false) * 1000;
+			        double sumIC = 0.0D;
+					for(int i = 0; i < period; i++) {
+						double total = 0D;
+						int n = 0;
+						for(int j = 0; j < 26 * 26; j++) {
+							double count = counts[i][j];
+							total += count * (count - 1);
+							n += count;
+						}
+						
+						if(n > 1)
+							sumIC += total / (n * (n - 1));
+					}
+					sumIC *= 10000;
+					sumIC /= period;
 			        
-			        if(sqDiff < bestIoC)
+			        if(sumIC < bestIoC)
     		    		bestPeriod = period;
-    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	this.barCharts[0].values.add(new ChartData("Period: " + period, sumIC));
     		    	
-    		    	bestIoC = Math.min(bestIoC, sqDiff);
-			
+    		    	bestIoC = Math.min(bestIoC, sumIC);
 			    }
 				
-				this.chart.setSelected(bestPeriod - 2);
+				this.barCharts[0].setSelected(bestPeriod - 2);
 			}
     		
-    		this.chart.repaint();
+    		this.repaintCharts();
     	}
     	
-    	private int[] decodePair(int k, int c1, int c2) {
+    	private int[] decodePair(int c1, int c2) {
     		int t_flag = 0;
     		int b_flag = 0;
             if (c1 < 13) 
@@ -2371,43 +2180,11 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
-    private class SeriatedPlayfairIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
+    private class SeriatedPlayfairIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public SeriatedPlayfairIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Seriated Playfair IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Seriated Playfair IoC", 1);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Double Letter Calculation"));
-	        panel.add(this.chart);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
@@ -2415,18 +2192,25 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setVisible(true);
      		addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+     	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+     		barChart.setHasBarText(false);
+     		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Double Letter Calculation"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 	
 			String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty() && text.length() % 2 == 0)
 				for(int period = 2; period <= 40; period++)
-					this.chart.values.add(new ChartData("Period: " + period, StatCalculator.calculateSeriatedPlayfair(text, period) ? 1 : 0));
+					this.barCharts[0].values.add(new ChartData("Period: " + period, StatCalculator.calculateSeriatedPlayfair(text, period) ? 1 : 0));
     		
-    		this.chart.repaint();
+    		this.repaintCharts();
     	}
     }
     
@@ -2829,32 +2613,22 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
-    private class SolitaireAction implements ActionListener, LoadElement {
+    private class SolitaireAction extends NCCDialog implements ActionListener, LoadElement {
     	
-    	private JDialog dialog;
     	private JTextField passKeyStartingOrder;
     	private JButton copyOrder;
     	private int[] cardOrder;
     	private List<String> order;
     	
     	public SolitaireAction() {
-    		this.dialog = new JDialog();
-    		this.dialog.setTitle("Solitaire Cipher");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/playing_card.png")));
+    		super("Solitaire Cipher", "image/playing_card.png");
     		this.dialog.setMinimumSize(new Dimension(900, 600));
-    		this.dialog.setFocusableWindowState(false);
     		
     		this.order = new ArrayList<String>();
     		
     		JPanel panel = new JPanel();
     		panel.setLayout(new FlowLayout(FlowLayout.LEFT));
 	
-			
-			
 			String[] suits = new String[] {"clubs", "diamonds", "hearts", "spades"};
 			String[] cards = new String[] {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 			final JPanel[] suitPanels = new JPanel[suits.length];
@@ -2872,7 +2646,7 @@ public class UINew extends JFrame implements IApplication {
 					final int id = s * cards.length + c;
 					JButton button = new JButton();
 					button.setFocusPainted(false);
-					final ImageIcon imageIcon = ImageUtil.createScaledImageIcon("/image/cards/" + cards[c] + "_of_" + suits[s] + ".png", 1D / 8D);
+					final ImageIcon imageIcon = ImageUtil.createScaledImageIcon(String.format("/image/cards/%s_of_%s.png", cards[c], suits[s]), 1D / 8D);
 					ButtonUtil.setButtonSizeToIconSize(button, imageIcon);
 					button.setIcon(imageIcon);
 					button.setDisabledIcon(imageIcon);
@@ -2883,13 +2657,13 @@ public class UINew extends JFrame implements IApplication {
 							JButton button = (JButton)e.getSource();
 							if(button.getIcon() == null) {
 								button.setIcon(imageIcon);
-								order.remove("" + id);
+								SolitaireAction.this.order.remove("" + id);
 							}
 							else {
 								button.setIcon(null);
-								order.add("" + id);
+								SolitaireAction.this.order.add("" + id);
 							}
-							passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+							SolitaireAction.this.passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
 							suitPanels[s2].repaint();
 						}
 					});
@@ -2912,13 +2686,13 @@ public class UINew extends JFrame implements IApplication {
 					JButton button = (JButton)e.getSource();
 					if(button.getIcon() == null) {
 						button.setIcon(imageIcon);
-						order.remove("52");
+						SolitaireAction.this.order.remove("52");
 					}
 					else {
 						button.setIcon(null);
-						order.add("52");
+						SolitaireAction.this.order.add("52");
 					}
-					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					SolitaireAction.this.passKeyStartingOrder.setText(StringTransformer.joinWith(SolitaireAction.this.order, ","));
 					suitPanels[0].repaint();
 				}
 			});
@@ -2938,13 +2712,13 @@ public class UINew extends JFrame implements IApplication {
 					JButton button = (JButton)e.getSource();
 					if(button.getIcon() == null) {
 						button.setIcon(imageIcon2);
-						order.remove("53");
+						SolitaireAction.this.order.remove("53");
 					}
 					else {
 						button.setIcon(null);
-						order.add("53");
+						SolitaireAction.this.order.add("53");
 					}
-					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					SolitaireAction.this.passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
 					suitPanels[0].repaint();
 				}
 			});
@@ -2959,9 +2733,9 @@ public class UINew extends JFrame implements IApplication {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					order.add("*");
+					SolitaireAction.this.order.add("*");
 	
-					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					SolitaireAction.this.passKeyStartingOrder.setText(StringTransformer.joinWith(SolitaireAction.this.order, ","));
 					suitPanels[0].repaint();
 				}
 			});
@@ -2975,12 +2749,11 @@ public class UINew extends JFrame implements IApplication {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					order.clear();
-					for(JButton but : buttons) {
+					SolitaireAction.this.order.clear();
+					for(JButton but : buttons)
 						but.setIcon(but.getDisabledIcon());
-					}
 					
-					passKeyStartingOrder.setText(StringTransformer.joinWith(order, ","));
+					SolitaireAction.this.passKeyStartingOrder.setText(StringTransformer.joinWith(SolitaireAction.this.order, ","));
 					suitPanels[0].repaint();
 				}
 			});
@@ -2988,9 +2761,9 @@ public class UINew extends JFrame implements IApplication {
 		
 	        this.cardOrder = new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
 	    	
-	    	passKeyStartingOrder = new JTextField("");
-	    	passKeyStartingOrder.setMinimumSize(new Dimension(882, 0));
-	    	passKeyStartingOrder.setPreferredSize(new Dimension(882, 20));
+	        this.passKeyStartingOrder = new JTextField("");
+	        this.passKeyStartingOrder.setMinimumSize(new Dimension(882, 0));
+	        this.passKeyStartingOrder.setPreferredSize(new Dimension(882, 20));
 	    	panel.add(this.passKeyStartingOrder);
 			
 			
@@ -2999,7 +2772,7 @@ public class UINew extends JFrame implements IApplication {
 
 				@Override
 				public void actionPerformed(ActionEvent event) {
-					StringSelection selection = new StringSelection(passKeyStartingOrder.getText());
+					StringSelection selection = new StringSelection(SolitaireAction.this.passKeyStartingOrder.getText());
 					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 				}
 	    		
@@ -3007,13 +2780,12 @@ public class UINew extends JFrame implements IApplication {
 	    	panel.add(this.copyOrder);
 	    	
     		this.dialog.add(panel);
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+     		UINew.this.addDialog(this.dialog);
     		//this.cardOrder = Solitaire.nextCardOrder(this.cardOrder);
 		}
 
@@ -3045,7 +2817,6 @@ public class UINew extends JFrame implements IApplication {
 
     		JPanel panel = new JPanel();
 
-    		
 	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 	        JPanel optionPanel = new JPanel();
 	        optionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
@@ -3313,30 +3084,12 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
      
-    private class TextInformationAction implements ActionListener {
+    private class TextInformationAction extends NCCDialog implements ActionListener {
     	
-    	private JDialog dialog;
     	public JTextArea output;
     	
     	public TextInformationAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Text Statistics");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/lock_break.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Text Statistics", "image/lock_break.png");
     		this.dialog.setMinimumSize(new Dimension(375, 600));
 	       
 	        this.output = new JTextArea();
@@ -3348,24 +3101,23 @@ public class UINew extends JFrame implements IApplication {
 		
 	
     		this.dialog.add(outputScrollPanel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
+    	@Override
+    	public void updateOnWithTextArea() {
     		String text = getInputTextOnlyAlpha();
     		int length = text.length();
     		
     		String outputText = "Length: " + length;
-			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, settings.getLanguage()), 4);
+			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, UINew.this.getLanguage()), 4);
     		
     		if(!text.isEmpty()) {
 
@@ -3496,15 +3248,15 @@ public class UINew extends JFrame implements IApplication {
     		}
     		
     		if(!text.isEmpty()) {
-    			List<String> possible = RandomEncrypter.getAllWithDifficulty(encodingDiffSlider.getValue());
+    			List<String> possible = RandomEncrypter.getAllWithDifficulty(UINew.this.encodingDiffSlider.getValue());
     			IRandEncrypter randomEncrypt = RandomEncrypter.getFromName(RandomUtil.pickRandomElement(possible));
     			String cipherText = randomEncrypt.randomlyEncrypt(text);
-    			output.println(randomEncrypt.getClass().getSimpleName());
-    			output.println(StringTransformer.repeat("\n", 25));
+    			UINew.this.output.println(randomEncrypt.getClass().getSimpleName());
+    			UINew.this.output.println(StringTransformer.repeat("\n", 25));
     			StringSelection selection = new StringSelection(cipherText);
 	    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
     			
-    			output.println(cipherText);
+	    		UINew.this.output.println(cipherText);
     		}
 		}
     }
@@ -3520,8 +3272,8 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-			settings.setLanguage(this.language);
-			menuItemCurrentLanguage.setText("Current: " + this.language.getName());
+    		UINew.this.getSettings().setLanguage(this.language);
+    		UINew.this.menuItemCurrentLanguage.setText("Current: " + this.language.getName());
 		}
     }
     
@@ -3535,7 +3287,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-			settings.setKeywordCreationId(this.id);
+    		UINew.this.getSettings().setKeywordCreationId(this.id);
 		}
     }
     
@@ -3556,8 +3308,7 @@ public class UINew extends JFrame implements IApplication {
 
 		@Override
 		public void keyReleased(KeyEvent arg0) {
-			settings.getSA().set(this.id, Double.valueOf(this.textComponent.getText()));
-			
+			UINew.this.getSettings().getSA().set(this.id, Double.valueOf(this.textComponent.getText()));
 		}
 
 		@Override
@@ -3586,14 +3337,14 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			settings.getSA().set(0, this.tempStart);
-			settings.getSA().set(1, this.tempStep);
-			settings.getSA().set(2, (double)this.count);
-			tempSetting.setText(ValueFormat.getNumber(this.tempStart));
+			UINew.this.getSettings().getSA().set(0, this.tempStart);
+			UINew.this.getSettings().getSA().set(1, this.tempStep);
+			UINew.this.getSettings().getSA().set(2, (double)this.count);
+			this.tempSetting.setText(ValueFormat.getNumber(this.tempStart));
 
-			tempStepSetting.setText(ValueFormat.getNumber(this.tempStep));
+			this.tempStepSetting.setText(ValueFormat.getNumber(this.tempStep));
 
-			countSetting.setText(ValueFormat.getNumber(this.count));	
+			this.countSetting.setText(ValueFormat.getNumber(this.count));	
 		}
     }
     
@@ -3607,17 +3358,17 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			if(checkBox.isSelected()) {
-				settings.updateProgressBars = true;
-				progressBar.setString("0.0%");
+			if(this.checkBox.isSelected()) {
+				UINew.this.getSettings().updateProgressBars = true;
+				UINew.this.progressBar.setString("0.0%");
 			}
 			else {
-				progressBar.setValue(0);
-				progressBar.setString("Inactive");
-				settings.updateProgressBars = false;
+				UINew.this.progressBar.setValue(0);
+				UINew.this.progressBar.setString("Inactive");
+				UINew.this.settings.updateProgressBars = false;
 			}
 
-			keyPanel.setIterationUnsed();
+			UINew.this.keyPanel.setIterationUnsed();
 		}
     }
     
@@ -3631,12 +3382,7 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			if(checkBox.isSelected()) {
-				settings.collectSolutions = true;
-			}
-			else {
-				settings.collectSolutions = false;
-			}
+			UINew.this.settings.collectSolutions = this.checkBox.isSelected();
 		}
     }
     public class CribInputAction implements ActionListener {
@@ -3686,12 +3432,12 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		menuItemCurrentAttack.setText("Target: " + this.menuItem.getText());
+    		UINew.this.menuItemCurrentAttack.setText("Target: " + this.menuItem.getText());
     		
     		int index = 0;
     		for(String name : AttackRegistry.getNames()) {
     			if(this.menuItem.getText().equals(name)) {
-    				cipherSelect.setSelectedIndex(index);
+    				UINew.this.cipherSelect.setSelectedIndex(index);
     				break;
     			}
     			index++;
@@ -3785,7 +3531,8 @@ public class UINew extends JFrame implements IApplication {
     private JButton toolBarStop;
     private JMenuBar menuBar;
     private JMenu menuItemFile;
-	private JMenuItem menuItemFullScreen;
+	private JMenuItem menuItemClearOutput;
+    private JMenuItem menuItemFullScreen;
 	private JMenu menuScreenShot;
 	private JMenuItem menuItemExit;
     private JMenu menuItemEdit;

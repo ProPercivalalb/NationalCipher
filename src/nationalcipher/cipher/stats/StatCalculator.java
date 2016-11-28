@@ -67,6 +67,17 @@ public class StatCalculator {
 		int n = text.length;
 		return sum / (n * (n - 1));
 	}
+	
+	public static double calculateMonoIC(char[] text) {
+		HashMap<Character, Integer> letters = StringAnalyzer.getCharacterCount(text);
+
+		double sum = 0.0D;
+		for(int value : letters.values())
+			sum += value * (value - 1);
+			
+		int n = text.length;
+		return sum / (n * (n - 1));
+	}
 
 	/*                         Friedman's Kappa test                         */
 	
@@ -308,33 +319,35 @@ public class StatCalculator {
 	    return bestPeriod;
 	}
 	
-	public static double calculateNicodemusIC(String text, int noOfRows, int period) {
+	public static double calculateNicodemusIC(String text, int blockHeight, int period) {
 		int[][] counts = new int[period][26];
 
-        int blockNo = (int)Math.floor(text.length() / (noOfRows * period));
-        if(blockNo == 0) return 0.0D;
+        int blocksFull = text.length() / (blockHeight * period);
+        if(blocksFull == 0) return 0.0D;
         
-        int limit = blockNo * noOfRows * period;
+        int limit = blocksFull * blockHeight * period;
 		int index = 0;
 		for(int i = 0; i < limit; i++) {
 			counts[index][text.charAt(i) - 'A'] += 1;
-            if((i + 1) % noOfRows == 0)
+            if((i + 1) % blockHeight == 0)
                 index = (index + 1) % period;
 		}
 		
-		double averagedIC = 0.0D;
+		double sumIC = 0.0D;
 		for(int i = 0; i < period; i++) {
-			double total = 0.0D;
-			int count = 0;
-			for(int j = 0; j < counts[i].length; j++) {
-				total += counts[i][j] * (counts[i][j] - 1);
-				count += counts[i][j];
+			double total = 0D;
+			int n = 0;
+			for(int j = 0; j < 26; j++) {
+				double count = counts[i][j];
+				total += count * (count - 1);
+				n += count;
 			}
-			if(count > 1)
-				averagedIC += total / (count * (count - 1));
+			
+			if(n > 1)
+				sumIC += total / (n * (n - 1));
 		}
         
-		return averagedIC / period;
+		return sumIC / period;
 	}
 	
 	public static double calculateMaxNicodemusIC(String text, int minPeriod, int maxPeriod) {

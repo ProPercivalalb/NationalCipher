@@ -7,9 +7,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Nicodemus implements IRandEncrypter {
 
-	public static String encode(String plainText, String key, VigenereType type) {
-		//Possible settings
-		int READ_OFF = 5;
+	public static String encode(String plainText, String key, int blockHeight, VigenereType type) {
 		
 		String cipherText = "";
 		
@@ -26,12 +24,12 @@ public class Nicodemus implements IRandEncrypter {
 		int total_row = (int)Math.ceil(plainText.length() / (double)key.length());
 		
 		while(start_row < total_row) {
-			int end_row = start_row + READ_OFF >= total_row ? total_row : start_row + READ_OFF;
+			int end_row = start_row + blockHeight >= total_row ? total_row : start_row + blockHeight;
 			
 			for(int i = 0; i < key.length(); i++) 
 				for(int j = start_row; j < end_row; j++)
 					if(j * key.length() + order[i] < plainText.length())
-						cipherText += type.encode((byte)plainText.charAt(j * key.length() + order[i]), (byte)key.charAt(i % key.length()));
+						cipherText += (char)type.encode((byte)plainText.charAt(j * key.length() + order[i]), (byte)key.charAt(i % key.length()));
 
 			start_row = end_row;
 		}
@@ -83,9 +81,6 @@ public class Nicodemus implements IRandEncrypter {
 							index += total;
 						}
 					}
-					
-			
-				
 				}
 			}
 		}
@@ -94,6 +89,6 @@ public class Nicodemus implements IRandEncrypter {
 	
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createShortKey26(3, 15), RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
+		return encode(plainText, KeyGeneration.createShortKey26(3, 10), RandomUtil.pickRandomInt(1, 10), RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
 	}
 }

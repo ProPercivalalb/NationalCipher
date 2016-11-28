@@ -12,7 +12,7 @@ public class StatisticMaxUniqueCharacters extends TextStatistic {
 
 	@Override
 	public void calculateStatistic() {
-		this.value = StringTransformer.countUniqueChars(this.text);
+		this.value = StringTransformer.getUniqueCharSet(this.text).size();
 	}
 	
 	@Override

@@ -2,6 +2,7 @@ package nationalcipher.cipher.base;
 
 public abstract class VigenereType {
 
+	public static final VigenereType NONE = new None();
 	public static final VigenereType BEAUFORT = new Beaufort();
 	public static final VigenereType PORTA = new Porta();
 	public static final VigenereType PORTA_VARIANT = new PortaVariant();
@@ -11,6 +12,18 @@ public abstract class VigenereType {
 	public static final VigenereType[] NORMAL_LIST = new VigenereType[] {BEAUFORT, PORTA, VARIANT, VIGENERE};
 	
 	private VigenereType() {} //Can't create any more instances
+	
+	private static class None extends VigenereType {
+		@Override
+		public byte encode(byte textCharId, byte keyCharId) {
+            return textCharId;
+		}
+		
+		@Override
+		public byte decode(byte textCharId, byte keyCharId) {
+            return textCharId;
+		}
+	}
 	
 	private static class Beaufort extends VigenereType {
 		@Override
