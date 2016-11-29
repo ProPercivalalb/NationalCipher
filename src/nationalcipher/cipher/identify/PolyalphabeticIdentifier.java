@@ -1,24 +1,54 @@
 package nationalcipher.cipher.identify;
 
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.stats.StatCalculator;
 
 public class PolyalphabeticIdentifier {
 	
-	public enum SubType {
-		BEAUFORT(),
-		PORTA(),
-		VARIANT(),
-		VIGENERE(),
-		
-		AUTOKEY_BEAUFORT(),
-		AUTOKEY_PORTA(),
-		AUTOKEY_VARIANT(),
-		AUTOKEY_VIGENERE(),
-		
-		SLIDEFAIR_BEAUFORT(),
-		SLIDEFAIR_VARIANT(),
-		SLIDEFAIR_VIGENERE();
-		
+	//?!?!? IMPORTANT ?!?!? These functions only check between period 3 and 15
+	
+	public static double calculateAutokeyVigenereLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.VIGENERE, true);
+	}
+	
+	public static double calculateAutokeyPortaLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.PORTA, true);
+	}
+	
+	public static double calculateAutokeyBeaufortLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.BEAUFORT, true);
+	}
+	
+	public static double calculateAutokeyVariantLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.VARIANT, true);
+	}
+
+	public static double calculateBeaufortLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.BEAUFORT, false);
+	}
+	
+	public static double calculatePortaLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.PORTA, false);
+	}
+	
+	public static double calculateVigenereLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.VIGENERE, false);
+	}
+	
+	public static double calculateVariantLDI(String text) {
+		return calculateSubTypeLDI(text, VigenereType.VARIANT, false);
+	}
+	
+	public static double calculateSlidefairBeaufortLDI(String text) {
+		return calculateSubTypeSLDI(text, VigenereType.BEAUFORT);
+	}
+
+	public static double calculateSlidefairVariantLDI(String text) {
+		return calculateSubTypeSLDI(text, VigenereType.VARIANT);
+	}
+	
+	public static double calculateSlidefairVigenereLDI(String text) {
+		return calculateSubTypeSLDI(text, VigenereType.VIGENERE);
 	}
 	
 	public static double calculateLDI(String text) {
@@ -67,219 +97,130 @@ public class PolyalphabeticIdentifier {
 		return scoreLargest * 100 / (text.length() - 1);
 	}
 	
-	public static double calculateSubTypeLDI(String text, SubType type) {
+	public static double calculateSubTypeLDI(String text, VigenereType type, boolean autokey) {
 		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text))
 			return 0.0D;
 		
 	    double largestSum = Double.MIN_VALUE;
-		
+		char[] charArray = text.toCharArray();
+	    
 		for(int period = 2; period <= 15; period++) {
 	        double sum = 0.0D;
-	        for(int col = 0; col < period; col++) 
-	        	sum += best_di(col, type, period, text);
+	        int rows = (int)Math.ceil(charArray.length / (double)period);
+	        
+	        for(int col = 0; col < period; col++)
+	        	sum += getBestVigenereDigramScore(charArray, col, type, rows, period, autokey);
 	            
 	        sum /= period;
 	        largestSum = Math.max(largestSum, sum);
 		}
 
-		return largestSum;
+		return largestSum * 100;
 	}
 	
-	//?!?!? IMPORTANT ?!?!? These functions only check between period 3 and 15
-	
-	public static double calculateAutokeyVigenereLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.AUTOKEY_VIGENERE);
-	}
-	
-	public static double calculateAutokeyPortaLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.AUTOKEY_PORTA);
-	}
-	
-	public static double calculateAutokeyBeaufortLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.AUTOKEY_BEAUFORT);
-	}
-	
-	public static double calculateAutokeyVariantLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.AUTOKEY_VARIANT);
-	}
-
-	public static double calculateBeaufortLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.BEAUFORT);
-	}
-	
-	public static double calculatePortaLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.PORTA);
-	}
-	
-	public static double calculateVigenereLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.VIGENERE);
-	}
-	
-	public static double calculateVariantLDI(String text) {
-		return calculateSubTypeLDI(text, SubType.VARIANT);
-	}
-	
-	public static double calculateSlidefairBeaufortLDI(String text) {
-		return calculateSubTypeSLDI(text, SubType.SLIDEFAIR_BEAUFORT);
-	}
-
-	public static double calculateSlidefairVariantLDI(String text) {
-		return calculateSubTypeSLDI(text, SubType.SLIDEFAIR_VARIANT);
-	}
-	
-	public static double calculateSlidefairVigenereLDI(String text) {
-		return calculateSubTypeSLDI(text, SubType.SLIDEFAIR_VIGENERE);
-	}
-	
-	public static double calculateSubTypeSLDI(String text, SubType type) {
+	public static double calculateSubTypeSLDI(String text, VigenereType type) {
 		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text) || text.length() % 2 == 1)
 			return 0;
 		
 		double largestSum = Double.MIN_VALUE;
+		char[] charArray = text.toCharArray();
 		
 		for(int period = 3; period <= 15; period++) {
 	        double sum = 0.0D;
+			int rows = (int)Math.ceil(text.length() / (2D * period));
+	        
 	        for(int col = 0; col < period; col++) 
-	        	sum += best_sldi(col, type, period, text);
+	        	sum += getBestSlidefairDigramScore(charArray, col, type, rows, period);
 	            
 	        sum /= period;
 		    largestSum = Math.max(largestSum, sum);
 	    }
 		
-		return largestSum;
+		return largestSum * 100;
 	}
 
-	public static double best_di(int col, SubType type, int period, String text) {
-		int bestScore = 0;
+	public static double getBestVigenereDigramScore(char[] text, int column, VigenereType type, int rows, int period, boolean autokey) {
+		double bestScore = 0.0D;
 		
-		int rows = (int)Math.floor(text.length() / period);
-	    for(int kl = 0; kl < 26; kl++) {
-	    	for(int kr = 0; kr < 26; kr++) {
-	    		int score = 0;
-	            int ct = 0;
-	            int kl1 = kl;
-	            int kr1 = kr;
-			    for(int j = 0; j < rows; j++) {
-			    	if(col + j * period + 1 >= text.length())
-			    		break;
-	                int cl = text.charAt(col + j * period) - 'A';
-	                int cr = text.charAt(col + j * period + 1) - 'A';
-	                int pl = decodeLet(cl, kl1, type);
-	                int pr = decodeLet(cr, kr1, type);
-	                score += logdi[pl][pr];
-	                ct++;
-	                if(type == SubType.AUTOKEY_BEAUFORT || type == SubType.AUTOKEY_PORTA || type == SubType.AUTOKEY_VIGENERE || type == SubType.AUTOKEY_VARIANT) {
-	                	kl1 = pl;
-	                	kr1 = pr;
+	    for(byte keyL = 'A'; keyL <= 'Z'; keyL++) {
+	    	for(byte keyR = 'A'; keyR <= 'Z'; keyR++) {
+	    		byte keyLN = keyL;
+	    		byte keyRN = keyR;
+	    		
+	    		double score = 0.0D;
+	            int diCount = 0;
+	            
+			    for(int r = 0; r < rows; r++) {
+			    	int pos = r * period + column;
+			    	if(pos + 1 >= text.length) break;
+			    	
+	                byte pl = type.decode((byte)text[pos], keyLN);
+	                byte pr = type.decode((byte)text[pos + 1], keyRN);
+	                score += logdi[pl - 'A'][pr - 'A'];
+	                if(autokey) {
+	                	keyLN = pl;
+	                	keyRN = pr;
 	                }
+	                diCount++;
 	            }
-			    if(ct == 0)
-			    	return 0.0D;
 			    
-	            score *= 100;
-	            score /= ct;
+			    if(diCount == 0) return 0.0D;
+	            score /= diCount;
+	            
 	            bestScore = Math.max(bestScore, score);
 	    	}
 	    }
+	    
 	    return bestScore;
     }
 	
-	/**
-	 * @param type Can either be 0 (VSlidefair) or 1 (BSlidefair)
-	 */
-	public static double best_sldi(int col, SubType type, int period, String text) {
-		int best_score = 0;
-		int rows = (int)Math.floor(text.length() / (2 * period));
-		int rowb = 2 * col;
-		for(int k = 0; k < 26; k++) {
-			int score = 0;
-		    int ct = 0;
-		    for(int j = 0; j < rows; j++) {
-		    	int posn = j * period * 2 + rowb;
-		        if(posn + 1 >= text.length())
-		        	break;
-		         int cl = text.charAt(posn) - 'A';
-		         int cr = text.charAt(posn + 1) - 'A';
-		         int[] result = decodeSL(cl, cr, k, type);
-		         int pl = result[0];
-		         int pr = result[1];
-		         score += logdi[pl][pr];
-		         ct++;
+	public static double getBestSlidefairDigramScore(char[] text, int column, VigenereType type, int rows, int period) {
+		double bestScore = 0.0D;
+
+		for(int key = 0; key < 26; key++) {
+			
+			double score = 0.0D;
+		    int diCount = 0;
+		    
+		    for(int r = 0; r < rows; r++) {
+		    	int pos = 2 * (r * period + column);
+		        if(pos + 1 >= text.length) break;
+		        
+		        int cl = text[pos] - 'A';
+		        int cr = text[pos + 1] - 'A';
+		        int[] result = decodeSL(cl, cr, key, type);
+		        int pl = result[0];
+		        int pr = result[1];
+		        score += logdi[pl][pr];
+		        diCount++;
 		    }
 		    
-		    if(ct == 0)
-		    	return 0.0D;
-		    score *= 100;
-		    score /= ct;
+		    if(diCount == 0) return 0.0D;
+		    score /= diCount;
 		    
-		    best_score = Math.max(best_score, score);
+		    bestScore = Math.max(bestScore, score);
 		}
-		return best_score ;
+		
+		return bestScore;
 	}
 	
-	/**
-	 * @param type Can either be 0 (Vigenere), 1 (Variant), 2 (Beaufort), 3 (Porta), 4 (VAutokey), 
-	 * 							 	5 (BAutokey), 6 (VIGAutokey), 7 (PAutokey)
-	 */
-	public static int decodeLet(int cipherChar, int key, SubType type) {
-        int plainChar = 0;
-
-        switch(type) {
-        case VIGENERE: // VIGENERE
-        case AUTOKEY_VIGENERE: //VIGAUTOKEY
-        	plainChar = (26 + cipherChar - key) % 26;
-            break;
-        case VARIANT: //VARIANT
-        case AUTOKEY_VARIANT: //VAUTOKEY
-        	plainChar = (cipherChar + key) % 26;
-            break;
-        case BEAUFORT: //BEAUFORT
-        case AUTOKEY_BEAUFORT: // BAUTOKEY
-        	plainChar = (26 + key - cipherChar) % 26;
-            break;
-        case PORTA: //PORTA
-        case AUTOKEY_PORTA: // PAUTOKEY
-        	key = (int)Math.floor(key / 2);
-            plainChar = cipherChar;
-            if(plainChar < 13) {
-            	plainChar += key;
-                if(plainChar < 13)
-                	plainChar += 13;
-            }
-            else {
-            	plainChar -= key;
-                if(plainChar > 12)
-                	plainChar -= 13;
-            }
-            break;
-        default:
-        	System.out.println("INVALID SUBTYPE GIVEN");
-		}
-        
-        return plainChar;
-	}
-	
-	public static int[] decodeSL(int cl, int cr, int key, SubType type) {
+	public static int[] decodeSL(int cl, int cr, int key, VigenereType type) {
 		int pl = 0;
 		int pr = 0;
 
-		switch(type) { //BSLIDEFAIR
-		case SLIDEFAIR_BEAUFORT:
+		if(type == VigenereType.BEAUFORT) {
         	pl = (26 + key - cr) % 26;
         	pr = (26 + key - cl) % 26;
-        	break;
-		case SLIDEFAIR_VARIANT:
+		}
+		else if(type == VigenereType.VARIANT) {
 			pl = (cr + key) % 26;
 	        pr = (26 + cl - key) % 26;
-	        break;
-		case SLIDEFAIR_VIGENERE:
+		}
+	    else if(type == VigenereType.VIGENERE) {
 			pl = (26 + cr - key) % 26;
 	        pr = (cl + key) % 26;
-	        break;
-		default:
-	        System.out.println("INVALID SUBTYPE GIVEN");
-        }
- 
+	    }
+		
         return new int[] {pl, pr};
 	}
 	

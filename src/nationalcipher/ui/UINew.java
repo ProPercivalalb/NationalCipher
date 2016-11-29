@@ -158,25 +158,30 @@ public class UINew extends JFrame implements IApplication {
 		StatisticHandler.registerStatistics();
     	this.settings.readFromFile();
     	
-        initComponents();
-        finishComponents();
-        loadDataFiles();
+        this.initComponents();
+        this.finishComponents();
+        this.loadDataFiles();
     }
     
     public void addDialog(JDialog dialog) {
-    	if(!lastStates.contains(dialog))
-    		lastStates.add(dialog);
-    	changeDialog(dialog);
+    	addDialog(dialog, true);
+    }
+    
+    public void addDialog(JDialog dialog, boolean picture) {
+    	if(!this.lastStates.contains(dialog))
+    		this.lastStates.add(dialog);
+    	if(picture)
+    		this.changeDialog(dialog);
     }
     
     public void removeDialog(JDialog dialog) {
-    	lastStates.remove(dialog);
-    	changeDialog(dialog);
+    	this.lastStates.remove(dialog);
+    	this.changeDialog(dialog);
     }
     
     public void changeDialog(JDialog dialog) {
     	this.menuScreenShot.removeAll();
-    	for(final JDialog listDialog : lastStates) {
+    	for(JDialog listDialog : this.lastStates) {
     		JMenuItem jmi = new JMenuItem(listDialog.getTitle());
     		if(listDialog.getIconImages() != null && !listDialog.getIconImages().isEmpty())
     			jmi.setIcon(new ImageIcon(listDialog.getIconImages().get(0)));
@@ -187,9 +192,9 @@ public class UINew extends JFrame implements IApplication {
     	        	listDialog.setBackground(Color.red);
     	        	BufferedImage image = new BufferedImage(listDialog.getContentPane().getWidth(), listDialog.getContentPane().getHeight(), BufferedImage.TYPE_INT_RGB);
     	        	listDialog.getContentPane().paint(image.getGraphics());
-    	          //  JOptionPane.showMessageDialog(null, new JLabel(new ImageIcon(image)));
     	        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd_hh.mm.ss");
     	            String dateTime = sdf.format(Calendar.getInstance().getTime());
+    	          	new PictureDialog(dateTime, new ImageIcon(image));
     	            try {
     	            	ImageIO.write(image, "png", new File(OSIdentifier.getMyDataFolder("nationalcipher/screenshots"), "screenshot" + dateTime + ".png"));
     	            }
@@ -199,35 +204,45 @@ public class UINew extends JFrame implements IApplication {
     	        }
     		});
     	}
-    	this.menuScreenShot.setEnabled(!lastStates.isEmpty());
+    	this.menuScreenShot.setEnabled(!this.lastStates.isEmpty());
+    }
+    
+    public class PictureDialog extends NCCDialog {
+
+		public PictureDialog(String title, ImageIcon imageIcon) {
+			super(title, "image/picture_save.png");
+			
+			this.dialog.add(new JLabel(imageIcon));
+			this.dialog.setMinimumSize(new Dimension(imageIcon.getIconWidth() + 20, imageIcon.getIconHeight() + this.dialog.getHeight() + 30));
+			this.dialog.setVisible(true);
+			UINew.this.addDialog(this.dialog, false);
+		}
     }
 
     public void loadDataFiles() {
-    	final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents((JComponent)getContentPane(), menuBar);
-    	
+    	final Map<Component, Boolean> stateMap = SwingHelper.disableAllChildComponents((JComponent)getContentPane(), this.menuBar);
     	
     	this.progressBar.setMaximum(Languages.languages.size() + 3);
 		//Loading
 		Threads.runTask(new Runnable() {
 			@Override
 			public void run() {
-				output.println("Loading data files\n	TranverseTree");
-				TraverseTree.onLoad();
-				progressBar.setValue(progressBar.getValue() + 1);
-				output.println("	Dictinary");
+				UINew.this.output.println("Loading data files\n	TranverseTree");
+				//TraverseTree.onLoad();
+				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
+				UINew.this.output.println("	Dictinary");
 				Dictionary.onLoad();
-				progressBar.setValue(progressBar.getValue() + 1);
-				output.println("	Word statitics");
+				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
+				UINew.this.output.println("	Word statitics");
 				WordSplit.loadFile();
-				progressBar.setValue(progressBar.getValue() + 1);
+				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
 				
 				for(ILanguage language : Languages.languages) {
-					output.println("	Lang(" + language.getName() + ")");
+					UINew.this.output.println("	Lang(" + language.getName() + ")");
 					language.loadNGramData();
-					progressBar.setValue(progressBar.getValue() + 1);
+					UINew.this.progressBar.setValue(progressBar.getValue() + 1);
 				}
 			
-				  
 				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(TraverseTree.class.getResourceAsStream("/javalibrary/cipher/stats/trigraph.txt")));
 
 				String[] split = null;
@@ -244,8 +259,8 @@ public class UINew extends JFrame implements IApplication {
 				
 				SwingHelper.rewindAllChildComponents(stateMap);
 		
-				progressBar.setValue(0);
-				output.clear();
+				UINew.this.progressBar.setValue(0);
+				UINew.this.output.clear();
 			}
 		});
 		
@@ -257,26 +272,23 @@ public class UINew extends JFrame implements IApplication {
 			@Override
 			public void windowStateChanged(WindowEvent event) {
 				int newState = event.getNewState();
-				if((newState & Frame.ICONIFIED) == Frame.ICONIFIED) {
-					for(JDialog dialog : dialogs) {
+				if((newState & Frame.ICONIFIED) == Frame.ICONIFIED)
+					for(JDialog dialog : UINew.this.dialogs) 
 						dialog.setVisible(false);
-					}
-				}
 			}
 		});
 		this.addWindowListener(new WindowAdapter() {
 			
             @Override
             public void windowDeactivated(WindowEvent e) {
-            	for(JDialog dialog : dialogs) {
+            	for(JDialog dialog : UINew.this.dialogs)
             		dialog.setVisible(false);
-            	}
             }
 
             @Override
             public void windowActivated(WindowEvent e) {
-            	for(JDialog dialog : dialogs)
-            		dialog.setVisible(lastStates.contains(dialog));
+            	for(JDialog dialog : UINew.this.dialogs)
+            		dialog.setVisible(UINew.this.lastStates.contains(dialog));
             }
         });
 		
@@ -526,7 +538,7 @@ public class UINew extends JFrame implements IApplication {
         this.menuItemEdit.add(this.menuItemCopySolution);
         
         this.menuItemShowTopSolutions.setText("Top Solutions");
-       // this.menuItemShowTopSolutions.setIcon(ImageUtil.createImageIcon("/image/page_copy.png", "Top Solutions"));
+        this.menuItemShowTopSolutions.setIcon(ImageUtil.createImageIcon("/image/table_sort.png", "Top Solutions"));
         this.menuItemShowTopSolutions.addActionListener(topSolutions = new ShowTopSolutionsAction());
         this.menuItemShowTopSolutions.setToolTipText("Shows the top solutions.");
         this.menuItemEdit.add(this.menuItemShowTopSolutions);
@@ -1165,7 +1177,7 @@ public class UINew extends JFrame implements IApplication {
     	private boolean updateNeed;
     	
     	public ShowTopSolutionsAction() {
-    		super("Top Solutions", "image/lock_break.png");
+    		super("Top Solutions", "image/table_sort.png");
     		this.dialog.setMinimumSize(new Dimension(900, 400));
     		
     		JPanel panel = new JPanel();
@@ -1285,15 +1297,15 @@ public class UINew extends JFrame implements IApplication {
     	private JButton copyText;
     	
     	public WordSplitAction() {
-    		super("Word Split", "image/lock_break.png");
+    		super("Word Split", "image/book_open.png");
     		this.dialog.setMinimumSize(new Dimension(800, 300));
     		
     		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 	        
 	        this.textOutput = new JTextArea();
 	        this.textOutput.setLineWrap(true);
-
+	        this.textOutput.setWrapStyleWord(true);
 	        JScrollPane scrollPane = new JScrollPane(this.textOutput);
 	        
 	        panel.add(scrollPane);
@@ -1309,7 +1321,9 @@ public class UINew extends JFrame implements IApplication {
 				}
 	    		
 	    	});
-	    	panel.add(this.copyText, BorderLayout.CENTER);
+	    	this.copyText.setHorizontalAlignment(JButton.LEFT);
+	    	panel.add(this.copyText);
+	    	this.dialog.add(panel);
     	}
     	
     	@Override
@@ -1322,8 +1336,8 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
     	public void updateOnWithTextArea() {
-    		String split = WordSplit.splitText(inputTextArea.getText().replaceAll(" ", ""));
-    		WordSplitAction.this.textOutput.setText(split);
+    		String split = WordSplit.splitText(UINew.this.inputTextArea.getText().replaceAll(" ", ""));
+    		WordSplitAction.this.textOutput.setText(split.toLowerCase());
     		WordSplitAction.this.textOutput.revalidate();
     	}
     }
@@ -1339,7 +1353,7 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void windowClosed(WindowEvent event) {
-			removeDialog(this.dialog);
+			UINew.this.removeDialog(this.dialog);
 		}
     }
     

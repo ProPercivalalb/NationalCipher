@@ -2,6 +2,7 @@ package nationalcipher.cipher.base.other;
 
 import java.util.Arrays;
 
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 
 public class ADFGVX {
@@ -44,7 +45,7 @@ public class ADFGVX {
 	}
 	
 	public static char[] decode(char[] cipherText, String keysquare, int[] order, String adfgvx, boolean defaultRead) {
-		return decodeTransformed(ColumnarTransposition.decode(cipherText, order, defaultRead), keysquare, adfgvx);
+		return decodeTransformed(ArrayUtil.convertCharType(ColumnarTransposition.decode(cipherText, new byte[cipherText.length], order, defaultRead)), keysquare, adfgvx);
 	}
 	
 	public static char[] decodeTransformed(char[] untransformedText, String keysquare) {

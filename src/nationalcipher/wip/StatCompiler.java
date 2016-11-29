@@ -3,10 +3,13 @@ package nationalcipher.wip;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
+import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
+import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.decrypt.methods.SolutionCollection2;
+import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
+import nationalcipher.cipher.identify.StatsTest;
 import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
@@ -25,45 +28,25 @@ public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
 	public static void main(String[] args) {
-		Solution[] solutionsPut = new Solution[128];
-
-		for(int b = 0; b < 128; b++)
-			solutionsPut[b] = new Solution(new byte[] {(byte)b}, -64 - b);
+		Languages.english.loadNGramData();
 		
-		DynamicResultList solutions = new DynamicResultList(7);
+		String text = "BFUKEGMDXSCVHTJPOVMVYNYFYLRLNVHUQCSEIXWUKLVVCRRRLFRQVVNUUCGNLNCFSANINISAXONQCVLFLCSIYBWLKGLJNQDBGBTCWRWPVDYENBKJOOOUBFOVMBOPKVXUQCCFIGOGMRLXQMLECOPQEFNINNKVHURLQFCTLPERFBWBMBQBABVLUOMFOOYBCQKAHBRDWLQPAISFHPCEYBXFWMETBINGCFWBACNGBBCGPUYCNYDFGFQCWVAICBKZUHNKIUUOMQKAXUXMCPUSNBDBVFJRRRLIDQLNHEMYXVYMJZONLPOYWNHXQMDBQFAQYIYSQGWVNEXCCANNJRDRLUQCBRUMYMGRLMRCCJCUQRRRVVUJIUYDXSVQBBECEFUMUQRBNBWBGRUMUIXBQJCBKACFUQMNLFBKOGIPKSDBHMHZOPUVBCRRLFVGXQMNNMPUYMVSDNHECFKGLFVGXQMNNMPGBFLYWCBFWCFRLTYCKXMONTOEFPXICZYJWRRRYZNYXQHFECBJUOCQKASUQGXTZSXKWRCUQGXXBFQYDRMNNDYEVSRLQVHHCFOFMUXFSFBPDQOOOUOMBNHOJQCNEFQCLECOPQWRQIJRSAYFMURNNJVMCGHFNBSFUXJWYHNPOFOEYXQCXVUNPMXRUOWYCOYBCGXTMXRJVFNPYYXQGBHZOQUORCVJCMUQDBJIJRSAANNZEGCBVUKGWINBKYFEJWKAXUQCRBOTNGCYIDTCNNNORERGNIJRGVFMWMDFNPYKOSLPVRBLCOP";
 		Timer timer = new Timer();
-		for(Solution solution : solutionsPut)
-			solutions.addResult(solution);
-		timer.displayTime();
-		System.out.println(solutions);
-		
-		DynamicResultList solutions2 = new DynamicResultList(7);
 		timer.restart();
-		for(Solution solution : solutionsPut)
-			solutions2.addResult(solution);
+		double newScore = StatsTest.calculateSubTypeLDI(text, VigenereType.VIGENERE, Languages.english);
 		timer.displayTime();
-		System.out.println(solutions2);
-		
-		DynamicResultList solutions3 = new DynamicResultList(7);
 		timer.restart();
-		for(Solution solution : solutionsPut)
-			solutions3.addResult(solution);
+		double oldScore = PolyalphabeticIdentifier.calculateVigenereLDI(text);
 		timer.displayTime();
-		System.out.println(solutions3);
-		
-		SolutionCollection2 solutions4 = new SolutionCollection2(7);
 		timer.restart();
-		for(Solution solution : solutionsPut)
-			solutions4.addResult(solution);
+		oldScore = PolyalphabeticIdentifier.calculateVigenereLDI(text);
 		timer.displayTime();
-		System.out.println(Arrays.toString(solutions4.solutions));
-		
-		SolutionCollection2 solutions5 = new SolutionCollection2(7);
 		timer.restart();
-		for(Solution solution : solutionsPut)
-			solutions5.addResult(solution);
+		newScore = StatsTest.calculateSubTypeLDI(text, VigenereType.VIGENERE, Languages.english);
 		timer.displayTime();
-		System.out.println(Arrays.toString(solutions5.solutions));
+		timer.restart();
+		
+		System.out.println(String.format("Old: %f, New: %f", oldScore, newScore));
 		
 		//Matrix matrix = new Matrix(new int[] {7, 21, 16, 5}, 2, 2);
 		//System.out.println(matrix.inverseMod(26));
