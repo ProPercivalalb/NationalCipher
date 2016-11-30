@@ -10,6 +10,7 @@ import javax.swing.JSpinner;
 
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.tools.SettingParse;
@@ -78,8 +79,24 @@ public class NihilistSubstitutionAttack extends CipherAttack {
 				
 
 			}
-			if(!error)
-				new SimpleSubstitutionAttack().attemptAttack(new String(tempText), DecryptionMethod.SIMULATED_ANNEALING, app);
+			if(!error) {
+				char[] alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
+				
+				SubstitutionHack substitutionHack = new SubstitutionHack(tempText, app) {
+					@Override
+					public char[] getAlphabet() {
+						return alphabet;
+					}
+				};
+				substitutionHack.run();
+				
+				if(substitutionHack.bestSolution.score >= task.bestSolution.score) {
+					task.bestSolution = substitutionHack.bestSolution;
+					task.bestSolution.bakeSolution();
+					task.out().println("%s", task.bestSolution);	
+					task.getKeyPanel().updateSolution(task.bestSolution);
+				}
+			}
 			else {
 				app.out().println("Cannot complete decryption");
 			}

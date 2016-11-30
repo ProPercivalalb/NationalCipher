@@ -1,5 +1,7 @@
 package nationalcipher.cipher.tools;
 
+import java.util.SplittableRandom;
+
 import javalibrary.util.RandomUtil;
 
 public class KeyManipulation {
@@ -97,16 +99,18 @@ public class KeyManipulation {
 		}
 		return keySquare;
 	}
-	
+
 	public static String modifyKey(String keySquare, int columns, int rows) {
-	    switch(RandomUtil.pickRandomInt(50)) {
-	        case 0: return swapTwoRows(keySquare, columns, rows);
-	        case 1: return swapTwoColumns(keySquare, columns, rows);
-	        case 2: return reverseKey(keySquare);
-	        case 3: return flipRows(keySquare, columns, rows);
-	        case 4: return flipColumns(keySquare, columns, rows);
-	        default: return swapTwoCharacters(keySquare);
-	    }
+		double d = RandomUtil.pickDouble();
+		if(d < 0.1) {
+			if(d < 0.02) return swapTwoRows(keySquare, columns, rows);
+			else if(d < 0.04) return swapTwoColumns(keySquare, columns, rows);
+			else if(d < 0.06)  return reverseKey(keySquare);
+			else if(d < 0.08)  return flipRows(keySquare, columns, rows);
+			else return flipColumns(keySquare, columns, rows);
+		}
+		else 
+			return swapTwoCharacters(keySquare);
 	}
 
 	public static int[] swapOrder(int[] order) {

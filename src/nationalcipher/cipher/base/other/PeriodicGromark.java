@@ -11,13 +11,13 @@ public class PeriodicGromark implements IRandEncrypter {
 
 	public static void main(String[] args) {
 		Timer timer = new Timer();
-		String text = "PHASEFIVESEAHORSEISREADYFORTRIALSANDTHENAUTILUSSYSTEMISFULLYFUNCTIONALWEENGAGEDTHEMECHANISMANDLOWEREDTHEDECKTOTHREEFEETABOVESEALEVELAPPROACHINGTHESHOREBYTHERADARSTATIONATALLTIMESSIGNALSFROMTHEIRCOMMUNICATIONSWEREMONITOREDANDNOSIGNWASGIVENTHATOURAPPROACHHADBEENMONITOREDOREVENNOTICEDWEBACKEDOFFTHEDECKWASRAISEDBYTWOFEETANDTHEAPPROACHATTEMPTEDAGAINONCEMOREOURINCURSIONWASUNNOTICEDOVERNIGHTWECONDUCTEDARANGEOFTESTSANDMAPPEDTHERADARCOVERAGEONTHREESEPARATEOCCASIONSTHERESEEMSTOHAVEBEENAFLURRYOFACTIVITYANDOURMODELINGSUGGESTSTHATTHESHIPSMASTSMAYHAVETRIGGEREDBRIEFALARMSONALLOCCASIONSTHEAUTOMATICDIVESYSTEMSCUTINCORRECTLYLOWERINGTHEDECKSTOSEALEVELANDTHEALARMSWERECANCELLEDTHESEAHORSEDEPLOYMENTSYSTEMWILLBEFULLYMOUNTEDTONIGHTANDWEWILLCONDUCTABATTERYOFTESTSONTHEDEPLOYMENTANDEMERGENCYRECOVERYSYSTEMSOVERTHENEXTTWONIGHTSASSUMINGTHATSEAANDAIRTRAFFICREMAINSLOW";
-		String key = "AWET";
+		String text = "SEXREACHEDSUPPOSEOURWHETHEROHREALLYBYANMANNERSISTERSOONESPORTSMANTOLERABLYHIMEXTENSIVEPUTSHEIMMEDIATEHEABROADOFCANNOTLOOKEDINCONTINUINGINTERESTEDTENSTIMULATEDPROSPEROUSFREQUENTLYALLBOISTEROUSNAYOFOHREALLYHEEXTENTHORSESWICKETDETRACTYETDELIGHTWRITTENFARTHERHISGENERALIFINSOBREDATDAREROSELOSEGOODFEELANDMAKETWOREALMISSUSEEASYCELEBRATEDDELIGHTFULANESPECIALLYINCREASINGINSTRUMENTAMINDULGENCECONTRASTEDSUFFICIENTTOUNPLEASANTINININSENSIBLEFAVOURABLELATTERREMARKHUNTEDENOUGHVULGARSAYMANSITTINGHEARTEDONITWITHOUTMEMARIANNEORHUSBANDSIFATSTRONGERYECONSIDEREDISASMIDDLETONSUNCOMMONLYPROMOTIONPERFECTLYYECONSISTEDSOHISCHATTYDININGFOREFFECTLADIESACTIVEEQUALLYJOURNEYWISHINGNOTSEVERALBEHAVEDCHAPTERSHETWOSIRDEFICIENTPROCURINGFAVOURITEEXTENSIVEYOUTWOYETDIMINUTIONSHEIMPOSSIBLEUNDERSTOODAGE";
+		String key = "MAGIC";
 		
 		String encoded = encode(text, key);
 		
 		System.out.println(encoded);
-		String decoded = new String(decode(encoded.toCharArray(), key));
+		String decoded = new String(decode(encoded.toCharArray(), new byte[encoded.length()], key));
 		System.out.println(decoded);
 		timer.displayTime();
 	}
@@ -52,16 +52,21 @@ public class PeriodicGromark implements IRandEncrypter {
 		String cipherText = "";
 		
 		for(int i = 0; i < plainText.length(); i++) {
-			int keyIndex = (int)(Math.floor(i / inOrd.length) % inOrd.length);
-			cipherText += transposedKey.charAt((transposedKey.indexOf(key.charAt(keyIndex)) + (plainText.charAt(i) - 'A') + numericKey[i]) % 26);
+			int keyIndex = (int)(Math.floor(i / inOrd.length) % inOrd.length);// + numericKey[i]
+			cipherText += transposedKey.charAt((transposedKey.indexOf(key.charAt(keyIndex)) + (plainText.charAt(i) - 'A')) % 26);
 		}
 		
 		return cipherText;
 	}
 	
-	public static char[] decode(char[] cipherText, String key) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String key) {
 		int[] inOrd = new int[key.length()];
 		int[] noOrd = new int[key.length()];
+		
+		char[] keyFull = new char[26];
+		int index = 0;
+		for(; index < key.length(); index++)
+			keyFull[index] = key.charAt(index);
 		
 		int p = 0;
 		for(char ch = 'A'; ch <= 'Z'; ++ch) {
@@ -71,27 +76,29 @@ public class PeriodicGromark implements IRandEncrypter {
 				noOrd[keyindex] = p;
 			}
 			else
-				key += ch;
+				keyFull[index++] = ch;
 		}
 		
-		
-		String transposedKey = "";
+		int[] transposedKeyIndexOf = new int[26];
 		int[] numericKey = new int[cipherText.length];
+		int rows = (int)Math.ceil(26D / key.length());
+		index = 0;
 		
 		for(int i = 0; i < inOrd.length; i++) {
-			transposedKey += StringTransformer.getEveryNthChar(key, inOrd[i], inOrd.length);
+			for(int r = 0; r < rows; r++) {
+				if(r * inOrd.length + inOrd[i] >= 26) break;
+				transposedKeyIndexOf[keyFull[r * inOrd.length + inOrd[i]] - 'A'] = index++;	
+			}
+			
 			numericKey[i] = noOrd[i];
 		}
 
 		for(int i = 0; i < numericKey.length - noOrd.length; i++)
 			numericKey[i + noOrd.length] = (numericKey[i] + numericKey[i + 1]) % 10;
-		
-		
-		char[] plainText = new char[cipherText.length];
-		
+
 		for(int i = 0; i < cipherText.length; i++) {
 			int keyIndex = (int)(Math.floor(i / inOrd.length) % inOrd.length);
-			plainText[i] = (char)(MathUtil.mod(transposedKey.indexOf(cipherText[i]) - transposedKey.indexOf(key.charAt(keyIndex)) - numericKey[i], 26) + 'A');
+			plainText[i] = (byte)(MathUtil.mod(transposedKeyIndexOf[cipherText[i] - 'A'] - transposedKeyIndexOf[key.charAt(keyIndex) - 'A'] - numericKey[i], 26) + 'A');
 		}
 		
 		return plainText;

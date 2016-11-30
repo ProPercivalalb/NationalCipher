@@ -31,6 +31,7 @@ import nationalcipher.cipher.decrypt.complete.HomophonicAttack;
 import nationalcipher.cipher.decrypt.complete.MyszkowskiAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistTranspositionAttack;
+import nationalcipher.cipher.decrypt.complete.PeriodicGromarkAttack;
 import nationalcipher.cipher.decrypt.complete.PhillipsAttack;
 import nationalcipher.cipher.decrypt.complete.PlayfairAttack;
 import nationalcipher.cipher.decrypt.complete.PolluxAttack;
@@ -155,9 +156,10 @@ public class AttackRegistry {
 		registerCipher(new DigrafidAttack(), settings);
 		registerCipher(new SolitaireAttack(), settings);
 		registerCipher(new StraddleCheckerboardAttack(), settings);
+		registerCipher(new PeriodicGromarkAttack(), settings);
 		
 		//
-		//registerCipher(new EnigmaNoPlugboardAttack(), settings);
+		//registerCipher(new PeriodicGromarkAttack(), settings);
 		//registerCipher(new SeriatedPlayfairAttack(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);

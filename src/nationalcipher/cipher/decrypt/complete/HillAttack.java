@@ -244,7 +244,7 @@ public class HillAttack extends CipherAttack {
 				
 				double currentSum = ChiSquared.calculate(decrypted, this.app.getLanguage());
 		
-				if(currentSum < 200) {
+				if(currentSum < 200D) {
 					this.app.out().println("%s, %f, %s", Arrays.toString(data), currentSum, Arrays.toString(decrypted));
 					this.best.add(new HillSection(decrypted, Arrays.copyOf(data, data.length)));
 				}
@@ -268,7 +268,9 @@ public class HillAttack extends CipherAttack {
 					try {
 						this.bestSolution.setKeyString(new Matrix(inverseMatrix, this.size).inverseMod(26).toString());
 					}
-					catch(MatrixNoInverse e) {}
+					catch(MatrixNoInverse e) {
+						this.bestSolution.setKeyString("Invertible: %s", Arrays.toString(inverseMatrix));
+					}
 					
 					this.bestSolution.bakeSolution();
 					this.out().println("%s", this.bestSolution);	

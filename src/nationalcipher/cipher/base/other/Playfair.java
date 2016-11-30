@@ -76,37 +76,30 @@ public class Playfair implements IRandEncrypter {
 	    return cipherText;
 	}
 	
+	//Double letter 1 down to right
 	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare) {
-	    
-	    for(int i = 0; i < cipherText.length; i += 2){
-	        char a = cipherText[i];
-	        char b = cipherText[i + 1];
-	        int i1 = keysquare.indexOf(a);
-	        int i2 = keysquare.indexOf(b);
+	    for(int i = 0; i < cipherText.length; i += 2) {
+	        int i1 = keysquare.indexOf(cipherText[i]);
+	        int i2 = keysquare.indexOf(cipherText[i + 1]);
 	        int row1 = i1 / 5;
 	        int col1 = i1 % 5;
 	        int row2 = i2 / 5;
 	        int col2 = i2 % 5;
 	        
-	        byte c, d;
-	        
 	        if(row1 == row2) {
-	        	c = (byte)keysquare.charAt(row1 * 5 + MathUtil.mod(col1 - 1, 5));
-	        	d = (byte)keysquare.charAt(row2 * 5 + MathUtil.mod(col2 - 1, 5));
+	        	plainText[i] = (byte)keysquare.charAt(row1 * 5 + (col1 + 5 - 1) % 5);
+	        	plainText[i + 1] = (byte)keysquare.charAt(row2 * 5 + (col2 + 5 - 1) % 5);
 	        }
 	        else if(col1 == col2) {
-	        	c = (byte)keysquare.charAt(MathUtil.mod(row1 - 1, 5) * 5 + col1);
-	        	d = (byte)keysquare.charAt(MathUtil.mod(row2 - 1, 5) * 5 + col2);
+	        	plainText[i] = (byte)keysquare.charAt(((row1 + 5 - 1) % 5) * 5 + col1);
+	        	plainText[i + 1] = (byte)keysquare.charAt(((row2 + 5 - 1) % 5) * 5 + col2);
 	        }
 	        else {
-	            c = (byte)keysquare.charAt(row1 * 5 + col2);
-	            d = (byte)keysquare.charAt(row2 * 5 + col1);
+	        	plainText[i] = (byte)keysquare.charAt(row1 * 5 + col2);
+	            plainText[i + 1] = (byte)keysquare.charAt(row2 * 5 + col1);
 	        }
-	        
-	        plainText[i] = c;
-	        plainText[i + 1] = d;
-
 	    }
+	    
 	    return plainText;
 	}
 

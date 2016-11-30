@@ -1857,62 +1857,31 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
-    private class NihilistIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chart2;
+    private class NihilistIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public NihilistIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Nihilist Substitution IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Nihilist Substitution IoC", 2);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Kappa IoC Calculation"));
-	        panel.add(this.chart);
-	        
-	        this.chart2 = new JBarChart(new ChartList());
-	        this.chart2.setHasBarText(false);
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Average IoC Calculation"));
-	        panel.add(this.chart2);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
-			this.chart2.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Kappa IoC Calculation", "Average IoC Calculation"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
     		String text = getInputTextOnlyDigits();
     		if(!text.isEmpty()) {
@@ -1924,12 +1893,12 @@ public class UINew extends JFrame implements IApplication {
     		    	
     		    	if(sqDiff < bestIC)
     		    		bestPeriod = period;
-    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	this.barCharts[0].values.add(new ChartData("Period: " + period, sqDiff));
     		    	
     		    	bestIC = Math.min(bestIC, sqDiff);
     		    }
     			
-    		    this.chart.setSelected(bestPeriod - 2);
+    		    this.barCharts[0].setSelected(bestPeriod - 2);
     		    
     		    bestPeriod = -1;
     		    double bestIoC = Double.MAX_VALUE;
@@ -1937,23 +1906,22 @@ public class UINew extends JFrame implements IApplication {
     		    for(int period = 2; period <= 40; ++period) {
     		    	double total = 0.0D;
     		    	for(int i = 0; i < period; i++)
-    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthBlock(text, 2, i, period), 2, true);
+    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthBlock(text, 2, i, period), 2, false);
     		    	total /= period;
     		    	
-    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
+    		    	double sqDiff = Math.abs(total - settings.getLanguage().getNormalCoincidence()) * 1000;
     		    	
     		    	if(sqDiff < bestIoC)
     		    		bestPeriod = period;
-    		    	this.chart2.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	this.barCharts[1].values.add(new ChartData("Period: " + period, sqDiff));
     		    	
     		    	bestIoC = Math.min(bestIoC, sqDiff);
     		    }
     		    
-    		    this.chart2.setSelected(bestPeriod - 2);
+    		    this.barCharts[1].setSelected(bestPeriod - 2);
     		}
     		
-    		this.chart.repaint();
-    		this.chart2.repaint();
+    		this.repaintCharts();
     	}
     }
     
@@ -2053,65 +2021,39 @@ public class UINew extends JFrame implements IApplication {
     	} 
     }
     
-    public class ProgressiveKeyIoCAction implements ActionListener {
+    public class ProgressiveKeyIoCAction extends NCCDialogBarChart implements ActionListener {
     	
-    	private JDialog dialog;
-    	private JBarChart chart;
     	private ThreadCancelable threadCancel;
     	
     	public ProgressiveKeyIoCAction() {
-    		threadCancel = new ThreadCancelable(new Runnable() {
-
-							@Override
-							public void run() {
-								updateDialog();
-							}
-						});
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						threadCancel.restart();
-						
-					}	
-				}
+    		super("Progressive Key IoC", 1);
+    		this.threadCancel = new ThreadCancelable(new Runnable() {
+    			@Override
+    			public void run() {
+    				ProgressiveKeyIoCAction.this.updateOnWithTextArea();
+    			}
     		});
     		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Progressive Key IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Progressive Key IoC Calculation"));
-	        panel.add(this.chart);
-
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		threadCancel.restart();
+    		this.threadCancel.restart();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Progressive Key IoC Calculation"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
 			String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty()) {
@@ -2137,7 +2079,7 @@ public class UINew extends JFrame implements IApplication {
 		    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(decoded, i, period), 1, true);
 		    		    	total /= period;
 		    		    	
-		    		    	double sqDiff = Math.pow(total - settings.getLanguage().getNormalCoincidence(), 2);
+		    		    	double sqDiff = Math.abs(total - settings.getLanguage().getNormalCoincidence()) * 1000;
 		    		    	
 		    		    	if(sqDiff < bestIoC) {
 		    		    		bestProgressivePeriod = progressivePeriod;
@@ -2158,8 +2100,8 @@ public class UINew extends JFrame implements IApplication {
     		    		bestEverProgressiveIndex = bestProgressivePeriod; //WILL GIVE A FACTOR OF THE ACCUTAL ANSWER
 					}
 				
-					this.chart.values.add(new ChartData(String.format("Period: %d, PP %d, PI %d", period, bestProgressivePeriod, bestProgressiveIndex), bestIoC));
-					this.chart.repaint();
+					this.barCharts[0].values.add(new ChartData(String.format("Period: %d, PP %d, PI %d", period, bestProgressivePeriod, bestProgressiveIndex), bestIoC));
+		    		this.repaintCharts();
 				}
 				
 				//output.println("Period: " + bestPeriod);
@@ -2167,7 +2109,6 @@ public class UINew extends JFrame implements IApplication {
 				//output.println("  Prog Index" + bestprogressiveIndex);
 			}
     		
-    		this.chart.repaint();
     	}
     }
     
@@ -2204,7 +2145,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+     		UINew.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -2228,62 +2169,31 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
-    public class SlidefairIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chart2;
-    	
-    	public SlidefairIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+    public class SlidefairIoCAction extends NCCDialogBarChart implements ActionListener {
 
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Slidefair IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    	public SlidefairIoCAction() {
+    		super("Slidefair IoC", 2);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation x3"));
-	        panel.add(this.chart);
-	         
-	        this.chart2 = new JBarChart(new ChartList());
-	        this.chart2.setHasBarText(false);
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Periodic IoC Calculation"));
-	        panel.add(this.chart2);
-	        
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+     		UINew.this.addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
-			this.chart2.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Step Calculation x3", "Periodic IoC Calculation"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 	
 			String text = getInputText();
 			if(!text.isEmpty()) {
@@ -2300,62 +2210,42 @@ public class UINew extends JFrame implements IApplication {
 	    		    	
 	    		    if(sqDiff < bestIoC)
 	    		    	bestPeriod = period;
-	    		    this.chart2.values.add(new ChartData("Period: " + period, sqDiff));
+	    		    this.barCharts[1].values.add(new ChartData("Period: " + period, sqDiff));
 	    		    	
 	    		    bestIoC = Math.min(bestIoC, sqDiff);
 	    		}
 	    		    
-	    		this.chart2.setSelected(bestPeriod - 2);
+	    		this.barCharts[1].setSelected(bestPeriod - 2);
 			}
     		
-    		this.chart.repaint();
-    		this.chart2.repaint();
+    		this.repaintCharts();
     	}
     }
     
-    public class SwagmanTestAction extends NCCDialog implements ActionListener {
-    	
-    	private JBarChart chart;
-    	
+    public class SwagmanTestAction extends NCCDialogBarChart implements ActionListener {
+
     	public SwagmanTestAction() {
-    		super("Swagman Test", "image/chart_bar.png");
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-
+    		super("Swagman Test", 1);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Swagman Test"));
-	        panel.add(this.chart);
-
-	         
-    		this.dialog.add(panel);
-    
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		addDialog(this.dialog);
+    		UINew.this.addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Swagman Test"));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
 			String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty()) {
@@ -2363,12 +2253,12 @@ public class UINew extends JFrame implements IApplication {
 				int bestPeriod = -1;
 				for(int period = 2; period <= 9; period++) {
 		            if(text.length() % period != 0) {
-		            	this.chart.values.add(new ChartData("" + period, 0));
+		            	this.barCharts[0].values.add(new ChartData("" + period, 0));
 		            	continue;
 		            }
 		            
 		            if(3 * period * period > text.length()) {
-		                this.chart.values.add(new ChartData("" + period, 0));
+		                this.barCharts[0].values.add(new ChartData("" + period, 0));
 		            	continue;
 		            }
 		            
@@ -2377,72 +2267,41 @@ public class UINew extends JFrame implements IApplication {
 		            	bestScore = result;
 		            	bestPeriod = period;
 		            }
-		            this.chart.values.add(new ChartData("" + period, result));
+		            this.barCharts[0].values.add(new ChartData("" + period, result));
 		        }
 				if(bestPeriod != -1)
-					this.chart.setSelected(bestPeriod - 2);
+					this.barCharts[0].setSelected(bestPeriod - 2);
 			}
     		
-    		this.chart.repaint();
+    		this.repaintCharts();
     	}
     }
     
-    public class TrifidIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chart2;
+    public class TrifidIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public TrifidIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Trifid IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Trifid IoC", 2);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart(new ChartList());
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Step Calculation x3"));
-	        panel.add(this.chart);
-	         
-	        this.chart2 = new JBarChart(new ChartList());
-	
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Trigraphic Phi Test"));
-	        panel.add(this.chart2);
-	        
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		addDialog(this.dialog);
+     		UINew.this.addDialog(this.dialog);
      		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
-			this.chart2.resetAll();
+    	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Step Calculation x3", "Trigraphic Phi Test"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+    	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 	
 			String text = getInputText();
 			if(!text.isEmpty()) {
@@ -2464,7 +2323,7 @@ public class UINew extends JFrame implements IApplication {
 					Statistics stats = new Statistics(counts.values());
 				    double variance = stats.getVariance();
 				 
-				    this.chart.values.add(new ChartData("Step: " + step, variance));
+				    this.barCharts[0].values.add(new ChartData("Step: " + step, variance));
 					values.put(step, variance);
 					
 					if(variance > maxValue) {
@@ -2497,7 +2356,7 @@ public class UINew extends JFrame implements IApplication {
 								bestStep = step;
 							}
 						}
-						this.chart.setSelected(bestStep - 1);
+						this.barCharts[0].setSelected(bestStep - 1);
 						
 						periodGuess = Math.min(bestStep, maxStep) * 3 + Math.abs(bestStep - maxStep);
 					}
@@ -2511,65 +2370,26 @@ public class UINew extends JFrame implements IApplication {
 			    	if(period > 0 && period < size) continue;
 			    	
 			        double score = StatCalculator.calculateStrangeIC(text, period, size, 27);
-			        this.chart2.values.add(new ChartData("" + period, score));
+			        this.barCharts[1].values.add(new ChartData("" + period, score));
 			        if(bestIC < score)
 			        	bestPeriod = period;
 			        
 			        bestIC = Math.max(bestIC, score);
 			    }
 			    
-			    this.chart.setSelected(maxStep - 1);
-				this.chart2.setSelected(bestPeriod > 0 ? bestPeriod - 2 : 0);
+			    this.barCharts[0].setSelected(maxStep - 1);
+				this.barCharts[1].setSelected(bestPeriod > 0 ? bestPeriod - 2 : 0);
 			}
     		
-    		this.chart.repaint();
-    		this.chart2.repaint();
+    		this.repaintCharts();
     	}
     }
     
-    private class VigenereIoCAction implements ActionListener {
-    	
-    	private JDialog dialog;
-    	private JBarChart chart;
-    	private JBarChart chart2;
+    private class VigenereIoCAction extends NCCDialogBarChart implements ActionListener {
     	
     	public VigenereIoCAction() {
-    		inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
-
-				@Override
-				public void onUpdate(DocumentEvent event) {
-					if(dialog.isVisible()) {
-						updateDialog();
-					}	
-				}
-    		});
-    		
-    		this.dialog = new JDialog();
-    		this.dialog.addWindowListener(new JDialogCloseEvent(this.dialog));
-    		this.dialog.setTitle("Vigenere IoC");
-    		this.dialog.setAlwaysOnTop(true);
-    		this.dialog.setModal(false);
-    		this.dialog.setResizable(false);
-    		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/chart_bar.png")));
-    		this.dialog.setFocusableWindowState(false);
+    		super("Vigenere IoC", 2);
     		this.dialog.setMinimumSize(new Dimension(800, 400));
-    		
-    		JPanel panel = new JPanel();
-	        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-	          
-	        this.chart = new JBarChart();
-	        this.chart.setHasBarText(false);
-	        this.chart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Kappa IoC Calculation"));
-	        panel.add(this.chart);
-	        
-	        this.chart2 = new JBarChart();
-	        this.chart2.setHasBarText(false);
-	        this.chart2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Average IoC Calculation"));
-	        panel.add(this.chart2);
-	         
-    		this.dialog.add(panel);
-    		
-    		dialogs.add(this.dialog);
     	}
     	
     	@Override
@@ -2577,12 +2397,19 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setVisible(true);
     		addDialog(this.dialog);
     		
-    		this.updateDialog();
+    		this.updateOnWithTextArea();
 		}
     	
-    	public void updateDialog() {
-			this.chart.resetAll();
-			this.chart2.resetAll();
+     	@Override
+    	public void initialiseChart(JBarChart barChart, int index) {
+    		barChart.setHasBarText(false);
+    		String[] graphTitle = new String[] {"Kappa IoC Calculation", "Average IoC Calculation"};
+    		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
+    	}
+    	
+     	@Override
+    	public void updateOnWithTextArea() {
+			this.resetCharts();
 			
     		String text = getInputTextOnlyAlpha();
     		if(!text.isEmpty()) {
@@ -2594,12 +2421,12 @@ public class UINew extends JFrame implements IApplication {
     		    	
     		    	if(sqDiff < bestKappa)
     		    		bestPeriod = period;
-    		    	this.chart.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	this.barCharts[0].values.add(new ChartData("Period: " + period, sqDiff));
     		    	
     		    	bestKappa = Math.min(bestKappa, sqDiff);
     		    }
     		    
-    		    this.chart.setSelected(bestPeriod - 2);
+    		    this.barCharts[0].setSelected(bestPeriod - 2);
     		    
     		    bestPeriod = -1;
     		    double bestIoC = Double.MAX_VALUE;
@@ -2614,16 +2441,15 @@ public class UINew extends JFrame implements IApplication {
     		    	
     		    	if(sqDiff < bestIoC)
     		    		bestPeriod = period;
-    		    	this.chart2.values.add(new ChartData("Period: " + period, sqDiff));
+    		    	this.barCharts[1].values.add(new ChartData("Period: " + period, sqDiff));
     		    	
     		    	bestIoC = Math.min(bestIoC, sqDiff);
     		    }
     		    
-    		    this.chart2.setSelected(bestPeriod - 2);
+    		    this.barCharts[1].setSelected(bestPeriod - 2);
     		}
     		
-    		this.chart.repaint();
-    		this.chart2.repaint();
+    		this.repaintCharts();
     	}
     }
     

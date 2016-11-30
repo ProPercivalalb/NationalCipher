@@ -11,7 +11,7 @@ public abstract class SimulatedAnnealing extends InternalDecryption {
 	
 	public SimulatedAnnealing(char[] text, IApplication app) {
 		super(text, app);
-		this.iterationTimer = false;
+		this.iterationTimer = true;
 	}
 
 	public Solution maxSolution;
