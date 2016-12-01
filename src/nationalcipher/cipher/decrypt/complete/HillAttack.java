@@ -16,6 +16,8 @@ import javalibrary.algebra.SimultaneousEquations;
 import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.fitness.ChiSquared;
+import javalibrary.list.DynamicResultList;
+import javalibrary.list.ResultPositive;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringAnalyzer;
@@ -132,10 +134,10 @@ public class HillAttack extends CipherAttack {
 				
 				KeyIterator.permutateArray(task, (byte)0, size, 26, true);
 				
-				if(task.best.size() < size)
-					app.out().println("Did not find enought key columns that produces good characters %d/%d", task.best.size(), size);
+				if(task.resultList.size() < size)
+					app.out().println("Did not find enought key columns that produces good characters %d/%d", task.resultList.size(), size);
 				else
-					KeyIterator.permutateArray(task, (byte)1, size, task.best.size(), false);
+					KeyIterator.permutateArray(task, (byte)1, size, task.resultList.size(), false);
 			}
 		}
 		
@@ -183,10 +185,11 @@ public class HillAttack extends CipherAttack {
 
 		private int size;
 		private int lengthSub;
-		private List<HillSection> best = new ArrayList<HillSection>();
+		private DynamicResultList<HillSection> resultList;
 		
 		public HillTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
+			this.resultList = new DynamicResultList<HillSection>(8);
 		}
 
 		@Override
@@ -242,18 +245,18 @@ public class HillAttack extends CipherAttack {
 					decrypted[i / this.size] = (char)(total % 26 + 'A');
 				}
 				
-				double currentSum = ChiSquared.calculate(decrypted, this.app.getLanguage());
+				double score = ChiSquared.calculate(decrypted, this.app.getLanguage());
 		
-				if(currentSum < 200D) {
-					this.app.out().println("%s, %f, %s", Arrays.toString(data), currentSum, Arrays.toString(decrypted));
-					this.best.add(new HillSection(decrypted, Arrays.copyOf(data, data.length)));
-				}
+				this.resultList.addResult(new HillSection(score, decrypted, Arrays.copyOf(data, data.length)));
+				
+				if(score < 128D)
+					this.app.out().println("%s, %f, %s", Arrays.toString(data), score, Arrays.toString(decrypted));
 			}
 			else {
 				for(int s = 0; s < this.size; s++) {
-					HillSection hillSection = this.best.get(data[s]);
+					HillSection hillResult = this.resultList.get(data[s]);
 					for(int i = 0; i < this.lengthSub; i++)
-						this.plainText[i * this.size + s] = (byte)hillSection.decrypted[i];
+						this.plainText[i * this.size + s] = (byte)hillResult.decrypted[i];
 				}
 				
 				this.lastSolution = new Solution(this.plainText, this.getLanguage());
@@ -261,10 +264,12 @@ public class HillAttack extends CipherAttack {
 				if(this.lastSolution.score >= this.bestSolution.score) {
 					this.bestSolution = this.lastSolution;
 					int[] inverseMatrix = new int[this.size * this.size];
-					for(int s = 0; s < this.size; s++)
+					for(int s = 0; s < this.size; s++) {
+						HillSection hillResult = this.resultList.get(data[s]);
 						for(int n = 0; n < this.size; n++)
-							inverseMatrix[s * this.size + n] = this.best.get(data[s]).inverseCol[n];
+							inverseMatrix[s * this.size + n] = hillResult.inverseCol[n];
 					
+					}
 					try {
 						this.bestSolution.setKeyString(new Matrix(inverseMatrix, this.size).inverseMod(26).toString());
 					}
@@ -280,10 +285,11 @@ public class HillAttack extends CipherAttack {
 		}
 	}
 	
-	public static class HillSection {
+	public static class HillSection extends ResultPositive {
 		public char[] decrypted;
 		public int[] inverseCol;
-		public HillSection(char[] decrypted, int[] inverseCol) {
+		public HillSection(double score, char[] decrypted, int[] inverseCol) {
+			super(score);
 			this.decrypted = decrypted;
 			this.inverseCol = inverseCol;
 		}

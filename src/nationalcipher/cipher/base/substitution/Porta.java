@@ -9,7 +9,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class Porta implements IRandEncrypter {
 
 	public static String encode(String plainText, String keyword, boolean move) {
-		return new String(decode(plainText.toCharArray(), keyword, move));
+		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], keyword, move));
 	}
 	
 	public static String[] key = new String[] {"NOPQRSTUVWXYZ", "ZNOPQRSTUVWXY", "YZNOPQRSTUVWX", "XYZNOPQRSTUVW", "WXYZNOPQRSTUV", "VWXYZNOPQRSTU", "UVWXYZNOPQRST", "TUVWXYZNOPQRS", "STUVWXYZNOPQR", "RSTUVWXYZNOPQ", "QRSTUVWXYZNOP", "PQRSTUVWXYZNO", "OPQRSTUVWXYZN", "NOPQRSTUVWXYZ", "OPQRSTUVWXYZN", "PQRSTUVWXYZNO", "QRSTUVWXYZNOP", "RSTUVWXYZNOPQ", "STUVWXYZNOPQR", "TUVWXYZNOPQRS", "UVWXYZNOPQRST", "VWXYZNOPQRSTU", "WXYZNOPQRSTUV", "XYZNOPQRSTUVW", "YZNOPQRSTUVWX", "ZNOPQRSTUVWXY"};
@@ -21,9 +21,7 @@ public class Porta implements IRandEncrypter {
 	 * ZNOPQRSTUVWXY  OPQRSTUVWXYZN
 	 * YZNOPQRSTUVWX  PQRSTUVWXYZNO
 	 */
-	public static byte[] decode(char[] cipherText, String keyword, boolean shiftRight) {
-		byte[] plainText = new byte[cipherText.length];
-		
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keyword, boolean shiftRight) {
 		for(int pos = 0; pos < cipherText.length; pos++){
 			int rowNo = (int)Math.floor((keyword.charAt(pos % keyword.length()) - 'A') / 2);
 			String row = key[rowNo + (shiftRight ? 0 : 13)];

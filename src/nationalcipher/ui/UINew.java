@@ -1374,7 +1374,6 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
     	public void initialiseChart(JBarChart barChart, int index) {
-    		barChart.setHasBarText(false);
     		String[] graphTitle = new String[] {"Ordered by Size", "Ordered Alphabeticly"};
     		barChart.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), graphTitle[index]));
     	}

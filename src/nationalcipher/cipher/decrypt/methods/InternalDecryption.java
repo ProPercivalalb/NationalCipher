@@ -17,16 +17,20 @@ public class InternalDecryption {
 	public char[] cipherText;
 	public byte[] plainText;
 	public IApplication app;
-	public final double UPPER_ESTIMATE;
+	public double UPPER_ESTIMATE;
 	
 	public InternalDecryption(char[] cipherText, IApplication app) {
-		this.cipherText = cipherText;
-		this.plainText = new byte[this.getOutputTextLength(cipherText.length)];
-		this.app = app;
-		
-		this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage().getQuadgramData()) * 1.1;
+		this.app = app;	
 		this.iteration = 1;
 		this.bestSolution = new Solution();
+		
+		this.setCipherText(cipherText);
+	}
+	
+	public void setCipherText(char[] cipherText) {
+		this.cipherText = cipherText;
+		this.plainText = new byte[this.getOutputTextLength(cipherText.length)];
+		this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage().getQuadgramData()) * 1.1;
 	}
 	
 	public int getOutputTextLength(int inputLength) {

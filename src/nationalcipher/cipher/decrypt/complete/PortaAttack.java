@@ -14,6 +14,7 @@ import javax.swing.JTextArea;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.Porta;
 import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
@@ -121,7 +122,8 @@ public class PortaAttack extends CipherAttack {
 		
 		@Override
 		public Solution tryModifiedKey(String key) {
-			return new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.PORTA), this.getLanguage()).setKeyString(key).bakeSolution();
+			return new Solution(Porta.decode(this.cipherText, this.plainText, key, this.shiftRight), this.getLanguage()).setKeyString(key).bakeSolution();
+			//return new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.PORTA), this.getLanguage()).setKeyString(key).bakeSolution();
 		}
 		
 		@Override

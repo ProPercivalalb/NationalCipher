@@ -24,6 +24,7 @@ import nationalcipher.cipher.decrypt.complete.EnigmaAttack;
 import nationalcipher.cipher.decrypt.complete.EnigmaNoPlugboardAttack;
 import nationalcipher.cipher.decrypt.complete.FourSquareAttack;
 import nationalcipher.cipher.decrypt.complete.FractionatedMorseAttack;
+import nationalcipher.cipher.decrypt.complete.GeneralPeriodAttack;
 import nationalcipher.cipher.decrypt.complete.HillAttack;
 import nationalcipher.cipher.decrypt.complete.HillExtendedAttack;
 import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack;
@@ -99,7 +100,8 @@ public class AttackRegistry {
 		registerCipher(new VariantAttack(), settings);
 		registerCipher(new VigenereAttack(), settings);
 		registerCipher(new PortaxAttack(), settings);
-
+		registerCipher(new GeneralPeriodAttack(), settings);
+		
 		registerCipher(new BeaufortAKAttack(), settings);
 		registerCipher(new PortaAKAttack(), settings);
 		registerCipher(new VariantAKAttack(), settings);
