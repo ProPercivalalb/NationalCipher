@@ -34,6 +34,7 @@ import nationalcipher.cipher.decrypt.complete.NihilistSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.PeriodicGromarkAttack;
 import nationalcipher.cipher.decrypt.complete.PhillipsAttack;
+import nationalcipher.cipher.decrypt.complete.Playfair6x6Attack;
 import nationalcipher.cipher.decrypt.complete.PlayfairAttack;
 import nationalcipher.cipher.decrypt.complete.PolluxAttack;
 import nationalcipher.cipher.decrypt.complete.PortaAKAttack;
@@ -126,6 +127,9 @@ public class AttackRegistry {
 		
 		registerCipher(new FractionatedMorseAttack(), settings);
 		registerCipher(new TriSquareAttack(), settings);
+		
+		//6x6 Polybius Squares
+		registerCipher(new Playfair6x6Attack(), settings);
 		
 		//Transpostion
 		registerCipher(new CadenusAttack(), settings);

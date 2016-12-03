@@ -63,6 +63,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -73,6 +74,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
@@ -362,6 +364,8 @@ public class UINew extends JFrame implements IApplication {
         this.menuCipherAttack = new JMenu();
         this.menuCribInput = new JMenuItem();
         this.menuItemCurrentAttack = new JMenuItem();
+        this.menuDataFiles = new JMenu();
+        this.addWordAddDictonary = new JMenuItem();
         
 		this.setLayout(new GridBagLayout());
 
@@ -851,6 +855,15 @@ public class UINew extends JFrame implements IApplication {
         this.menuCipherAttack.add(transpostion);
         
         this.menuBar.add(this.menuCipherAttack);
+        
+        
+        this.menuDataFiles.setText("Data Files");
+        
+        this.addWordAddDictonary.setText("Add words to Dictonary");
+        this.addWordAddDictonary.setIcon(ImageUtil.createImageIcon("/image/book_add.png", "Hill IoC"));
+     	this.addWordAddDictonary.addActionListener(new WordAddAction());
+        this.menuDataFiles.add(this.addWordAddDictonary);
+        this.menuBar.add(this.menuDataFiles);
         
         
         this.setJMenuBar(this.menuBar);
@@ -3223,8 +3236,10 @@ public class UINew extends JFrame implements IApplication {
 			UINew.this.settings.collectSolutions = this.checkBox.isSelected();
 		}
     }
+    
     public class CribInputAction implements ActionListener {
 
+    	@Override
     	public void actionPerformed(ActionEvent event) {
     		JDialog dialog = new JDialog(UINew.this);
     		
@@ -3251,6 +3266,88 @@ public class UINew extends JFrame implements IApplication {
     	    dialog.add(panel);
     		
     	    panel.add(new JTextArea());
+    		dialog.setLocationRelativeTo(UINew.this);
+    		
+	        
+    		dialog.pack();
+			dialog.setVisible(true);
+    	}
+    	
+    }
+    
+    public class WordAddAction implements ActionListener {
+
+    	@Override
+    	public void actionPerformed(ActionEvent event) {
+    		JDialog dialog = new JDialog(UINew.this);
+    		
+    		dialog.setTitle("Add words to Dictonary");
+    		
+    		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("image/book_add.png")));
+    		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    		dialog.setResizable(false);
+    		dialog.setMinimumSize(new Dimension(400, 200));
+    		dialog.setModal(true);
+   
+    		ActionListener escListener = new ActionListener() {
+    	        @Override
+    	        public void actionPerformed(ActionEvent event) {
+    	        	dialog.dispatchEvent(new WindowEvent(dialog, WindowEvent.WINDOW_CLOSING));
+    	        }
+    	    };
+
+    	    dialog.getRootPane().registerKeyboardAction(escListener, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+    		
+    		JPanel panel = new JPanel();
+    		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.setBorder(BorderFactory.createCompoundBorder(new EmptyBorder(2, 2, 2, 2), BorderFactory.createEtchedBorder()));
+    	    dialog.add(panel);
+    	    JTextArea wordInput = new JTextArea();
+    	    JScrollPane scrollArea = new JScrollPane(wordInput);
+    	    wordInput.setLineWrap(true);
+    	    JButton button = new JButton("Compile words");
+    	    button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					String text = wordInput.getText();
+					String[] words = text.split("[\\s+]+");
+					System.out.println(Arrays.toString(words));
+					DefaultTableModel model = new DefaultTableModel(new String[] {"Word", "Valid"}, words.length) {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public boolean isCellEditable(int row, int col) {
+							return false;
+						}
+					};
+					JTable table = new JTable(model);
+					JScrollPane tableScroll = new JScrollPane(table);
+					panel.removeAll();
+					panel.add(tableScroll);
+					int i = 0;
+					for(String word : words) {
+						word = word.toUpperCase();
+						word = word.replaceAll("[^a-zA-Z]+", "");
+						if(word.length() == 0) continue;
+						
+						if(Dictionary.containsWord(word)) {
+							//model.setValueAt(word, i, 0);
+							//model.setValueAt("Already a word", i++, 1);
+						}
+						else {
+							model.setValueAt(word, i, 0);
+							model.setValueAt("Found new word", i++, 1);
+						}
+					}
+					model.setRowCount(i);
+					panel.revalidate();
+					panel.repaint();
+				}
+    	    	
+    	    });
+    	    panel.add(scrollArea);
+    	    panel.add(button);
     		dialog.setLocationRelativeTo(UINew.this);
     		
 	        
@@ -3420,4 +3517,6 @@ public class UINew extends JFrame implements IApplication {
     private JMenu menuCipherAttack;
     private JMenuItem menuCribInput;
     private JMenuItem menuItemCurrentAttack;
+    private JMenu menuDataFiles;
+    private JMenuItem addWordAddDictonary;
 }

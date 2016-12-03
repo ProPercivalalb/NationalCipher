@@ -2,9 +2,11 @@ package nationalcipher.wip;
 
 import java.util.LinkedHashMap;
 
-import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.other.ConjugatedBifid;
-import nationalcipher.cipher.stats.StatisticHandler;
+import javalibrary.dict.Dictionary;
+import javalibrary.file.DraftFile;
+import javalibrary.lib.Timer;
+import javalibrary.util.ArrayUtil;
+import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.stats.types.StatisticBifid0;
@@ -20,16 +22,28 @@ import nationalcipher.cipher.stats.types.StatisticMaxICx1000;
 import nationalcipher.cipher.stats.types.StatisticNormalOrder;
 import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTrigraphNoOverlapICx100000;
+import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.transposition.Routes;
 
 public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
 	public static void main(String[] args) {
+		Dictionary.onLoad();
 
-		registerStatistics();
-		for(IRandEncrypter en : new IRandEncrypter[] {new ConjugatedBifid()})
-			for(Class<? extends TextStatistic> clz : map.values())
-				StatisticHandler.calculateStatPrint(en, clz, 100);
+		Timer timer = new Timer();
+		DraftFile draft = new DraftFile("premadekeys.txt");
+		System.out.println(DictionaryAttack.createLongKey("ALEX".toCharArray(), "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray()));
+		System.out.println(DictionaryAttack.createLongKey("ALEX".toCharArray(), "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray(), Routes.DIAG_TOPTOBOTTOM_LEFT, 5, 5));
+		draft.close();
+		
+		
+		
+		
+		//registerStatistics();
+		//for(IRandEncrypter en : new IRandEncrypter[] {new ConjugatedBifid()})
+		//	for(Class<? extends TextStatistic> clz : map.values())
+		//		StatisticHandler.calculateStatPrint(en, clz, 100);
 		
 		//TODO
 		//for(IRandEncrypter en : new IRandEncrypter[] {new Caesar(), new Keyword(), new Affine()})
