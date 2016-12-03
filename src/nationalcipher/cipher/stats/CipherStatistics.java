@@ -330,6 +330,58 @@ public class CipherStatistics extends StatisticsRef {
 			vigenereNicodemus.put(NORMAL_ORDER, new DataHolder(223.68, 31.92)); //Min: 116.00 Max: 322.00
 			vigenereNicodemus.put(NICODEMUS_MAX_3to15, new DataHolder(66.52, 3.19)); //Min: 52.38 Max: 81.48
 			
+			HashMap<String, DataHolder> beaufortProgressive = createOrGetList("Progressive Key", "Same Period", "Beaufort");
+			beaufortProgressive.put(IC_x1000, new DataHolder(38.57, 0.76)); //Min: 34.55 Max: 55.09
+			beaufortProgressive.put(IC_MAX_1to15_x1000, new DataHolder(42.96, 4.89)); //Min: 37.89 Max: 76.97
+			beaufortProgressive.put(IC_2_TRUE_x10000, new DataHolder(15.34, 1.71)); //Min: 5.50 Max: 37.96
+			beaufortProgressive.put(IC_2_FALSE_x10000, new DataHolder(15.82, 3.36)); //Min: 0.00 Max: 59.94
+			beaufortProgressive.put(IC_3_FALSE_x100000, new DataHolder(8.65, 9.56)); //Min: 0.00 Max: 198.40
+			beaufortProgressive.put(IC_KAPPA_x1000, new DataHolder(51.49, 6.47)); //Min: 37.27 Max: 105.59
+			beaufortProgressive.put(LOG_DIGRAPH, new DataHolder(427.76, 13.24)); //Min: 344.00 Max: 523.00
+			beaufortProgressive.put(LOG_DIGRAPH_REVERSED, new DataHolder(146.28, 202.69)); //Min: 0.00 Max: 497.00
+			beaufortProgressive.put(LONG_REPEAT, new DataHolder(5.65, 1.20)); //Min: 0.00 Max: 14.38
+			beaufortProgressive.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(48.28, 4.17)); //Min: 2.00 Max: 80.00
+			beaufortProgressive.put(NORMAL_ORDER, new DataHolder(223.22, 28.39)); //Min: 114.00 Max: 320.00
+
+			HashMap<String, DataHolder> portaProgressive = createOrGetList("Progressive Key", "Same Period", "Porta");
+			portaProgressive.put(IC_x1000, new DataHolder(38.66, 0.71)); //Min: 34.94 Max: 51.26
+			portaProgressive.put(IC_MAX_1to15_x1000, new DataHolder(42.76, 4.84)); //Min: 37.82 Max: 75.54
+			portaProgressive.put(IC_2_TRUE_x10000, new DataHolder(15.66, 1.53)); //Min: 7.08 Max: 34.77
+			portaProgressive.put(IC_2_FALSE_x10000, new DataHolder(16.12, 2.94)); //Min: 2.39 Max: 51.52
+			portaProgressive.put(IC_3_FALSE_x100000, new DataHolder(9.21, 9.09)); //Min: 0.00 Max: 145.14
+			portaProgressive.put(IC_KAPPA_x1000, new DataHolder(52.19, 6.83)); //Min: 39.72 Max: 94.77
+			portaProgressive.put(LOG_DIGRAPH, new DataHolder(430.15, 12.31)); //Min: 361.00 Max: 493.00
+			portaProgressive.put(LOG_DIGRAPH_REVERSED, new DataHolder(147.78, 204.77)); //Min: 0.00 Max: 536.00
+			portaProgressive.put(LONG_REPEAT, new DataHolder(5.80, 1.21)); //Min: 0.00 Max: 14.99
+			portaProgressive.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(48.13, 4.43)); //Min: 10.00 Max: 80.00
+			portaProgressive.put(NORMAL_ORDER, new DataHolder(216.78, 26.92)); //Min: 110.00 Max: 318.00
+			
+			HashMap<String, DataHolder> variantProgressive = createOrGetList("Progressive Key", "Same Period", "Variant");
+			variantProgressive.put(IC_x1000, new DataHolder(38.56, 0.68)); //Min: 34.87 Max: 47.33
+			variantProgressive.put(IC_MAX_1to15_x1000, new DataHolder(43.04, 5.00)); //Min: 38.27 Max: 76.97
+			variantProgressive.put(IC_2_TRUE_x10000, new DataHolder(15.35, 1.73)); //Min: 6.29 Max: 36.97
+			variantProgressive.put(IC_2_FALSE_x10000, new DataHolder(15.70, 2.99)); //Min: 2.39 Max: 60.88
+			variantProgressive.put(IC_3_FALSE_x100000, new DataHolder(8.52, 9.21)); //Min: 0.00 Max: 154.54
+			variantProgressive.put(IC_KAPPA_x1000, new DataHolder(51.53, 6.46)); //Min: 38.52 Max: 92.52
+			variantProgressive.put(LOG_DIGRAPH, new DataHolder(427.14, 13.25)); //Min: 343.00 Max: 529.00
+			variantProgressive.put(LOG_DIGRAPH_REVERSED, new DataHolder(146.58, 203.11)); //Min: 0.00 Max: 500.00
+			variantProgressive.put(LONG_REPEAT, new DataHolder(5.61, 1.21)); //Min: 0.00 Max: 15.12
+			variantProgressive.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(48.23, 4.14)); //Min: 5.00 Max: 76.00
+			variantProgressive.put(NORMAL_ORDER, new DataHolder(223.02, 29.01)); //Min: 116.00 Max: 322.00
+
+			HashMap<String, DataHolder> vigenereProgressive = createOrGetList("Progressive Key", "Same Period", "Vigenere");
+			vigenereProgressive.put(IC_x1000, new DataHolder(38.58, 0.77)); //Min: 35.17 Max: 52.11
+			vigenereProgressive.put(IC_MAX_1to15_x1000, new DataHolder(43.01, 5.00)); //Min: 36.77 Max: 76.97
+			vigenereProgressive.put(IC_2_TRUE_x10000, new DataHolder(15.36, 1.76)); //Min: 6.00 Max: 39.88
+			vigenereProgressive.put(IC_2_FALSE_x10000, new DataHolder(15.74, 3.07)); //Min: 0.00 Max: 65.36
+			vigenereProgressive.put(IC_3_FALSE_x100000, new DataHolder(8.45, 8.80)); //Min: 0.00 Max: 145.14
+			vigenereProgressive.put(IC_KAPPA_x1000, new DataHolder(51.64, 6.58)); //Min: 39.09 Max: 99.38
+			vigenereProgressive.put(LOG_DIGRAPH, new DataHolder(427.38, 13.26)); //Min: 364.00 Max: 532.00
+			vigenereProgressive.put(LOG_DIGRAPH_REVERSED, new DataHolder(146.46, 202.94)); //Min: 0.00 Max: 492.00
+			vigenereProgressive.put(LONG_REPEAT, new DataHolder(5.65, 1.22)); //Min: 0.00 Max: 14.71
+			vigenereProgressive.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(48.28, 4.10)); //Min: 13.00 Max: 75.00
+			vigenereProgressive.put(NORMAL_ORDER, new DataHolder(222.92, 28.55)); //Min: 112.00 Max: 312.00
+			
 			HashMap<String, DataHolder> fractionatedMorse = createOrGetList("Fractionated Morse");
 			fractionatedMorse.put(IC_x1000, new DataHolder(57.53, 1.50)); //Min: 53.84 Max: 61.78
 			fractionatedMorse.put(IC_MAX_1to15_x1000, new DataHolder(59.29, 1.89)); //Min: 56.28 Max: 67.25
@@ -602,7 +654,7 @@ public class CipherStatistics extends StatisticsRef {
 			amsco.put(LOG_DIGRAPH_VIGENERE, new DataHolder(693.02, 7.01));
 			amsco.put(LOG_DIGRAPH_PORTA, new DataHolder(565.05, 22.86));
 			
-			HashMap<String, DataHolder> bifid = createOrGetList("Bifid", "P:3-15");
+			HashMap<String, DataHolder> bifid = createOrGetList("Bifid", "P:3-15", "Single");
 			bifid.put(IC_x1000, new DataHolder(45.71, 3.08));
 			bifid.put(IC_MAX_1to15_x1000, new DataHolder(51.69, 4.42));
 			bifid.put(IC_KAPPA_x1000, new DataHolder(60.60, 8.31));
@@ -613,17 +665,9 @@ public class CipherStatistics extends StatisticsRef {
 			bifid.put(NORMAL_ORDER, new DataHolder(192.41, 27.67));
 			bifid.put(BIFID_0, new DataHolder(149.14, 69.68));
 			bifid.put(BIFID_MAX_3to15, new DataHolder(334.40, 126.10));
-			bifid.put(NICODEMUS_MAX_3to15, new DataHolder(48.32, 4.04));
-			bifid.put(TRIFID_MAX_3to15, new DataHolder(819.11, 811.16));
 			bifid.put(LOG_DIGRAPH, new DataHolder(488.75, 29.66));
-			bifid.put(LOG_DIGRAPH_PORTA, new DataHolder(538.89, 25.61));
-			bifid.put(LOG_DIGRAPH_AUTOKEY_BEAUFORT, new DataHolder(533.16, 33.17));
-			bifid.put(LOG_DIGRAPH_AUTOKEY_PORTA, new DataHolder(465.85, 22.85));
-			bifid.put(LOG_DIGRAPH_AUTOKEY_VARIANT, new DataHolder(533.29, 33.19));
-			bifid.put(LOG_DIGRAPH_AUTOKEY_VIGENERE, new DataHolder(533.92, 33.35));
-			bifid.put(LOG_DIGRAPH_PORTAX, new DataHolder(150.56, 206.81));
 			
-			HashMap<String, DataHolder> bifid0 = createOrGetList("Bifid", "P:0");
+			HashMap<String, DataHolder> bifid0 = createOrGetList("Bifid", "P:0", "Single");
 			bifid0.put(IC_x1000, new DataHolder(45.71, 3.06));
 			bifid0.put(IC_MAX_1to15_x1000, new DataHolder(47.56, 3.54));
 			bifid0.put(IC_KAPPA_x1000, new DataHolder(64.95, 8.69));
@@ -634,10 +678,38 @@ public class CipherStatistics extends StatisticsRef {
 			bifid0.put(NORMAL_ORDER, new DataHolder(195.67, 27.71));
 			bifid0.put(BIFID_0, new DataHolder(375.02, 86.87));
 			bifid0.put(BIFID_MAX_3to15, new DataHolder(158.13, 24.58));
-			bifid0.put(NICODEMUS_MAX_3to15, new DataHolder(47.31, 3.72));
-			bifid0.put(TRIFID_MAX_3to15, new DataHolder(507.17, 266.05));
 			bifid0.put(LOG_DIGRAPH, new DataHolder(485.04, 29.57));
 
+			HashMap<String, DataHolder> cmBifid = createOrGetList("Bifid", "P:3-15", "Conjugated");
+			cmBifid.put(IC_x1000, new DataHolder(45.68, 3.12)); //Min: 37.84 Max: 66.84
+			cmBifid.put(IC_MAX_1to15_x1000, new DataHolder(51.98, 4.35)); //Min: 41.29 Max: 79.17
+			cmBifid.put(IC_2_TRUE_x10000, new DataHolder(24.26, 4.82)); //Min: 10.22 Max: 51.57
+			cmBifid.put(IC_2_FALSE_x10000, new DataHolder(27.95, 15.04)); //Min: 3.16 Max: 92.01
+			cmBifid.put(IC_3_FALSE_x100000, new DataHolder(29.74, 45.10)); //Min: 0.00 Max: 380.39
+			cmBifid.put(IC_KAPPA_x1000, new DataHolder(60.42, 8.26)); //Min: 44.21 Max: 130.43
+			cmBifid.put(LOG_DIGRAPH, new DataHolder(485.04, 29.57)); //Min: 324.00 Max: 564.00
+			cmBifid.put(LOG_DIGRAPH_REVERSED, new DataHolder(154.16, 214.02)); //Min: 0.00 Max: 533.00
+			cmBifid.put(LONG_REPEAT, new DataHolder(8.50, 1.98)); //Min: 0.00 Max: 17.18
+			cmBifid.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(46.95, 7.56)); //Min: 9.00 Max: 72.00
+			cmBifid.put(NORMAL_ORDER, new DataHolder(231.95, 27.02)); //Min: 125.00 Max: 321.00
+			cmBifid.put(BIFID_0, new DataHolder(131.74, 21.57)); //Min: 19.29 Max: 250.77
+			cmBifid.put(BIFID_MAX_3to15, new DataHolder(347.12, 120.85)); //Min: 135.03 Max: 574.12
+			
+			HashMap<String, DataHolder> cmBifid0 = createOrGetList("Bifid", "P:0", "Conjugated");
+			cmBifid0.put(IC_x1000, new DataHolder(45.82, 3.09)); //Min: 37.50 Max: 62.16
+			cmBifid0.put(IC_MAX_1to15_x1000, new DataHolder(47.53, 3.56)); //Min: 40.33 Max: 75.09
+			cmBifid0.put(IC_2_TRUE_x10000, new DataHolder(24.27, 3.33)); //Min: 10.21 Max: 44.77
+			cmBifid0.put(IC_2_FALSE_x10000, new DataHolder(24.72, 4.06)); //Min: 3.16 Max: 53.80
+			cmBifid0.put(IC_3_FALSE_x100000, new DataHolder(19.23, 12.92)); //Min: 0.00 Max: 163.93
+			cmBifid0.put(IC_KAPPA_x1000, new DataHolder(64.87, 8.67)); //Min: 46.15 Max: 125.65
+			cmBifid0.put(LOG_DIGRAPH, new DataHolder(485.04, 29.57)); //Min: 350.00 Max: 548.00
+			cmBifid0.put(LOG_DIGRAPH_REVERSED, new DataHolder(154.54, 214.59)); //Min: 0.00 Max: 541.00
+			cmBifid0.put(LONG_REPEAT, new DataHolder(8.67, 1.31)); //Min: 0.00 Max: 13.89
+			cmBifid0.put(LONG_REPEAT_ODD_PERCENTAGE, new DataHolder(49.16, 2.78)); //Min: 12.00 Max: 70.00
+			cmBifid0.put(NORMAL_ORDER, new DataHolder(232.04, 27.02)); //Min: 121.00 Max: 323.00
+			cmBifid0.put(BIFID_0, new DataHolder(374.11, 86.62)); //Min: 96.45 Max: 617.28
+			cmBifid0.put(BIFID_MAX_3to15, new DataHolder(157.91, 24.59)); //Min: 111.19 Max: 335.59
+			
 			HashMap<String, DataHolder> enigma = createOrGetList("Enigma", "NOPLUGBOARD");
 			enigma.put(IC_x1000, new DataHolder(38.50, 0.43));
 			enigma.put(IC_MAX_1to15_x1000, new DataHolder(40.07, 1.69));

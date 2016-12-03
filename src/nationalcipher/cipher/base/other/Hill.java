@@ -59,6 +59,25 @@ public class Hill implements IRandEncrypter {
 	    
 	    return plainText;
 	}
+	
+	public static byte[] decodeUsingInverse(char[] cipherText, byte[] plainText, Matrix inverseMatrix)  { 
+		int size = inverseMatrix.squareSize();
+	    for(int i = 0; i < cipherText.length; i += size) {
+	    	
+	    	int[] let = new int[size];
+	    	for(int j = 0; j < size; j++)
+	    		let[j] = ((int)cipherText[i + j] - 'A');
+	    	
+	    	Matrix cipherMatrix = new Matrix(let, size, 1);
+	    	Matrix plainMatrix = inverseMatrix.multiply(cipherMatrix).modular(26);
+	    	
+	    	for(int j = 0; j < size; j++)
+	    		plainText[i + j] = (byte)(plainMatrix.data[j] + 'A');
+	    		
+	    }
+	    
+	    return plainText;
+	}
 
 	@Override
 	public String randomlyEncrypt(String plainText) {

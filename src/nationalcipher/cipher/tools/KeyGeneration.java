@@ -10,7 +10,7 @@ import javalibrary.util.RandomUtil;
 
 public class KeyGeneration {
 
-	private final static char[] allPolluxChars = "X.-".toCharArray();
+	public final static char[] ALL_POLLUX_CHARS = "X.-".toCharArray();
 	
 	public final static char[] ALL_36_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 	public final static char[] ALL_27_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
@@ -96,7 +96,7 @@ public class KeyGeneration {
 	//Specific key generators
 	
 	public static char[] createPolluxKey() {
-		List<Character> characters = ListUtil.toList(allPolluxChars);
+		List<Character> characters = ListUtil.toList(ALL_POLLUX_CHARS);
 		
 		char[] key = new char[10];
 		int i = 0;
@@ -108,7 +108,7 @@ public class KeyGeneration {
 		}
 		
 		for(; i < key.length; i++)
-			key[i] = RandomUtil.pickRandomChar(allPolluxChars);
+			key[i] = RandomUtil.pickRandomChar(ALL_POLLUX_CHARS);
 		
 		ArrayUtil.shuffle(key);
 		

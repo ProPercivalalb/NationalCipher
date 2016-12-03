@@ -49,6 +49,7 @@ public class ProgressiveKey implements IRandEncrypter {
 	
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createShortKey26(6), 6, RandomUtil.pickRandomInt(1, 25), RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
+		int period = RandomUtil.pickRandomInt(2, 15);
+		return encode(plainText, KeyGeneration.createShortKey26(period), period, RandomUtil.pickRandomInt(1, 25), VigenereType.PORTA);//RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
 	}
 }

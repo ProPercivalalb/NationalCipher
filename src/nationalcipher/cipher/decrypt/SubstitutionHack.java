@@ -4,7 +4,7 @@ import nationalcipher.cipher.base.substitution.Keyword;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
 
 /**
@@ -27,7 +27,7 @@ public class SubstitutionHack extends SimulatedAnnealing {
 
 	@Override
 	public Solution modifyKey(double temp, int count, double lastDF) {
-		this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
+		this.lastKey = KeyManipulation.swapTwoCharacters(this.bestMaximaKey);
 		return new Solution(Keyword.decodeWithAlphabet(this.cipherText, this.plainText, this.getAlphabet(), this.lastKey), this.getLanguage());
 	}
 

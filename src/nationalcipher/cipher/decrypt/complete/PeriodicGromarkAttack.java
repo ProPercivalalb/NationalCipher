@@ -11,22 +11,14 @@ import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.other.PeriodicGromark;
-import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Keyword;
-import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.LongKeyAttack;
-import nationalcipher.cipher.decrypt.complete.PeriodicGromarkAttack.PeriodicGromarkTask;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -104,6 +96,11 @@ public class PeriodicGromarkAttack extends CipherAttack {
 			
 				return new Solution(PeriodicGromark.decode(this.cipherText, this.plainText, key), this.getLanguage()).setKeyString(key).bakeSolution();
 			return new Solution();
+		}
+		
+		@Override
+		public boolean hasDuplicateLetters() {
+			return false;
 		}
 		
 		@Override

@@ -12,8 +12,8 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
-import nationalcipher.cipher.tools.KeySquareManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -35,7 +35,7 @@ public class TrifidAttack extends CipherAttack {
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		panel.add(new SubOptionPanel("Period:", this.spinner));
-		panel.add(new SubOptionPanel("27th Character:", this.extraCharacter));
+		panel.add(new SubOptionPanel("27th Character: (NYI)", this.extraCharacter));
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class TrifidAttack extends CipherAttack {
 		
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey = KeySquareManipulation.generateRandTrifidKey(this.extraChar);
+			this.bestMaximaKey = KeyGeneration.createLongKey27();
 			return new Solution(Trifid.decode(this.cipherText, this.plainText, this.numberText, this.bestMaximaKey, this.period), this.getLanguage());
 		}
 

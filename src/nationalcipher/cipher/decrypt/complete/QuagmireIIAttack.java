@@ -14,7 +14,7 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -67,7 +67,7 @@ public class QuagmireIIAttack extends CipherAttack {
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeySquareManipulation.modifyKey(this.bestMaximaKey);
+			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 3, 8);
 			return new Solution(decode(this.lastKey), this.getLanguage());
 		}
 

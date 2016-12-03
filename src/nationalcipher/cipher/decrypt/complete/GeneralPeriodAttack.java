@@ -1,38 +1,23 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
-import javalibrary.fitness.ChiSquared;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Keyword;
-import nationalcipher.cipher.decrypt.AutokeyAttack;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.LongKeyAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
-import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
-import nationalcipher.cipher.decrypt.methods.KeySearch;
-import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
-import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
-import nationalcipher.ui.UINew;
 
 public class GeneralPeriodAttack extends CipherAttack {
 

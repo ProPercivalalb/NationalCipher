@@ -4,7 +4,7 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -50,9 +50,9 @@ public abstract class DoubleKeySquareAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
-				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
+				this.lastKey1 = KeyManipulation.modifyKey(this.bestMaximaKey1, 5, 5);
 			else
-				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
+				this.lastKey2 = KeyManipulation.modifyKey(this.bestMaximaKey2, 5, 5);
 			
 			return new Solution(DoubleKeySquareAttack.this.decode(this.cipherText, this.plainText, this.lastKey1, this.lastKey2), this.getLanguage());
 		}

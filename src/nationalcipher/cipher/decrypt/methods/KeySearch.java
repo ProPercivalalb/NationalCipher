@@ -21,7 +21,7 @@ public abstract class KeySearch extends InternalDecryption {
 			while(true) {
 				boolean change = false;
 				for(int i = 0; i < length; i++) {
-					for(char j = 'A'; j <= 'Z'; j += alphaIncrease()) {
+					for(char j = 'A'; j <= 'Z'; j += this.alphaIncrease()) {
 						byte previous = parent[i];
 						parent[i] = (byte)j;
 						
@@ -53,7 +53,7 @@ public abstract class KeySearch extends InternalDecryption {
 	}
 
 	//TODO
-	public boolean duplicateLetters() {
+	public boolean hasDuplicateLetters() {
 		return true;
 	}
 	

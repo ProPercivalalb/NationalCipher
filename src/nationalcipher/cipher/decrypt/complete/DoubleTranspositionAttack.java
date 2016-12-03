@@ -18,7 +18,7 @@ import nationalcipher.cipher.decrypt.methods.KeyIterator.DoubleIntegerOrderedKey
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -116,13 +116,13 @@ public class DoubleTranspositionAttack extends CipherAttack {
 			if(count % 2 == 0) {
 				int[] copy = ArrayUtil.copyOfRange(this.bestMaximaKey1, 0, this.period1);
 				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
-					KeySquareManipulation.exchangeOrder(copy);
+					KeyManipulation.swapOrder(copy);
 				this.lastKey1 = copy;
 			}
 			else {
 				int[] copy = ArrayUtil.copyOfRange(this.bestMaximaKey2, 0, this.period2);
 				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
-					KeySquareManipulation.exchangeOrder(copy);
+					KeyManipulation.swapOrder(copy);
 				this.lastKey2 = copy;
 			}
 			return new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, this.lastKey2, true)), new byte[this.cipherText.length], this.lastKey1, true), this.getLanguage());

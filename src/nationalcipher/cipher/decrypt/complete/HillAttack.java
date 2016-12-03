@@ -27,14 +27,17 @@ import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.Hill;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.SquareMatrixKey;
+import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
+import nationalcipher.ui.UINew;
 
 public class HillAttack extends CipherAttack {
 
@@ -47,7 +50,7 @@ public class HillAttack extends CipherAttack {
 	
 	public HillAttack() {
 		super("Hill");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION, DecryptionMethod.SIMULATED_ANNEALING);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 3, 2, 5, 1);
 		this.gramSearchRange = JSpinnerUtil.createSpinner(20, 3, 100, 1);
 		this.trigramSets = new JComboBox<String>(this.TRI_GRAM_DISPLAY);
@@ -140,6 +143,11 @@ public class HillAttack extends CipherAttack {
 					KeyIterator.permutateArray(task, (byte)1, size, task.resultList.size(), false);
 			}
 		}
+		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
+			task.size = sizeRange[0];
+			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
+			task.run();
+		}
 		
 		app.out().println(task.getBestSolution());
 	}
@@ -181,11 +189,12 @@ public class HillAttack extends CipherAttack {
 		return equation;
 	}
 	
-	public class HillTask extends InternalDecryption implements SquareMatrixKey, ArrayPermutations {
+	public class HillTask extends SimulatedAnnealing implements SquareMatrixKey, ArrayPermutations {
 
 		private int size;
 		private int lengthSub;
 		private DynamicResultList<HillSection> resultList;
+		public Matrix bestKey, bestMaximaKey, lastKey;
 		
 		public HillTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
@@ -217,6 +226,48 @@ public class HillAttack extends CipherAttack {
 			}
 		}
 		
+		@Override
+		public Solution generateKey() {
+
+					this.bestMaximaKey = KeyGeneration.createMatrix(this.size, 26);
+					return new Solution(Hill.decodeUsingInverse(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
+			
+		}
+
+		@Override
+		public Solution modifyKey(double temp, int count, double lastDF) {
+		
+					this.lastKey = KeyManipulation.modifyMatrix(this.bestMaximaKey, count % this.size, this.size);
+					return new Solution(Hill.decodeUsingInverse(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
+			
+		}
+
+		@Override
+		public void storeKey() {
+			this.bestMaximaKey = this.lastKey;
+		}
+
+		@Override
+		public void solutionFound() {
+			this.bestKey = this.bestMaximaKey;
+			this.bestSolution.setKeyString(this.bestKey.toString());
+			this.bestSolution.bakeSolution();
+			this.getKeyPanel().updateSolution(this.bestSolution);
+		}
+		
+		@Override
+		public void onIteration() {
+			this.getProgress().increase();
+			this.getKeyPanel().updateIteration(this.iteration++);
+		}
+
+		@Override
+		public boolean endIteration() {
+			this.out().println("%s", this.bestSolution);
+			UINew.BEST_SOULTION = this.bestSolution.getText();
+			this.getProgress().setValue(0);
+			return false;
+		}
 		
 		@Override
 		public void onList(byte id, int[] data, Object... extra) {

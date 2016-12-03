@@ -11,7 +11,8 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -59,8 +60,8 @@ public class ConjugatedBifidAttack extends CipherAttack {
 		
 		@Override
 		public Solution generateKey() {
-			this.bestMaximaKey1 = KeySquareManipulation.generateRandKeySquare();
-			this.bestMaximaKey2 = KeySquareManipulation.generateRandKeySquare();
+			this.bestMaximaKey1 = KeyGeneration.createLongKey25();
+			this.bestMaximaKey2 = KeyGeneration.createLongKey25();
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
 			return new Solution(ConjugatedBifid.decode(this.cipherText, this.bestMaximaKey1, this.bestMaximaKey2, this.period), this.getLanguage());
@@ -69,9 +70,9 @@ public class ConjugatedBifidAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
-				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
+				this.lastKey1 = KeyManipulation.modifyKey(this.bestMaximaKey1, 5, 5);
 			else
-				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
+				this.lastKey2 = KeyManipulation.modifyKey(this.bestMaximaKey2, 5, 5);
 			
 			return new Solution(ConjugatedBifid.decode(this.cipherText, this.lastKey1, this.lastKey2, this.period), this.getLanguage());
 		}

@@ -7,7 +7,7 @@ import nationalcipher.cipher.decrypt.methods.KeyIterator.Long26Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -69,7 +69,7 @@ public abstract class LongKeyAttack extends CipherAttack {
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeySquareManipulation.exchange2letters(this.bestMaximaKey);
+			this.lastKey = KeyManipulation.swapTwoCharacters(this.bestMaximaKey);
 			return new Solution(LongKeyAttack.this.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
 		}
 

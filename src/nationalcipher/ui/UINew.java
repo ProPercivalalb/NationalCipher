@@ -1,6 +1,5 @@
 package nationalcipher.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -106,7 +105,6 @@ import javalibrary.swing.MenuScroller;
 import javalibrary.swing.ProgressValue;
 import javalibrary.swing.SwingHelper;
 import javalibrary.swing.chart.ChartData;
-import javalibrary.swing.chart.ChartList;
 import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.ThreadCancelable;
 import javalibrary.thread.Threads;
@@ -117,7 +115,6 @@ import nationalcipher.LoadElement;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.RandomEncrypter;
-import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.AttackRegistry;
 import nationalcipher.cipher.decrypt.CipherAttack;
@@ -2070,6 +2067,8 @@ public class UINew extends JFrame implements IApplication {
 					
 					for(int progressivePeriod = 1; progressivePeriod <= 25; progressivePeriod++) {
 						for(int progressiveIndex = 1; progressiveIndex <= 25; progressiveIndex++) {
+							//TODO
+							/**
 							char[] decoded = ProgressiveKey.decodeBase(arrayText, progressivePeriod, progressiveIndex);
 							
 							
@@ -2086,7 +2085,7 @@ public class UINew extends JFrame implements IApplication {
 		    		    	}
 		  
 		    		    	bestIoC = Math.min(bestIoC, sqDiff);
-		    		    	list.add(new ProgressiveKeySearch(progressivePeriod, progressiveIndex, sqDiff));
+		    		    	list.add(new ProgressiveKeySearch(progressivePeriod, progressiveIndex, sqDiff));**/
 						}
 					}
 					

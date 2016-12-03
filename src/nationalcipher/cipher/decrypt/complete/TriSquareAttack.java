@@ -9,7 +9,7 @@ import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeySquareManipulation;
+import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -80,11 +80,11 @@ public class TriSquareAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
-				this.lastKey1 = KeySquareManipulation.modifyKey(this.bestMaximaKey1);
+				this.lastKey1 = KeyManipulation.modifyKey(this.bestMaximaKey1, 5, 5);
 			if(count % 2 == 1)
-				this.lastKey2 = KeySquareManipulation.modifyKey(this.bestMaximaKey2);
+				this.lastKey2 = KeyManipulation.modifyKey(this.bestMaximaKey2, 5, 5);
 			else
-				this.lastKey3 = KeySquareManipulation.modifyKey(this.bestMaximaKey3);
+				this.lastKey3 = KeyManipulation.modifyKey(this.bestMaximaKey3, 5, 5);
 			
 			return new Solution(TriSquare.decode(this.cipherText, this.plainText, this.lastKey1, this.lastKey2, this.lastKey3), this.getLanguage());
 		}

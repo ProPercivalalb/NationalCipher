@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.swing.JDialog;
@@ -8,16 +7,12 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
 import javalibrary.dict.Dictionary;
-import javalibrary.fitness.ChiSquared;
 import javalibrary.list.ResultPositive;
 import javalibrary.math.MathUtil;
-import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
-import javalibrary.util.ArrayUtil;
 import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Nicodemus;
-import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;

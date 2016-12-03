@@ -1,17 +1,13 @@
 package nationalcipher.wip;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import javalibrary.language.Languages;
-import javalibrary.lib.Timer;
-import javalibrary.list.DynamicResultList;
-import nationalcipher.cipher.base.VigenereType;
-import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
-import nationalcipher.cipher.identify.StatsTest;
+import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.other.ConjugatedBifid;
+import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;
+import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticEvenDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticICx1000;
@@ -19,6 +15,7 @@ import nationalcipher.cipher.stats.types.StatisticKappaICx1000;
 import nationalcipher.cipher.stats.types.StatisticLogDigraph;
 import nationalcipher.cipher.stats.types.StatisticLogDigraphReversed;
 import nationalcipher.cipher.stats.types.StatisticLongRepeat;
+import nationalcipher.cipher.stats.types.StatisticMaxBifid3to15;
 import nationalcipher.cipher.stats.types.StatisticMaxICx1000;
 import nationalcipher.cipher.stats.types.StatisticNormalOrder;
 import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
@@ -28,47 +25,18 @@ public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
 	public static void main(String[] args) {
-		Languages.english.loadNGramData();
-		
-		String text = "BFUKEGMDXSCVHTJPOVMVYNYFYLRLNVHUQCSEIXWUKLVVCRRRLFRQVVNUUCGNLNCFSANINISAXONQCVLFLCSIYBWLKGLJNQDBGBTCWRWPVDYENBKJOOOUBFOVMBOPKVXUQCCFIGOGMRLXQMLECOPQEFNINNKVHURLQFCTLPERFBWBMBQBABVLUOMFOOYBCQKAHBRDWLQPAISFHPCEYBXFWMETBINGCFWBACNGBBCGPUYCNYDFGFQCWVAICBKZUHNKIUUOMQKAXUXMCPUSNBDBVFJRRRLIDQLNHEMYXVYMJZONLPOYWNHXQMDBQFAQYIYSQGWVNEXCCANNJRDRLUQCBRUMYMGRLMRCCJCUQRRRVVUJIUYDXSVQBBECEFUMUQRBNBWBGRUMUIXBQJCBKACFUQMNLFBKOGIPKSDBHMHZOPUVBCRRLFVGXQMNNMPUYMVSDNHECFKGLFVGXQMNNMPGBFLYWCBFWCFRLTYCKXMONTOEFPXICZYJWRRRYZNYXQHFECBJUOCQKASUQGXTZSXKWRCUQGXXBFQYDRMNNDYEVSRLQVHHCFOFMUXFSFBPDQOOOUOMBNHOJQCNEFQCLECOPQWRQIJRSAYFMURNNJVMCGHFNBSFUXJWYHNPOFOEYXQCXVUNPMXRUOWYCOYBCGXTMXRJVFNPYYXQGBHZOQUORCVJCMUQDBJIJRSAANNZEGCBVUKGWINBKYFEJWKAXUQCRBOTNGCYIDTCNNNORERGNIJRGVFMWMDFNPYKOSLPVRBLCOP";
-		Timer timer = new Timer();
-		timer.restart();
-		double newScore = StatsTest.calculateSubTypeLDI(text, VigenereType.VIGENERE, Languages.english);
-		timer.displayTime();
-		timer.restart();
-		double oldScore = PolyalphabeticIdentifier.calculateVigenereLDI(text);
-		timer.displayTime();
-		timer.restart();
-		oldScore = PolyalphabeticIdentifier.calculateVigenereLDI(text);
-		timer.displayTime();
-		timer.restart();
-		newScore = StatsTest.calculateSubTypeLDI(text, VigenereType.VIGENERE, Languages.english);
-		timer.displayTime();
-		timer.restart();
-		
-		System.out.println(String.format("Old: %f, New: %f", oldScore, newScore));
-		
-		//Matrix matrix = new Matrix(new int[] {7, 21, 16, 5}, 2, 2);
-		//System.out.println(matrix.inverseMod(26));
-		//System.out.println("" + new String(Enigma.decode("NPNKANVHWKPXORCDDTRJRXSJFLCIUAIIBUNQIUQFTHLOZOIMENDNGPCB".toCharArray(), new byte[56], stringToOrder("DWG"), stringToOrder("AAP"), new int[] {1, 4, 3})));
-		//System.out.println(new String(ProgressiveKey.decode("BCNPSNXNBECEMAISHPZAKGQYLLZTJNAONVSGQCDQ".toCharArray(), new byte[3179], "POLITICS", 8, 3, VigenereType.PORTA)));
-		//System.out.println(RailFence.decode("ERIPHINOTLAFHVTDIATLNOWSIPTIOSEEYEHMROTNSIDSHEECNATROLOINYHNMPBRTTTLEUEYNDNAHDFDSIIOIHNAOGDELONOIHEERSEEBEOTESOVAPCAHEMTASAIFEERSOILRETEOEYWMOEBTIEIDIESWSAMTORASOEHPSSSEIFRSTTTFODELMOWDTAFOOESUINAEOSETLYHAOAALRHNVIERLRHREITSHRTARTIFYUTHRSHSNOSEIIIHNORNPRNOLEGERMONETTOAPSHHSDLIABRHFLTSRTEAOAALWEAIAAAFNNENISIHRTSERADRVNTAALAOLINSSETLOTEUKNARISYGESASSIWEETDOGTUEEOELEUDTNWELHAFETOTULGTCNTOTSADFMCUUGAIRNPAINETCLTOYAENGDOEICRDRMALLNWUOHBESITBEETNEENOMSTELSOAFHETITDCPROABRGRPOEUCLTOUDEHBEPARTSLWDTEOWHERFRMALETMLRSSBNMSRMEIYGOIIESYYDODUMETNUEMRTNTOFEAIETETHRCOITUATAACGHASEUTTOIVRESEAWRGIEAOAOCEAYFGNIRAERNANOCHVCSSMEHRSUILBSTEEPTOUNDTGILOMTEETAEGRDRTOIHERONIWTIETWEOOMTAEIAABEUDILNWAOLEAATENASARFORIVIANTERATGNIRMMOTAIHTVDIFUCVLHSSERWSEEAXEVASTTSWRUEETAAHCVLRCETCNTDIEFIRONWSEEETEAERIADACBATRHURPTOCUVRESDOCUAEODHCOBDNTENCNIAAHRIYLSETFETXNTTEIELCNAVBFRBFWDOEHRAKEATTLNAENOBEEITAYNROUDTRSYOSNOERATSNOSAYNMFRSODCCALCNONVAENESCFROGOOTNHCMETEAKEHOAYSPNLAYEEOTHONMNNREBNEFNTALCTOOREOTEDORUOLWDRYPEUGSOGNRWHNEOCRLYRTSOWOEHYEKNTWRNPRHHMLTEDLICSESGBTEEECSOENEAAOTIEAOSRMHTRWVNEWIFYUMMWHTELNCNLEILGGIDITRHGRENSGGINMCTIUNGIATOEEFMAENSEOTTRDPEOAEDXGEETCOERHTOTCHTTNSRHOONOERHOVREFIHEWRELDSFEAHREMEOEEVERTIDVPLLHOSLETFYGRANCUOTUHECEVKEONNKIBHRGFIOEDTTUACDEIIUTUPMSSNEORSOEEIBALYCHSBIHEPTIHONHAUWATOCBWEUEYOAINOOEHUOHT".toCharArray(), 4, 5));
+
 		registerStatistics();
-		//for(IRandEncrypter en : new IRandEncrypter[] {new Caesar(), new Keyword(), new Affine()})
-		//	for(Class<? extends TextStatistic> clz : map.values())
-		//		StatisticHandler.calculateStatPrint(en, clz, 100);
+		for(IRandEncrypter en : new IRandEncrypter[] {new ConjugatedBifid()})
+			for(Class<? extends TextStatistic> clz : map.values())
+				StatisticHandler.calculateStatPrint(en, clz, 100);
 		
 		//TODO
 		//for(IRandEncrypter en : new IRandEncrypter[] {new Caesar(), new Keyword(), new Affine()})
 		//	for(Class<? extends TextStatistic> clz : new Class[] {StatisticLogDigraphAffine.class}) 
 		//		StatisticHandler.calculateStatPrint(en, clz, 50);
 	}
-	public static int[] stringToOrder(String rotors) {
-		int[] order = new int[3];
-		for(int i = 0; i < order.length; i++)
-			order[i] = rotors.charAt(i) - 'A';
-		return order;
-	}
+
 	private static void registerStatistics() {
 
 		
@@ -86,8 +54,8 @@ public class StatCompiler {
 		registerStatistic(StatisticsRef.NORMAL_ORDER, StatisticNormalOrder.class);
 		
 		
-		//registerStatistic(StatisticsRef.BIFID_MAX_0, StatisticMaxBifid0.class);
-		//registerStatistic(StatisticsRef.BIFID_MAX_3to15, StatisticMaxBifid3to15.class);
+		registerStatistic(StatisticsRef.BIFID_0, StatisticBifid0.class);
+		registerStatistic(StatisticsRef.BIFID_MAX_3to15, StatisticMaxBifid3to15.class);
 		//registerStatistic(StatisticsRef.NICODEMUS_MAX_3to15, StatisticMaxNicodemus3to15.class);
 		//registerStatistic(StatisticsRef.TRIFID_MAX_3to15, StatisticMaxTrifid3to15.class);
 		

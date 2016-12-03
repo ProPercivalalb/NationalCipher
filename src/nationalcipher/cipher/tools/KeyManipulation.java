@@ -1,7 +1,6 @@
 package nationalcipher.cipher.tools;
 
-import java.util.SplittableRandom;
-
+import javalibrary.math.matrics.Matrix;
 import javalibrary.util.RandomUtil;
 
 public class KeyManipulation {
@@ -161,5 +160,18 @@ public class KeyManipulation {
 	        case 2: return rotateOrder(order);
 	        default: return swapOrder(order);
 	    }
+	}
+
+	public static Matrix modifyMatrix(Matrix matrix, int row, int size) {
+		int col = RandomUtil.pickRandomInt(size);
+		int value = RandomUtil.pickRandomInt(26);
+		Matrix copy = matrix.copy();
+		copy.data[row * size + col] = value;
+		return copy;
+	}
+	
+	public static char[] swapMorseIndex(char[] order) {
+	    order[RandomUtil.pickRandomInt(order.length)] = RandomUtil.pickRandomChar(KeyGeneration.ALL_POLLUX_CHARS);
+	    return order;
 	}
 }
