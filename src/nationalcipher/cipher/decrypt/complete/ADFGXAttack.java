@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import javalibrary.lib.BooleanLib;
 import javalibrary.list.DynamicResultList;
 import javalibrary.list.ResultPositive;
 import javalibrary.swing.JSpinnerUtil;
@@ -39,7 +40,7 @@ public class ADFGXAttack extends CipherAttack {
 		this.alphaCount = this.alphaChar.length;
 		this.alphabet = alphabet;
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 12, 1);
-		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.directionOption = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 	}
 	
 	@Override

@@ -1,6 +1,9 @@
 package nationalcipher.cipher.base.transposition;
 
+import java.util.Map;
+
 import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -45,14 +48,21 @@ public class Phillips implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare, boolean orderRows, boolean orderColumns) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String key, boolean orderRows, boolean orderColumns) {
+		return decode(cipherText, plainText, key.toCharArray(), orderRows, orderColumns);
+	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[] key, boolean orderRows, boolean orderColumns) {
+		
+		Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);
+		
 		for(int i = 0; i < cipherText.length; i++) {
 			int squareIndex = ((int)(i / 5) % rows.length);
 			
 			int[] order = rows[squareIndex];
 			int[] orderIndex = rowsIndex[squareIndex];
 			
-			int index = keysquare.indexOf(cipherText[i]);
+			int index = keyIndex.get(cipherText[i]);
 			
 			int row = index / 5;
 			int column = index % 5;
@@ -70,7 +80,7 @@ public class Phillips implements IRandEncrypter {
 			else
 				newColumn = (column + 4) % 5;
 	
-			plainText[i] = (byte)keysquare.charAt(newRow * 5 + newColumn);
+			plainText[i] = (byte)key[newRow * 5 + newColumn];
 		}
 		
 		return plainText;

@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.base.VigenereType;
@@ -24,7 +25,7 @@ public class PortaAKAttack extends AutokeyAttack {
 	
 	public PortaAKAttack() {
 		super("Porta Autokey");
-		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.directionOption = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 	}
 
 	@Override

@@ -37,13 +37,13 @@ public abstract class RouteCipherType {
 	
 	public final int[] getPattern(int width, int height, int totalSize) {
 		if(!this.canCache())
-			return createPattern(width, height, totalSize);
+			return this.createPattern(width, height, totalSize);
 		
 		List<Integer> key = Arrays.asList(width, height);
 		if(this.cache.containsKey(key))
 			return this.cache.get(key);
 		
-		int[] grid = createPattern(width, height, totalSize);
+		int[] grid = this.createPattern(width, height, totalSize);
 		this.cache.put(key, grid);
 		
 		return grid;

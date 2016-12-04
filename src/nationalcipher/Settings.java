@@ -25,6 +25,9 @@ public class Settings {
 	public ButtonGroup languageGroup;
 	private int keywordCreation;
 	public ButtonGroup keywordCreationGroup;
+	public boolean checkShift;
+	public boolean checkReverse;
+	public boolean checkRoutes;
 	private List<Double> simulatedAnnealing;
 	public boolean updateProgressBars;
 	public boolean collectSolutions;
@@ -37,7 +40,11 @@ public class Settings {
 		this.language = Languages.english;
 		this.keywordCreation = 0;
 		this.simulatedAnnealing = Arrays.asList(20.0D, 0.1D, 500.0D);
-		this.updateProgressBars = true;
+		this.checkShift = true;
+		this.checkReverse = true;
+		this.checkRoutes = true;
+		this.updateProgressBars = false;
+		this.collectSolutions = false;
 		
 		this.loadElements = new ArrayList<LoadElement>();
 		this.gson = new Gson();
@@ -97,6 +104,18 @@ public class Settings {
 		return this.simulatedAnnealing;
 	}
 	
+	public boolean checkShift() {
+		return this.checkShift;
+	}
+	
+	public boolean checkReverse() {
+		return this.checkReverse;
+	}
+	
+	public boolean checkRoutes() {
+		return this.checkRoutes;
+	}
+	
 	public boolean updateProgress() {
 		return this.updateProgressBars;
 	}
@@ -125,6 +144,9 @@ public class Settings {
 			map.put("language", this.language.getName());
 			map.put("keyword_creation", this.keywordCreation);
 			map.put("simulated_annealing", this.simulatedAnnealing);
+			map.put("check_shift", this.checkShift);
+			map.put("check_reverse", this.checkReverse);
+			map.put("check_routes", this.checkRoutes);
 			map.put("update_progress_bars", this.updateProgressBars);
 			map.put("collect_solutions", this.collectSolutions);
 			
@@ -169,13 +191,11 @@ public class Settings {
 				this.simulatedAnnealing = simulatedAnnealing;
 			}
 			
-			if(map.containsKey("update_progress_bars")) {
-				this.updateProgressBars = (boolean)map.get("update_progress_bars");
-			}
-			
-			if(map.containsKey("collect_solutions")) {
-				this.collectSolutions = (boolean)map.get("collect_solutions");
-			}
+			this.checkShift = SettingsUtil.getSetting("check_shift", map, Boolean.TYPE, true);
+			this.checkReverse = SettingsUtil.getSetting("check_reverse", map, Boolean.TYPE, true);
+			this.checkRoutes = SettingsUtil.getSetting("check_routes", map, Boolean.TYPE, true);
+			this.updateProgressBars = SettingsUtil.getSetting("update_progress_bars", map, Boolean.TYPE, false);
+			this.collectSolutions = SettingsUtil.getSetting("collect_solutions", map, Boolean.TYPE, false);
 			
 			for(LoadElement loadElement : this.loadElements)
 				loadElement.read(map);

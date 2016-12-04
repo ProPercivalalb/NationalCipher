@@ -1,12 +1,8 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import javalibrary.dict.Dictionary;
-import nationalcipher.cipher.base.other.Playfair;
 import nationalcipher.cipher.base.other.Playfair6x6;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;

@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
 import javalibrary.dict.Dictionary;
+import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
@@ -35,7 +36,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		super("Columnar Transposition");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.DICTIONARY, DecryptionMethod.SIMULATED_ANNEALING);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
-		this.readOffDefaultChose = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.readOffDefaultChose = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 		this.saSpinner = JSpinnerUtil.createSpinner(14, 2, 100, 1);
 	}
 	
@@ -64,7 +65,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
-			for(String word : Dictionary.words) {
+			for(String word : Dictionary.WORDS) {
 				int[] order = new int[word.length()];
 				
 				int p = 0;

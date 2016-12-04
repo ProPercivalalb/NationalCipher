@@ -5,11 +5,13 @@ import nationalcipher.cipher.base.other.Playfair;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
+import nationalcipher.cipher.decrypt.methods.DictionaryAttack.DictionaryKey;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
+import nationalcipher.cipher.transposition.RouteCipherType;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -26,8 +28,8 @@ public class PlayfairAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
-			for(String word : Dictionary.words)
-				task.onIteration(DictionaryAttack.createLong26Key(word, app.getSettings().getKeywordFiller(), 'J'));
+
+			DictionaryAttack.tryKeysWithOptions(task, Dictionary.WORDS_CHAR, KeyGeneration.ALL_25_CHARS, 5, 5, app.getSettings().checkShift(), app.getSettings().checkReverse(), app.getSettings().checkRoutes());
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
@@ -37,12 +39,28 @@ public class PlayfairAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PlayfairTask extends SimulatedAnnealing implements Long25Key {
+	public class PlayfairTask extends SimulatedAnnealing implements Long25Key, DictionaryKey {
 
 		public String bestKey, bestMaximaKey, lastKey;
 		
 		public PlayfairTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
+		}
+		
+		@Override
+		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
+			this.lastSolution = new Solution(Playfair.decode(this.cipherText, this.plainText, complete), this.getLanguage());
+			
+			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.bestSolution = this.lastSolution;
+				this.bestSolution.setKeyString(DictionaryAttack.expressParameters(complete, word, shift, reversed, route));
+				this.bestSolution.bakeSolution();
+				this.out().println("%s", this.bestSolution);	
+				this.getKeyPanel().updateSolution(this.bestSolution);
+			}
+			
+			this.getKeyPanel().updateIteration(this.iteration++);
+			this.getProgress().increase();
 		}
 
 		@Override

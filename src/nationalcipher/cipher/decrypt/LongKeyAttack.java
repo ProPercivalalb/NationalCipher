@@ -3,11 +3,12 @@ package nationalcipher.cipher.decrypt;
 import javalibrary.dict.Dictionary;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.Long26Key;
+import nationalcipher.cipher.decrypt.methods.DictionaryAttack.DictionaryKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
+import nationalcipher.cipher.transposition.RouteCipherType;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -26,8 +27,8 @@ public abstract class LongKeyAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
-			for(String word : Dictionary.words)
-				this.task.onIteration(DictionaryAttack.createLong26Key(word, app.getSettings().getKeywordFiller()));
+
+			DictionaryAttack.tryKeysWithOptions(task, Dictionary.WORDS_CHAR, KeyGeneration.ALL_25_CHARS, app.getSettings().checkShift(), app.getSettings().checkReverse());
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
@@ -37,7 +38,7 @@ public abstract class LongKeyAttack extends CipherAttack {
 		app.out().println(this.task.getBestSolution());
 	}
 	
-	public class LongKeyTask extends SimulatedAnnealing implements Long26Key {
+	public class LongKeyTask extends SimulatedAnnealing implements DictionaryKey {
 
 		public String bestKey, bestMaximaKey, lastKey;
 		
@@ -46,13 +47,15 @@ public abstract class LongKeyAttack extends CipherAttack {
 		}
 
 		@Override
-		public void onIteration(String key) {
+		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
+			String key = new String(complete);
 			this.lastSolution = new Solution(LongKeyAttack.this.decode(this.cipherText, this.plainText, key), this.getLanguage());
 			this.addSolution(this.lastSolution);
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString(key);
+				this.bestSolution.setKeyString(DictionaryAttack.expressParameters(complete, word, shift, reversed, route));
+				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}

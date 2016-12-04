@@ -357,6 +357,9 @@ public class UINew extends JFrame implements IApplication {
 		this.menuItemKeywordNormal = new JCheckBoxMenuItem();
 		this.menuItemKeywordHalf = new JCheckBoxMenuItem();
 		this.menuItemKeywordReverse = new JCheckBoxMenuItem();
+		this.menuItemCheckShift = new JCheckBoxMenuItem();
+		this.menuItemCheckReverse = new JCheckBoxMenuItem();
+		this.menuItemCheckRoutes = new JCheckBoxMenuItem();
 		this.menuItemSimulatedAnnealing = new JMenu();
         this.menuItemSAPreset = new JMenu();
         this.menuItemUpdateProgress = new JCheckBoxMenuItem();
@@ -766,6 +769,23 @@ public class UINew extends JFrame implements IApplication {
 		this.menuItemKeyword.add(this.menuItemKeywordNormal);
 		this.menuItemKeyword.add(this.menuItemKeywordHalf);
 		this.menuItemKeyword.add(this.menuItemKeywordReverse);
+		this.menuItemKeyword.addSeparator();
+		
+		this.menuItemCheckShift.setText("Check Shift?");
+		this.menuItemCheckReverse.setText("Check Reverse?");
+		this.menuItemCheckRoutes.setText("Check Routes?");
+		
+		this.menuItemCheckShift.setSelected(this.settings.checkShift());
+		this.menuItemCheckReverse.setSelected(this.settings.checkReverse());
+		this.menuItemCheckRoutes.setSelected(this.settings.checkRoutes());
+		
+		this.menuItemCheckShift.addActionListener(new CheckShiftAction(this.menuItemCheckShift));
+		this.menuItemCheckReverse.addActionListener(new CheckReverseAction(this.menuItemCheckReverse));
+		this.menuItemCheckRoutes.addActionListener(new CheckRoutesAction(this.menuItemCheckRoutes));
+
+		this.menuItemKeyword.add(this.menuItemCheckShift);
+		this.menuItemKeyword.add(this.menuItemCheckReverse);
+		this.menuItemKeyword.add(this.menuItemCheckRoutes);
 		
 		this.menuItemSettings.add(this.menuItemKeyword);
 		
@@ -3141,7 +3161,48 @@ public class UINew extends JFrame implements IApplication {
     		UINew.this.getSettings().setKeywordCreationId(this.id);
 		}
     }
+
+    private class CheckShiftAction implements ActionListener {
+    	
+    	public JCheckBoxMenuItem menuItem;
+    	
+    	public CheckShiftAction(JCheckBoxMenuItem menuItem) {
+    		this.menuItem = menuItem;
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		UINew.this.getSettings().checkShift = this.menuItem.isSelected();
+		}
+    }
     
+    private class CheckReverseAction implements ActionListener {
+    	
+    	public JCheckBoxMenuItem menuItem;
+    	
+    	public CheckReverseAction(JCheckBoxMenuItem menuItem) {
+    		this.menuItem = menuItem;
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		UINew.this.getSettings().checkReverse = this.menuItem.isSelected();
+		}
+    }
+    
+    private class CheckRoutesAction implements ActionListener {
+    	
+    	public JCheckBoxMenuItem menuItem;
+    	
+    	public CheckRoutesAction(JCheckBoxMenuItem menuItem) {
+    		this.menuItem = menuItem;
+    	}
+    	
+    	@Override
+		public void actionPerformed(ActionEvent event) {
+    		UINew.this.getSettings().checkRoutes = this.menuItem.isSelected();
+		}
+    }
     private class SimulatedAnnealingAction implements KeyListener {
     	
     	public JTextComponent textComponent;
@@ -3510,6 +3571,9 @@ public class UINew extends JFrame implements IApplication {
     private JMenuItem menuItemKeywordNormal;
     private JMenuItem menuItemKeywordHalf;
     private JMenuItem menuItemKeywordReverse;
+    private JCheckBoxMenuItem menuItemCheckShift;
+    private JCheckBoxMenuItem menuItemCheckReverse;
+    private JCheckBoxMenuItem menuItemCheckRoutes;
     private JMenu menuItemSimulatedAnnealing;
     private JMenu menuItemSAPreset;
     private JCheckBoxMenuItem menuItemUpdateProgress;

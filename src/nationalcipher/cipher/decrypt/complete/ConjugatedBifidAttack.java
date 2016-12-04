@@ -64,7 +64,7 @@ public class ConjugatedBifidAttack extends CipherAttack {
 			this.bestMaximaKey2 = KeyGeneration.createLongKey25();
 			this.lastKey1 = this.bestMaximaKey1;
 			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(ConjugatedBifid.decode(this.cipherText, this.bestMaximaKey1, this.bestMaximaKey2, this.period), this.getLanguage());
+			return new Solution(ConjugatedBifid.decode(this.cipherText, this.plainText, this.bestMaximaKey1, this.bestMaximaKey2, this.period), this.getLanguage());
 		}
 
 		@Override
@@ -74,7 +74,7 @@ public class ConjugatedBifidAttack extends CipherAttack {
 			else
 				this.lastKey2 = KeyManipulation.modifyKey(this.bestMaximaKey2, 5, 5);
 			
-			return new Solution(ConjugatedBifid.decode(this.cipherText, this.lastKey1, this.lastKey2, this.period), this.getLanguage());
+			return new Solution(ConjugatedBifid.decode(this.cipherText, this.plainText, this.lastKey1, this.lastKey2, this.period), this.getLanguage());
 		}
 
 		@Override
@@ -88,6 +88,7 @@ public class ConjugatedBifidAttack extends CipherAttack {
 			this.bestKey1 = this.bestMaximaKey1;
 			this.bestKey2 = this.bestMaximaKey2;
 			this.bestSolution.setKeyString(this.bestKey1 + " " + this.bestKey2);
+			this.bestSolution.bakeSolution();
 			this.getKeyPanel().updateSolution(this.bestSolution);
 		}
 		

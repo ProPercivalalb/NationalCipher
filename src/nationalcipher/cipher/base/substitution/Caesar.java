@@ -1,11 +1,8 @@
 package nationalcipher.cipher.base.substitution;
 
-import javalibrary.lib.Timer;
 import javalibrary.math.MathUtil;
-import javalibrary.math.Units.Time;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.other.ConjugatedBifid;
 
 public class Caesar implements IRandEncrypter {
 
@@ -26,35 +23,6 @@ public class Caesar implements IRandEncrypter {
 		}
 		
 		return cipherText;
-	}
-	
-	public static void main(String[] args) {
-		String s = "TESTINGTHEEFFECTIVENESSOFBYTEANDINTANDCHARARRAYS";
-		int len = s.length();
-		int no = 100000;
-	
-			char[] charArray = s.toCharArray();
-
-		double total = 0.0D;
-		Timer t = new Timer();
-		for(int j = 0; j < 100; j++) {
-			for(int i = 0; i < no; i++)
-			ConjugatedBifid.decode(charArray, "ABCDEFGHIKLMNOPQRSTUVWXYZ", "ABCDEFGHIKLMNOPQRSTUVWXYZ", 2);
-			total += t.getTimeRunning(Time.MILLISECOND);
-			//t.displayTime();
-			t.restart();
-		}
-		
-		System.out.println("Average: " + (total / 100.0D));
-		
-		
-
-		//for(int i = 0; i < no; i++)
-		//	decode(charArray, 6);
-		
-		
-		//t.displayTime();
-		//t.restart();
 	}
 	
 	public static byte[] decode(char[] cipherText, int shift) {

@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 
+import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.VigenereType;
@@ -35,7 +36,7 @@ public class PortaAttack extends CipherAttack {
 		super("Porta");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
-		this.directionOption = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.directionOption = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 	}
 	
 	@Override

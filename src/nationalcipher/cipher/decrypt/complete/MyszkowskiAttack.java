@@ -45,7 +45,7 @@ public class MyszkowskiAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
-			for(String word : Dictionary.words)
+			for(String word : Dictionary.WORDS)
 				task.onIteration(word);
 		}
 		else if(method == DecryptionMethod.BRUTE_FORCE) {

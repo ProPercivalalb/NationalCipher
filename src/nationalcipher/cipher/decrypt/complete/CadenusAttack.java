@@ -32,7 +32,7 @@ public class CadenusAttack extends CipherAttack {
 			app.getProgress().addMaxValue(Dictionary.wordCount()); //TODO Calculate real amount
 			for(int factor : factors) {
 				app.out().println("Factor: %d", factor);
-				for(String word : Dictionary.words) {
+				for(String word : Dictionary.WORDS) {
 					
 					if(word.length() == factor)
 						task.onIteration(word);

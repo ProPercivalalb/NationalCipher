@@ -1,6 +1,9 @@
 package nationalcipher.cipher.base.other;
 
+import java.util.Map;
+
 import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -37,16 +40,20 @@ public class ConjugatedBifid implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static byte[] decode(char[] cipherText, String keysquare1, String keysquare2, int period) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare1, String keysquare2, int period) {
+		return decode(cipherText, plainText, keysquare1.toCharArray(), keysquare2.toCharArray(), period);
+	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[] keysquare1, char[] keysquare2, int period) {
 		if(period == 0) period = cipherText.length;
 		
-		byte[] plainText = new byte[cipherText.length];
+		Map<Character, Integer> keyIndex2 = CipherUtils.createCharacterIndexMapping(keysquare2);
 		
 		int[] numberText = new int[cipherText.length * 2];
 		for(int i = 0; i < cipherText.length; i++) {
 			
 			char a = cipherText[i];
-			int index = keysquare2.indexOf(a);
+			int index = keyIndex2.get(a);
 			int row = index / 5;
 			int column = index % 5;
 			
@@ -74,7 +81,7 @@ public class ConjugatedBifid implements IRandEncrypter {
 		for(int i = 0; i < numberText.length; i += 2) {
 			int a = numberText[i];
 			int b = numberText[i + 1];
-			plainText[index++] = (byte)keysquare1.charAt(a * 5 + b);
+			plainText[index++] = (byte)keysquare1[a * 5 + b];
 		}
 		
 		return plainText;

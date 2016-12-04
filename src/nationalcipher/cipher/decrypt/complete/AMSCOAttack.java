@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.AMSCO;
@@ -30,7 +31,7 @@ public class AMSCOAttack extends CipherAttack {
 		super("AMSCO");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
-		this.doubleLetterChose = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.doubleLetterChose = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 		this.doubleLetterChose.setSelectedItem(true);
 	}
 	

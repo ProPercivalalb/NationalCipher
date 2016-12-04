@@ -106,8 +106,8 @@ public class SolitaireAttack extends CipherAttack {
 			app.out().println(task.getBestSolution());
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
-			app.getProgress().addMaxValue(Dictionary.words.size());
-			for(String word : Dictionary.words)
+			app.getProgress().addMaxValue(Dictionary.WORDS.size());
+			for(String word : Dictionary.WORDS)
 				task.onIteration(word);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {

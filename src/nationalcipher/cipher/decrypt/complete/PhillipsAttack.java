@@ -5,17 +5,19 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.dict.Dictionary;
+import javalibrary.lib.BooleanLib;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
+import nationalcipher.cipher.decrypt.methods.DictionaryAttack.DictionaryKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
+import nationalcipher.cipher.transposition.RouteCipherType;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.UINew;
 
@@ -27,8 +29,8 @@ public class PhillipsAttack extends CipherAttack {
 	public PhillipsAttack() {
 		super("Phillips");
 		this.setAttackMethods(DecryptionMethod.DICTIONARY, DecryptionMethod.SIMULATED_ANNEALING);
-		this.orderRowsSelection = new JComboBox<Boolean>(new Boolean[] {true, false});
-		this.orderColumnsSelection = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.orderRowsSelection = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
+		this.orderColumnsSelection = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 	}
 	
 	@Override
@@ -47,8 +49,7 @@ public class PhillipsAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
-			for(String word : Dictionary.words)
-				task.onIteration(DictionaryAttack.createLong26Key(word, app.getSettings().getKeywordFiller(), 'J'));
+			DictionaryAttack.tryKeysWithOptions(task, Dictionary.WORDS_CHAR, KeyGeneration.ALL_25_CHARS, 5, 5, app.getSettings().checkShift(), app.getSettings().checkReverse(), app.getSettings().checkRoutes());
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
@@ -58,7 +59,7 @@ public class PhillipsAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PhillipsTask extends SimulatedAnnealing implements Long25Key {
+	public class PhillipsTask extends SimulatedAnnealing implements DictionaryKey {
 
 		public boolean orderRows;
 		public boolean orderColumns;
@@ -69,12 +70,12 @@ public class PhillipsAttack extends CipherAttack {
 		}
 
 		@Override
-		public void onIteration(String key) {
-			this.lastSolution = new Solution(Phillips.decode(this.cipherText, this.plainText, key, this.orderRows, this.orderColumns), this.getLanguage());
+		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
+			this.lastSolution = new Solution(Phillips.decode(this.cipherText, this.plainText, complete, this.orderRows, this.orderColumns), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s, r: %b, c: %b", key, this.orderRows, this.orderColumns);
+				this.bestSolution.setKeyString("%s, r: %b, c: %b", DictionaryAttack.expressParameters(complete, word, shift, reversed, route), this.orderRows, this.orderColumns);
 				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);

@@ -1,6 +1,9 @@
 package nationalcipher.cipher.base.other;
 
+import java.util.Map;
+
 import javalibrary.math.MathUtil;
+import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -75,26 +78,33 @@ public class Playfair implements IRandEncrypter {
 	
 	//Double letter 1 down to right
 	public static byte[] decode(char[] cipherText, byte[] plainText, String key) {
+		return decode(cipherText, plainText, key.toCharArray());
+	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[] key) {
+		
+		Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);
+		
 		int size = 5;
 	    for(int i = 0; i < cipherText.length; i += 2) {
-	        int i1 = key.indexOf(cipherText[i]);
-	        int i2 = key.indexOf(cipherText[i + 1]);
+	        int i1 = keyIndex.get(cipherText[i]);
+	        int i2 = keyIndex.get(cipherText[i + 1]);
 	        int row1 = i1 / size;
 	        int col1 = i1 % size;
 	        int row2 = i2 / size;
 	        int col2 = i2 % size;
 	        
 	        if(row1 == row2) {
-	        	plainText[i] = (byte)key.charAt(row1 * size + (col1 + size - 1) % 5);
-	        	plainText[i + 1] = (byte)key.charAt(row2 * 5 + (col2 + size - 1) % 5);
+	        	plainText[i] = (byte)key[row1 * size + (col1 + size - 1) % size];
+	        	plainText[i + 1] = (byte)key[row2 * size + (col2 + size - 1) % size];
 	        }
 	        else if(col1 == col2) {
-	        	plainText[i] = (byte)key.charAt(((row1 + size - 1) % size) * size + col1);
-	        	plainText[i + 1] = (byte)key.charAt(((row2 + size - 1) % size) * size + col2);
+	        	plainText[i] = (byte)key[((row1 + size - 1) % size) * size + col1];
+	        	plainText[i + 1] = (byte)key[((row2 + size - 1) % size) * size + col2];
 	        }
 	        else {
-	        	plainText[i] = (byte)key.charAt(row1 * size + col2);
-	            plainText[i + 1] = (byte)key.charAt(row2 * size + col1);
+	        	plainText[i] = (byte)key[row1 * size + col2];
+	            plainText[i + 1] = (byte)key[row2 * size + col1];
 	        }
 	    }
 	    

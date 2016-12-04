@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import javalibrary.dict.Dictionary;
+import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
@@ -28,7 +29,7 @@ public class NihilistTranspositionAttack extends CipherAttack {
 	public NihilistTranspositionAttack() {
 		super("Nihilist Transposition");
 		this.setAttackMethods(DecryptionMethod.DICTIONARY, DecryptionMethod.BRUTE_FORCE);
-		this.readOffDefaultChose = new JComboBox<Boolean>(new Boolean[] {true, false});
+		this.readOffDefaultChose = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 	}
 	
 	@Override
@@ -52,7 +53,7 @@ public class NihilistTranspositionAttack extends CipherAttack {
 			for(int factor : factors) {
 				int sqrt = (int)Math.sqrt(factor);
 				app.out().println("Factor: %d", factor);
-				for(String word : Dictionary.words) {
+				for(String word : Dictionary.WORDS) {
 					if(word.length() == sqrt) {
 						int[] order = new int[word.length()];
 						

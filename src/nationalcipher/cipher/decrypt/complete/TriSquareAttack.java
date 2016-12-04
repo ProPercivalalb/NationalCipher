@@ -5,7 +5,6 @@ import javalibrary.math.MathUtil;
 import nationalcipher.cipher.base.substitution.TriSquare;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -28,10 +27,10 @@ public class TriSquareAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(MathUtil.pow(Dictionary.wordCount(), 3));
-			for(String word : Dictionary.words)
-				for(String word1 : Dictionary.words)
-					for(String word2 : Dictionary.words)
-						this.task.onIteration(DictionaryAttack.createLong26Key(word, app.getSettings().getKeywordFiller(), 'J'), DictionaryAttack.createLong26Key(word1, app.getSettings().getKeywordFiller(), 'J'), DictionaryAttack.createLong26Key(word2, app.getSettings().getKeywordFiller(), 'J'));
+			//for(String word : Dictionary.WORDS)
+			//	for(String word1 : Dictionary.WORDS)
+			//		for(String word2 : Dictionary.WORDS)
+			//			this.task.onIteration(DictionaryAttack.createLong26Key(word, app.getSettings().getKeywordFiller(), 'J'), DictionaryAttack.createLong26Key(word1, app.getSettings().getKeywordFiller(), 'J'), DictionaryAttack.createLong26Key(word2, app.getSettings().getKeywordFiller(), 'J'));
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());

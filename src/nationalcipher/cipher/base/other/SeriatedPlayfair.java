@@ -1,7 +1,10 @@
 package nationalcipher.cipher.base.other;
 
+import java.util.Map;
+
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
+import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -84,19 +87,21 @@ public class SeriatedPlayfair implements IRandEncrypter {
 		return new String(cipherText);
 	}
 	
-	public static byte[] decode(char[] cipherText, String keysquare, int period) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, String key, int period) {
+		return decode(cipherText, plainText, key.toCharArray(), period);
+	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[] key, int period) {
 		if(period == 0) period = cipherText.length / 2;
-		byte[] plainText = new byte[cipherText.length];
-		
+
+		Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);
+	
 		for(int i = 0; i < cipherText.length; i += period * 2) {
 			int min = Math.min(period, (cipherText.length - i) / 2);
 
 			for(int j = 0; j < min; j++) {
-				char a = cipherText[i + j];
-				char b = cipherText[i + j + min];
-				
-				int i1 = keysquare.indexOf(a);
-			    int i2 = keysquare.indexOf(b);
+				int i1 = keyIndex.get(cipherText[i + j]);
+			    int i2 = keyIndex.get(cipherText[i + j + min]);
 			    int row1 = i1 / 5;
 			    int col1 = i1 % 5;
 			    int row2 = i2 / 5;
@@ -105,16 +110,16 @@ public class SeriatedPlayfair implements IRandEncrypter {
 			    char c, d;
 			        
 			    if(row1 == row2) {
-			    	c = keysquare.charAt(row1 * 5 + MathUtil.mod(col1 - 1, 5));
-			    	d = keysquare.charAt(row2 * 5 + MathUtil.mod(col2 - 1, 5));
+			    	c = key[row1 * 5 + MathUtil.mod(col1 - 1, 5)];
+			    	d = key[row2 * 5 + MathUtil.mod(col2 - 1, 5)];
 			    }
 			    else if(col1 == col2) {
-			    	c = keysquare.charAt(MathUtil.mod(row1 - 1, 5) * 5 + col1);
-			        d = keysquare.charAt(MathUtil.mod(row2 - 1, 5) * 5 + col2);
+			    	c = key[MathUtil.mod(row1 - 1, 5) * 5 + col1];
+			        d = key[MathUtil.mod(row2 - 1, 5) * 5 + col2];
 			    }
 			    else {
-			    	c = keysquare.charAt(row1 * 5 + col2);
-			        d = keysquare.charAt(row2 * 5 + col1);
+			    	c = key[row1 * 5 + col2];
+			        d = key[row2 * 5 + col1];
 			    }
 			        
 			    plainText[i + j] = (byte)c;

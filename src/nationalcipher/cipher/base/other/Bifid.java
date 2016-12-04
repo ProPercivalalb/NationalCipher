@@ -39,8 +39,12 @@ public class Bifid implements IRandEncrypter {
 	    return cipherText;
 	}
 	
-	public static byte[] decode(char[] cipherText, String keysquare, int period) {
-		return ConjugatedBifid.decode(cipherText, keysquare, keysquare, period);
+	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare, int period) {
+		return decode(cipherText, plainText, keysquare.toCharArray(), period);
+	}
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[] keysquare, int period) {
+		return ConjugatedBifid.decode(cipherText, plainText, keysquare, keysquare, period);
 	}
 
 	@Override
