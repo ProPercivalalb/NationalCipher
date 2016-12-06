@@ -7,7 +7,7 @@ import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
-import nationalcipher.cipher.base.EnigmaLib;
+import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.complete.EnigmaAttack.EnigmaSection;
@@ -52,7 +52,7 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 						indicator[1] = (indicator[1] + s2) % 26;
 						indicator[2] = (indicator[2] + s3) % 26;
 					
-						task.lastSolution = new Solution(task.decryptEnigma(task.cipherText, task.plainText, trial.etw, trial.reflector, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors), app.getLanguage());
+						task.lastSolution = new Solution(task.decryptEnigma(task.cipherText, task.plainText, trial.etw, trial.etwInverse, trial.reflector, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors), app.getLanguage());
 						
 						if(task.lastSolution.score > task.bestSolution.score) {
 							task.bestSolution = task.lastSolution;
@@ -95,9 +95,9 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 				//for(char[] reflector : EnigmaLib.ENIGMA_REFLECTORS) {
 					int[] rotor = (int[])extra[0];
 					
-					this.plainText = this.decryptEnigma(this.cipherText, this.plainText, EnigmaLib.ENIGMA_D_ETW, EnigmaLib.ENIGMA_D_UKW, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor);
+					this.plainText = this.decryptEnigma(this.cipherText, this.plainText, EnigmaLib.ENIGMA_D_ETW, EnigmaLib.ENIGMA_D_ETW_INVERSE, EnigmaLib.ENIGMA_D_UKW, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor);
 					
-					EnigmaSection trialSolution = new EnigmaSection(TextFitness.scoreFitnessQuadgrams(this.plainText, this.getLanguage()), EnigmaLib.ENIGMA_D_ETW, EnigmaLib.ENIGMA_D_UKW, data, rotor);
+					EnigmaSection trialSolution = new EnigmaSection(TextFitness.scoreFitnessQuadgrams(this.plainText, this.getLanguage()), EnigmaLib.ENIGMA_D_ETW, EnigmaLib.ENIGMA_D_ETW_INVERSE, EnigmaLib.ENIGMA_D_UKW, data, rotor);
 	
 					if(this.squeezeFirst.addResult(trialSolution))
 						trialSolution.makeCopy();
@@ -109,10 +109,10 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 			return EnigmaLib.NO_ENIGMA_D_ROTORS;
 		}
 		
-		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, char[] plugboardOrETW, char[] reflector, int[] indicator, int[] ring, int[] rotors) {
+		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, char[] etw, char[] etwInverse, char[] reflector, int[] indicator, int[] ring, int[] rotors) {
 			return Enigma.decode(this.cipherText, this.plainText, 
 					EnigmaLib.ENIGMA_D_ROTORS, EnigmaLib.ENIGMA_D_ROTORS_INVERSE, EnigmaLib.ENIGMA_D_ROTORS_NOTCHES, 
-					reflector, indicator, ring, rotors, plugboardOrETW);
+					etw, etwInverse, reflector, indicator, ring, rotors);
 			
 			//EnigmaLib.ENIGMA_ROTORS, EnigmaLib.ENIGMA_ROTORS_INVERSE, EnigmaLib.ENIGMA_ROTORS_NOTCHES, EnigmaLib.REFLECTOR_B
 		}

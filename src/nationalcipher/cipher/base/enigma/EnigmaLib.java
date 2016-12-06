@@ -1,12 +1,20 @@
-package nationalcipher.cipher.base;
+package nationalcipher.cipher.base.enigma;
 
 public class EnigmaLib {
 
+	public static final EngimaMachine ENIGMA_D = new EnigmaD("Enigma D");
+	public static final EngimaMachine ENIGMA_I = new EnigmaI("Enigma I");
+	public static final EngimaMachine NORENIGMA = new Norenigma("Norenigma");
+	public static final EngimaMachine ENIGMA_M3 = new EnigmaM3("Enigma M3");
+	public static final EngimaMachine ENIGMA_K = new EnigmaK("Enigma K");
+	public static final EngimaMachine ROCKET_I = new RocketI("Rocket I");
+	
 	public static final char[][] ENIGMA_D_ROTORS = EnigmaLib.createNormal("LPGSZMHAEOQKVXRFYBUTNICJDW", "SLVGBTFXJQOHEWIRZYAMKPCNDU", "CJGDPSHKTURAWZXFMYNQOBVLIE");
 	public static final char[][] ENIGMA_D_ROTORS_INVERSE = EnigmaLib.createInverse(ENIGMA_D_ROTORS);
 	public static final int NO_ENIGMA_D_ROTORS = ENIGMA_D_ROTORS.length;
 	public static final int[][] ENIGMA_D_ROTORS_NOTCHES = new int[][] {{24},{4},{13}};
 	public static final char[] ENIGMA_D_ETW = createInverse("QWERTZUIOASDFGHJKPYXCVBNML".toCharArray());
+	public static final char[] ENIGMA_D_ETW_INVERSE = createInverse(ENIGMA_D_ETW);
 	public static final char[] ENIGMA_D_UKW = "IMETCGFRAYSQBZXWLHKDVUPOJN".toCharArray();
 	
 	public static final char[][] ENIGMA_ROTORS = EnigmaLib.createNormal("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "AJDKSIRUXBLHWTMCQGZNPYFVOE", "BDFHJLCPRTXVZNYEIWGAKMUSQO", "ESOVPZJAYQUIRHXLNFTGKDCMWB", "VZBRGITYUPSDNHLXAWMJQOFECK", "JPGVOUMFYQBENHZRDKASXLICTW", "NZJHGRCXMYSWBOUFAIVLPEKQDT", "FKQHTLXOCBJSPDZRAMEWNIUYGV");
@@ -58,4 +66,5 @@ public class EnigmaLib {
 	
 	//Please dont change
 	public static final int[] DEFAULT_SETTING = new int[] {0, 0, 0};
+	public static final char[] DEFAULT_ETW = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 }

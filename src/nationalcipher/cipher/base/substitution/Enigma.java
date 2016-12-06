@@ -1,8 +1,8 @@
 package nationalcipher.cipher.base.substitution;
 
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.EnigmaLib;
 import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {
@@ -31,46 +31,12 @@ public class Enigma implements IRandEncrypter {
 			plugBoardArray[jchar] = plugBoardArray[ichar];
 			plugBoardArray[ichar] = temp;
 		}
-		 
-		for(int i = 0; i < cipherText.length; i++) {
-			//Next settings
-			int[] middleNotches = NOTCHES[rotors[1]];
-			int[] endNotches = NOTCHES[rotors[2]];
-			
-			if(ArrayUtil.contains(middleNotches, indicator[1])) {
-				indicator[0] = (indicator[0] + 1) % 26;
-			    indicator[1] = (indicator[1] + 1) % 26;
-			}
-	
-			if(ArrayUtil.contains(endNotches, indicator[2]))
-				indicator[1] = (indicator[1] + 1) % 26;
-			
-		    indicator[2] = (indicator[2] + 1) % 26;
-			
-		    char ch = cipherText[i];
-		    
-		    if(plugBoardSettings.length > 0)
-		    	ch = nextCharacter(ch, plugBoardArray);
-		    
-		    for(int r = 2; r >= 0; r--)
-		    	ch = nextCharacter(ch, ROTORS[rotors[r]], indicator[r] - ring[r]);
-		    
-		    ch = nextCharacter(ch, REFLECTOR);
-	
-		    for(int r = 0; r < 3; r++)
-		    	ch = nextCharacter(ch, INVERSE[rotors[r]], indicator[r] - ring[r]);
-		    
-		    if(plugBoardSettings.length > 0)
-		    	ch = nextCharacter(ch, plugBoardArray);
-		    
-		    plainText[i] = (byte)ch;
-		}
 		
-		return plainText;
+		return decode(cipherText, plainText, ROTORS, INVERSE, NOTCHES, plugBoardArray, plugBoardArray, REFLECTOR, indicator, ring, rotors);
 	}
 	
 	//Used for a plugboard
-	public static byte[] decode(char[] cipherText, byte[] plainText, char[][] ROTORS, char[][] INVERSE, int[][] NOTCHES, char[] REFLECTOR, int[] indicator, int[] ring, int[] rotors, char[] plugBoard) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[][] ROTORS, char[][] INVERSE, int[][] NOTCHES, char[] ETW, char[] ETW_INVERSE, char[] REFLECTOR, int[] indicator, int[] ring, int[] rotors) {
 		 
 		for(int i = 0; i < cipherText.length; i++) {
 			//Next settings
@@ -89,7 +55,7 @@ public class Enigma implements IRandEncrypter {
 			
 		    char ch = cipherText[i];
 		    
-		    ch = nextCharacter(ch, plugBoard);
+		    ch = nextCharacter(ch, ETW);
 		    
 		    for(int r = 2; r >= 0; r--)
 		    	ch = nextCharacter(ch, ROTORS[rotors[r]], indicator[r] - ring[r]);
@@ -99,7 +65,7 @@ public class Enigma implements IRandEncrypter {
 		    for(int r = 0; r < 3; r++)
 		    	ch = nextCharacter(ch, INVERSE[rotors[r]], indicator[r] - ring[r]);
 		    
-		    ch = nextCharacter(ch, plugBoard);
+		    ch = nextCharacter(ch, ETW_INVERSE);
 		    
 		    plainText[i] = (byte)ch;
 		}
