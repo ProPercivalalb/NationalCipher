@@ -1,103 +1,13 @@
 package nationalcipher.cipher.base.substitution;
 
-import javalibrary.fitness.TextFitness;
-import javalibrary.language.Languages;
-import javalibrary.lib.Timer;
 import javalibrary.util.ArrayUtil;
+import nationalcipher.cipher.base.EnigmaLib;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {
 
-	public static void main(String[] args) {
-		Languages.english.loadNGramData();
-		System.out.println(encode("A", "DWR", "AAP", new int[] {1, 4, 3}));
-		//System.out.println(encode("OLPFNEZBZLXTC", "AAA", "AAA", new int[] {0, 1, 2}, "CI"));
-		Timer timer = new Timer();
-		//iterateMyszkowski(3, 0, "");
-		iterateRingSetting(3, 0, "");
-		timer.displayTime();
-		//OLPFDEZJJLXTI
-	}
-	
-	private static void iterateRingSetting(int no, int time, String key) {
-		for(char i = 'A'; i <= 'Z'; i++) {
-			String backup = key;
-			backup += i;
-			
-			if(time + 1 >= no) {
-				String s = encode("NPNKANVHWKPXORCDDTRJRXSJFLCIUAIIBUNQIUQFTHLOZOIMENDNGPCB", "DXR", backup, stringToOrder("143"));
-				double score = TextFitness.scoreFitnessQuadgrams(s, Languages.english);
-				if(score > bestScore) {
-					bestScore = score;
-					System.out.println(score + " " + s + " " + backup + " ");
-
-				}
-				//if(backup.startsWith("AA"))
-				//	System.out.println(score + " " + s + " " + backup + " ");
-				continue;
-			}
-			
-			iterateRingSetting(no, time + 1, backup);
-		}
-	}
-	
-	private static void iterateMyszkowski(int no, int time, String key) {
-		for(char i = 'A'; i <= 'Z'; i++) {
-			String backup = key;
-			backup += i;
-			
-			if(time + 1 >= no) {
-				//System.out.println(backup);
-				iterateCadenus(new char[] {'0', '1', '2', '3', '4', '5', '6', '7'}, 3, 0, "", backup);
-				continue;
-			}
-			
-			iterateMyszkowski(no, time + 1, backup);
-		}
-	}
-	
-	public static double bestScore = Double.NEGATIVE_INFINITY;
-	
-	private static void iterateCadenus(char[] characters, int no, int time, String key, String indicator) {
-		for(char character : characters) {
-			String backup = key;
-			if(key.contains("" + character))
-				continue;
-			
-			backup += character;
-			
-			if(time + 1 >= no) {
-				String s = encode("NPNKANVHWKPXORCDDTRJRXSJFLCIUAIIBUNQIUQFTHLOZOIMENDNGPCB", indicator, "AAA", stringToOrder(backup));
-				double score = TextFitness.scoreFitnessQuadgrams(s, Languages.english);
-				if(score > bestScore) {
-					bestScore = score;
-					System.out.println(score + " " + s + " " + backup + " " +indicator );
-
-				}
-				//System.out.println(s);
-				//System.out.println(backup);
-				continue;
-			}
-			
-			iterateCadenus(characters, no, time + 1, backup, indicator);
-		}
-	}
-	
-	public static int[] stringToOrder(String rotors) {
-		int[] order = new int[3];
-		for(int i = 0; i < order.length; i++)
-			order[i] = rotors.charAt(i) - '0';
-		return order;
-	}
-	
-	public static int[][] NOTCHES = new int[][] {{16},{4},{21},{9},{25},{25,12},{25,12},{25,12}};
-	public static char[][] KEYS = new char[][] {"EKMFLGDQVZNTOWYHXUSPAIBRCJ".toCharArray(),"AJDKSIRUXBLHWTMCQGZNPYFVOE".toCharArray(),"BDFHJLCPRTXVZNYEIWGAKMUSQO".toCharArray(),"ESOVPZJAYQUIRHXLNFTGKDCMWB".toCharArray(),"VZBRGITYUPSDNHLXAWMJQOFECK".toCharArray(),"JPGVOUMFYQBENHZRDKASXLICTW".toCharArray(),"NZJHGRCXMYSWBOUFAIVLPEKQDT".toCharArray(),"FKQHTLXOCBJSPDZRAMEWNIUYGV".toCharArray()};
-	public static char[][] KEYS_INVERSE = new char[][] {"UWYGADFPVZBECKMTHXSLRINQOJ".toCharArray(),"AJPCZWRLFBDKOTYUQGENHXMIVS".toCharArray(),"TAGBPCSDQEUFVNZHYIXJWLRKOM".toCharArray(),"HZWVARTNLGUPXQCEJMBSKDYOIF".toCharArray(),"QCYLXWENFTZOSMVJUDKGIARPHB".toCharArray(),"SKXQLHCNWARVGMEBJPTYFDZUIO".toCharArray(),"QMGYVPEDRCWTIANUXFKZOSLHJB".toCharArray(),"QJINSAYDVKBFRUHMCPLEWZTGXO".toCharArray()};
-	
-	public static char[] REFLECTOR = "YRUHQSLDPXNGOKMIEBFZCWVJAT".toCharArray();
-	
-	public static String encode(String plainText, String notchSetting, String ringSetting, int[] rotors, String... plugBoardSettings) {
+	public static String encode(String plainText, char[][] ROTORS, char[][] INVERSE, int[][] NOTCHES, char[] REFLECTOR, String notchSetting, String ringSetting, int[] rotors, String... plugBoardSettings) {
 		int[] notchKey = new int[3];
 		for(int i = 0; i < notchKey.length; i++)
 			notchKey[i] = notchSetting.charAt(i) - 'A';
@@ -106,10 +16,10 @@ public class Enigma implements IRandEncrypter {
 		for(int i = 0; i < ring.length; i++)
 			ring[i] = ringSetting.charAt(i) - 'A';
 		
-		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], notchKey, ring, rotors));//TODO, plugBoardSettings));
+		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], ROTORS, INVERSE, NOTCHES, REFLECTOR, notchKey, ring, rotors));//TODO, plugBoardSettings));
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, int[] indicator, int[] ring, int[] rotors, char[]... plugBoardSettings) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[][] ROTORS, char[][] INVERSE, int[][] NOTCHES, char[] REFLECTOR, int[] indicator, int[] ring, int[] rotors, char[]... plugBoardSettings) {
 		
 		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 		
@@ -143,12 +53,12 @@ public class Enigma implements IRandEncrypter {
 		    	ch = nextCharacter(ch, plugBoardArray);
 		    
 		    for(int r = 2; r >= 0; r--)
-		    	ch = nextCharacter(ch, KEYS[rotors[r]], indicator[r] - ring[r]);
+		    	ch = nextCharacter(ch, ROTORS[rotors[r]], indicator[r] - ring[r]);
 		    
 		    ch = nextCharacter(ch, REFLECTOR);
 	
 		    for(int r = 0; r < 3; r++)
-		    	ch = nextCharacter(ch, KEYS_INVERSE[rotors[r]], indicator[r] - ring[r]);
+		    	ch = nextCharacter(ch, INVERSE[rotors[r]], indicator[r] - ring[r]);
 		    
 		    if(plugBoardSettings.length > 0)
 		    	ch = nextCharacter(ch, plugBoardArray);
@@ -160,7 +70,7 @@ public class Enigma implements IRandEncrypter {
 	}
 	
 	//Used for a plugboard
-	public static byte[] decode(char[] cipherText, byte[] plainText, int[] indicator, int[] ring, int[] rotors, char[] plugBoard) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, char[][] ROTORS, char[][] INVERSE, int[][] NOTCHES, char[] REFLECTOR, int[] indicator, int[] ring, int[] rotors, char[] plugBoard) {
 		 
 		for(int i = 0; i < cipherText.length; i++) {
 			//Next settings
@@ -182,12 +92,12 @@ public class Enigma implements IRandEncrypter {
 		    ch = nextCharacter(ch, plugBoard);
 		    
 		    for(int r = 2; r >= 0; r--)
-		    	ch = nextCharacter(ch, KEYS[rotors[r]], indicator[r] - ring[r]);
+		    	ch = nextCharacter(ch, ROTORS[rotors[r]], indicator[r] - ring[r]);
 		    
 		    ch = nextCharacter(ch, REFLECTOR);
 	
 		    for(int r = 0; r < 3; r++)
-		    	ch = nextCharacter(ch, KEYS_INVERSE[rotors[r]], indicator[r] - ring[r]);
+		    	ch = nextCharacter(ch, INVERSE[rotors[r]], indicator[r] - ring[r]);
 		    
 		    ch = nextCharacter(ch, plugBoard);
 		    
@@ -207,6 +117,6 @@ public class Enigma implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3));
+		return encode(plainText, EnigmaLib.ENIGMA_ROTORS, EnigmaLib.ENIGMA_ROTORS_INVERSE, EnigmaLib.ENIGMA_ROTORS_NOTCHES, EnigmaLib.REFLECTOR_B, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3));
 	}
 }

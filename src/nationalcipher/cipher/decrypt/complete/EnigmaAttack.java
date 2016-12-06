@@ -1,11 +1,13 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
+import javalibrary.lib.Timer;
+import javalibrary.list.DynamicResultList;
+import javalibrary.list.ResultNegative;
+import javalibrary.math.MathUtil;
+import javalibrary.math.Units.Time;
+import nationalcipher.cipher.base.EnigmaLib;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
@@ -28,132 +30,126 @@ public class EnigmaAttack extends CipherAttack {
 		EnigmaTask task = new EnigmaTask(text, app);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			//ONLY 5 COGS USED
-			//KeyIterator.permutateArray(task, (byte)0, 3, 3, false);
-			task.onList((byte)0, new int[] {0, 1, 2});
 			
-			Collections.sort(task.best, this.comparator);
+			int rotorCombos = MathUtil.factorial(task.getNumberRotor(), 3);
+			app.out().println("Going throught all combinations of the %d rotors (%d) and indicator settings (%d), totalling %d test subjects.", task.getNumberRotor(), rotorCombos, (int)Math.pow(26, 3), rotorCombos * (int)Math.pow(26, 3));
+			double constant = 120 / 60000D; //Time taken per letter per rotor setting
+			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length));
+			Timer timer = new Timer();
+			KeyIterator.permutateArray(task, (byte)0, 3, task.getNumberRotor(), false);
+			app.out().println("Time taken %fs", timer.getTimeRunning(Time.SECOND));
+			
+			task.squeezeFirst.sort();
 			app.out().println("Determining ring settings");
-			app.out().println("%d Possible indicators and rotor orders, therefore %d possible ring settings", task.best.size(), task.best.size() * 26);
+			app.out().println("%d Possible indicators and rotor orders, therefore %d possible ring settings", task.squeezeFirst.size(), task.squeezeFirst.size() * 26);
+
 			
-			task.best = task.best.subList(0, Math.min(200, task.best.size()));
-			app.out().println("%d Possible indicators and rotor orders, therefore %d possible ring settings", task.best.size(), task.best.size() * 26);
-			
-			
-			for(int i = 0; i < task.best.size(); i++) {
-				EnigmaSection trialSolution = task.best.get(i);
-				//app.out().println("%f, Ind:%s, %s", trialSolution.score, toString(trialSolution.indicator), Arrays.toString(trialSolution.rotors));
+			for(int i = 0; i < task.squeezeFirst.size(); i++) {
+				EnigmaSection trial = task.squeezeFirst.get(i);
 				for(int s3 = 0; s3 < 26; s3++) {
-					int[] indicator = Arrays.copyOf(trialSolution.indicator, trialSolution.indicator.length);
+					int[] indicator = trial.copyIndicator();
 					int[] ring = new int[] {0, 0, s3};
 
 					indicator[2] = (indicator[2] + s3) % 26;
 				
-					task.plainText = Enigma.decode(task.cipherText, task.plainText, Arrays.copyOf(indicator, indicator.length), ring, trialSolution.rotors);
-					EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, indicator, trialSolution.rotors);
+					task.plainText = task.decryptEnigma(task.cipherText, task.plainText, trial.reflector, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors);
+					EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, trial.etw, trial.reflector, indicator, trial.rotors);
 					nextTrialSolution.ring = ring;
-					//app.out().println("    %f, Ind:%s, Ring:%s, %s", nextTrialSolution.score, toString(nextTrialSolution.indicator), toString(nextTrialSolution.ring), Arrays.toString(nextTrialSolution.rotors));
-					if(nextTrialSolution.score > 30D) {
-						task.bestNext.add(nextTrialSolution);
-						//app.out().println("%f, Ind:%s, Ring:%s, %s", nextTrialSolution.score, toString(nextTrialSolution.indicator), toString(nextTrialSolution.ring), Arrays.toString(nextTrialSolution.rotors));
+	
+					if(task.squeezeSecond.addResult(nextTrialSolution))
 						nextTrialSolution.makeCopy();
-					}
+			
 				}
 			}
 			
-			Collections.sort(task.bestNext, this.comparator);
+			task.squeezeSecond.sort();
 			
-			for(int i = 0; i < task.bestNext.size(); i++) {
-				EnigmaSection trialSolution = task.bestNext.get(i);
+			for(int i = 0; i < task.squeezeSecond.size(); i++) {
+				EnigmaSection trial = task.squeezeSecond.get(i);
 
 				for(int s2 = 0; s2 < 26; s2++) {
-					int[] indicator = Arrays.copyOf(trialSolution.indicator, trialSolution.indicator.length);
-					int[] ring = new int[] {0, s2, trialSolution.ring[2]};
+					int[] indicator = trial.copyIndicator();
+					int[] ring = new int[] {0, s2, trial.ring[2]};
 	
 					indicator[1] = (indicator[1] + s2) % 26;
 					
-					task.plainText = Enigma.decode(task.cipherText, task.plainText, Arrays.copyOf(indicator, indicator.length), ring, trialSolution.rotors);
-					EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, indicator, trialSolution.rotors);
+					task.plainText = task.decryptEnigma(task.cipherText, task.plainText, trial.reflector, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors);
+					EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, trial.etw, trial.reflector, indicator, trial.rotors);
 					nextTrialSolution.ring = ring;
-					
-					if(nextTrialSolution.score > 30D) {
-						task.bestNext2.add(nextTrialSolution);
-						nextTrialSolution.makeCopy();
 	
-					}
+					if(task.squeezeThird.addResult(nextTrialSolution))
+						nextTrialSolution.makeCopy();
 				}
 			}
 			
-			Collections.sort(task.bestNext2, this.comparator);
+			task.squeezeThird.sort();
 			
-			for(int i = 0; i < task.bestNext2.size(); i++) {
-				EnigmaSection trial = task.bestNext2.get(i);
+			for(int option = 0; option < task.squeezeThird.size(); option++) {
+				EnigmaSection trial = task.squeezeThird.get(option);
+			
 				int plugboardIndex = 0;
 				char[][] plugboard = new char[13][2];
+				String possiblePlugBoard = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 				while(true) {
-					int[] indicator = Arrays.copyOf(trial.indicator, trial.indicator.length);
-					task.plainText = Enigma.decode(task.cipherText, task.plainText, indicator, trial.ring, trial.rotors);
+		
+					task.plainText = task.decryptEnigma(task.cipherText, task.plainText, trial.reflector, trial.copyIndicator(), trial.ring, trial.rotors, plugboard);
+					
 					Solution bestSolution = new Solution(task.plainText, app.getLanguage().getTrigramData()).bakeSolution();
-					for(char c1 = 'A'; c1 <= 'Z'; c1++) {
-						for(char c2 = 'A'; c2 <= 'Z'; c2++) {
-							if(c1 == c2) continue;
-							indicator = Arrays.copyOf(trial.indicator, trial.indicator.length);
-							plugboard[plugboardIndex][0] = c1;
-							plugboard[plugboardIndex][1] = c2;
-
-							for(int j = 0; j < task.plainText.length; j++) {
-								if(task.plainText[j] == c1)
-									task.plainText[j] = (byte)c2;
-								else if(task.plainText[j] == c2)
-									task.plainText[j] = (byte)c1;
-							}
-							Solution lastSolution = new Solution(task.plainText, app.getLanguage().getTrigramData());
+					byte[] testText = Arrays.copyOf(task.plainText, task.plainText.length);
+					boolean foundFinalPlug = true;
+					for(int i1 = 0; i1 < possiblePlugBoard.length() - 1; i1++) {
+						for(int i2 = i1 + 1; i2 < possiblePlugBoard.length(); i2++) {
+							if(i1 == i2) continue;
+							plugboard[plugboardIndex][0] = possiblePlugBoard.charAt(i1);
+							plugboard[plugboardIndex][1] = possiblePlugBoard.charAt(i2);
+							testText = task.decryptEnigma(task.cipherText, testText, trial.reflector, trial.copyIndicator(), trial.ring, trial.rotors, plugboard);
+							Solution lastSolution = new Solution(testText, app.getLanguage().getTrigramData());
 	
-							if(lastSolution.score > bestSolution.score) {
+							if(lastSolution.isResultBetter(bestSolution)) {
 								bestSolution = lastSolution;
-								bestSolution.setKeyString("%c %c", c1, c2);
+								bestSolution.setKeyString("%c%c", plugboard[plugboardIndex][0], plugboard[plugboardIndex][1]);
 								bestSolution.bakeSolution();
-								app.out().println(" %s", bestSolution);
+								foundFinalPlug = false;
 							}
-							
-							for(int j = 0; j < task.plainText.length; j++) {
-								if(task.plainText[j] == c1)
-									task.plainText[j] = (byte)c2;
-								else if(task.plainText[j] == c2)
-									task.plainText[j] = (byte)c1;
-							}
-						}	
+						}
 					}
 					
-					app.out().println("First round");
-					break;
+					if(foundFinalPlug) {
+						char[] plugs = new char[Math.max(plugboardIndex * 3 - 1, 0)];
+						Arrays.fill(plugs, ' ');
+						for(int p = 0; p < plugboardIndex; p++) {
+							plugs[p * 3] = plugboard[p][0];
+							plugs[p * 3 + 1] = plugboard[p][1];
+						}
+						bestSolution.setKeyString("%s, Plugs:[%s]", trial.toKeyString(), new String(plugs));
+						app.out().println("%s", bestSolution);
+						if(bestSolution.isResultBetter(task.bestSolution))
+							task.bestSolution = bestSolution;
+						break;
+					}
+					
+					possiblePlugBoard = possiblePlugBoard.replaceAll(String.format("[%s]", bestSolution.keyString), "");
+					plugboard[plugboardIndex][0] = bestSolution.keyString.charAt(0);
+					plugboard[plugboardIndex][1] = bestSolution.keyString.charAt(1);
+					plugboardIndex++;
 				}
-				if(i == 3)
-				break;
-				//	app.out().println("%f, Ind:%s, Ring:%s, %s, %s", trialSolution.score, toString(trialSolution.indicator), toString(trialSolution.ring), Arrays.toString(trialSolution.rotors), new String(task.plainText));
-				
-			
 			}
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
-
-	public String toString(int[] order) {
-		char[] text = new char[3];
-		for(int i = 0; i < order.length; i++)
-			text[i] = (char)(order[i] + 'A');
-		return new String(text);
-	}
 	
 	public class EnigmaTask extends InternalDecryption implements ArrayPermutations {
 
-		private List<EnigmaSection> best = new ArrayList<EnigmaSection>();
-		private List<EnigmaSection> bestNext = new ArrayList<EnigmaSection>();
-		private List<EnigmaSection> bestNext2 = new ArrayList<EnigmaSection>();
+		private DynamicResultList<EnigmaSection> squeezeFirst;
+		private DynamicResultList<EnigmaSection> squeezeSecond;
+		private DynamicResultList<EnigmaSection> squeezeThird;
 		
 		public EnigmaTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
+			this.squeezeFirst = new DynamicResultList<EnigmaSection>(200);
+			this.squeezeSecond = new DynamicResultList<EnigmaSection>(20);
+			this.squeezeThird = new DynamicResultList<EnigmaSection>(20);
 		}
 
 		@Override
@@ -163,40 +159,71 @@ public class EnigmaAttack extends CipherAttack {
 			else if(id == 1) {
 				int[] rotor = (int[])extra[0];
 				
-				this.plainText = Enigma.decode(this.cipherText, this.plainText, Arrays.copyOf(data, data.length), new int[] {0, 0, 0}, rotor);
-				EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, data, rotor);
+				this.plainText = this.decryptEnigma(this.cipherText, this.plainText, EnigmaLib.NORWAY_UKW, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor);
+				EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, EnigmaLib.NORWAY_UKW, data, rotor);
 				
-				if(trialSolution.score > 40D) {
-					this.best.add(trialSolution);
+				if(this.squeezeFirst.addResult(trialSolution))
 					trialSolution.makeCopy();
-				}
+
 			}
 		}
+		
+		public int getNumberRotor() {
+			return EnigmaLib.NO_NORWAY_ENIGMA_ROTORS;
+		}
+		
+		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, char[] reflector, int[] indicator, int[] ring, int[] rotors) {
+			return Enigma.decode(this.cipherText, this.plainText, EnigmaLib.NORWAY_ENIGMA_ROTORS, EnigmaLib.NORWAY_ENIGMA_ROTORS_INVERSE, 
+					EnigmaLib.NORWAY_ENIGMA_ROTORS_NOTCHES, reflector, indicator, ring, rotors);
+		}
+		
+		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, char[] reflector, int[] indicator, int[] ring, int[] rotors, char[][] plugboard) {
+			return Enigma.decode(this.cipherText, this.plainText, EnigmaLib.NORWAY_ENIGMA_ROTORS, EnigmaLib.NORWAY_ENIGMA_ROTORS_INVERSE, 
+					EnigmaLib.NORWAY_ENIGMA_ROTORS_NOTCHES, reflector, indicator, ring, rotors, plugboard);
+		}
 	}
-	public Comparator<EnigmaSection> comparator = new Comparator<EnigmaSection>() {
-		@Override
-	    public int compare(EnigmaSection c1, EnigmaSection c2) {
-			double diff = c2.score - c1.score;
-	        return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
-	    }
-	};
 	
-	public static class EnigmaSection {
-		public double score;
+	public static class EnigmaSection extends ResultNegative {
+		
+		public char[] etw;
+		public char[] reflector;
 		public int[] indicator;
 		public int[] ring;
 		public int[] rotors;
-		public EnigmaSection(double score, int[] notchKey, int[] rotors) {
-			this.score = score;
+		
+		public EnigmaSection(double score, char[] etw, char[] reflector, int[] notchKey, int[] rotors) {
+			super(score);
+			this.etw = etw;
+			this.reflector = reflector;
 			this.indicator = notchKey;
 			this.rotors = rotors;
 		}
-		
+
 		public void makeCopy() {
 			this.indicator = Arrays.copyOf(this.indicator, this.indicator.length);
 			this.rotors = Arrays.copyOf(this.rotors, this.rotors.length);
-			if(this.ring != null)
-				this.ring = Arrays.copyOf(this.ring, this.ring.length);
+			if(this.ring != null) this.ring = Arrays.copyOf(this.ring, this.ring.length);
+		}
+		
+		public int[] copyIndicator() {
+			return Arrays.copyOf(this.indicator, this.indicator.length);
+		}
+		
+		public String displaySetting(int[] order) {
+			if(order == null) return "null";
+			char[] text = new char[3];
+			for(int i = 0; i < order.length; i++)
+				text[i] = (char)(order[i] + 'A');
+			return new String(text);
+		}
+		
+		public String toKeyString() {
+			return String.format("Machine Type: [R:%s], Rotors:%s: Ind:%s, Ring:%s", new String(this.reflector), Arrays.toString(this.rotors), this.displaySetting(this.indicator), this.displaySetting(this.ring));
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("%f, %s", this.score, this.toKeyString());
 		}
 	}
 }

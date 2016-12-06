@@ -240,6 +240,8 @@ public class KeyIterator {
 	}
 	
 	private static void permutateArray(ArrayPermutations task, byte id, int size, int range, boolean duplicates, int count, int[] pattern, Object... extra) {
+		int nextCount = count + 1;
+		
 		hasDuplicate:
 		for(int i = 0; i < range; i++) {
 			int previous = pattern[count];
@@ -252,10 +254,10 @@ public class KeyIterator {
 			
 			pattern[count] = i;
 			
-			if(count + 1 == size) 
+			if(nextCount == size) 
 				task.onList(id, pattern, extra);
 			else
-				permutateArray(task, id, size, range, duplicates, count + 1, pattern, extra);
+				permutateArray(task, id, size, range, duplicates, nextCount, pattern, extra);
 			
 			pattern[count] = previous;
 		}
