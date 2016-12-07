@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.enigma;
 
-public class Norenigma extends EngimaMachine {
+public class Norenigma extends EnigmaMachine {
 
 	public Norenigma(String name) {
 		super(name);

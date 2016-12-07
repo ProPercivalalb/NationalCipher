@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.enigma;
 
-public class EngimaMachine {
+public class EnigmaMachine {
 
 	public String name;
 	public char[][] rotors;
@@ -14,7 +14,7 @@ public class EngimaMachine {
 	public char[] etw;
 	public char[] etwInverse;
 	
-	public EngimaMachine(String name) {
+	public EnigmaMachine(String name) {
 		this.name = name;
 	}
 	

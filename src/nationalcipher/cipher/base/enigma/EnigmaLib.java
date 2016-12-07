@@ -2,12 +2,13 @@ package nationalcipher.cipher.base.enigma;
 
 public class EnigmaLib {
 
-	public static final EngimaMachine ENIGMA_D = new EnigmaD("Enigma D");
-	public static final EngimaMachine ENIGMA_I = new EnigmaI("Enigma I");
-	public static final EngimaMachine NORENIGMA = new Norenigma("Norenigma");
-	public static final EngimaMachine ENIGMA_M3 = new EnigmaM3("Enigma M3");
-	public static final EngimaMachine ENIGMA_K = new EnigmaK("Enigma K");
-	public static final EngimaMachine ROCKET_I = new RocketI("Rocket I");
+	public static final EnigmaMachine ENIGMA_D = new EnigmaD("Enigma D");
+	public static final EnigmaMachine ENIGMA_I = new EnigmaI("Enigma I");
+	public static final EnigmaMachine NORENIGMA = new Norenigma("Norenigma");
+	public static final EnigmaMachine ENIGMA_M3 = new EnigmaM3("Enigma M3");
+	public static final EnigmaMachine ENIGMA_K = new EnigmaK("Enigma K");
+	public static final EnigmaMachine SWISS_K = new SwissK("Swiss K");
+	public static final EnigmaMachine ROCKET_I = new RocketI("Rocket I");
 	
 	public static final char[][] ENIGMA_D_ROTORS = EnigmaLib.createNormal("LPGSZMHAEOQKVXRFYBUTNICJDW", "SLVGBTFXJQOHEWIRZYAMKPCNDU", "CJGDPSHKTURAWZXFMYNQOBVLIE");
 	public static final char[][] ENIGMA_D_ROTORS_INVERSE = EnigmaLib.createInverse(ENIGMA_D_ROTORS);

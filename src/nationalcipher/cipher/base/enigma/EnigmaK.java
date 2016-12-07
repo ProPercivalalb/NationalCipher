@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.enigma;
 
-public class EnigmaK extends EngimaMachine {
+public class EnigmaK extends EnigmaMachine {
 
 	public EnigmaK(String name) {
 		super(name);

@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.enigma;
 
-public class SwissK extends EngimaMachine {
+public class SwissK extends EnigmaMachine {
 
 	public SwissK(String name) {
 		super(name);

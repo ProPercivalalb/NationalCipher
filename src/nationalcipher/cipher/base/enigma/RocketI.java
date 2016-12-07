@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.enigma;
 
-public class RocketI extends EngimaMachine {
+public class RocketI extends EnigmaMachine {
 
 	public RocketI(String name) {
 		super(name);
@@ -9,5 +9,4 @@ public class RocketI extends EngimaMachine {
 		this.setReflectors("QYHOGNECVPUZTFDJAXWMKISRBL");
 		this.setETW("QWERTZUIOASDFGHJKPYXCVBNML");
 	}
-
 }
