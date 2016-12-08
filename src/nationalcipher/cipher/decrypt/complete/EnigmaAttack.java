@@ -7,6 +7,7 @@ import java.util.Arrays;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
@@ -30,14 +31,16 @@ public class EnigmaAttack extends CipherAttack {
 
 	private JComboBox<EnigmaMachine> machineSelection;
 	private JComboBox<String> reflectorSelection;
+	private JTextField plugboardDefinition;
 	
 	public EnigmaAttack() {
 		super("Enigma");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
+		this.plugboardDefinition = new JTextField();
 		for(EnigmaMachine machine : EnigmaLib.MACHINES)
-			if(machine.canPlugboard())
+			if(machine.isSolvable() && machine.canPlugboard())
 				this.machineSelection.addItem(machine);
 		
 		this.machineSelection.addActionListener(new ActionListener() {
@@ -65,6 +68,7 @@ public class EnigmaAttack extends CipherAttack {
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		panel.add(new SubOptionPanel("Machine Version:", this.machineSelection));
 		panel.add(new SubOptionPanel("Reflector:", this.reflectorSelection));
+		panel.add(new SubOptionPanel("Plugboard:", this.plugboardDefinition));
 	}
 	
 	@Override
@@ -74,15 +78,27 @@ public class EnigmaAttack extends CipherAttack {
 		//Settings grab
 		task.machine = (EnigmaMachine)this.machineSelection.getSelectedItem();
 		task.reflectorTest = this.reflectorSelection.getSelectedIndex() - 1;
-		int start = 0;
-		int end = task.machine.reflectorCount;
+		task.start = 0;
+		task.end = task.machine.reflectorCount;
 		if(task.reflectorTest != -1) {
-			start = task.reflectorTest;
-			end = start + 1;
+			task.start = task.reflectorTest;
+			task.end = task.start + 1;
 		}
 		
-		task.start = start;
-		task.end = end;
+		
+		String plugboardInput = this.plugboardDefinition.getText();
+		char[][] plugboardDefinition = new char[13][2];
+		boolean definitionProvided = false;
+		int count = 0;
+		for(String split : plugboardInput.split("[, ]"))
+			if(split.length() == 2) {
+				plugboardDefinition[count++] = split.toCharArray();
+				definitionProvided = true;
+			}
+		
+		if(definitionProvided)
+			task.machine = task.machine.createWithPlugboard(plugboardDefinition);
+		
 		app.out().println("Using machine type: %s", task.machine);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
@@ -97,7 +113,7 @@ public class EnigmaAttack extends CipherAttack {
 			
 			task.squeezeFirst.sort();
 			app.out().println("Determining ring settings");
-			app.out().println("%d Possible indicators and rotor orders, therefore %d possible ring settings", task.squeezeFirst.size(), task.squeezeFirst.size() * 26 * 26);
+			app.out().println("%d possible indicators and rotor orders, therefore %d possible ring settings", task.squeezeFirst.size(), task.squeezeFirst.size() * 26 * 26);
 
 			
 			for(int i = 0; i < task.squeezeFirst.size(); i++) {
@@ -254,7 +270,7 @@ public class EnigmaAttack extends CipherAttack {
 		}
 		
 		public String toKeyString() {
-			return String.format("Machine Type: %s, Rotors:%s: Ind:%s, Ring:%s", this.machine, Arrays.toString(this.rotors), this.displaySetting(this.indicator), this.displaySetting(this.ring));
+			return String.format("Machine Type: %s, Rotors:%s: Ind:%s, Ring:%s, Reflector:%d", this.machine, Arrays.toString(this.rotors), this.displaySetting(this.indicator), this.displaySetting(this.ring), this.reflector);
 		}
 		
 		@Override

@@ -8,10 +8,6 @@ public class EnigmaM3 extends EnigmaMachine {
 		this.setNotches(new int[][] {{16},{4},{21},{9},{25},{25,12},{25,12},{25,12}});
 		this.setReflectors("YRUHQSLDPXNGOKMIEBFZCWVJAT", "FVPJIAOYEDRZXWGCTKUQSBNMHL");
 		this.setReflectorNames("UKW-B", "UKW-C");
-	}
-
-	@Override
-	public boolean canPlugboard() {
-		return true;
+		this.canPlugboard = true;
 	}
 }

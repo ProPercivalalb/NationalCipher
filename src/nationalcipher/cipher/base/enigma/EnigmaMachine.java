@@ -1,11 +1,12 @@
 package nationalcipher.cipher.base.enigma;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import javalibrary.util.ArrayUtil;
 
 public class EnigmaMachine {
 
+	//TODO CHANGE ALL THE PUBLIC FIELDS TO PRIVATE
 	public String name;
 	public char[][] rotors;
 	public char[][] rotorsInverse;
@@ -19,8 +20,13 @@ public class EnigmaMachine {
 	public char[] etw;
 	public char[] etwInverse;
 	
+	public boolean canPlugboard;
+	public boolean stepping;
+	
 	public EnigmaMachine(String name) {
 		this.name = name;
+		this.canPlugboard = false;
+		this.stepping = true;
 	}
 	
 	public final void setRotors(String... input) {
@@ -41,6 +47,18 @@ public class EnigmaMachine {
 	
 	public final void setNotches(int[][] input) {
 		this.notches = input;
+	}
+	
+	public final void setNotches(String... input) {
+		int[][] normal = new int[input.length][];
+		
+		for(int r = 0; r < input.length; r++)  {
+			normal[r] = new int[input[r].length()];
+			for(int i = 0; i < normal[r].length; i++) 
+				normal[r][i] = input[r].charAt(i) - 'A';
+		}
+
+		this.notches = normal;
 	}
 	
 	public final void setReflectors(String... input) {
@@ -76,12 +94,35 @@ public class EnigmaMachine {
 		return this.reflectorCount;
 	}
 	
-	public boolean canPlugboard() {
-		return false;
+	public final boolean canPlugboard() {
+		return this.canPlugboard;
+	}
+	
+	/**
+	 * True is the classic Ratchets setting and False is cogs
+	 * @return
+	 */
+	public final boolean getStepping() {
+		return this.stepping;
+	}
+	
+	public boolean isSolvable() {
+		return true;
 	}
 	
 	public EnigmaMachine createWithPlugboard(char[]... input) {
-		EnigmaMachine copy = this.copy();
+		EnigmaMachine copy = new EnigmaPlugboard(this.name);
+		copy.rotors = this.rotors;
+		copy.rotorsInverse = this.rotorsInverse;
+		copy.rotorCount = this.rotorCount;
+		copy.notches = this.notches;
+		copy.reflector = this.reflector;
+		copy.reflectorNames = this.reflectorNames;
+		copy.reflectorCount = this.reflectorCount;
+		
+		copy.canPlugboard = this.canPlugboard;
+		copy.stepping = copy.stepping;
+		
 		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 		
 		for(char[] swap : input) {
@@ -99,15 +140,16 @@ public class EnigmaMachine {
 		return copy;
 	}
 	
-	public EnigmaMachine copy() {
-		try {
-			return this.getClass().getConstructor(String.class).newInstance(this.name);
-		} 
-		catch(Exception e) {
-			e.printStackTrace();
+	public static class EnigmaPlugboard extends EnigmaMachine {
+
+		public EnigmaPlugboard(String name) {
+			super(name);
 		}
 		
-		return null;
+		@Override
+		public String toString() {
+			return String.format("%s, Plugboard:%s", this.name, new String(this.etw));
+		} 
 	}
 	
 	@Override

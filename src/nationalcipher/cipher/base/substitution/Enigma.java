@@ -95,37 +95,58 @@ public class Enigma implements IRandEncrypter {
 	
 	//Used for a plugboard
 	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector) {
-			 
+			
+		int reflectorSetting = 0;
 		for(int i = 0; i < cipherText.length; i++) {
+			
 			//Next settings
-			int[] middleNotches = machine.notches[rotors[1]];
-			int[] endNotches = machine.notches[rotors[2]];
+			if(machine.getStepping()) { //Ratchet Setting
+				int[] middleNotches = machine.notches[rotors[1]];
+				int[] endNotches = machine.notches[rotors[2]];
 				
-			if(ArrayUtil.contains(middleNotches, indicator[1])) {
-				indicator[0] = (indicator[0] + 1) % 26;
-				indicator[1] = (indicator[1] + 1) % 26;
+				if(ArrayUtil.contains(middleNotches, indicator[1])) {
+					indicator[0] = (indicator[0] + 1) % 26;
+					indicator[1] = (indicator[1] + 1) % 26;
+				}
+			
+				if(ArrayUtil.contains(endNotches, indicator[2]))
+					indicator[1] = (indicator[1] + 1) % 26;
+					
+				indicator[2] = (indicator[2] + 1) % 26;
 			}
-		
-			if(ArrayUtil.contains(endNotches, indicator[2]))
-				indicator[1] = (indicator[1] + 1) % 26;
-				
-			indicator[2] = (indicator[2] + 1) % 26;
-				
+			else { //Cog Setting
+				int[] endNotches = machine.notches[rotors[2]];
+				if(ArrayUtil.contains(endNotches, indicator[2])) {
+					int[] middleNotches = machine.notches[rotors[1]];
+					
+					if(ArrayUtil.contains(middleNotches, indicator[1])) {
+						int[] otherNotches = machine.notches[rotors[0]];
+						
+						if(ArrayUtil.contains(otherNotches, indicator[0]))
+							reflectorSetting = (reflectorSetting + 1) % 26;
+						
+						indicator[0] = (indicator[0] + 1) % 26;
+					}
+					indicator[1] = (indicator[1] + 1) % 26;
+				}
+				indicator[2] = (indicator[2] + 1) % 26;
+			}
+			
 			char ch = cipherText[i];
-			    
-			if(machine.etw != null)
-			  	ch = nextCharacter(ch, machine.etw);
+			
+			if(machine.etwInverse != null)
+			  	ch = nextCharacter(ch, machine.etwInverse);
 			    
 			for(int r = 2; r >= 0; r--)
 			  	ch = nextCharacter(ch, machine.rotors[rotors[r]], indicator[r] - ring[r]);
-			    
-			ch = nextCharacter(ch, machine.reflector[reflector]);
+			
+			ch = nextCharacter(ch, machine.reflector[reflector], reflectorSetting);
 		
 			for(int r = 0; r < 3; r++)
 			   	ch = nextCharacter(ch, machine.rotorsInverse[rotors[r]], indicator[r] - ring[r]);
 			    
-			if(machine.etwInverse != null)
-			    ch = nextCharacter(ch, machine.etwInverse);
+			if(machine.etw != null)
+			    ch = nextCharacter(ch, machine.etw);
 			    
 			plainText[i] = (byte)ch;
 		}

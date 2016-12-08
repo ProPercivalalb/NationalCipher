@@ -8,10 +8,6 @@ public class Norenigma extends EnigmaMachine {
 		this.setNotches(new int[][] {{16},{4},{21},{9},{25}});
 		this.setReflectors("MOWJYPUXNDSRAIBFVLKZGQCHET");
 		this.setReflectorNames("UKW");
-	}
-
-	@Override
-	public boolean canPlugboard() {
-		return true;
+		this.canPlugboard = true;
 	}
 }

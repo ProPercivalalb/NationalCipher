@@ -12,10 +12,12 @@ import javalibrary.dict.Dictionary;
 import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -34,7 +36,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 	
 	public ColumnarTranspositionAttack() {
 		super("Columnar Transposition");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.DICTIONARY, DecryptionMethod.SIMULATED_ANNEALING);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.DICTIONARY, DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.CALCULATED);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
 		this.readOffDefaultChose = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
 		this.saSpinner = JSpinnerUtil.createSpinner(14, 2, 100, 1);
@@ -80,11 +82,14 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
 			task.run();
 		}
+		else if(method == DecryptionMethod.CALCULATED) {
+			KeyIterator.permutateArray(task, (byte)0, 6, task.period1, false);
+		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class ColumnarTranspositionTask extends SimulatedAnnealing implements IntegerOrderedKey {
+	public class ColumnarTranspositionTask extends SimulatedAnnealing implements IntegerOrderedKey, ArrayPermutations {
 
 		public int period1;
 		public boolean readOffDefault;
@@ -95,12 +100,26 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		}
 
 		@Override
+		public void onList(byte id, int[] data, Object... extra) {
+			int[] order = new int[this.period1];
+			int index = 0;
+			for(; index < data.length; index++)
+				order[data[index]] = index;
+			
+			for(int i = 0; i < this.period1; i++)
+				if(!ArrayUtil.contains(data, i))
+					order[i] = index++;
+			//this.app.out().println(Arrays.toString(order));
+			this.onIteration(order);
+		}
+		
+		@Override
 		public void onIteration(int[] order) {
 			this.lastSolution = new Solution(ColumnarTransposition.decode(this.cipherText, this.plainText, order, this.readOffDefault), this.getLanguage());
 			
-			if(this.lastSolution.score >= this.bestSolution.score) {
+			if(this.lastSolution.isResultBetter(this.bestSolution)) {
 				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s  d:%b", Arrays.toString(order), this.readOffDefault);
+				this.bestSolution.setKeyString("%s d:%b", Arrays.toString(order), this.readOffDefault);
 				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);

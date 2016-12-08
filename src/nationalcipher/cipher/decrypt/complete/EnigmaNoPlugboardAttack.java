@@ -7,6 +7,7 @@ import java.util.Arrays;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import javalibrary.fitness.TextFitness;
 import javalibrary.lib.Timer;
@@ -36,8 +37,10 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
+		
 		for(EnigmaMachine machine : EnigmaLib.MACHINES)
-			this.machineSelection.addItem(machine);
+			if(machine.isSolvable())
+				this.machineSelection.addItem(machine);
 
 		this.machineSelection.addActionListener(new ActionListener() {
 
@@ -73,15 +76,13 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 		//Settings grab
 		task.machine = (EnigmaMachine)this.machineSelection.getSelectedItem();
 		task.reflectorTest = this.reflectorSelection.getSelectedIndex() - 1;
-		int start = 0;
-		int end = task.machine.reflectorCount;
+		task.start = 0;
+		task.end = task.machine.reflectorCount;
 		if(task.reflectorTest != -1) {
-			start = task.reflectorTest;
-			end = start + 1;
+			task.start = task.reflectorTest;
+			task.end = task.start + 1;
 		}
 		
-		task.start = start;
-		task.end = end;
 		app.out().println("Using machine type: %s", task.machine);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
