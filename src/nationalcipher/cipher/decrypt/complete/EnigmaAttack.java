@@ -1,6 +1,12 @@
 package nationalcipher.cipher.decrypt.complete;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
+
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
@@ -17,13 +23,48 @@ import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
 
 public class EnigmaAttack extends CipherAttack {
 
+	private JComboBox<EnigmaMachine> machineSelection;
+	private JComboBox<String> reflectorSelection;
+	
 	public EnigmaAttack() {
 		super("Enigma");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
+		this.machineSelection = new JComboBox<EnigmaMachine>();
+		this.reflectorSelection = new JComboBox<String>();
+		for(EnigmaMachine machine : EnigmaLib.MACHINES)
+			if(machine.canPlugboard())
+				this.machineSelection.addItem(machine);
+		
+		this.machineSelection.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				EnigmaMachine currentMachine = (EnigmaMachine)EnigmaAttack.this.machineSelection.getSelectedItem();
+				
+				EnigmaAttack.this.reflectorSelection.removeAllItems();
+				if(currentMachine.reflectorCount > 1)
+					EnigmaAttack.this.reflectorSelection.addItem("-Check all-");
+				for(String reflectorName : currentMachine.reflectorNames)
+					EnigmaAttack.this.reflectorSelection.addItem(reflectorName);
+			}
+		});
+		
+		EnigmaMachine currentMachine = (EnigmaMachine)EnigmaAttack.this.machineSelection.getSelectedItem();
+		if(currentMachine.reflectorCount > 1)
+			this.reflectorSelection.addItem("-Check all-");
+		for(String reflectorName : currentMachine.reflectorNames)
+			this.reflectorSelection.addItem(reflectorName);
+	}
+	
+	@Override
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
+		panel.add(new SubOptionPanel("Machine Version:", this.machineSelection));
+		panel.add(new SubOptionPanel("Reflector:", this.reflectorSelection));
 	}
 	
 	@Override
@@ -31,65 +72,59 @@ public class EnigmaAttack extends CipherAttack {
 		EnigmaTask task = new EnigmaTask(text, app);
 		
 		//Settings grab
-		task.machine = EnigmaLib.ENIGMA_I;
+		task.machine = (EnigmaMachine)this.machineSelection.getSelectedItem();
+		task.reflectorTest = this.reflectorSelection.getSelectedIndex() - 1;
+		int start = 0;
+		int end = task.machine.reflectorCount;
+		if(task.reflectorTest != -1) {
+			start = task.reflectorTest;
+			end = start + 1;
+		}
+		
+		task.start = start;
+		task.end = end;
+		app.out().println("Using machine type: %s", task.machine);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			
 			int rotorCombos = MathUtil.factorial(task.machine.getNumberOfRotors(), 3);
 			app.out().println("Going throught all combinations of the %d rotors (%d) and indicator settings (%d), totalling %d test subjects.", task.machine.getNumberOfRotors(), rotorCombos, (int)Math.pow(26, 3), rotorCombos * (int)Math.pow(26, 3));
 			double constant = 120 / 60000D; //Time taken per letter per rotor setting
-			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length * task.machine.getNumberOfReflectors()));
+			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length * (task.reflectorTest == -1 ? task.machine.getNumberOfReflectors() : 1)));
 			Timer timer = new Timer();
 			KeyIterator.permutateArray(task, (byte)0, 3, task.machine.getNumberOfRotors(), false);
 			app.out().println("Time taken %fs", timer.getTimeRunning(Time.SECOND));
 			
 			task.squeezeFirst.sort();
 			app.out().println("Determining ring settings");
-			app.out().println("%d Possible indicators and rotor orders, therefore %d possible ring settings", task.squeezeFirst.size(), task.squeezeFirst.size() * 26);
+			app.out().println("%d Possible indicators and rotor orders, therefore %d possible ring settings", task.squeezeFirst.size(), task.squeezeFirst.size() * 26 * 26);
 
 			
 			for(int i = 0; i < task.squeezeFirst.size(); i++) {
 				EnigmaSection trial = task.squeezeFirst.get(i);
-				for(int s3 = 0; s3 < 26; s3++) {
-					int[] indicator = trial.copyIndicator();
-					int[] ring = new int[] {0, 0, s3};
+				for(int s2 = 0; s2 < 26; s2++) {
+					for(int s3 = 0; s3 < 26; s3++) {
+						int[] indicator = trial.copyIndicator();
+						int[] ring = new int[] {0, s2, s3};
 
-					indicator[2] = (indicator[2] + s3) % 26;
+						indicator[1] = (indicator[1] + s2) % 26;
+						indicator[2] = (indicator[2] + s3) % 26;
 				
-					task.plainText = task.decryptEnigma(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector);
-					EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, trial.machine, indicator, trial.rotors, trial.reflector);
-					nextTrialSolution.ring = ring;
+						task.plainText = task.decryptEnigma(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector);
+						EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, trial.machine, indicator, trial.rotors, trial.reflector);
+						nextTrialSolution.ring = ring;
 	
-					if(task.squeezeSecond.addResult(nextTrialSolution))
-						nextTrialSolution.makeCopy();
-			
+						if(task.squeezeSecond.addResult(nextTrialSolution))
+							nextTrialSolution.makeCopy();
+					}
 				}
 			}
 			
 			task.squeezeSecond.sort();
+			app.out().println("Determining plugboard");
 			
-			for(int i = 0; i < task.squeezeSecond.size(); i++) {
-				EnigmaSection trial = task.squeezeSecond.get(i);
-
-				for(int s2 = 0; s2 < 26; s2++) {
-					int[] indicator = trial.copyIndicator();
-					int[] ring = new int[] {0, s2, trial.ring[2]};
-	
-					indicator[1] = (indicator[1] + s2) % 26;
-					
-					task.plainText = task.decryptEnigma(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector);
-					EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, trial.machine, indicator, trial.rotors, trial.reflector);
-					nextTrialSolution.ring = ring;
-	
-					if(task.squeezeThird.addResult(nextTrialSolution))
-						nextTrialSolution.makeCopy();
-				}
-			}
-			
-			task.squeezeThird.sort();
-			
-			for(int option = 0; option < task.squeezeThird.size(); option++) {
-				EnigmaSection trial = task.squeezeThird.get(option);
+			for(int option = 0; option < task.squeezeSecond.size(); option++) {
+				EnigmaSection trial = task.squeezeSecond.get(option);
 			
 				int plugboardIndex = 0;
 				char[][] plugboard = new char[13][2];
@@ -146,15 +181,15 @@ public class EnigmaAttack extends CipherAttack {
 	public class EnigmaTask extends InternalDecryption implements ArrayPermutations {
 
 		private EnigmaMachine machine;
+		private int reflectorTest; //-1 if test all, otherwise is the index of the reflector to test
+		private int start, end;
 		private DynamicResultList<EnigmaSection> squeezeFirst;
 		private DynamicResultList<EnigmaSection> squeezeSecond;
-		private DynamicResultList<EnigmaSection> squeezeThird;
 		
 		public EnigmaTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 			this.squeezeFirst = new DynamicResultList<EnigmaSection>(256);
-			this.squeezeSecond = new DynamicResultList<EnigmaSection>(256);
-			this.squeezeThird = new DynamicResultList<EnigmaSection>(64);
+			this.squeezeSecond = new DynamicResultList<EnigmaSection>(64);
 		}
 
 		@Override
@@ -163,8 +198,8 @@ public class EnigmaAttack extends CipherAttack {
 				KeyIterator.permutateArray(this, (byte)1, 3, 26, true, data);
 			else if(id == 1) {
 				int[] rotor = (int[])extra[0];
-			
-				for(int reflector = 0; reflector < this.machine.reflectorCount; reflector++) {
+
+				for(int reflector = this.start; reflector < this.end; reflector++) {
 					
 					this.plainText = this.decryptEnigma(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
 					EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, this.machine, data, rotor, reflector);
@@ -172,7 +207,6 @@ public class EnigmaAttack extends CipherAttack {
 					if(this.squeezeFirst.addResult(trialSolution))
 						trialSolution.makeCopy();
 				}
-
 			}
 		}
 		
@@ -181,7 +215,7 @@ public class EnigmaAttack extends CipherAttack {
 		}
 		
 		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector, char[][] plugboard) {
-			return Enigma.decode(cipherText, plainText, machine, indicator, ring, rotors, reflector, plugboard);
+			return Enigma.decode(cipherText, plainText, machine.createWithPlugboard(plugboard), indicator, ring, rotors, reflector);
 		}
 	}
 	
@@ -220,7 +254,7 @@ public class EnigmaAttack extends CipherAttack {
 		}
 		
 		public String toKeyString() {
-			return String.format("Machine Type: [R:%s], Rotors:%s: Ind:%s, Ring:%s", new String(this.machine.reflector[this.reflector]), Arrays.toString(this.rotors), this.displaySetting(this.indicator), this.displaySetting(this.ring));
+			return String.format("Machine Type: %s, Rotors:%s: Ind:%s, Ring:%s", this.machine, Arrays.toString(this.rotors), this.displaySetting(this.indicator), this.displaySetting(this.ring));
 		}
 		
 		@Override

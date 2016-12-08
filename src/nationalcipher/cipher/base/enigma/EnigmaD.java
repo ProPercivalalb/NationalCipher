@@ -7,6 +7,7 @@ public class EnigmaD extends EnigmaMachine {
 		this.setRotors("LPGSZMHAEOQKVXRFYBUTNICJDW", "SLVGBTFXJQOHEWIRZYAMKPCNDU", "CJGDPSHKTURAWZXFMYNQOBVLIE");
 		this.setNotches(new int[][] {{24},{4},{13}});
 		this.setReflectors("IMETCGFRAYSQBZXWLHKDVUPOJN");
+		this.setReflectorNames("UKW");
 		this.setETW("QWERTZUIOASDFGHJKPYXCVBNML");
 	}
 

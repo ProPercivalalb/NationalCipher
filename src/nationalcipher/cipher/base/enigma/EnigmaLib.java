@@ -10,6 +10,8 @@ public class EnigmaLib {
 	public static final EnigmaMachine SWISS_K = new SwissK("Swiss K");
 	public static final EnigmaMachine ROCKET_I = new RocketI("Rocket I");
 	
+	public static final EnigmaMachine[] MACHINES = new EnigmaMachine[] {ENIGMA_D, ENIGMA_I, NORENIGMA, ENIGMA_M3, ENIGMA_K, SWISS_K, ROCKET_I};
+	
 	public static final char[][] ENIGMA_D_ROTORS = EnigmaLib.createNormal("LPGSZMHAEOQKVXRFYBUTNICJDW", "SLVGBTFXJQOHEWIRZYAMKPCNDU", "CJGDPSHKTURAWZXFMYNQOBVLIE");
 	public static final char[][] ENIGMA_D_ROTORS_INVERSE = EnigmaLib.createInverse(ENIGMA_D_ROTORS);
 	public static final int NO_ENIGMA_D_ROTORS = ENIGMA_D_ROTORS.length;

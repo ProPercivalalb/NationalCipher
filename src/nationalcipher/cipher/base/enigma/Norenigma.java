@@ -7,6 +7,7 @@ public class Norenigma extends EnigmaMachine {
 		this.setRotors("WTOKASUYVRBXJHQCPZEFMDINLG", "GJLPUBSWEMCTQVHXAOFZDRKYNI", "JWFMHNBPUSDYTIXVZGRQLAOEKC", "ESOVPZJAYQUIRHXLNFTGKDCMWB", "HEJXQOTZBVFDASCILWPGYNMURK");
 		this.setNotches(new int[][] {{16},{4},{21},{9},{25}});
 		this.setReflectors("MOWJYPUXNDSRAIBFVLKZGQCHET");
+		this.setReflectorNames("UKW");
 	}
 
 	@Override

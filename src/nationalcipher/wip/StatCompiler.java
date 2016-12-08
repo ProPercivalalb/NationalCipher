@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import javalibrary.dict.Dictionary;
 import javalibrary.file.DraftFile;
 import javalibrary.lib.Timer;
+import nationalcipher.cipher.base.enigma.EnigmaLib;
+import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;
@@ -36,7 +38,10 @@ public class StatCompiler {
 		draft.close();
 		
 		
-		
+		String plainText = "A";
+		byte[] plainText2 = new byte[plainText.length()];
+		byte[] cipherText = Enigma.decode(plainText.toCharArray(), plainText2, EnigmaLib.ROCKET_I, new int[] {0, 0, 0}, new int[] {0, 0, 0}, new int[] {0, 1, 2}, 0);
+		System.out.println(new String(cipherText));
 		
 		//registerStatistics();
 		//for(IRandEncrypter en : new IRandEncrypter[] {new ConjugatedBifid()})

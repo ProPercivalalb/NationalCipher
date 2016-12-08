@@ -1,5 +1,9 @@
 package nationalcipher.cipher.base.enigma;
 
+import java.lang.reflect.InvocationTargetException;
+
+import javalibrary.util.ArrayUtil;
+
 public class EnigmaMachine {
 
 	public String name;
@@ -9,6 +13,7 @@ public class EnigmaMachine {
 	public int rotorCount;
 	
 	public char[][] reflector;
+	public String[] reflectorNames;
 	public int reflectorCount;
 	
 	public char[] etw;
@@ -47,6 +52,11 @@ public class EnigmaMachine {
 		this.reflector = normal;
 		this.reflectorCount = input.length;
 	}
+	
+	public final void setReflectorNames(String... input) {
+		this.reflectorNames = input;
+		this.reflectorCount = input.length;
+	}
 
 	public void setETW(String input) {
 		this.etw = input.toCharArray();
@@ -68,5 +78,40 @@ public class EnigmaMachine {
 	
 	public boolean canPlugboard() {
 		return false;
+	}
+	
+	public EnigmaMachine createWithPlugboard(char[]... input) {
+		EnigmaMachine copy = this.copy();
+		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+		
+		for(char[] swap : input) {
+			if(swap[0] == 0 || swap[1] == 0) continue;
+			int ichar = ArrayUtil.indexOf(plugBoardArray, swap[0]);
+			int jchar = ArrayUtil.indexOf(plugBoardArray, swap[1]);
+			char temp = plugBoardArray[jchar];
+			plugBoardArray[jchar] = plugBoardArray[ichar];
+			plugBoardArray[ichar] = temp;
+		}
+		
+		copy.etw = plugBoardArray;
+		copy.etwInverse = plugBoardArray;
+		
+		return copy;
+	}
+	
+	public EnigmaMachine copy() {
+		try {
+			return this.getClass().getConstructor(String.class).newInstance(this.name);
+		} 
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@Override
+	public String toString() {
+		return this.name;
 	}
 }

@@ -1,6 +1,12 @@
 package nationalcipher.cipher.decrypt.complete;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
+
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 
 import javalibrary.fitness.TextFitness;
 import javalibrary.lib.Timer;
@@ -16,14 +22,48 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
 public class EnigmaNoPlugboardAttack extends CipherAttack {
 
+	private JComboBox<EnigmaMachine> machineSelection;
+	private JComboBox<String> reflectorSelection;
+	
 	public EnigmaNoPlugboardAttack() {
 		super("Enigma No Plugboard");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
+		this.machineSelection = new JComboBox<EnigmaMachine>();
+		this.reflectorSelection = new JComboBox<String>();
+		for(EnigmaMachine machine : EnigmaLib.MACHINES)
+			this.machineSelection.addItem(machine);
+
+		this.machineSelection.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				EnigmaMachine currentMachine = (EnigmaMachine)EnigmaNoPlugboardAttack.this.machineSelection.getSelectedItem();
+				
+				EnigmaNoPlugboardAttack.this.reflectorSelection.removeAllItems();
+				if(currentMachine.reflectorCount > 1)
+					EnigmaNoPlugboardAttack.this.reflectorSelection.addItem("-Check all-");
+				for(String reflectorName : currentMachine.reflectorNames)
+					EnigmaNoPlugboardAttack.this.reflectorSelection.addItem(reflectorName);
+			}
+		});
+		
+		EnigmaMachine currentMachine = (EnigmaMachine)this.machineSelection.getSelectedItem();
+		if(currentMachine.reflectorCount > 1)
+			this.reflectorSelection.addItem("-Check all-");
+		for(String reflectorName : currentMachine.reflectorNames)
+			this.reflectorSelection.addItem(reflectorName);
+	}
+	
+	@Override
+	public void createSettingsUI(JDialog dialog, JPanel panel) {
+		panel.add(new SubOptionPanel("Machine Version:", this.machineSelection));
+		panel.add(new SubOptionPanel("Reflector:", this.reflectorSelection));
 	}
 	
 	@Override
@@ -31,14 +71,25 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 		EnigmaTask task = new EnigmaTask(text, app);
 		
 		//Settings grab
-		task.machine = EnigmaLib.ENIGMA_I;
+		task.machine = (EnigmaMachine)this.machineSelection.getSelectedItem();
+		task.reflectorTest = this.reflectorSelection.getSelectedIndex() - 1;
+		int start = 0;
+		int end = task.machine.reflectorCount;
+		if(task.reflectorTest != -1) {
+			start = task.reflectorTest;
+			end = start + 1;
+		}
+		
+		task.start = start;
+		task.end = end;
+		app.out().println("Using machine type: %s", task.machine);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			
 			int rotorCombos = MathUtil.factorial(task.machine.getNumberOfRotors(), 3);
 			app.out().println("Going throught all combinations of the %d rotors (%d) and indicator settings (%d), totalling %d test subjects.", task.machine.getNumberOfRotors(), rotorCombos, (int)Math.pow(26, 3), rotorCombos * (int)Math.pow(26, 3));
 			double constant = 120 / 60000D; //Time taken per letter per rotor setting
-			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length * task.machine.getNumberOfReflectors()));
+			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length * (task.reflectorTest == -1 ? task.machine.getNumberOfReflectors() : 1)));
 			Timer timer = new Timer();
 			KeyIterator.permutateArray(task, (byte)0, 3, task.machine.getNumberOfRotors(), false);
 			app.out().println("Time taken %fs", timer.getTimeRunning(Time.SECOND));
@@ -85,6 +136,8 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 	public class EnigmaTask extends InternalDecryption implements ArrayPermutations {
 
 		private EnigmaMachine machine;
+		private int reflectorTest; //-1 if test all, otherwise is the index of the reflector to test
+		private int start, end;
 		private DynamicResultList<EnigmaSection> squeezeFirst;
 		
 		public EnigmaTask(String text, IApplication app) {
@@ -97,8 +150,9 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 			if(id == 0)
 				KeyIterator.permutateArray(this, (byte)1, 3, 26, true, data);
 			else if(id == 1) {
-					int[] rotor = (int[])extra[0];
-				for(int reflector = 0; reflector < this.machine.reflectorCount; reflector++) {
+				int[] rotor = (int[])extra[0];
+				
+				for(int reflector = this.start; reflector < this.end; reflector++) {
 						
 					this.plainText = this.decryptEnigma(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
 					
@@ -111,7 +165,7 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 		}
 
 		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector) {
-			return Enigma.decode(this.cipherText, this.plainText, machine, indicator, ring, rotors, reflector);
+			return Enigma.decode(cipherText, plainText, machine, indicator, ring, rotors, reflector);
 			
 			//EnigmaLib.ENIGMA_ROTORS, EnigmaLib.ENIGMA_ROTORS_INVERSE, EnigmaLib.ENIGMA_ROTORS_NOTCHES, EnigmaLib.REFLECTOR_B
 		}

@@ -1,6 +1,7 @@
 package nationalcipher.cipher.base.substitution;
 
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
@@ -8,6 +9,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {
 
+	/**
 	public static String encode(String plainText, EnigmaMachine machine, String notchSetting, String ringSetting, int[] rotors, int reflector, String... plugBoardSettings) {
 		int[] notchKey = new int[3];
 		for(int i = 0; i < notchKey.length; i++)
@@ -89,7 +91,7 @@ public class Enigma implements IRandEncrypter {
 		}
 		
 		return plainText;
-	}
+	}**/
 	
 	//Used for a plugboard
 	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector) {
@@ -104,32 +106,32 @@ public class Enigma implements IRandEncrypter {
 				indicator[1] = (indicator[1] + 1) % 26;
 			}
 		
-				if(ArrayUtil.contains(endNotches, indicator[2]))
-					indicator[1] = (indicator[1] + 1) % 26;
+			if(ArrayUtil.contains(endNotches, indicator[2]))
+				indicator[1] = (indicator[1] + 1) % 26;
 				
-			    indicator[2] = (indicator[2] + 1) % 26;
+			indicator[2] = (indicator[2] + 1) % 26;
 				
-			    char ch = cipherText[i];
+			char ch = cipherText[i];
 			    
-			    if(machine.etw != null)
-			    	ch = nextCharacter(ch, machine.etw);
+			if(machine.etw != null)
+			  	ch = nextCharacter(ch, machine.etw);
 			    
-			    for(int r = 2; r >= 0; r--)
-			    	ch = nextCharacter(ch, machine.rotors[rotors[r]], indicator[r] - ring[r]);
+			for(int r = 2; r >= 0; r--)
+			  	ch = nextCharacter(ch, machine.rotors[rotors[r]], indicator[r] - ring[r]);
 			    
-			    ch = nextCharacter(ch, machine.reflector[reflector]);
+			ch = nextCharacter(ch, machine.reflector[reflector]);
 		
-			    for(int r = 0; r < 3; r++)
-			    	ch = nextCharacter(ch, machine.rotorsInverse[rotors[r]], indicator[r] - ring[r]);
+			for(int r = 0; r < 3; r++)
+			   	ch = nextCharacter(ch, machine.rotorsInverse[rotors[r]], indicator[r] - ring[r]);
 			    
-			    if(machine.etwInverse != null)
-			    	ch = nextCharacter(ch, machine.etwInverse);
+			if(machine.etwInverse != null)
+			    ch = nextCharacter(ch, machine.etwInverse);
 			    
-			    plainText[i] = (byte)ch;
-			}
-			
-			return plainText;
+			plainText[i] = (byte)ch;
 		}
+			
+		return plainText;
+	}
 	
 	public static char nextCharacter(char ch, char[] key) {
 		return key[ch - 'A'];
@@ -141,6 +143,7 @@ public class Enigma implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, EnigmaLib.ENIGMA_ROTORS, EnigmaLib.ENIGMA_ROTORS_INVERSE, EnigmaLib.ENIGMA_ROTORS_NOTCHES, EnigmaLib.REFLECTOR_B, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3));
+		EnigmaMachine machine = RandomUtil.pickRandomElement(EnigmaLib.MACHINES);
+		return encode(plainText, machine, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3), RandomUtil.pickRandomInt(machine.getNumberOfReflectors()));
 	}
 }
