@@ -38,9 +38,9 @@ public class StatCompiler {
 		draft.close();
 		
 		
-		String plainText = "A";
+		String plainText = "DDIQNWUVJPO";
 		byte[] plainText2 = new byte[plainText.length()];
-		byte[] cipherText = Enigma.decode(plainText.toCharArray(), plainText2, EnigmaLib.ROCKET_I, new int[] {0, 0, 0}, new int[] {0, 0, 0}, new int[] {0, 1, 2}, 0);
+		byte[] cipherText = Enigma.decode(plainText.toCharArray(), plainText2, EnigmaLib.ENIGMA_M4, new int[] {0, 0, 0}, new int[] {0, 0, 0}, new int[] {0, 1, 2}, 0, 0);
 		System.out.println(new String(cipherText));
 		
 		//registerStatistics();

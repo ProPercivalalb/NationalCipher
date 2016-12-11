@@ -18,7 +18,7 @@ import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.complete.EnigmaAttack.EnigmaSection;
+import nationalcipher.cipher.decrypt.complete.EnigmaPlugboardAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -27,32 +27,32 @@ import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
-public class EnigmaNoPlugboardAttack extends CipherAttack {
+public class EnigmaPlainAttack extends CipherAttack {
 
 	private JComboBox<EnigmaMachine> machineSelection;
 	private JComboBox<String> reflectorSelection;
 	
-	public EnigmaNoPlugboardAttack() {
-		super("Enigma No Plugboard");
+	public EnigmaPlainAttack() {
+		super("Enigma - Plain");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
 		
 		for(EnigmaMachine machine : EnigmaLib.MACHINES)
-			if(machine.isSolvable())
+			if(machine.isSolvable() && !machine.hasThinRotor())
 				this.machineSelection.addItem(machine);
 
 		this.machineSelection.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				EnigmaMachine currentMachine = (EnigmaMachine)EnigmaNoPlugboardAttack.this.machineSelection.getSelectedItem();
+				EnigmaMachine currentMachine = (EnigmaMachine)EnigmaPlainAttack.this.machineSelection.getSelectedItem();
 				
-				EnigmaNoPlugboardAttack.this.reflectorSelection.removeAllItems();
+				EnigmaPlainAttack.this.reflectorSelection.removeAllItems();
 				if(currentMachine.reflectorCount > 1)
-					EnigmaNoPlugboardAttack.this.reflectorSelection.addItem("-Check all-");
+					EnigmaPlainAttack.this.reflectorSelection.addItem("-Check all-");
 				for(String reflectorName : currentMachine.reflectorNames)
-					EnigmaNoPlugboardAttack.this.reflectorSelection.addItem(reflectorName);
+					EnigmaPlainAttack.this.reflectorSelection.addItem(reflectorName);
 			}
 		});
 		
@@ -108,7 +108,7 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 						indicator[1] = (indicator[1] + s2) % 26;
 						indicator[2] = (indicator[2] + s3) % 26;
 					
-						task.lastSolution = new Solution(task.decryptEnigma(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector), app.getLanguage());
+						task.lastSolution = new Solution(Enigma.decode(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector), app.getLanguage());
 						
 						if(task.lastSolution.score > task.bestSolution.score) {
 							task.bestSolution = task.lastSolution;
@@ -155,7 +155,7 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 				
 				for(int reflector = this.start; reflector < this.end; reflector++) {
 						
-					this.plainText = this.decryptEnigma(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
+					this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
 					
 					EnigmaSection trialSolution = new EnigmaSection(TextFitness.scoreFitnessQuadgrams(this.plainText, this.getLanguage()), this.machine, data, rotor, reflector);
 	
@@ -163,12 +163,6 @@ public class EnigmaNoPlugboardAttack extends CipherAttack {
 						trialSolution.makeCopy();
 				}
 			}
-		}
-
-		public byte[] decryptEnigma(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector) {
-			return Enigma.decode(cipherText, plainText, machine, indicator, ring, rotors, reflector);
-			
-			//EnigmaLib.ENIGMA_ROTORS, EnigmaLib.ENIGMA_ROTORS_INVERSE, EnigmaLib.ENIGMA_ROTORS_NOTCHES, EnigmaLib.REFLECTOR_B
 		}
 	}
 }

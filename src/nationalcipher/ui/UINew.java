@@ -117,6 +117,8 @@ import nationalcipher.LoadElement;
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.RandomEncrypter;
+import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.AttackRegistry;
 import nationalcipher.cipher.decrypt.CipherAttack;
@@ -2087,6 +2089,7 @@ public class UINew extends JFrame implements IApplication {
 			String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty()) {
 				char[] arrayText = text.toCharArray();
+				byte[] plainText = new byte[arrayText.length];
 				int bestPeriod = -1;
 				int bestEverProgressivePeriod = -1;
 				int bestEverProgressiveIndex = -1;
@@ -2098,29 +2101,31 @@ public class UINew extends JFrame implements IApplication {
 					double bestIoC = Double.MAX_VALUE;
 					List<ProgressiveKeySearch> list = new ArrayList<ProgressiveKeySearch>();
 					
-					for(int progressivePeriod = 1; progressivePeriod <= 25; progressivePeriod++) {
+					//for(int progressivePeriod = 1; progressivePeriod <= 25; progressivePeriod++) {
+					for(VigenereType type : VigenereType.NORMAL_LIST) {
 						for(int progressiveIndex = 1; progressiveIndex <= 25; progressiveIndex++) {
 							//TODO
-							/**
-							char[] decoded = ProgressiveKey.decodeBase(arrayText, progressivePeriod, progressiveIndex);
+						
+							char[] decoded = ArrayUtil.convertCharType(ProgressiveKey.decodeBase(arrayText, plainText, period, progressiveIndex, type));
 							
 							
 							double total = 0.0D;
 		    		    	for(int i = 0; i < period; i++)
-		    		    		total += StatCalculator.calculateIC(StringTransformer.getEveryNthChar(decoded, i, period), 1, true);
+		    		    		total += StatCalculator.calculateMonoIC(StringTransformer.getEveryNthChar(decoded, i, period).toCharArray());
 		    		    	total /= period;
 		    		    	
 		    		    	double sqDiff = Math.abs(total - settings.getLanguage().getNormalCoincidence()) * 1000;
 		    		    	
 		    		    	if(sqDiff < bestIoC) {
-		    		    		bestProgressivePeriod = progressivePeriod;
+		    		    		bestProgressivePeriod = period;
 		    		    		bestProgressiveIndex = progressiveIndex;
 		    		    	}
 		  
 		    		    	bestIoC = Math.min(bestIoC, sqDiff);
-		    		    	list.add(new ProgressiveKeySearch(progressivePeriod, progressiveIndex, sqDiff));**/
+		    		    	list.add(new ProgressiveKeySearch(period, progressiveIndex, sqDiff));
 						}
 					}
+					//}
 					
 					Collections.sort(list);
 		

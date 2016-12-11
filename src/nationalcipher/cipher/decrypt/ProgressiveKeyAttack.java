@@ -26,7 +26,7 @@ public abstract class ProgressiveKeyAttack extends CipherAttack {
 		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION);
 		this.rangeSpinner1 = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 		this.rangeSpinner2 = JSpinnerUtil.createRangeSpinners(1, 30, 1, 100, 1);
-		this.rangeSpinner3 = JSpinnerUtil.createRangeSpinners(1, 30, 1, 100, 1);
+		this.rangeSpinner3 = JSpinnerUtil.createRangeSpinners(1, 25, 1, 100, 1);
 	}
 	
 	@Override

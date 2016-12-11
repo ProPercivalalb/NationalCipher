@@ -8,8 +8,7 @@ import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {
-
-	/**
+	
 	public static String encode(String plainText, EnigmaMachine machine, String notchSetting, String ringSetting, int[] rotors, int reflector, String... plugBoardSettings) {
 		int[] notchKey = new int[3];
 		for(int i = 0; i < notchKey.length; i++)
@@ -19,84 +18,27 @@ public class Enigma implements IRandEncrypter {
 		for(int i = 0; i < ring.length; i++)
 			ring[i] = ringSetting.charAt(i) - 'A';
 		
-		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], machine, notchKey, ring, rotors, reflector));//TODO, plugBoardSettings));
+		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], machine, notchKey, ring, rotors, -1, reflector));
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector, char[]... plugBoardSettings) {
-		
-		if(machine.canPlugboard()) {
-			char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-			
-			for(char[] swap : plugBoardSettings) {
-				if(swap[0] == 0 || swap[1] == 0) continue;
-				int ichar = ArrayUtil.indexOf(plugBoardArray, swap[0]);
-				int jchar = ArrayUtil.indexOf(plugBoardArray, swap[1]);
-				char temp = plugBoardArray[jchar];
-				plugBoardArray[jchar] = plugBoardArray[ichar];
-				plugBoardArray[ichar] = temp;
-			}
-			
-			machine.etw = plugBoardArray;
-			machine.etwInverse = plugBoardArray;
-		}
-		
-		return decode(cipherText, plainText, machine, indicator, ring, rotors, reflector);
+	//Useful functions
+	
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflectorIndex, char[][] plugboard) {
+		return decode(cipherText, plainText, machine.createWithPlugboard(plugboard), indicator, ring, rotors, -1, reflectorIndex);
 	}
 	
-	//Used for a plugboard
-	public static byte[] decodeWithPlugboard(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector, char[]... plugBoardSettings) {
-		 
-		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-		
-		for(char[] swap : plugBoardSettings) {
-			if(swap[0] == 0 || swap[1] == 0) continue;
-			int ichar = ArrayUtil.indexOf(plugBoardArray, swap[0]);
-			int jchar = ArrayUtil.indexOf(plugBoardArray, swap[1]);
-			char temp = plugBoardArray[jchar];
-			plugBoardArray[jchar] = plugBoardArray[ichar];
-			plugBoardArray[ichar] = temp;
-		}
-		
-		for(int i = 0; i < cipherText.length; i++) {
-			//Next settings
-			int[] middleNotches = machine.notches[rotors[1]];
-			int[] endNotches = machine.notches[rotors[2]];
-			
-			if(ArrayUtil.contains(middleNotches, indicator[1])) {
-				indicator[0] = (indicator[0] + 1) % 26;
-			    indicator[1] = (indicator[1] + 1) % 26;
-			}
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int thinRotor, int reflectorIndex, char[][] plugboard) {
+		return decode(cipherText, plainText, machine.createWithPlugboard(plugboard), indicator, ring, rotors, thinRotor, reflectorIndex);
+	}
 	
-			if(ArrayUtil.contains(endNotches, indicator[2]))
-				indicator[1] = (indicator[1] + 1) % 26;
-			
-		    indicator[2] = (indicator[2] + 1) % 26;
-			
-		    char ch = cipherText[i];
-		    
-
-		    ch = nextCharacter(ch, plugBoardArray);
-		    
-		    for(int r = 2; r >= 0; r--)
-		    	ch = nextCharacter(ch, machine.rotors[rotors[r]], indicator[r] - ring[r]);
-		    
-		    ch = nextCharacter(ch, machine.reflector[reflector]);
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflectorIndex) {
+		return decode(cipherText, plainText, machine, indicator, ring, rotors, -1, reflectorIndex);
+	}
 	
-		    for(int r = 0; r < 3; r++)
-		    	ch = nextCharacter(ch, machine.rotorsInverse[rotors[r]], indicator[r] - ring[r]);
-		    
-		    ch = nextCharacter(ch, plugBoardArray);
-		    
-		    plainText[i] = (byte)ch;
-		}
-		
-		return plainText;
-	}**/
-	
-	//Used for a plugboard
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflector) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int thinRotor, int reflectorIndex) {
 			
 		int reflectorSetting = 0;
+		int thinRotorSetting = 0;
 		for(int i = 0; i < cipherText.length; i++) {
 			
 			//Next settings
@@ -140,8 +82,14 @@ public class Enigma implements IRandEncrypter {
 			for(int r = 2; r >= 0; r--)
 			  	ch = nextCharacter(ch, machine.rotors[rotors[r]], indicator[r] - ring[r]);
 			
-			ch = nextCharacter(ch, machine.reflector[reflector], reflectorSetting);
+			if(machine.hasThinRotor)
+				ch = nextCharacter(ch, machine.thinRotor[thinRotor], thinRotorSetting);
+			
+			ch = nextCharacter(ch, machine.reflector[reflectorIndex], reflectorSetting);
 		
+			if(machine.hasThinRotor)
+				ch = nextCharacter(ch, machine.thinRotorInverse[thinRotor], thinRotorSetting);
+			
 			for(int r = 0; r < 3; r++)
 			   	ch = nextCharacter(ch, machine.rotorsInverse[rotors[r]], indicator[r] - ring[r]);
 			    
@@ -164,7 +112,7 @@ public class Enigma implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		EnigmaMachine machine = RandomUtil.pickRandomElement(EnigmaLib.MACHINES);
+		EnigmaMachine machine = EnigmaLib.NORENIGMA;//RandomUtil.pickRandomElement(EnigmaLib.MACHINES);
 		return encode(plainText, machine, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3), RandomUtil.pickRandomInt(machine.getNumberOfReflectors()));
 	}
 }

@@ -8,6 +8,7 @@ public class EnigmaMachine {
 
 	//TODO CHANGE ALL THE PUBLIC FIELDS TO PRIVATE
 	public String name;
+	
 	public char[][] rotors;
 	public char[][] rotorsInverse;
 	public int[][] notches;
@@ -20,13 +21,19 @@ public class EnigmaMachine {
 	public char[] etw;
 	public char[] etwInverse;
 	
+	public char[][] thinRotor;
+	public char[][] thinRotorInverse;
+	public int thinRotorCount;
+	
 	public boolean canPlugboard;
+	public boolean hasThinRotor;
 	public boolean stepping;
 	
 	public EnigmaMachine(String name) {
 		this.name = name;
 		this.canPlugboard = false;
 		this.stepping = true;
+		this.hasThinRotor = false;
 	}
 	
 	public final void setRotors(String... input) {
@@ -86,6 +93,22 @@ public class EnigmaMachine {
 		this.etwInverse = inverse;
 	}
 	
+	public final void setThinRotors(String... input) {
+		char[][] normal = new char[input.length][26];
+		char[][] inverse = new char[normal.length][26];
+		
+		for(int r = 0; r < input.length; r++) {
+			for(int i = 0; i < 26; i++) {
+				normal[r][i] = input[r].charAt(i);
+				inverse[r][normal[r][i] - 'A'] = (char)(i + 'A');
+			}
+		}
+		
+		this.thinRotor = normal;
+		this.thinRotorInverse = inverse;
+		this.thinRotorCount = input.length;
+	}
+	
 	public final int getNumberOfRotors() {
 		return this.rotorCount;
 	}
@@ -94,8 +117,16 @@ public class EnigmaMachine {
 		return this.reflectorCount;
 	}
 	
+	public final int getNumberOfThinRotors() {
+		return this.thinRotorCount;
+	}
+	
 	public final boolean canPlugboard() {
 		return this.canPlugboard;
+	}
+	
+	public boolean hasThinRotor() {
+		return this.hasThinRotor;
 	}
 	
 	/**

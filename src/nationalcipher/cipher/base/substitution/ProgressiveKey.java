@@ -52,4 +52,23 @@ public class ProgressiveKey implements IRandEncrypter {
 		int period = RandomUtil.pickRandomInt(2, 15);
 		return encode(plainText, KeyGeneration.createShortKey26(period), period, RandomUtil.pickRandomInt(1, 25), VigenereType.PORTA);//RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
 	}
+
+	public static byte[] decodeBase(char[] cipherText, byte[] plainText, int period, int progressiveKey, VigenereType type) {
+		int progression = 0;
+		int count = 0;
+		for(int index = 0; index < cipherText.length; index++) {
+			byte charIdProg = type.decode((byte)cipherText[index], (byte)(progression + 'A'));
+			plainText[index] = type.decode((byte)cipherText[index], (byte)(progression + 'A'));
+			
+			if(count + 1 == period) {
+				count = 0;
+				progression = (progression + progressiveKey) % 26;
+			}
+			else
+				count++;
+			
+		}
+		
+		return plainText;
+	}
 }
