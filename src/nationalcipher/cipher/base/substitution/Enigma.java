@@ -78,17 +78,19 @@ public class Enigma implements IRandEncrypter {
 			
 			if(machine.etwInverse != null)
 			  	ch = nextCharacter(ch, machine.etwInverse);
+			
+			//if(machine.canUhr) {
+			//	ch = machine.nextUhrCharacter(ch);
+			//}
 			    
 			for(int r = 2; r >= 0; r--)
 			  	ch = nextCharacter(ch, machine.rotors[rotors[r]], indicator[r] - ring[r]);
 			
-			if(machine.hasThinRotor)
-				ch = nextCharacter(ch, machine.thinRotor[thinRotor], thinRotorSetting);
+			if(machine.hasThinRotor) ch = nextCharacter(ch, machine.thinRotor[thinRotor], thinRotorSetting);
 			
 			ch = nextCharacter(ch, machine.reflector[reflectorIndex], reflectorSetting);
 		
-			if(machine.hasThinRotor)
-				ch = nextCharacter(ch, machine.thinRotorInverse[thinRotor], thinRotorSetting);
+			if(machine.hasThinRotor) ch = nextCharacter(ch, machine.thinRotorInverse[thinRotor], thinRotorSetting);
 			
 			for(int r = 0; r < 3; r++)
 			   	ch = nextCharacter(ch, machine.rotorsInverse[rotors[r]], indicator[r] - ring[r]);

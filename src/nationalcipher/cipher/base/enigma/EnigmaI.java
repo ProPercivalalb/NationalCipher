@@ -9,5 +9,7 @@ public class EnigmaI extends EnigmaMachine {
 		this.setReflectors("EJMZALYXVBWFCRQUONTSPIKHGD", "YRUHQSLDPXNGOKMIEBFZCWVJAT", "FVPJIAOYEDRZXWGCTKUQSBNMHL");
 		this.setReflectorNames("UKW-A", "UKW-B", "UKW-C");
 		this.canPlugboard = true;
+		this.canUhr = true;
+		this.rotorCount = 3;
 	}
 }

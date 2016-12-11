@@ -9,5 +9,6 @@ public class EnigmaM3 extends EnigmaMachine {
 		this.setReflectors("YRUHQSLDPXNGOKMIEBFZCWVJAT", "FVPJIAOYEDRZXWGCTKUQSBNMHL");
 		this.setReflectorNames("UKW-B", "UKW-C");
 		this.canPlugboard = true;
+		this.canUhr = true;
 	}
 }

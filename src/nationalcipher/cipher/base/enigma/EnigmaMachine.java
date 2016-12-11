@@ -26,12 +26,14 @@ public class EnigmaMachine {
 	public int thinRotorCount;
 	
 	public boolean canPlugboard;
+	public boolean canUhr;
 	public boolean hasThinRotor;
 	public boolean stepping;
 	
 	public EnigmaMachine(String name) {
 		this.name = name;
 		this.canPlugboard = false;
+		this.canUhr = false;
 		this.stepping = true;
 		this.hasThinRotor = false;
 	}
@@ -125,7 +127,11 @@ public class EnigmaMachine {
 		return this.canPlugboard;
 	}
 	
-	public boolean hasThinRotor() {
+	public final boolean canUhr() {
+		return this.canUhr;
+	}
+	
+	public final boolean hasThinRotor() {
 		return this.hasThinRotor;
 	}
 	
@@ -143,26 +149,15 @@ public class EnigmaMachine {
 	
 	public EnigmaMachine createWithPlugboard(char[]... input) {
 		EnigmaMachine copy = new EnigmaPlugboard(this.name);
-		copy.rotors = this.rotors;
-		copy.rotorsInverse = this.rotorsInverse;
-		copy.rotorCount = this.rotorCount;
-		copy.notches = this.notches;
-		copy.reflector = this.reflector;
-		copy.reflectorNames = this.reflectorNames;
-		copy.reflectorCount = this.reflectorCount;
-		
-		copy.canPlugboard = this.canPlugboard;
-		copy.stepping = copy.stepping;
+		EnigmaMachine.copy(this, copy);
 		
 		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 		
 		for(char[] swap : input) {
 			if(swap[0] == 0 || swap[1] == 0) continue;
-			int ichar = ArrayUtil.indexOf(plugBoardArray, swap[0]);
-			int jchar = ArrayUtil.indexOf(plugBoardArray, swap[1]);
-			char temp = plugBoardArray[jchar];
-			plugBoardArray[jchar] = plugBoardArray[ichar];
-			plugBoardArray[ichar] = temp;
+			
+			plugBoardArray[swap[0] - 'A'] = swap[1];
+			plugBoardArray[swap[1] - 'A'] = swap[0];
 		}
 		
 		copy.etw = plugBoardArray;
@@ -171,20 +166,106 @@ public class EnigmaMachine {
 		return copy;
 	}
 	
+	public EnigmaMachine createWithUhr(int setting, char[][] input) {
+		EnigmaMachine copy = new EnigmaUhr(this.name, input);
+		EnigmaMachine.copy(this, copy);
+
+		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+		for(char[] swap : input) {
+			if(swap[0] == 0 || swap[1] == 0) continue;
+			int uhrIndex = swap[2] - '0';
+			
+			int aWire = (uhrIndex * 4 + setting) % 40;
+			int bWirePosition = (EnigmaLib.AB_WIRING[aWire] + (40 - setting)) % 40;
+			plugBoardArray[swap[0] - 'A'] = input[EnigmaLib.B_PLUG_ORDER[bWirePosition / 4]][1];
+
+			int bWire = (EnigmaLib.B_PLUG_ORDER_INDEXED[uhrIndex] * 4 + setting) % 40;
+			int aWirePosition = (EnigmaLib.AB_WIRING_INDEXED[bWire] + (40 - setting)) % 40;
+			plugBoardArray[swap[1] - 'A'] = input[aWirePosition / 4][0];
+		}
+		
+		char[] inverse = new char[26];
+		for(int i = 0; i < 26; i++)
+			inverse[plugBoardArray[i] - 'A'] = (char)(i + 'A');
+		
+		copy.etwInverse = inverse;
+		copy.etw = plugBoardArray;
+		
+		return copy;
+	}
+	
+	public EnigmaMachine createWithUhr(int setting, String... input) {
+		if(input.length == 10) {
+			char[][] raw = new char[10][3];
+			for(int i = 0; i < input.length; i++)
+				raw[i] = input[i].toCharArray();
+			return createWithUhr(setting, raw);
+		}
+		return null;
+	}
+	
+	public static void copy(EnigmaMachine orignal, EnigmaMachine copy) {
+		copy.rotors = orignal.rotors;
+		copy.rotorsInverse = orignal.rotorsInverse;
+		copy.rotorCount = orignal.rotorCount;
+		copy.notches = orignal.notches;
+		copy.reflector = orignal.reflector;
+		copy.reflectorNames = orignal.reflectorNames;
+		copy.reflectorCount = orignal.reflectorCount;
+		copy.etw = orignal.etw;
+		copy.etwInverse = orignal.etwInverse;
+		copy.thinRotor = orignal.thinRotor;
+		copy.thinRotorInverse = orignal.thinRotorInverse;
+		copy.thinRotorCount = orignal.thinRotorCount;
+		copy.canPlugboard = orignal.canPlugboard;
+		copy.canUhr = orignal.canUhr;
+		copy.hasThinRotor = orignal.hasThinRotor;
+		copy.stepping = orignal.stepping;
+	}
+	
 	public static class EnigmaPlugboard extends EnigmaMachine {
 
+		public int plugCount;
+		
 		public EnigmaPlugboard(String name) {
 			super(name);
 		}
 		
 		@Override
 		public String toString() {
+			//char[] plugs = new char[Math.max(this.plugCount * 3 - 1, 0)];
+			//Arrays.fill(plugs, ' ');
+			//for(int p = 0; p < this.plugCount; p++) {
+			//	plugs[p * 3] = plugboard[p][0];
+			//	plugs[p * 3 + 1] = plugboard[p][1];
+			//}
+			
 			return String.format("%s, Plugboard:%s", this.name, new String(this.etw));
 		} 
+	}
+	
+	public static class EnigmaUhr extends EnigmaMachine {
+
+		public char[][] input;
+		
+		public EnigmaUhr(String name, char[][] input) {
+			super(name);
+			this.input = input;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("%s, Plugboard:%s", this.name, new String(this.etw));
+		} 
+		
 	}
 	
 	@Override
 	public String toString() {
 		return this.name;
+	}
+
+	public char nextUhrCharacter(char ch) {
+		return ch;
 	}
 }

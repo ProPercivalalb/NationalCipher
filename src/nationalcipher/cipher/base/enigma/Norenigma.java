@@ -9,5 +9,6 @@ public class Norenigma extends EnigmaMachine {
 		this.setReflectors("MOWJYPUXNDSRAIBFVLKZGQCHET");
 		this.setReflectorNames("UKW");
 		this.canPlugboard = true;
+		this.canUhr = true;
 	}
 }

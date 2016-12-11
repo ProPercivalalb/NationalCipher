@@ -1,5 +1,7 @@
 package nationalcipher.cipher.base.enigma;
 
+import javalibrary.util.ArrayUtil;
+
 public class EnigmaLib {
 
 	public static final EnigmaMachine ENIGMA_D = new EnigmaD("Enigma D");
@@ -16,6 +18,12 @@ public class EnigmaLib {
 	
 	//ENIGMA_G31, ENIGMA_G260, ENIGMA_G312 require an alternative method to solving
 	public static final EnigmaMachine[] MACHINES = new EnigmaMachine[] {ENIGMA_D, ENIGMA_I, NORENIGMA, ENIGMA_M3, ENIGMA_M4, ENIGMA_K, SWISS_K, ROCKET_I};
+	
+	//Enigma Uhr
+	public static final int[] AB_WIRING = new int[] {6, 31, 4, 29, 18, 39, 16, 25, 30, 23, 28, 1, 38, 11, 36, 37, 26, 27, 24, 21, 14, 3, 12, 17,  2,  7, 0, 33, 10, 35, 8, 5, 22, 19, 20, 13, 34, 15, 32, 9};       	
+	public static final int[] B_PLUG_ORDER = new int[] {6, 0, 7, 5, 1, 8, 4, 2, 9, 3};
+	public static final int[] AB_WIRING_INDEXED = ArrayUtil.toIndexedArray(AB_WIRING);
+	public static final int[] B_PLUG_ORDER_INDEXED = ArrayUtil.toIndexedArray(B_PLUG_ORDER);
 	
 	//Please dont change
 	public static final int[] DEFAULT_SETTING = new int[] {0, 0, 0};
