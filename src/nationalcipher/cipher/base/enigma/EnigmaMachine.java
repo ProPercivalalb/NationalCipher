@@ -1,9 +1,5 @@
 package nationalcipher.cipher.base.enigma;
 
-import java.util.Arrays;
-
-import javalibrary.util.ArrayUtil;
-
 public class EnigmaMachine {
 
 	//TODO CHANGE ALL THE PUBLIC FIELDS TO PRIVATE
@@ -23,6 +19,7 @@ public class EnigmaMachine {
 	
 	public char[][] thinRotor;
 	public char[][] thinRotorInverse;
+	public String[] thinRotorNames;
 	public int thinRotorCount;
 	
 	public boolean canPlugboard;
@@ -108,6 +105,11 @@ public class EnigmaMachine {
 		
 		this.thinRotor = normal;
 		this.thinRotorInverse = inverse;
+		this.thinRotorCount = input.length;
+	}
+	
+	public final void setThinRotorNames(String... input) {
+		this.thinRotorNames = input;
 		this.thinRotorCount = input.length;
 	}
 	
@@ -257,15 +259,10 @@ public class EnigmaMachine {
 		public String toString() {
 			return String.format("%s, Plugboard:%s", this.name, new String(this.etw));
 		} 
-		
 	}
 	
 	@Override
 	public String toString() {
 		return this.name;
-	}
-
-	public char nextUhrCharacter(char ch) {
-		return ch;
 	}
 }

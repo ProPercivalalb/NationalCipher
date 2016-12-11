@@ -7,11 +7,11 @@ public class EnigmaM4 extends EnigmaMachine {
 		this.setRotors("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "AJDKSIRUXBLHWTMCQGZNPYFVOE", "BDFHJLCPRTXVZNYEIWGAKMUSQO", "ESOVPZJAYQUIRHXLNFTGKDCMWB", "VZBRGITYUPSDNHLXAWMJQOFECK", "JPGVOUMFYQBENHZRDKASXLICTW", "NZJHGRCXMYSWBOUFAIVLPEKQDT", "FKQHTLXOCBJSPDZRAMEWNIUYGV");
 		this.setNotches("Q", "E", "V", "J", "Z", "ZM", "ZM", "ZM");
 		this.setThinRotors("LEYJVCNIXWPBQMDRTAKZGFUHOS", "FSOKANUERHMBTIYCWLQPZXVGJD");
+		this.setThinRotorNames((char)945 + "|Alpha", (char)946 + "|Beta");
 		this.setReflectors("ENKQAUYWJICOPBLMDXZVFTHRGS", "RDOBJNTKVEHMLFCWZAXGYIPSUQ");
 		this.setReflectorNames("B-THIN", "C-THIN");
 		this.canPlugboard = true;
 		this.hasThinRotor = true;
 		this.canUhr = true;
-		//this.rotorCount = 4;
 	}
 }

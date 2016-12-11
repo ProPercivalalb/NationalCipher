@@ -1,21 +1,13 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-
-import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
-import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
 
 public class PolybusSquareAttack extends CipherAttack {

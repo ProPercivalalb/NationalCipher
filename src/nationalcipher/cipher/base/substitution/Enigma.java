@@ -3,8 +3,8 @@ package nationalcipher.cipher.base.substitution;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
+import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {

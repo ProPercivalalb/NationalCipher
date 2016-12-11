@@ -22,42 +22,41 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
 
-public class EnigmaPlugboardAttack extends CipherAttack {
+public class EnigmaUhrAttack extends CipherAttack {
 
 	private JComboBox<EnigmaMachine> machineSelection;
 	private JComboBox<String> reflectorSelection;
 	private JTextField plugboardDefinition;
 	
-	public EnigmaPlugboardAttack() {
-		super("Enigma - Plugboard");
+	public EnigmaUhrAttack() {
+		super("Enigma - Plugboard Uhr");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
 		this.plugboardDefinition = new JTextField();
 		for(EnigmaMachine machine : EnigmaLib.MACHINES)
-			if(machine.isSolvable() && machine.canPlugboard() && !machine.hasThinRotor())
+			if(machine.isSolvable() && machine.canPlugboard() && !machine.hasThinRotor() && machine.canUhr())
 				this.machineSelection.addItem(machine);
 		
 		this.machineSelection.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				EnigmaMachine currentMachine = (EnigmaMachine)EnigmaPlugboardAttack.this.machineSelection.getSelectedItem();
+				EnigmaMachine currentMachine = (EnigmaMachine)EnigmaUhrAttack.this.machineSelection.getSelectedItem();
 				
-				EnigmaPlugboardAttack.this.reflectorSelection.removeAllItems();
+				EnigmaUhrAttack.this.reflectorSelection.removeAllItems();
 				if(currentMachine.reflectorCount > 1)
-					EnigmaPlugboardAttack.this.reflectorSelection.addItem("-Check all-");
+					EnigmaUhrAttack.this.reflectorSelection.addItem("-Check all-");
 				for(String reflectorName : currentMachine.reflectorNames)
-					EnigmaPlugboardAttack.this.reflectorSelection.addItem(reflectorName);
+					EnigmaUhrAttack.this.reflectorSelection.addItem(reflectorName);
 			}
 		});
 		
-		EnigmaMachine currentMachine = (EnigmaMachine)EnigmaPlugboardAttack.this.machineSelection.getSelectedItem();
+		EnigmaMachine currentMachine = (EnigmaMachine)EnigmaUhrAttack.this.machineSelection.getSelectedItem();
 		if(currentMachine.reflectorCount > 1)
 			this.reflectorSelection.addItem("-Check all-");
 		for(String reflectorName : currentMachine.reflectorNames)
@@ -85,19 +84,18 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			task.end = task.start + 1;
 		}
 		
-		
 		String plugboardInput = this.plugboardDefinition.getText();
-		char[][] plugboardDefinition = new char[13][2];
+		char[][] plugboardDefinition = new char[10][3];
 		boolean definitionProvided = false;
 		int count = 0;
 		for(String split : plugboardInput.split("[, ]"))
-			if(split.length() == 2) {
+			if(split.length() == 3) {
 				plugboardDefinition[count++] = split.toCharArray();
 				definitionProvided = true;
 			}
 		
 		if(definitionProvided)
-			task.machine = task.machine.createWithPlugboard(plugboardDefinition);
+			task.machine = task.machine.createWithUhr(4, plugboardDefinition);
 		
 		app.out().println("Using machine type: %s", task.machine);
 		
@@ -141,56 +139,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			
 			for(int option = 0; option < task.squeezeSecond.size(); option++) {
 				EnigmaSection trial = task.squeezeSecond.get(option);
-			
-				int plugboardIndex = 0;
-				char[][] plugboard = new char[13][2];
-				String possiblePlugBoard = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-				while(true) {
-		
-					task.plainText = Enigma.decode(task.cipherText, task.plainText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, trial.reflector, plugboard);
-					
-					Solution bestSolution = new Solution(task.plainText, app.getLanguage().getTrigramData()).bakeSolution();
-					byte[] testText = Arrays.copyOf(task.plainText, task.plainText.length);
-					boolean foundFinalPlug = true;
-					for(int i1 = 0; i1 < possiblePlugBoard.length() - 1; i1++) {
-						for(int i2 = i1 + 1; i2 < possiblePlugBoard.length(); i2++) {
-							if(i1 == i2) {
-								app.out().println("Same letter: ");
-								continue;
-							}
-							plugboard[plugboardIndex][0] = possiblePlugBoard.charAt(i1);
-							plugboard[plugboardIndex][1] = possiblePlugBoard.charAt(i2);
-							testText = Enigma.decode(task.cipherText, testText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, trial.reflector, plugboard);
-							Solution lastSolution = new Solution(testText, app.getLanguage().getTrigramData());
-	
-							if(lastSolution.isResultBetter(bestSolution)) {
-								bestSolution = lastSolution;
-								bestSolution.setKeyString("%c%c", plugboard[plugboardIndex][0], plugboard[plugboardIndex][1]);
-								bestSolution.bakeSolution();
-								foundFinalPlug = false;
-							}
-						}
-					}
-					
-					if(foundFinalPlug) {
-						char[] plugs = new char[Math.max(plugboardIndex * 3 - 1, 0)];
-						Arrays.fill(plugs, ' ');
-						for(int p = 0; p < plugboardIndex; p++) {
-							plugs[p * 3] = plugboard[p][0];
-							plugs[p * 3 + 1] = plugboard[p][1];
-						}
-						bestSolution.setKeyString("%s, Plugs:[%s]", trial.toKeyString(), new String(plugs));
-						app.out().println("%s", bestSolution);
-						if(bestSolution.isResultBetter(task.bestSolution))
-							task.bestSolution = bestSolution;
-						break;
-					}
-					
-					possiblePlugBoard = possiblePlugBoard.replaceAll(String.format("[%s]", bestSolution.keyString), "");
-					plugboard[plugboardIndex][0] = bestSolution.keyString.charAt(0);
-					plugboard[plugboardIndex][1] = bestSolution.keyString.charAt(1);
-					plugboardIndex++;
-				}
+				app.out().println("%s", trial);
 			}
 		}
 		

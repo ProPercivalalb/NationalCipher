@@ -11,11 +11,10 @@ import javax.swing.JTextField;
 
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
-import javalibrary.list.ResultNegative;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
-import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
+import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.complete.EnigmaPlugboardAttack.EnigmaSection;
@@ -32,6 +31,7 @@ public class EnigmaThinRotor extends CipherAttack {
 
 	private JComboBox<EnigmaMachine> machineSelection;
 	private JComboBox<String> reflectorSelection;
+	private JComboBox<String> thinRotorSelection;
 	private JTextField plugboardDefinition;
 	
 	public EnigmaThinRotor() {
@@ -39,6 +39,7 @@ public class EnigmaThinRotor extends CipherAttack {
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
+		this.thinRotorSelection = new JComboBox<String>();
 		this.plugboardDefinition = new JTextField();
 		for(EnigmaMachine machine : EnigmaLib.MACHINES)
 			if(machine.isSolvable() && machine.canPlugboard() && machine.hasThinRotor())
@@ -55,6 +56,12 @@ public class EnigmaThinRotor extends CipherAttack {
 					EnigmaThinRotor.this.reflectorSelection.addItem("-Check all-");
 				for(String reflectorName : currentMachine.reflectorNames)
 					EnigmaThinRotor.this.reflectorSelection.addItem(reflectorName);
+				
+				EnigmaThinRotor.this.thinRotorSelection.removeAllItems();
+				if(currentMachine.thinRotorCount > 1)
+					EnigmaThinRotor.this.thinRotorSelection.addItem("-Check all-");
+				for(String reflectorName : currentMachine.thinRotorNames)
+					EnigmaThinRotor.this.thinRotorSelection.addItem(reflectorName);
 			}
 		});
 		
@@ -63,12 +70,18 @@ public class EnigmaThinRotor extends CipherAttack {
 			this.reflectorSelection.addItem("-Check all-");
 		for(String reflectorName : currentMachine.reflectorNames)
 			this.reflectorSelection.addItem(reflectorName);
+		
+		if(currentMachine.thinRotorCount > 1)
+			EnigmaThinRotor.this.thinRotorSelection.addItem("-Check all-");
+		for(String reflectorName : currentMachine.thinRotorNames)
+			EnigmaThinRotor.this.thinRotorSelection.addItem(reflectorName);
 	}
 	
 	@Override
 	public void createSettingsUI(JDialog dialog, JPanel panel) {
 		panel.add(new SubOptionPanel("Machine Version:", this.machineSelection));
 		panel.add(new SubOptionPanel("Reflector:", this.reflectorSelection));
+		panel.add(new SubOptionPanel("Thin Rotor:", this.thinRotorSelection));
 		panel.add(new SubOptionPanel("Plugboard:", this.plugboardDefinition));
 	}
 	
@@ -86,7 +99,6 @@ public class EnigmaThinRotor extends CipherAttack {
 			task.start = task.reflectorTest;
 			task.end = task.start + 1;
 		}
-		
 		
 		String plugboardInput = this.plugboardDefinition.getText();
 		char[][] plugboardDefinition = new char[13][2];

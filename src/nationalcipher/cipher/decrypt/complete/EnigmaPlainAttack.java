@@ -7,7 +7,6 @@ import java.util.Arrays;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import javalibrary.fitness.TextFitness;
 import javalibrary.lib.Timer;
@@ -23,8 +22,8 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
 
 public class EnigmaPlainAttack extends CipherAttack {
