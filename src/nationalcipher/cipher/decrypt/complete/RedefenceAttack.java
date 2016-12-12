@@ -63,17 +63,19 @@ public class RedefenceAttack extends CipherAttack {
 
 		@Override
 		public void onIteration(int[] order) {
-			this.lastSolution = new Solution(Redefence.decode(this.cipherText, order), this.getLanguage());
-			
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString(Arrays.toString(order));
-				this.out().println("%s", this.bestSolution);	
-				this.getKeyPanel().updateSolution(this.bestSolution);
+			for(int i = 0; i < (order.length - 1) * 2; i++) {
+				this.lastSolution = new Solution(Redefence.decode(this.cipherText, order, i), this.getLanguage());
+				
+				if(this.lastSolution.score >= this.bestSolution.score) {
+					this.bestSolution = this.lastSolution;
+					this.bestSolution.setKeyString("%s, Offset:%d", Arrays.toString(order), i);
+					this.out().println("%s", this.bestSolution);	
+					this.getKeyPanel().updateSolution(this.bestSolution);
+				}
+				
+				this.getKeyPanel().updateIteration(this.iteration++);
+				this.getProgress().increase();
 			}
-			
-			this.getKeyPanel().updateIteration(this.iteration++);
-			this.getProgress().increase();
 		}
 	}
 	

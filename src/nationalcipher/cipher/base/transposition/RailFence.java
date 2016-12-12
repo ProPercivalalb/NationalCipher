@@ -39,7 +39,7 @@ public class RailFence implements IRandEncrypter {
 		int branchTotal = 2 * (rows - 1);
 		int branchs = ghostLength / branchTotal;
 		int noUnassigned = ghostLength - (branchs * branchTotal);
-		System.out.println(rows + " " + startingOffset);
+		
 		int index = 0;
 		for(int row = 1; row <= rows; row++) {
 			if(index >= cipherText.length) break;

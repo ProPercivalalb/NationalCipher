@@ -1,5 +1,6 @@
 package nationalcipher.cipher.base.transposition;
 
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 
 /**
@@ -7,28 +8,15 @@ import nationalcipher.cipher.base.IRandEncrypter;
  */
 public class Redefence implements IRandEncrypter {
 
-	public static String decode(String cipherText, String key) {
-		
-		int[] order = new int[key.length()];
-		
-		int p = 0;
-		for(char ch = 'A'; ch <= 'Z'; ++ch) {
-			int keyindex = key.indexOf(ch);
-			if(keyindex != -1)
-				order[p++] = keyindex + 1;
-		}
-		
-		return decode(cipherText, order);
-	}
-	
-	public static byte[] decode(char[] cipherText, int[] order) {
+	public static byte[] decode(char[] cipherText, int[] order, int startingOffset) {
 		int rows = order.length;
 		
 		byte[] plainText = new byte[cipherText.length];
+		int ghostLength = cipherText.length + startingOffset;
 		
 		int branchTotal = 2 * (rows - 1);
-		int branchs = cipherText.length / branchTotal;
-		int noUnassigned = cipherText.length - (branchs * branchTotal);
+		int branchs = ghostLength / branchTotal;
+		int noUnassigned = ghostLength - (branchs * branchTotal);
 		
 		int index = 0;
 		for(int k = 0; k < rows; k++) {
@@ -41,76 +29,44 @@ public class Redefence implements IRandEncrypter {
 
 			if(noUnassigned >= row) {
 				occurs += 1;
-				
 				if(row < rows && row + (rows - row) * 2 <= noUnassigned)
 					occurs += 1;
 			}
 			
+			if(startingOffset >= row) {
+				occurs -= 1;
+				if(row < rows && row + (rows - row) * 2 <= startingOffset)
+					occurs -= 1;
+			}
+
 			for(int i = 0; i < occurs; i++) {
 				int newIndex = 0;
 				
 				if(row > 1 && row < rows) {
-					int branch = (int)(i / 2);
-					newIndex = branch * branchTotal + row - 1;
-					
-					if(i % 2 == 1)
-						newIndex += (rows - row) * 2;	
-				}
-				else
-					newIndex = i * branchTotal + row - 1;
-				
-				plainText[newIndex] = (byte)cipherText[index];
-				index++;
-			}
-		}
-		
-		return plainText;
-	}
+					int branch2 = i;
+					if(startingOffset >= row) {
+						branch2 += 1;
+						if(row < rows && row + (rows - row) * 2 <= startingOffset)
+							branch2 += 1;
+					}
 	
-	public static String decode(String cipherText, int[] order) {
-		int rows = order.length;
-		
-		char[] plainText = new char[cipherText.length()];
-		int index = 0;
-		int no_per_ite = rows * 2 - 2;
-		double total = (double)cipherText.length() / no_per_ite;
-		int total_ite = (int)Math.floor(total);
-		int total_left = (int)((total - total_ite) * no_per_ite);
-		
-		for(int k = 0; k < rows; k++) {
-			int c_row = order[k];
-			
-			if(index >= cipherText.length())
-				break;
-			
-			int times = total_ite;
-			if(c_row != 1 && c_row != rows)
-				times *= 2;
-
-			if(total_left >= c_row)
-				times += 1;
-			
-			if(c_row != rows && rows - c_row <= total_left - rows)
-				times += 1;
-			
-			for(int i = 0; i < times; i++) {
-				int newIndex = 0;
-				
-				if(c_row == 1 || c_row == rows)
-					newIndex = i * no_per_ite + c_row - 1;
+					int branch = (int)(branch2 / 2);
+					newIndex = branch * branchTotal + row - 1 - startingOffset;
+					if(branch2 % 2 == 1)
+						newIndex += (rows - row) * 2;
+					plainText[newIndex] = (byte)cipherText[index++];
+				}
 				else {
-					int x = (int)Math.floor(i / 2);
-					newIndex = x * no_per_ite + c_row - 1;
-					
-					if(i % 2 == 1)
-						newIndex += (rows - c_row) * 2;			
+					int branch = i;
+					if(startingOffset >= row)
+						branch += 1;
+					newIndex = branch * branchTotal + row - 1 - startingOffset;
+					plainText[newIndex] = (byte)cipherText[index++];
 				}
 				
-				plainText[newIndex] = cipherText.charAt(index);
-				index++;
 			}
 		}
-		return new String(plainText);
+		return plainText;
 	}
 
 	@Override

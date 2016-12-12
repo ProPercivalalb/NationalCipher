@@ -9,16 +9,16 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {
 	
-	public static String encode(String plainText, EnigmaMachine machine, String notchSetting, String ringSetting, int[] rotors, int reflector, String... plugBoardSettings) {
-		int[] notchKey = new int[3];
-		for(int i = 0; i < notchKey.length; i++)
-			notchKey[i] = notchSetting.charAt(i) - 'A';
+	public static String encode(String plainText, EnigmaMachine machine, String indicatorStr, String ringStr, int[] rotors, int reflector, String... plugBoardSettings) {
+		int[] indicator = new int[3];
+		for(int i = 0; i < indicator.length; i++)
+			indicator[i] = indicatorStr.charAt(i) - 'A';
 		
 		int[] ring = new int[3];
 		for(int i = 0; i < ring.length; i++)
-			ring[i] = ringSetting.charAt(i) - 'A';
+			ring[i] = ringStr.charAt(i) - 'A';
 		
-		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], machine, notchKey, ring, rotors, -1, reflector));
+		return new String(decode(plainText.toCharArray(), new byte[plainText.length()], machine, indicator, ring, rotors, -1, reflector));
 	}
 	
 	//Useful functions

@@ -85,6 +85,13 @@ public class AttackRegistry {
 		return names;
 	}
 	
+	public static CipherAttack getFromName(String name) {
+		for(CipherAttack attack : ciphers)
+			if(attack.getDisplayName().equals(name))
+				return attack;
+		return null;
+	}
+	
 	public static void registerCipher(CipherAttack cipherAttack, Settings settings) {
 		ciphers.add(cipherAttack);
 		settings.addLoadElement(cipherAttack);

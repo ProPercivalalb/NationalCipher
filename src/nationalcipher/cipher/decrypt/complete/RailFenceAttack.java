@@ -59,7 +59,7 @@ public class RailFenceAttack extends CipherAttack {
 				
 				if(this.lastSolution.score >= this.bestSolution.score) {
 					this.bestSolution = this.lastSolution;
-					this.bestSolution.setKeyString("Rows:%d Offset:%d", no, i);
+					this.bestSolution.setKeyString("Rows:%d, Offset:%d", no, i);
 					this.out().println("%s", this.bestSolution);	
 					this.getKeyPanel().updateSolution(this.bestSolution);
 				}

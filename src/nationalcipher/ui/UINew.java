@@ -15,6 +15,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -300,6 +302,7 @@ public class UINew extends JFrame implements IApplication {
     }
                      
     private void initComponents() {
+    	this.cipherSearch = new JTextField();
     	this.cipherSelect = new JComboBox<String>(AttackRegistry.getNames());
     	this.decryptionType = new JComboBox<DecryptionMethod>();
     	this.inputPanel = new JPanel();
@@ -409,7 +412,13 @@ public class UINew extends JFrame implements IApplication {
 		});
 		this.toolBar.add(nonletters);
         
-		
+		this.cipherSearch.setText("Search");
+		this.cipherSearch.setMaximumSize(new Dimension(120, Integer.MAX_VALUE));
+		CipherSearchAction CSActions = new CipherSearchAction(this.cipherSearch, this.cipherSelect);
+	    this.cipherSearch.addActionListener(CSActions);
+		this.cipherSearch.addKeyListener(CSActions);
+	    this.cipherSearch.addFocusListener(CSActions);
+	    this.toolBar.add(this.cipherSearch);
 		
 		//this.cipherSelect.setText("DECRYPTION");
         this.cipherSelect.setMaximumSize(new Dimension(180, Integer.MAX_VALUE));
@@ -1000,20 +1009,85 @@ public class UINew extends JFrame implements IApplication {
 		}
     }
     
+    private class CipherSearchAction implements KeyListener, FocusListener, ActionListener {
+    	
+    	public JTextField searchBar;
+    	public JComboBox<String> list;
+    	
+    	public CipherSearchAction(JTextField searchBar, JComboBox<String> list) {
+    		this.searchBar = searchBar;
+    		this.list = list;
+    	}
+
+		@Override
+		public void keyPressed(KeyEvent event) {
+			this.update();
+		}
+
+		@Override
+		public void keyReleased(KeyEvent event) {
+			this.update();
+		}
+
+		@Override
+		public void keyTyped(KeyEvent event) {
+			this.update();
+		}
+
+		@Override
+		public void focusGained(FocusEvent event) {
+			this.searchBar.setText("");
+			this.update();
+		}
+
+		@Override
+		public void focusLost(FocusEvent event) {
+			if(this.searchBar.getText().isEmpty()) {
+				this.searchBar.setText("Search");
+				
+				this.list.removeAllItems();
+				for(String id : AttackRegistry.getNames())
+					this.list.addItem(id);
+			}
+		}
+		
+		public void update() {
+			String text = this.searchBar.getText().toLowerCase();
+			if(text.equals("search")) {
+				for(String id : AttackRegistry.getNames())
+					this.list.addItem(id);
+				return;
+			}
+			this.list.removeAllItems();
+			for(String id : AttackRegistry.getNames())
+				if(id.toLowerCase().contains(text))
+					this.list.addItem(id);
+
+			if(this.list.getItemCount() > 0) this.list.setSelectedIndex(0);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			this.update();
+		}
+    }
+    
     private class CipherSelectAction implements ActionListener {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		DecryptionMethod lastMethod = (DecryptionMethod)UINew.this.decryptionType.getSelectedItem();
     		UINew.this.decryptionType.removeAllItems();
-    		CipherAttack decrypt = getCipherAttack();
-    		List<DecryptionMethod> methods = decrypt.getAttackMethods();
-    		
-    		for(DecryptionMethod method : methods)
-    			UINew.this.decryptionType.addItem(method);
-    		
-    		if(methods.contains(lastMethod))
-    			UINew.this.decryptionType.setSelectedItem(lastMethod);
+    		if(UINew.this.hasCipherAttack()) {
+	    		CipherAttack decrypt = UINew.this.getCipherAttack();
+	    		List<DecryptionMethod> methods = decrypt.getAttackMethods();
+	    		
+	    		for(DecryptionMethod method : methods)
+	    			UINew.this.decryptionType.addItem(method);
+	    		
+	    		if(methods.contains(lastMethod))
+	    			UINew.this.decryptionType.setSelectedItem(lastMethod);
+    		}
     	}
     }
     
@@ -1072,10 +1146,10 @@ public class UINew extends JFrame implements IApplication {
 					UINew.BEST_SOULTION = null;
 					UINew.topSolutions.reset();
 					
-					CipherAttack force = getCipherAttack();
-					UINew.this.output.println("Cipher: " + force.getDisplayName());
+					CipherAttack force = UINew.this.getCipherAttack();
+					DecryptionMethod method = (DecryptionMethod)UINew.this.decryptionType.getSelectedItem();
+					UINew.this.output.println("Cipher: %s, Method: %s",force.getDisplayName(), method);
 					UINew.this.output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
-					DecryptionMethod method = (DecryptionMethod)decryptionType.getSelectedItem();
 					UINew.this.progressValue = new ProgressValueNC(1000, UINew.this.progressBar, UINew.this.getSettings());
 					if(!settings.updateProgress())
 						UINew.this.progressValue.setIndeterminate(true);
@@ -1205,7 +1279,7 @@ public class UINew extends JFrame implements IApplication {
     public class ShowTopSolutionsAction extends NCCDialog implements ActionListener {
     	
     	private JTextArea textOutput;
-    	public DynamicResultList<Solution> solutions; //Can sort up to 10 Million
+    	public DynamicResultList<Solution> solutions;
     	private boolean updateNeed;
     	
     	public ShowTopSolutionsAction() {
@@ -3462,8 +3536,12 @@ public class UINew extends JFrame implements IApplication {
     //	return DecryptionManager.ciphers.get(cipherSelect.getSelectedIndex());
     //}
     
+    public boolean hasCipherAttack() {
+    	return this.getCipherAttack() != null;
+    }
+    
     public CipherAttack getCipherAttack() {
-    	return AttackRegistry.ciphers.get(cipherSelect.getSelectedIndex());
+    	return AttackRegistry.getFromName((String)this.cipherSelect.getSelectedItem());
     }
      
     //IApplication methods
@@ -3516,6 +3594,7 @@ public class UINew extends JFrame implements IApplication {
 		return dialog;
 	}
     
+	private JTextField cipherSearch;
     private JComboBox<String> cipherSelect;
     private JComboBox<DecryptionMethod> decryptionType;
     private JPanel inputPanel;
