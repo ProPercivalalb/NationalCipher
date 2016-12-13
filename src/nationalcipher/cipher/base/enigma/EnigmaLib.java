@@ -19,7 +19,7 @@ public class EnigmaLib {
 	public static final EnigmaMachine ROCKET_I = new RocketI("Rocket I");
 	public static final EnigmaMachine ENIGMA_T = new EnigmaT("Enigma T");
 	
-	//ENIGMA_G31, ENIGMA_G260, ENIGMA_G312 require an alternative method to solving
+	//ZAHLWERK, ENIGMA_G31, ENIGMA_G260, ENIGMA_G312 require an alternative method to solving
 	public static final EnigmaMachine[] MACHINES = new EnigmaMachine[] {ENIGMA_D, ENIGMA_I, NORENIGMA, ENIGMA_M3, ENIGMA_M4, ENIGMA_K, SWISS_K, ROCKET_I};
 	
 	//Enigma Uhr

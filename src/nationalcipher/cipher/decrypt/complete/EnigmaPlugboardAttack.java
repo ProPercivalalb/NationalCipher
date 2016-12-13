@@ -14,6 +14,7 @@ import javalibrary.list.DynamicResultList;
 import javalibrary.list.ResultNegative;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.substitution.Enigma;
@@ -35,7 +36,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 	
 	public EnigmaPlugboardAttack() {
 		super("Enigma - Plugboard");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
 		this.plugboardDefinition = new JTextField();
@@ -87,12 +88,13 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 		
 		
 		String plugboardInput = this.plugboardDefinition.getText();
-		char[][] plugboardDefinition = new char[13][2];
+		int[][] plugboardDefinition = new int[13][2];
 		boolean definitionProvided = false;
 		int count = 0;
 		for(String split : plugboardInput.split("[, ]"))
 			if(split.length() == 2) {
-				plugboardDefinition[count++] = split.toCharArray();
+				plugboardDefinition[count][0] = split.charAt(0) - 'A';
+				plugboardDefinition[count++][1] = split.charAt(1) - 'A';
 				definitionProvided = true;
 			}
 		
@@ -143,41 +145,50 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 				EnigmaSection trial = task.squeezeSecond.get(option);
 			
 				int plugboardIndex = 0;
-				char[][] plugboard = new char[13][2];
-				String possiblePlugBoard = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				int[][] plugboard = new int[13][2];
+				int[] possiblePlugBoard = new int[26];
+				for(int i = 0; i < 26; i++) possiblePlugBoard[i] = i;
 				while(true) {
 		
 					task.plainText = Enigma.decode(task.cipherText, task.plainText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, trial.reflector, plugboard);
 					
 					Solution bestSolution = new Solution(task.plainText, app.getLanguage().getTrigramData()).bakeSolution();
+					int bestPlug1 = 0;
+					int bestPlug2 = 1;
 					byte[] testText = Arrays.copyOf(task.plainText, task.plainText.length);
 					boolean foundFinalPlug = true;
-					for(int i1 = 0; i1 < possiblePlugBoard.length() - 1; i1++) {
-						for(int i2 = i1 + 1; i2 < possiblePlugBoard.length(); i2++) {
+					for(int i1 = 0; i1 < possiblePlugBoard.length - 1; i1++) {
+						for(int i2 = i1 + 1; i2 < possiblePlugBoard.length; i2++) {
 							if(i1 == i2) {
 								app.out().println("Same letter: ");
 								continue;
 							}
-							plugboard[plugboardIndex][0] = possiblePlugBoard.charAt(i1);
-							plugboard[plugboardIndex][1] = possiblePlugBoard.charAt(i2);
+							plugboard[plugboardIndex][0] = possiblePlugBoard[i1];
+							plugboard[plugboardIndex][1] = possiblePlugBoard[i2];
 							testText = Enigma.decode(task.cipherText, testText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, trial.reflector, plugboard);
 							Solution lastSolution = new Solution(testText, app.getLanguage().getTrigramData());
 	
 							if(lastSolution.isResultBetter(bestSolution)) {
 								bestSolution = lastSolution;
 								bestSolution.setKeyString("%c%c", plugboard[plugboardIndex][0], plugboard[plugboardIndex][1]);
+								bestPlug1 = plugboard[plugboardIndex][0];
+								bestPlug2 = plugboard[plugboardIndex][1];
 								bestSolution.bakeSolution();
 								foundFinalPlug = false;
 							}
 						}
 					}
 					
+					plugboard[plugboardIndex][0] = bestPlug1;
+					plugboard[plugboardIndex][1] = bestPlug2;
+					
 					if(foundFinalPlug) {
+						plugboardIndex++;
 						char[] plugs = new char[Math.max(plugboardIndex * 3 - 1, 0)];
 						Arrays.fill(plugs, ' ');
 						for(int p = 0; p < plugboardIndex; p++) {
-							plugs[p * 3] = plugboard[p][0];
-							plugs[p * 3 + 1] = plugboard[p][1];
+							plugs[p * 3] = (char)(plugboard[p][0] + 'A');
+							plugs[p * 3 + 1] = (char)(plugboard[p][1] + 'A');
 						}
 						bestSolution.setKeyString("%s, Plugs:[%s]", trial.toKeyString(), new String(plugs));
 						app.out().println("%s", bestSolution);
@@ -186,12 +197,35 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 						break;
 					}
 					
-					possiblePlugBoard = possiblePlugBoard.replaceAll(String.format("[%s]", bestSolution.keyString), "");
-					plugboard[plugboardIndex][0] = bestSolution.keyString.charAt(0);
-					plugboard[plugboardIndex][1] = bestSolution.keyString.charAt(1);
+					
+					int[] possiblePlugBoardNext = new int[possiblePlugBoard.length - 2];
+					int currentIndex = 0;
+					for(int i = 0; i < possiblePlugBoard.length; i++)
+						if(!ArrayUtil.contains(plugboard[plugboardIndex], possiblePlugBoard[i]))
+							possiblePlugBoardNext[currentIndex++] = possiblePlugBoard[i];
+					System.out.println(Arrays.toString(possiblePlugBoard));
+					possiblePlugBoard = possiblePlugBoardNext;
+					System.out.println(Arrays.toString(possiblePlugBoard));
 					plugboardIndex++;
 				}
 			}
+		}
+		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+			//KQGZOLWEXRFZDJMWLLZMKPPWJWSHWPUQCHMZRDYZQGIWCBZSGEHNFWPBUYCZCXZMDXJTONYZOKINMDAQHLGBBZSHSWJDRNLCSKIFSTBACPOEKRKOYIGQGEFXFRMZNJXBMJRLITJJVATSBBXPPARQBKRSQHVAQOACKLNEUIYUESXGXSNDXZRZXLXNQMEVNHWIRAICOBKYOGVQBVHXCHUXFAUPBDFZXSHHJPDELINHOHHWDIGKMDZFTDWKKUOWOJCPLZESWDTAQRRFMTBXLYRTYOMXELHMVEJNQSWDXCSJRQAYECOCMOPAUNYCQJAEUGCMKNSFYHNPOMAZTAPSYJDDBNTBHCMLCHJJAFRBVCEFJPXWMWWDBFXCIUBROPUTPSBAROJAGYDMXQMVGAYYFWVXMVKQPSJQAOOKDGBYIBJFJYDWPDCFHKVJKEXMOASFRNRHOVOBUJJKCWMMCZILTNGCQYBCJIVUKFMRMSHYXFVIHYBCZSSRIRFJBJDTGHJCLMUPRGSMVMWZPAYQOTPFURWRRMXYQAQOZGYKUZAOPAHLVSUNLQOFQIJTIKCIWAWEXRRKBPLUEXHRLADMMNCVXSZHJFQCSFFKJCLEDIIMZJLLNGUMJHKJJUQTNAMLXSHABPDNKJHGINDRFYYRVHJBVMTSFRPWBSCLZVYFTMJBBGBRGWSBOBSYVFCSAXSITTIBBCHIFHIAGCWLJWJFPFTNKPWKTIHRBRSICDVVVPMRSCKGKVJEBLQVRUFMQUKWIMDMXVTBINECMSEMLRKFTAMSZTYPWJTHDBCLGWSBSNNEFFKQDQMFZYLFWYQWYLIPZUGYYGGHOEFYIRBVLBWFMRAPKLQZYEIAYNUMXQGBEIRTEVAXXXYJGZKYRZVUKMNOHLIQCZOSVCTNKXLYDINZNLLUBARYPWSTCWWCHJXOGMLYBCYNECBHXSOBMOPWDVOZFUVMKDWFJZCHIJCUHJMKVKUSPMGWMBTBVLOHVELSPYMXZISJODQAXPUVHWNQPBYNUYHRMPZALAVAULNVCSXJJCZIVQRWHAWRMMEBJUFFMXONTRUMDMWDHODEKXIBYFHYOPGHFVBVCSNBGWJQUA
+			String possiblePlugBoard = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			EnigmaMachine orignal = task.machine;
+			for(int i1 = 0; i1 < possiblePlugBoard.length(); i1++) {
+				task.machine = orignal.createWithPlugboard(new int[] {possiblePlugBoard.charAt(i1), 0});
+				app.out().println("Completed for plug:[A%c]", possiblePlugBoard.charAt(i1));
+					KeyIterator.permutateArray(task, (byte)0, 3, 3, false);
+					task.squeezeFirst.sort();
+					for(int i = 0; i < 20; i++) {
+						EnigmaSection trial = task.squeezeFirst.get(i);
+						app.out().println("%s", trial);
+					}
+					app.out().println("A%c", possiblePlugBoard.charAt(i1));
+			}
+			task.machine = orignal;
 		}
 		
 		app.out().println(task.getBestSolution());

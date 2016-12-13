@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javalibrary.fitness.TextFitness;
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
+import javalibrary.math.ArrayOperations;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
@@ -106,12 +107,11 @@ public class EnigmaPlainAttack extends CipherAttack {
 
 						indicator[1] = (indicator[1] + s2) % 26;
 						indicator[2] = (indicator[2] + s3) % 26;
-					
-						task.lastSolution = new Solution(Enigma.decode(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector), app.getLanguage());
+						
+						task.lastSolution = new Solution(Enigma.decodeFast(task.cipherText, task.plainText, trial.machine, Arrays.copyOf(indicator, indicator.length), ring, trial.rotors, trial.reflector), app.getLanguage());
 						
 						if(task.lastSolution.score > task.bestSolution.score) {
 							task.bestSolution = task.lastSolution;
-						
 							task.bestSolution.setKeyString("%s, %s, %s", this.toString(indicator), this.toString(ring), Arrays.toString(trial.rotors));
 						
 							task.bestSolution.bakeSolution();
@@ -154,7 +154,7 @@ public class EnigmaPlainAttack extends CipherAttack {
 				
 				for(int reflector = this.start; reflector < this.end; reflector++) {
 						
-					this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
+					this.plainText = Enigma.decodeFast(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
 					
 					EnigmaSection trialSolution = new EnigmaSection(TextFitness.scoreFitnessQuadgrams(this.plainText, this.getLanguage()), this.machine, data, rotor, reflector);
 	

@@ -1,24 +1,28 @@
 package nationalcipher.cipher.base.enigma;
 
+import java.util.Arrays;
+
+import javalibrary.util.ArrayUtil;
+
 public class EnigmaMachine {
 
 	//TODO CHANGE ALL THE PUBLIC FIELDS TO PRIVATE
 	public String name;
 	
-	public char[][] rotors;
-	public char[][] rotorsInverse;
+	public int[][] rotors;
+	public int[][] rotorsInverse;
 	public int[][] notches;
 	public int rotorCount;
 	
-	public char[][] reflector;
+	public int[][] reflector;
 	public String[] reflectorNames;
 	public int reflectorCount;
 	
-	public char[] etw;
-	public char[] etwInverse;
+	public int[] etw;
+	public int[] etwInverse;
 	
-	public char[][] thinRotor;
-	public char[][] thinRotorInverse;
+	public int[][] thinRotor;
+	public int[][] thinRotorInverse;
 	public String[] thinRotorNames;
 	public int thinRotorCount;
 	
@@ -36,13 +40,13 @@ public class EnigmaMachine {
 	}
 	
 	public final void setRotors(String... input) {
-		char[][] normal = new char[input.length][26];
-		char[][] inverse = new char[normal.length][26];
+		int[][] normal = new int[input.length][26];
+		int[][] inverse = new int[normal.length][26];
 		
 		for(int r = 0; r < input.length; r++) {
 			for(int i = 0; i < 26; i++) {
-				normal[r][i] = input[r].charAt(i);
-				inverse[r][normal[r][i] - 'A'] = (char)(i + 'A');
+				normal[r][i] = input[r].charAt(i) - 'A';
+				inverse[r][normal[r][i]] = i;
 			}
 		}
 		
@@ -68,10 +72,11 @@ public class EnigmaMachine {
 	}
 	
 	public final void setReflectors(String... input) {
-		char[][] normal = new char[input.length][];
+		int[][] normal = new int[input.length][26];
 		
 		for(int r = 0; r < input.length; r++)
-			normal[r] = input[r].toCharArray();
+			for(int i = 0; i < input[r].length(); i++) 
+				normal[r][i] = input[r].charAt(i) - 'A';
 			
 		this.reflector = normal;
 		this.reflectorCount = input.length;
@@ -83,23 +88,25 @@ public class EnigmaMachine {
 	}
 
 	public void setETW(String input) {
-		this.etw = input.toCharArray();
+		this.etw = new int[26];
+		for(int i = 0; i < input.length(); i++) 
+			this.etw[i] = input.charAt(i) - 'A';
 		
-		char[] inverse = new char[26];
+		int[] inverse = new int[26];
 		for(int i = 0; i < 26; i++)
-			inverse[this.etw[i] - 'A'] = (char)(i + 'A');
+			inverse[this.etw[i]] = i;
 			
 		this.etwInverse = inverse;
 	}
 	
 	public final void setThinRotors(String... input) {
-		char[][] normal = new char[input.length][26];
-		char[][] inverse = new char[normal.length][26];
+		int[][] normal = new int[input.length][26];
+		int[][] inverse = new int[normal.length][26];
 		
 		for(int r = 0; r < input.length; r++) {
 			for(int i = 0; i < 26; i++) {
-				normal[r][i] = input[r].charAt(i);
-				inverse[r][normal[r][i] - 'A'] = (char)(i + 'A');
+				normal[r][i] = input[r].charAt(i) - 'A';
+				inverse[r][normal[r][i]] = i;
 			}
 		}
 		
@@ -149,17 +156,18 @@ public class EnigmaMachine {
 		return true;
 	}
 	
-	public EnigmaMachine createWithPlugboard(char[]... input) {
+	public EnigmaMachine createWithPlugboard(int[]... input) {
 		EnigmaMachine copy = new EnigmaPlugboard(this.name);
 		EnigmaMachine.copy(this, copy);
 		
-		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+		int[] plugBoardArray = new int[26];
+		for(int i = 0; i < 26; i++) plugBoardArray[i] = i;
 		
-		for(char[] swap : input) {
-			if(swap[0] == 0 || swap[1] == 0) continue;
+		for(int[] swap : input) {
+			if(swap[0] == swap[1]) continue;
 			
-			plugBoardArray[swap[0] - 'A'] = swap[1];
-			plugBoardArray[swap[1] - 'A'] = swap[0];
+			plugBoardArray[swap[0]] = swap[1];
+			plugBoardArray[swap[1]] = swap[0];
 		}
 		
 		copy.etw = plugBoardArray;
@@ -172,7 +180,8 @@ public class EnigmaMachine {
 		EnigmaMachine copy = new EnigmaUhr(this.name, input);
 		EnigmaMachine.copy(this, copy);
 
-		char[] plugBoardArray = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+		int[] plugBoardArray = new int[26];
+		for(int i = 0; i < 26; i++) plugBoardArray[i] = i;
 		for(char[] swap : input) {
 			if(swap[0] == 0 || swap[1] == 0) continue;
 			int uhrIndex = swap[2] - '0';
@@ -186,9 +195,9 @@ public class EnigmaMachine {
 			plugBoardArray[swap[1] - 'A'] = input[aWirePosition / 4][0];
 		}
 		
-		char[] inverse = new char[26];
+		int[] inverse = new int[26];
 		for(int i = 0; i < 26; i++)
-			inverse[plugBoardArray[i] - 'A'] = (char)(i + 'A');
+			inverse[plugBoardArray[i]] = i;
 		
 		copy.etwInverse = inverse;
 		copy.etw = plugBoardArray;
@@ -242,7 +251,7 @@ public class EnigmaMachine {
 			//	plugs[p * 3 + 1] = plugboard[p][1];
 			//}
 			
-			return String.format("%s, Plugboard:%s", this.name, new String(this.etw));
+			return String.format("%s, Plugboard:%s", this.name, Arrays.toString(this.etw));
 		} 
 	}
 	
@@ -257,7 +266,7 @@ public class EnigmaMachine {
 		
 		@Override
 		public String toString() {
-			return String.format("%s, Plugboard:%s", this.name, new String(this.etw));
+			return String.format("%s, Plugboard:%s", this.name, Arrays.toString(this.etw));
 		} 
 	}
 	
