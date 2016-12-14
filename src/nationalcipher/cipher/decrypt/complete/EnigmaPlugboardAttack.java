@@ -241,8 +241,8 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 		
 		public EnigmaTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
-			this.squeezeFirst = new DynamicResultList<EnigmaSection>(256);
-			this.squeezeSecond = new DynamicResultList<EnigmaSection>(64);
+			this.squeezeFirst = new DynamicResultList<EnigmaSection>(256 * 4);
+			this.squeezeSecond = new DynamicResultList<EnigmaSection>(64 * 2);
 		}
 
 		@Override
