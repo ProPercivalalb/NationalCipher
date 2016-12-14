@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.substitution.Enigma;
 
 public class EnigmaUtil {
@@ -56,4 +57,33 @@ public class EnigmaUtil {
 		return positions;
 	}
 	
+	public static String convertMappingToReadablePlugboard(int[] mapping) {
+		int[] plugboardTracker = new int[26];
+		for(int i = 0; i < 26; i++) plugboardTracker[i] = i;
+		String str = "";
+		next:
+		do {
+			for(int i : plugboardTracker) {
+				int index = ArrayUtil.indexOf(mapping, i);
+				if(index == i) continue;
+				int other = index;
+				
+				str += String.format("%c%c ", (char)(i + 'A'), (char)(other + 'A'));
+				
+				int[] possiblePlugBoardNext = new int[plugboardTracker.length - 2];
+				int currentIndex = 0;
+				for(int p = 0; p < plugboardTracker.length; p++)
+					if(plugboardTracker[p] != i && plugboardTracker[p] != other)
+						possiblePlugBoardNext[currentIndex++] = plugboardTracker[p];
+				
+				plugboardTracker = possiblePlugBoardNext;
+				continue next;
+			}
+			
+			break;
+		} 
+		while(true);
+		
+		return str;
+	}
 }

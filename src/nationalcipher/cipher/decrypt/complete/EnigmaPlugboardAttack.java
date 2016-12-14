@@ -17,6 +17,7 @@ import javalibrary.math.Units.Time;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
+import nationalcipher.cipher.base.enigma.EnigmaUtil;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
@@ -143,7 +144,59 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			
 			for(int option = 0; option < task.squeezeSecond.size(); option++) {
 				EnigmaSection trial = task.squeezeSecond.get(option);
-			
+				
+				int[] plugboard = new int[26];
+				int[] possiblePlugBoard = new int[26];
+				for(int i = 0; i < 26; i++) {
+					plugboard[i] = i;
+					possiblePlugBoard[i] = i;
+				}
+				Solution bestSolution = null;
+				for(int t = 0; t < 13; t++) {
+					task.plainText = Enigma.decode(task.cipherText, task.plainText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, -1, trial.reflector, plugboard);
+					
+					bestSolution = new Solution(task.plainText, StatCalculator.calculateMonoIC(task.plainText) * 1000).bakeSolution();
+					int bestPlug1 = 0;
+					int bestPlug2 = 1;
+					byte[] testText = Arrays.copyOf(task.plainText, task.plainText.length);
+					boolean foundFinalPlug = true;
+					for(int i1 = 0; i1 < possiblePlugBoard.length - 1; i1++) {
+						for(int i2 = i1 + 1; i2 < possiblePlugBoard.length; i2++) {
+							int plug1 = possiblePlugBoard[i1];
+							int plug2 = possiblePlugBoard[i2];
+							
+							plugboard[plug2] = plug1;
+							plugboard[plug1] = plug2;
+							testText = Enigma.decode(task.cipherText, testText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, -1, trial.reflector, plugboard);
+							Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000);
+	
+							if(lastSolution.isResultBetter(bestSolution)) {
+								bestSolution = lastSolution;
+								bestPlug1 = plug1;
+								bestPlug2 = plug2;
+								foundFinalPlug = false;
+							}
+
+							plugboard[plug2] = plug2;
+							plugboard[plug1] = plug1;
+						}
+					}
+					
+					if(foundFinalPlug) break;
+				
+					plugboard[bestPlug2] = bestPlug1;
+					plugboard[bestPlug1] = bestPlug2;
+					
+					int[] possiblePlugBoardNext = new int[possiblePlugBoard.length - 2];
+					int currentIndex = 0;
+					for(int i = 0; i < possiblePlugBoard.length; i++)
+						if(possiblePlugBoard[i] != bestPlug1 && possiblePlugBoard[i] != bestPlug2)
+							possiblePlugBoardNext[currentIndex++] = possiblePlugBoard[i];
+					
+					possiblePlugBoard = possiblePlugBoardNext;
+				}
+				
+				/**
 				int plugboardIndex = 0;
 				int[][] plugboard = new int[13][2];
 				int[] possiblePlugBoard = new int[26];
@@ -203,29 +256,52 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 					for(int i = 0; i < possiblePlugBoard.length; i++)
 						if(!ArrayUtil.contains(plugboard[plugboardIndex], possiblePlugBoard[i]))
 							possiblePlugBoardNext[currentIndex++] = possiblePlugBoard[i];
-					System.out.println(Arrays.toString(possiblePlugBoard));
+					
 					possiblePlugBoard = possiblePlugBoardNext;
-					System.out.println(Arrays.toString(possiblePlugBoard));
+					
 					plugboardIndex++;
+				}**/
+				
+				
+				
+
+				bestSolution.setKeyString("%s, Plugs:[%s]", trial.toKeyString(), EnigmaUtil.convertMappingToReadablePlugboard(plugboard));
+				/**
+				Solution bestSolution2 = new Solution();
+				for(int s2 = 0; s2 < 26; s2++) {
+					for(int s3 = 0; s3 < 26; s3++) {
+						int[] indicator = trial.copyIndicator();
+						int[] ring = new int[] {trial.ring[0], trial.ring[1], trial.ring[2]};
+						
+						indicator[1] = (indicator[1] + s2) % 26;
+						indicator[2] = (indicator[2] + s3) % 26;
+				
+						ring[1] = (ring[1] + s2) % 26;
+						ring[2] = (ring[2] + s3) % 26;
+						
+						task.plainText = Enigma.decode(task.cipherText, task.plainText, trial.machine, indicator, ring, trial.rotors, -1, trial.reflector, plugboard);
+						Solution lastSolution = new Solution(task.plainText, app.getLanguage());
+	
+						if(lastSolution.isResultBetter(bestSolution2)) {
+							bestSolution2 = lastSolution;
+							bestSolution2.setKeyString("%s, Plugs:[%s]", trial.toKeyString(), str);
+							bestSolution2.bakeSolution();
+						}
+					}
 				}
+				app.out().println("%s", bestSolution2);
+				if(bestSolution2.isResultBetter(task.bestSolution))
+					task.bestSolution = bestSolution2;**/
+				
+
+				app.out().println("%s", bestSolution);
+				if(bestSolution.isResultBetter(task.bestSolution))
+					task.bestSolution = bestSolution;
+				
 			}
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
-			//KQGZOLWEXRFZDJMWLLZMKPPWJWSHWPUQCHMZRDYZQGIWCBZSGEHNFWPBUYCZCXZMDXJTONYZOKINMDAQHLGBBZSHSWJDRNLCSKIFSTBACPOEKRKOYIGQGEFXFRMZNJXBMJRLITJJVATSBBXPPARQBKRSQHVAQOACKLNEUIYUESXGXSNDXZRZXLXNQMEVNHWIRAICOBKYOGVQBVHXCHUXFAUPBDFZXSHHJPDELINHOHHWDIGKMDZFTDWKKUOWOJCPLZESWDTAQRRFMTBXLYRTYOMXELHMVEJNQSWDXCSJRQAYECOCMOPAUNYCQJAEUGCMKNSFYHNPOMAZTAPSYJDDBNTBHCMLCHJJAFRBVCEFJPXWMWWDBFXCIUBROPUTPSBAROJAGYDMXQMVGAYYFWVXMVKQPSJQAOOKDGBYIBJFJYDWPDCFHKVJKEXMOASFRNRHOVOBUJJKCWMMCZILTNGCQYBCJIVUKFMRMSHYXFVIHYBCZSSRIRFJBJDTGHJCLMUPRGSMVMWZPAYQOTPFURWRRMXYQAQOZGYKUZAOPAHLVSUNLQOFQIJTIKCIWAWEXRRKBPLUEXHRLADMMNCVXSZHJFQCSFFKJCLEDIIMZJLLNGUMJHKJJUQTNAMLXSHABPDNKJHGINDRFYYRVHJBVMTSFRPWBSCLZVYFTMJBBGBRGWSBOBSYVFCSAXSITTIBBCHIFHIAGCWLJWJFPFTNKPWKTIHRBRSICDVVVPMRSCKGKVJEBLQVRUFMQUKWIMDMXVTBINECMSEMLRKFTAMSZTYPWJTHDBCLGWSBSNNEFFKQDQMFZYLFWYQWYLIPZUGYYGGHOEFYIRBVLBWFMRAPKLQZYEIAYNUMXQGBEIRTEVAXXXYJGZKYRZVUKMNOHLIQCZOSVCTNKXLYDINZNLLUBARYPWSTCWWCHJXOGMLYBCYNECBHXSOBMOPWDVOZFUVMKDWFJZCHIJCUHJMKVKUSPMGWMBTBVLOHVELSPYMXZISJODQAXPUVHWNQPBYNUYHRMPZALAVAULNVCSXJJCZIVQRWHAWRMMEBJUFFMXONTRUMDMWDHODEKXIBYFHYOPGHFVBVCSNBGWJQUA
-			String possiblePlugBoard = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			EnigmaMachine orignal = task.machine;
-			for(int i1 = 0; i1 < possiblePlugBoard.length(); i1++) {
-				task.machine = orignal.createWithPlugboard(new int[] {possiblePlugBoard.charAt(i1), 0});
-				app.out().println("Completed for plug:[A%c]", possiblePlugBoard.charAt(i1));
-					KeyIterator.permutateArray(task, (byte)0, 3, 3, false);
-					task.squeezeFirst.sort();
-					for(int i = 0; i < 20; i++) {
-						EnigmaSection trial = task.squeezeFirst.get(i);
-						app.out().println("%s", trial);
-					}
-					app.out().println("A%c", possiblePlugBoard.charAt(i1));
-			}
-			task.machine = orignal;
+			KeyIterator.permutateArray(task, (byte)2, 3, 3, false);
 		}
 		
 		app.out().println(task.getBestSolution());
@@ -241,7 +317,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 		
 		public EnigmaTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
-			this.squeezeFirst = new DynamicResultList<EnigmaSection>(256 * 4);
+			this.squeezeFirst = new DynamicResultList<EnigmaSection>(256 * 2);
 			this.squeezeSecond = new DynamicResultList<EnigmaSection>(64 * 2);
 		}
 
@@ -259,6 +335,72 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 					
 					if(this.squeezeFirst.addResult(trialSolution))
 						trialSolution.makeCopy();
+				}
+			}
+			else if(id == 2)
+				KeyIterator.permutateArray(this, (byte)3, 3, 26, true, data);
+			else if(id == 3) {
+				int[] rotor = (int[])extra[0];
+
+				for(int reflector = this.start; reflector < this.end; reflector++) {
+
+					int[] plugboard = new int[26];
+					int[] possiblePlugBoard = new int[26];
+					for(int i = 0; i < 26; i++) {
+						plugboard[i] = i;
+						possiblePlugBoard[i] = i;
+					}
+					
+					while(true) {
+						this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
+						
+						Solution bestSolution = new Solution(this.plainText, StatCalculator.calculateMonoIC(this.plainText) * 1000).bakeSolution();
+						int bestPlug1 = 0;
+						int bestPlug2 = 1;
+						byte[] testText = Arrays.copyOf(this.plainText, this.plainText.length);
+						boolean foundFinalPlug = true;
+						for(int i1 = 0; i1 < possiblePlugBoard.length - 1; i1++) {
+							for(int i2 = i1 + 1; i2 < possiblePlugBoard.length; i2++) {
+								int plug1 = possiblePlugBoard[i1];
+								int plug2 = possiblePlugBoard[i2];
+								
+								plugboard[plug2] = plug1;
+								plugboard[plug1] = plug2;
+								testText = Enigma.decode(this.cipherText, testText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
+								Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000);
+		
+								if(lastSolution.isResultBetter(bestSolution)) {
+									bestSolution = lastSolution;
+									bestPlug1 = plug1;
+									bestPlug2 = plug2;
+									foundFinalPlug = false;
+								}
+
+								plugboard[plug2] = plug2;
+								plugboard[plug1] = plug1;
+							}
+						}
+						
+						if(foundFinalPlug) {
+							EnigmaSection trialSolution = new EnigmaSection(bestSolution.score, this.machine.createWithPresetPlugboard(plugboard), data, rotor, reflector);
+							if(this.squeezeFirst.addResult(trialSolution)) {
+								this.app.out().println("%s", trialSolution);
+								trialSolution.makeCopy();
+							}
+							break;
+						}
+					
+						plugboard[bestPlug2] = bestPlug1;
+						plugboard[bestPlug1] = bestPlug2;
+						
+						int[] possiblePlugBoardNext = new int[possiblePlugBoard.length - 2];
+						int currentIndex = 0;
+						for(int i = 0; i < possiblePlugBoard.length; i++)
+							if(possiblePlugBoard[i] != bestPlug1 && possiblePlugBoard[i] != bestPlug2)
+								possiblePlugBoardNext[currentIndex++] = possiblePlugBoard[i];
+						
+						possiblePlugBoard = possiblePlugBoardNext;
+					}
 				}
 			}
 		}

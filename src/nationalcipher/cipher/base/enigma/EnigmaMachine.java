@@ -172,7 +172,16 @@ public class EnigmaMachine {
 		
 		copy.etw = plugBoardArray;
 		copy.etwInverse = plugBoardArray;
-		
+		return copy;
+	}
+
+	public EnigmaMachine createWithPresetPlugboard(int[] plugBoardArray) {
+		EnigmaMachine copy = new EnigmaPlugboard(this.name);
+		EnigmaMachine.copy(this, copy);
+			
+		copy.etw = plugBoardArray;
+		copy.etwInverse = plugBoardArray;
+			
 		return copy;
 	}
 	
@@ -244,14 +253,7 @@ public class EnigmaMachine {
 		
 		@Override
 		public String toString() {
-			//char[] plugs = new char[Math.max(this.plugCount * 3 - 1, 0)];
-			//Arrays.fill(plugs, ' ');
-			//for(int p = 0; p < this.plugCount; p++) {
-			//	plugs[p * 3] = plugboard[p][0];
-			//	plugs[p * 3 + 1] = plugboard[p][1];
-			//}
-			
-			return String.format("%s, Plugboard:%s", this.name, Arrays.toString(this.etw));
+			return String.format("%s, %s", this.name, EnigmaUtil.convertMappingToReadablePlugboard(this.etw));
 		} 
 	}
 	
