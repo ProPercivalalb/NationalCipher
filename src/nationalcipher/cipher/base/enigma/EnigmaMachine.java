@@ -191,17 +191,18 @@ public class EnigmaMachine {
 
 		int[] plugBoardArray = new int[26];
 		for(int i = 0; i < 26; i++) plugBoardArray[i] = i;
+		int uhrIndex = 0;
 		for(char[] swap : input) {
 			if(swap[0] == 0 || swap[1] == 0) continue;
-			int uhrIndex = swap[2] - '0';
 			
 			int aWire = (uhrIndex * 4 + setting) % 40;
 			int bWirePosition = (EnigmaLib.AB_WIRING[aWire] + (40 - setting)) % 40;
-			plugBoardArray[swap[0] - 'A'] = input[EnigmaLib.B_PLUG_ORDER[bWirePosition / 4]][1];
+			plugBoardArray[swap[0] - 'A'] = input[EnigmaLib.B_PLUG_ORDER[bWirePosition / 4]][1] - 'A';
 
 			int bWire = (EnigmaLib.B_PLUG_ORDER_INDEXED[uhrIndex] * 4 + setting) % 40;
 			int aWirePosition = (EnigmaLib.AB_WIRING_INDEXED[bWire] + (40 - setting)) % 40;
-			plugBoardArray[swap[1] - 'A'] = input[aWirePosition / 4][0];
+			plugBoardArray[swap[1] - 'A'] = input[aWirePosition / 4][0] - 'A';
+			uhrIndex++;
 		}
 		
 		int[] inverse = new int[26];
