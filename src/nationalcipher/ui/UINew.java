@@ -1618,102 +1618,12 @@ public class UINew extends JFrame implements IApplication {
 			
     		String text = getInputTextOnlyAlpha();
     		if(!text.isEmpty()) {
-    			
-    			Figure figure = new Figure(text.toCharArray(), settings.getLanguage());
-    			
-    			for(int length = 2; length <= 6; length++)
-    				Permentations.permutate(figure, ArrayUtil.range(0, length));
-    			
-    			String s = "";
-    			
-    			s += "Like english: " + figure.smallest + "\n";
-    			for(Integer[] i : figure.orders1) {
-    				s += Arrays.toString(i) + "\n";
-    			}
-    			
-    			s += "\nIOC: " + figure.closestIC + " off normal\n";
-    			
-    			for(Integer[] i : figure.orders2) {
-    				s += Arrays.toString(i) + "\n";
-    			}
-    			
-    			  output.println("----------- ADFGVX ----------- ");
-    				output.print(s);
-    			  //  output.println(" IoC Calculation: " + bestPeriod);
-    			    output.println("");
+    			//TODO
     		}
     		
     		this.repaintCharts();
     	}
     }
-    
-    public static class Figure implements PermentateArray {
-
-		public char[] text;
-		public ILanguage language;
-		public double smallest = Double.MAX_VALUE;
-		public List<Integer[]> orders1 = new ArrayList<Integer[]>();
-		public double closestIC = Double.MAX_VALUE;
-		public List<Integer[]> orders2 = new ArrayList<Integer[]>();
-		
-		
-		public Figure(char[] text, ILanguage language) {
-			this.text = text;
-			this.language = language;
-		}
-		
-		@Override
-		public void onPermentate(int[] array) {
-			System.out.println(""+ Arrays.toString(array));
-			byte[] s = ColumnarTransposition.decode(this.text, new byte[this.text.length], array, false);
-			String str = new String(s);
-			double n = calculate(str, this.language);
-	    	double evenDiagraphicIC = StatCalculator.calculateIC(str, 2, false);
-	    	
-	    	Integer[] arr = new Integer[array.length];
-	    	for(int i = 0; i <array.length; i++)
-	    		arr[i] = Integer.valueOf(array[i]);
-	    	
-	    	
-	    	if(n <= smallest) {
-	    		if(n != smallest)
-	    			orders1.clear();
-	    		orders1.add(arr);
-	    		smallest = n;
-	    	}
-	    	double sqDiff = Math.pow(this.language.getNormalCoincidence() - evenDiagraphicIC, 2);
-	    	if(sqDiff <= closestIC) {
-	    		if(n != smallest)
-	    			orders2.clear();
-	    		orders2.add(arr);
-	    		
-	    		closestIC = sqDiff;
-	    	}
-		}
-		
-	}
-	
-	public static double calculate(String text, ILanguage language) {
-		Map<String, Integer> letters = MapHelper.sortMapByValue(StringAnalyzer.getEmbeddedStrings(text, 2, 2, false), false);
-		double total = 0.0D;
-		
-		List<Double> normalOrder = language.getFrequencyLargestFirst();
-		
-		int index = 0;
-		for(String letter : letters.keySet()) {
-			
-			double count = letters.get(letter);
-			double expectedCount = normalOrder.get(index) * (text.length() / 2) / 100;
-			
-			double sum = Math.abs(count - expectedCount);
-			index += 1;
-			total += sum;
-			if(index >= normalOrder.size())
-				break;
-		}
-		
-		return total;
-	}
     
     private class NormalIoCAction extends NCCDialogBarChart implements ActionListener {
     	
