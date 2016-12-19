@@ -27,8 +27,8 @@ public class Solitaire implements IRandEncrypter {
 		
 		public Deck(int[] cards) {
 			this.cards = cards;
-			this.jA = ArrayUtil.indexOf(this.cards, Solitaire.TOTAL_CARDS, JOKER_A);
-			this.jB = ArrayUtil.indexOf(this.cards, Solitaire.TOTAL_CARDS, JOKER_B);
+			this.jA = ArrayUtil.indexOf(this.cards, 0, Solitaire.TOTAL_CARDS, JOKER_A);
+			this.jB = ArrayUtil.indexOf(this.cards, 0, Solitaire.TOTAL_CARDS, JOKER_B);
 		}
 	}
 
@@ -38,7 +38,7 @@ public class Solitaire implements IRandEncrypter {
 		int jA, jB, jT;
 		
 		//TODO What happens when joker A wraps round
-		jT = ArrayUtil.indexOf(cardOrder, TOTAL_CARDS, JOKER_A);
+		jT = ArrayUtil.indexOf(cardOrder, 0, TOTAL_CARDS, JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
 			cardOrder[jT] = cardOrder[jA];
@@ -51,7 +51,7 @@ public class Solitaire implements IRandEncrypter {
 		cardOrder[jA] = JOKER_A;
 
 		//Move Joker B 2 to right
-		jB = ArrayUtil.indexOf(cardOrder, TOTAL_CARDS, JOKER_B);
+		jB = ArrayUtil.indexOf(cardOrder, 0, TOTAL_CARDS, JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];
@@ -188,7 +188,7 @@ public class Solitaire implements IRandEncrypter {
 		int jA, jB, jT;
 		
 		//Moves joker A (Black) 1 to right and handles wrap
-		jT = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
+		jT = ArrayUtil.indexOf(cardOrder, 0, Solitaire.TOTAL_CARDS, Solitaire.JOKER_A);
 		if(jT < 53) {
 			jA = jT + 1;
 			cardOrder[jT] = cardOrder[jA];
@@ -202,7 +202,7 @@ public class Solitaire implements IRandEncrypter {
 
 
 		//Moves joker B (Red) 2 to right  and handles wrap
-		jB = ArrayUtil.indexOf(cardOrder, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
+		jB = ArrayUtil.indexOf(cardOrder, 0, Solitaire.TOTAL_CARDS, Solitaire.JOKER_B);
 		if(jB < 52) {
 			jT = jB + 1;
 			cardOrder[jB] = cardOrder[jT];

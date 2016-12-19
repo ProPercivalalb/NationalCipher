@@ -84,8 +84,8 @@ import javax.swing.text.JTextComponent;
 import javalibrary.Output;
 import javalibrary.cipher.permentate.PermentateArray;
 import javalibrary.cipher.permentate.Permentations;
-import javalibrary.cipher.stats.TraverseTree;
-import javalibrary.cipher.stats.WordSplit;
+import javalibrary.cipher.stats.ReadableText;
+import javalibrary.cipher.stats.ReadableText;
 import javalibrary.dict.Dictionary;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
@@ -237,7 +237,7 @@ public class UINew extends JFrame implements IApplication {
 				Dictionary.onLoad();
 				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
 				UINew.this.output.println("	Word statitics");
-				WordSplit.loadFile();
+				ReadableText.loadFile();
 				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
 				
 				for(ILanguage language : Languages.languages) {
@@ -246,7 +246,7 @@ public class UINew extends JFrame implements IApplication {
 					UINew.this.progressBar.setValue(progressBar.getValue() + 1);
 				}
 			
-				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(TraverseTree.class.getResourceAsStream("/javalibrary/cipher/stats/trigraph.txt")));
+				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(UINew.class.getResourceAsStream("/resources/data/trigraph.txt")));
 
 				String[] split = null;
 				try {
@@ -1442,7 +1442,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
     	public void updateOnWithTextArea() {
-    		String split = WordSplit.splitText(UINew.this.inputTextArea.getText().replaceAll(" ", ""));
+    		String split = ReadableText.parseText(UINew.this.inputTextArea.getText().replaceAll(" ", ""));
     		WordSplitAction.this.textOutput.setText(split.toLowerCase());
     		WordSplitAction.this.textOutput.revalidate();
     	}

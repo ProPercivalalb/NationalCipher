@@ -198,6 +198,43 @@ public class KeyGeneration {
 		return change;
 	}
 	
+	private static int[] createGenericGrilleKey(int size) {
+		double half = size / 2D;
+		int rows = (int)Math.ceil(half);
+		int cols = (int)Math.floor(half);
+		int keyLength = rows * cols;
+		
+		int[] key = new int[keyLength];
+		int count = 0;
+		for(int r = 0; r < rows; r++)
+			for(int c = 0; c < cols; c++)
+				key[count++] = r * size + c;
+		
+		return key;
+	}
+	
+	public static int[] createGrilleKey(int size) {
+		int[] key = createGenericGrilleKey(size);
+		
+		for(int i = 0; i < key.length; i++) {
+			int quadrant = RandomUtil.pickRandomInt(4);
+			int value = key[i];
+			for(int rot = 0; rot < quadrant; rot++) {
+				int row = value / size;
+				int col = value % size;
+				value = col * size + (size - row - 1);
+			}
+			key[i] = value;
+		}
+
+		return key;
+	}
+	
+	
+	
+	
+	
+	
 	// Random key length generator
 	
 	
@@ -217,9 +254,9 @@ public class KeyGeneration {
 		return createOrder(length);
 	}
 	
-	
-	
-	
-	
+	public static int[] createGrilleKey(int minLength, int maxLength) {
+		int length = RandomUtil.pickRandomInt(minLength, maxLength);
+		return createGrilleKey(length);
+	}
 
 }

@@ -38,12 +38,12 @@ public class DictionaryAttack {
 		int index = 0;
 			
 		for(char cInW : word)
-			if(!ArrayUtil.contains(complete, index, cInW) && ArrayUtil.contains(fullAlphabet, cInW))
+			if(!ArrayUtil.contains(complete, 0, index, cInW) && ArrayUtil.contains(fullAlphabet, cInW))
 				complete[index++] = cInW;
 			
 		for(int i = 0; i < length; i++) {
 			char cInA = fullAlphabet[(length * 2 + (reversed ? -1 : 1) * i - shift + (reversed ? -1 : 0)) % length];
-			if(!ArrayUtil.contains(complete, index, cInA))
+			if(!ArrayUtil.contains(complete, 0, index, cInA))
 				complete[index++] = cInA;
 		
 		}

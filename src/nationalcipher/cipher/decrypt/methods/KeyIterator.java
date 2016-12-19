@@ -2,6 +2,9 @@ package nationalcipher.cipher.decrypt.methods;
 
 import javalibrary.math.matrics.Matrix;
 import javalibrary.util.ArrayUtil;
+import nationalcipher.cipher.base.transposition.Grille.GrilleKey;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 public class KeyIterator {
 
@@ -206,13 +209,53 @@ public class KeyIterator {
 		if(arr.length - pos == 0)
 			task.onIteration(arr);
 		else
-			for(char i : new char[] {'.', '-', 'X'}) {
+			for(char i : KeyGeneration.ALL_POLLUX_CHARS) {
 				char h = arr[pos];
 	            arr[pos] = i;
 	            
 	            iteratePollux(task, pos + 1, arr);
 	            arr[pos] = h;
 			}
+	}
+	
+	public static interface GrilleKey {
+		public void onIteration(int[] key);
+	}
+	
+	public static void iterateGrille(GrilleKey task, int size) {
+		double halfSize = size / 2D;
+		int rows = (int)Math.ceil(halfSize);
+		int cols = (int)Math.floor(halfSize);
+		int keySize = rows * cols;
+		
+		int[] key = new int[keySize];
+		int count = 0;
+		for(int r = 0; r < rows; r++)
+			for(int c = 0; c < cols; c++)
+				key[count++] = r * size + c;
+		
+		KeyIterator.permutateArray(new ArrayPermutations() {
+
+			@Override
+			public void onList(byte id, int[] data, Object... extra) {
+				GrilleKey keyGenerator = (GrilleKey)extra[0];
+				int[] starting = (int[])extra[1];
+				int[] next = new int[starting.length];
+				
+				for(int i = 0; i < key.length; i++) {
+					int quadrant = data[i];
+					int value = starting[i];
+					for(int rot = 0; rot < quadrant; rot++) {
+						int row = value / size;
+						int col = value % size;
+						value = col * size + (size - row - 1);
+					}
+					next[i] = value;
+				}
+				keyGenerator.onIteration(next);
+			}
+			
+		}, keySize, 4, true, task, key);
 	}
 	
 	public static interface ArrayPermutations {

@@ -45,6 +45,7 @@ import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.base.transposition.AMSCO;
 import nationalcipher.cipher.base.transposition.Cadenus;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
+import nationalcipher.cipher.base.transposition.Grille;
 import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
@@ -104,6 +105,7 @@ public class RandomEncrypter {
 		registerEncrypter(new Enigma(), 8);
 		registerEncrypter(new FourSquare(), 7);
 		registerEncrypter(new FractionatedMorse(), 5);
+		registerEncrypter(new Grille(), 5);
 		registerEncrypter(new Hill(), 7);
 		registerEncrypter(new HillExtended(), 7);
 		registerEncrypter(new HillSubstitution(), 8);

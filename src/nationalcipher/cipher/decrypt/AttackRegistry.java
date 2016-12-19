@@ -27,6 +27,7 @@ import nationalcipher.cipher.decrypt.complete.EnigmaUhrAttack;
 import nationalcipher.cipher.decrypt.complete.FourSquareAttack;
 import nationalcipher.cipher.decrypt.complete.FractionatedMorseAttack;
 import nationalcipher.cipher.decrypt.complete.GeneralPeriodAttack;
+import nationalcipher.cipher.decrypt.complete.GrilleAttack;
 import nationalcipher.cipher.decrypt.complete.HillAttack;
 import nationalcipher.cipher.decrypt.complete.HillExtendedAttack;
 import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack;
@@ -153,6 +154,7 @@ public class AttackRegistry {
 		registerCipher(new MyszkowskiAttack(), settings);
 		registerCipher(new DoubleTranspositionAttack(), settings);
 		registerCipher(new NihilistTranspositionAttack(), settings);
+		registerCipher(new GrilleAttack(), settings);
 		
 		//Other
 		registerCipher(new PlayfairAttack(), settings);
@@ -178,7 +180,7 @@ public class AttackRegistry {
 		registerCipher(new PolybusSquareAttack(), settings);
 		
 		//
-		//registerCipher(new PeriodicGromarkAttack(), settings);
+		//registerCipher(new GrilleAttack(), settings);
 		//registerCipher(new EnigmaThinRotor(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);
