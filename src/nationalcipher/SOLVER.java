@@ -99,7 +99,7 @@ public class SOLVER {
 			byte[] decoded2 = new byte[0];
 
 			for(int j = 0; j < cipherText2.length() / blockSize; j++)
-				decoded2 = ArrayUtil.concat(decoded2, NihilistTransposition.decode(ArrayUtil.copyOfRange(cipherText2.toCharArray(), j * blockSize, blockSize), new byte[blockSize], key1, read));
+				decoded2 = ArrayUtil.concat(decoded2, NihilistTransposition.decode(ArrayUtil.copyRange(cipherText2.toCharArray(), j * blockSize, (j + 1) * blockSize), new byte[blockSize], key1, read));
 			String decoded = new String(decoded2);
 			//System.out.println(decoded);
 			if(!plainText.equals(decoded)) {

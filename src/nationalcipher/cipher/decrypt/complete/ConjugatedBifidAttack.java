@@ -25,7 +25,7 @@ public class ConjugatedBifidAttack extends CipherAttack {
 	public ConjugatedBifidAttack() {
 		super("Conjugated Bifid");
 		this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
-		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.rangeInt(2, 101)));
+		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.createRangeInteger(2, 101)));
 	}
 	
 	@Override

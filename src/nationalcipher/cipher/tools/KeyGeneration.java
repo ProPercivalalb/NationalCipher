@@ -69,11 +69,7 @@ public class KeyGeneration {
 	}
 	
 	public static int[] createOrder(int length) {
-		int[] order = ArrayUtil.range(0, length);
-
-		ArrayUtil.shuffle(order);
-		
-		return order;
+		return ArrayUtil.shuffle(ArrayUtil.createRange(length));
 	}
 	
 	public static Matrix createMatrix(int size, int range) {
@@ -110,9 +106,7 @@ public class KeyGeneration {
 		for(; i < key.length; i++)
 			key[i] = RandomUtil.pickRandomChar(ALL_POLLUX_CHARS);
 		
-		ArrayUtil.shuffle(key);
-		
-		return key;
+		return ArrayUtil.shuffle(key);
 	}
 
 	

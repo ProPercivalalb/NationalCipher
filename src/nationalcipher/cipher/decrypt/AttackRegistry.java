@@ -22,7 +22,6 @@ import nationalcipher.cipher.decrypt.complete.DigrafidAttack;
 import nationalcipher.cipher.decrypt.complete.DoubleTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack;
 import nationalcipher.cipher.decrypt.complete.EnigmaPlugboardAttack;
-import nationalcipher.cipher.decrypt.complete.EnigmaThinRotor;
 import nationalcipher.cipher.decrypt.complete.EnigmaUhrAttack;
 import nationalcipher.cipher.decrypt.complete.FourSquareAttack;
 import nationalcipher.cipher.decrypt.complete.FractionatedMorseAttack;
@@ -171,7 +170,7 @@ public class AttackRegistry {
 		registerCipher(new EnigmaPlainAttack(), settings);
 		registerCipher(new EnigmaPlugboardAttack(), settings);
 		registerCipher(new EnigmaUhrAttack(), settings);
-		registerCipher(new EnigmaThinRotor(), settings);
+		//registerCipher(new EnigmaThinRotor(), settings);
 		registerCipher(new HomophonicAttack(), settings);
 		registerCipher(new DigrafidAttack(), settings);
 		registerCipher(new SolitaireAttack(), settings);

@@ -92,7 +92,7 @@ public class AMSCO implements IRandEncrypter {
 			if(left > 0)
 				length += isDoubleLetter ? 1 : Math.min(2, left);
 
-			grid[realColumn] = ArrayUtil.copyOfRange(cipherText, index, length);
+			grid[realColumn] = ArrayUtil.copyRange(cipherText, index, index + length);
 			index += length;
 		}
 		

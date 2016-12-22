@@ -54,7 +54,7 @@ public class PeriodicGromarkAttack extends CipherAttack {
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length) {
-				task.onList((byte)-1, ArrayUtil.range(0, length));
+				task.onList((byte)-1, ArrayUtil.createRange(length));
 				//KeyIterator.permutateArray(task, length, length, false);
 			}
 		}

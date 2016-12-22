@@ -1,10 +1,13 @@
 package nationalcipher.wip;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import javalibrary.cipher.stats.ReadableText;
 import javalibrary.dict.Dictionary;
 import javalibrary.file.DraftFile;
 import javalibrary.lib.Timer;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.substitution.Enigma;
@@ -30,8 +33,36 @@ public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
 	public static void main(String[] args) {
-
 		Timer timer = new Timer();
+
+
+		char[] text = "IFYOUA".toCharArray();
+		char[] text2 = "MAGIC".toCharArray();
+		char[] text3 = "MAN".toCharArray();
+		int len = text.length;
+	
+		
+		
+		timer.restart();
+		for(int i = 0; i < 20000000; i++)
+			System.out.println(ArrayUtil.concat(text, text2));
+		timer.displayTime();
+
+		
+		timer.restart();
+		for(int i = 0; i < 20000000; i++)
+			ArrayUtil.concat(text, text2);
+		timer.displayTime();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		char[] plainText = "PTEFUQDGCSSWGQUNYKVLCWBTAJPCBYAIRGFYYLCOSBVATSYFMVVMQLRGVXXXMXXSDMKNKGTAACTLLWWTSUJKPHFWQARTZUWZPEDJMGBDMKSBDCCIDOLRJWAYQJQAHYKGVPVAUSTBAACKKYEAUZSJODJBEBETGFCRSUDGHOQFKHPRJIYMVBIMQNLUQMDFDIIOQASYJOZCIMLBVKCHTCKBJWEBEDXMPINDOMHOTYHIVCTUSUQWLKEGDDQZOIFOQUYNUQARAXMFVQOSGTXSTVHSEIZGYGDQGXORNYREUYSNCZYJPHDPTVWGGKCHLDYYRBWKEGMJTBKDJLIYDJDFEGFYWNJUWVTFAFDLKQZLYMPKLQVGIGUXSVNXXJXGXTMKGARMGSHALGZDDUTTOXHMOVPUPTYJKIIGZJPYVBCGRYZZHDOPMPVYANJAVXHFGFDSMGHCJYLQCTZIAAHBFPYTGVEMLAPSNCWKHIWLBOYYSSQKWIZNZDGGLKQPIVRXKYJNQWXECVZCTTPFZATLLXWXMYVFPUVYOXBUQHDJLHSODKPLVOLZJCGHCJCVXGBALHYJHGJSZGOUWUCQOWDOGTTUGLVSJZEQXSKOIBWXLUWCWZCDVYUTYNUWKIDFPGPBNUHVAWEHZGMKGZTUBJBLMHJCCHZAQTGOMKMGCIOZQZUQNBAGMQPKPJGURMKQWYATGVMERODREKCYNHWKZLYCPBSHCZOPSJWVZGWEVICKZCYLWHDXZXLQWTIPOFRRTBBHDKTFJKPOKFWTGQWRDCMCBSYVRTOTQZQBNYTIRNCCIDFJFGJSBNYBZXFXEVXZBMHQBEJZUUMYNWVCNLXTAMUDAUYQTGUCIKEXNXWESESQQZSFOREYKJFMDUCWMUGHBQTHPIMQHMFMMLBTRAHJUKIFDPLHDBJQZZTBJWJTMUTBCDSZZUWZLWLGZYLYMEXKQXQIQKKFHSCRWPYSGYKGBYZXSTDBSMFOEOIAUXKTTWDYJJVRALMAUIQCVXFQYQQWKLHLLZDLTXBOVSBGVBC".replaceAll(" ", "").toUpperCase().toCharArray();
 		byte[] plainText2 = new byte[plainText.length];
@@ -41,7 +72,7 @@ public class StatCompiler {
 		
 		//EnigmaMachine machine = EnigmaLib.ENIGMA_I.createWithUhr(4, "AB0", "CD1", "EF2", "GH3", "IJ4", "KL5", "MN6", "OP7", "QR8", "ST9");
 		EnigmaMachine machine = EnigmaLib.ENIGMA_I.createWithPlugboard(new int[][] {{0, 12}, {2, 18}, {6, 8}});
-		System.out.println(Enigma.encode(new String(plainText), machine, "XIJ", "ARB", rotors, 1));
+		//System.out.println(Enigma.encode(new String(plainText), machine, "XIJ", "ARB", rotors, 1));
 		/**timer.restart();
 		for(int i = 0; i < 5000; i++)
 			Enigma.decode(plainText, plainText2, machine, new int[] {0, 0, 0}, ring, rotors, -1, 0);

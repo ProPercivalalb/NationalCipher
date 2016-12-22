@@ -456,10 +456,7 @@ public class Routes {
 		
 		@Override
 		public int[] createPattern(int width, int height, int totalSize) {
-			List<Integer> grid = Arrays.asList(ArrayUtil.rangeInt(0, width * height));
-			Collections.shuffle(grid, new Random(System.currentTimeMillis()));
-			
-			return ListUtil.toArray(grid);
+			return ArrayUtil.shuffle(ArrayUtil.createRange(totalSize));
 		}
 	}
 }

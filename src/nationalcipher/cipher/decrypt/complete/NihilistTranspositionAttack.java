@@ -93,7 +93,7 @@ public class NihilistTranspositionAttack extends CipherAttack {
 			this.plainText = new byte[blockSize];
 			byte[] plainText = new byte[0];
 			for(int i = 0; i < this.cipherText.length / blockSize; i++)
-				plainText = ArrayUtil.concat(plainText, NihilistTransposition.decode(ArrayUtil.copyOfRange(this.cipherText, i * blockSize, blockSize), this.plainText, order, this.readOffDefault));
+				plainText = ArrayUtil.concat(plainText, NihilistTransposition.decode(ArrayUtil.copyRange(this.cipherText, i * blockSize, (i + 1) * blockSize), this.plainText, order, this.readOffDefault));
 
 			this.lastSolution = new Solution(plainText, this.getLanguage());
 			

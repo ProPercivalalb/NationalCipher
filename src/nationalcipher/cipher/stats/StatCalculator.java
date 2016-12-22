@@ -713,7 +713,7 @@ public class StatCalculator {
 
 		int numb_columns = text.length() / period;
 	        
-	    int[] row_order = ArrayUtil.range(0, period);
+	    int[] row_order = ArrayUtil.createRange(period);
 	    int[][] swag_array = new int[period][numb_columns];
 	    int index = 0, i = 0;
 	        

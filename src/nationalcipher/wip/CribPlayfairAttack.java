@@ -49,7 +49,7 @@ public class CribPlayfairAttack {
 				mapping.put(CIPHER_TEXT.substring(e, e+2), crib.substring(e - i, e - i + 2));
 			}
 			
-			char[] plainText2 = ArrayUtil.copyOfRange(plainText, 0, plainText.length);
+			char[] plainText2 = ArrayUtil.copy(plainText);
 			for(String k : mapping.keySet()) {
 				insert(CIPHER_TEXT, plainText2, k, mapping.get(k));
 			}

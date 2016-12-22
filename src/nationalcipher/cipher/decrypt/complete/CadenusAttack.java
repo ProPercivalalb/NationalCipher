@@ -62,7 +62,7 @@ public class CadenusAttack extends CipherAttack {
 			int blockSize = key.length() * 25;
 			byte[] plainText = new byte[0];
 			for(int i = 0; i < this.cipherText.length / blockSize; i++)
-				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyOfRange(this.cipherText, i * blockSize, blockSize), key));
+				plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyRange(this.cipherText, i * blockSize, (i + 1) * blockSize), key));
 
 			
 			this.lastSolution = new Solution(plainText, this.getLanguage());

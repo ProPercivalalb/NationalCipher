@@ -81,7 +81,7 @@ public class KeyIterator {
 	}
 	
 	public static void iterateIntegerOrderedKey(IntegerOrderedKey task, int length) {
-		iterateIntegerOrderedKey(task, ArrayUtil.range(0, length));
+		iterateIntegerOrderedKey(task, ArrayUtil.createRange(length));
 	}
 	
 	public static void iterateIntegerOrderedKey(IntegerOrderedKey task, int[] arr) {
@@ -110,12 +110,12 @@ public class KeyIterator {
 	}
 	
 	public static void iterateDoubleIntegerOrderedKey(DoubleIntegerOrderedKey task, int length1, int length2) {
-		iterateDoubleIntegerOrderedKey(task, ArrayUtil.range(0, length1), length2, 0);
+		iterateDoubleIntegerOrderedKey(task, ArrayUtil.createRange(length1), length2, 0);
 	}
 	
 	private static void iterateDoubleIntegerOrderedKey(DoubleIntegerOrderedKey task, int[] arr, int length2, int pos) {
 	    if(arr.length - pos == 1)
-	    	iterateIntegerOrderedKeySecond(task, ArrayUtil.range(0, length2), arr, 0);
+	    	iterateIntegerOrderedKeySecond(task, ArrayUtil.createRange(length2), arr, 0);
 	    else
 	        for(int i = pos; i < arr.length; i++) {
 	            int h = arr[pos];
@@ -152,7 +152,7 @@ public class KeyIterator {
 	}
 	
 	public static void permutateString(PermutateString task, String str) {
-		permutateString(task, str, ArrayUtil.range(0, str.length()), 0);
+		permutateString(task, str, ArrayUtil.createRange(str.length()), 0);
 	}
 	
 	private static void permutateString(PermutateString task, String str, int[] arr, int pos) {

@@ -29,7 +29,7 @@ public class SeriatedPlayfairAttack extends CipherAttack {
 	public SeriatedPlayfairAttack() {
 		super("Seriated Playfair");
 		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.DICTIONARY);
-		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.rangeInt(2, 101)));
+		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.createRangeInteger(2, 101)));
 	}
 	
 	@Override

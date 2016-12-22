@@ -28,7 +28,7 @@ public class EnigmaUtil {
 				for(int i2 = 0; i2 < 26; i2++) {
 					for(int i3 = 0; i3 < 26; i3++) {
 						int[] set = new int[] {i, i2, i3};
-				char ch = 'G';
+				int ch = 6;
 				
 				for(int r = 2; r >= 0; r--)
 				  	ch = Enigma.nextCharacter(ch, machine.rotors[rotors[r]], set[r]);
@@ -37,8 +37,8 @@ public class EnigmaUtil {
 			
 				for(int r = 0; r < 3; r++)
 				   	ch = Enigma.nextCharacter(ch, machine.rotorsInverse[rotors[r]], set[r]);
-				if(ch == 'D')
-				System.out.println(String.format("Pos:%s %c", Arrays.toString(set), ch));
+				if(ch == 3)
+					System.out.println(String.format("Pos:%s %c", Arrays.toString(set), ch));
 			}}}
 		}
 		

@@ -29,7 +29,7 @@ public class BifidAttack extends CipherAttack {
 	public BifidAttack() {
 		super("Bifid");
 		this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING, DecryptionMethod.DICTIONARY);
-		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.rangeInt(2, 101)));
+		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.createRangeInteger(2, 101)));
 	}
 	
 	@Override

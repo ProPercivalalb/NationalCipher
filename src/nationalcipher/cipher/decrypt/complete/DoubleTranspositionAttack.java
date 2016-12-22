@@ -114,13 +114,13 @@ public class DoubleTranspositionAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0) {
-				int[] copy = ArrayUtil.copyOfRange(this.bestMaximaKey1, 0, this.period1);
+				int[] copy = ArrayUtil.copy(this.bestMaximaKey1);
 				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
 					KeyManipulation.swapOrder(copy);
 				this.lastKey1 = copy;
 			}
 			else {
-				int[] copy = ArrayUtil.copyOfRange(this.bestMaximaKey2, 0, this.period2);
+				int[] copy = ArrayUtil.copy(this.bestMaximaKey2);
 				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
 					KeyManipulation.swapOrder(copy);
 				this.lastKey2 = copy;

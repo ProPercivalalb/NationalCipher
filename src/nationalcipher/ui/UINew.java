@@ -82,8 +82,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 
 import javalibrary.Output;
-import javalibrary.cipher.permentate.PermentateArray;
-import javalibrary.cipher.permentate.Permentations;
 import javalibrary.cipher.stats.ReadableText;
 import javalibrary.cipher.stats.ReadableText;
 import javalibrary.dict.Dictionary;

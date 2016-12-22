@@ -58,7 +58,7 @@ public class FractionatedMorse implements IRandEncrypter {
 			}
 		}
 		
-		return ArrayUtil.copyOfRange(plainText, 0, index);
+		return ArrayUtil.copyRange(plainText, 0, index);
 	}
 
 	/**

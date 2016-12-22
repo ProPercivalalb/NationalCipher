@@ -137,7 +137,7 @@ public class Solitaire implements IRandEncrypter {
 	}
 	
 	public static int[] createCardOrder(String key) {
-		return createCardOrder(key, ArrayUtil.range(0, 54));
+		return createCardOrder(key, ArrayUtil.createRange(54));
 	}
 	
 	public static int[] createCardOrder(String key, int[] startingOrder) {

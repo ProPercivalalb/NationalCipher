@@ -28,7 +28,7 @@ public class TrifidAttack extends CipherAttack {
 	public TrifidAttack() {
 		super("Trifid");
 		this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
-		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.rangeInt(2, 101)));
+		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.createRangeInteger(2, 101)));
 		this.extraCharacter = new JComboBox<Character>(new Character[] {'#', '.', '*', '@', '_'});
 	}
 	

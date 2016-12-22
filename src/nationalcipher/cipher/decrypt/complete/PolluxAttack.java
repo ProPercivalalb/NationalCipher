@@ -88,7 +88,7 @@ public class PolluxAttack extends CipherAttack {
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeyManipulation.swapMorseIndex(ArrayUtil.copyOfRange(this.bestMaximaKey, 0, this.bestMaximaKey.length));
+			this.lastKey = KeyManipulation.swapMorseIndex(ArrayUtil.copy(this.bestMaximaKey));
 			return new Solution(Pollux.decode(this.cipherText, this.lastKey), this.getLanguage());
 		}
 

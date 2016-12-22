@@ -58,7 +58,7 @@ public class Solution extends ResultNegative {
 	public Solution bakeSolution() {
 		if(!this.beenBaked) {
 			this.beenBaked = true;
-			this.text = ArrayUtil.copyOfRange(this.text, 0, this.text.length);
+			this.text = ArrayUtil.copy(this.text);
 		}
 		return this;
 	}
