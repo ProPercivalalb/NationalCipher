@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1307,7 +1308,7 @@ public class UINew extends JFrame implements IApplication {
 	        
     		this.dialog.add(panel);
     		
-    		this.solutions = new DynamicResultList<Solution>(256);
+    		this.solutions = new DynamicResultList<Solution>(256, false);
     	}
     	
     	@Override
@@ -1317,20 +1318,21 @@ public class UINew extends JFrame implements IApplication {
 		}
     	
     	public void sortSolutions() {
-    		this.solutions.sort();
-    		
+    		LinkedList<Solution> resultsCopy = this.solutions.copyList();
+    		Collections.sort(resultsCopy);
     		String text = "";
-    		for(int i = 0; i < this.solutions.size(); i++)
-    			text += String.format(i + " %s\n", this.solutions.get(i));
+    		for(int i = 0; i < resultsCopy.size(); i++)
+    			text += String.format(i + " %s\n", resultsCopy.get(i));
 
     		this.textOutput.setText(text);
     		this.textOutput.revalidate();
     		this.textOutput.setCaretPosition(0);
     	}
 
-    	public void addSolution(Solution solution) {
-    		this.solutions.addResult(solution);
+    	public boolean addSolution(Solution solution) {
+    		boolean successful = this.solutions.addResult(solution);
     		this.updateNeed = true;
+    		return successful;
     	}
     	
     	public void reset() {

@@ -83,7 +83,7 @@ public class Hill implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		do {
 			try {
-				return encode(plainText, KeyGeneration.createMatrix(RandomUtil.pickRandomInt(2, 5), 26));
+				return encode(plainText, KeyGeneration.createMatrix(RandomUtil.pickRandomInt(3, 3), 26));
 			}
 			catch(MatrixNoInverse noInverse) {}
 		}

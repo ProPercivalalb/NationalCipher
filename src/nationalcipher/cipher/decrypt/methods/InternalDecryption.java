@@ -22,7 +22,7 @@ public class InternalDecryption {
 	public InternalDecryption(char[] cipherText, IApplication app) {
 		this.app = app;	
 		this.iteration = 1;
-		this.bestSolution = new Solution();
+		this.bestSolution = Solution.WORST_SOLUTION;
 		
 		this.setCipherText(cipherText);
 	}
@@ -39,14 +39,13 @@ public class InternalDecryption {
 	
 	public void addSolution(Solution solution) {
 		if(this.getSettings().collectSolutions())
-			if(solution.score > this.UPPER_ESTIMATE) {
-				solution.bakeSolution();
-				UINew.topSolutions.addSolution(solution);
-			}
+			if(solution.score > this.UPPER_ESTIMATE)
+				if(UINew.topSolutions.addSolution(solution))
+					solution.bakeSolution();
 	}
 	
 	public void resetSolution() {
-		this.bestSolution = new Solution();
+		this.bestSolution = Solution.WORST_SOLUTION;
 		UINew.topSolutions.reset();
 	}
 	

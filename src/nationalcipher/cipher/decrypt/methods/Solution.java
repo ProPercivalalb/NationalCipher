@@ -14,16 +14,13 @@ public class Solution extends ResultNegative {
 	private boolean beenBaked;
 	public String keyString;
 	public static final String UNKNOWN_KEY = "UNKNOWN";
+	public static final Solution WORST_SOLUTION = new Solution(new byte[0], Double.NEGATIVE_INFINITY);
 	
 	public Solution(byte[] text, double score) {
 		super(score);
 		this.text = text;
 		this.beenBaked = false;
 		this.keyString = UNKNOWN_KEY;
-	}
-	
-	public Solution() {
-		this(new byte[0], Double.NEGATIVE_INFINITY);
 	}
 	
 	//public Solution(char[] text, ILanguage language) {

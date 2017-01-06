@@ -2,14 +2,19 @@ package nationalcipher.wip;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javalibrary.cipher.stats.ReadableText;
 import javalibrary.dict.Dictionary;
 import javalibrary.file.DraftFile;
+import javalibrary.fitness.ChiSquared;
+import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
+import nationalcipher.cipher.base.other.Playfair;
+import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.stats.StatisticsRef;
@@ -27,45 +32,67 @@ import nationalcipher.cipher.stats.types.StatisticMaxICx1000;
 import nationalcipher.cipher.stats.types.StatisticNormalOrder;
 import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTrigraphNoOverlapICx100000;
+import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.transposition.Routes;
 
 public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
 	
+public static Map<Character, Double> frequencyMap;
+	
+	public char[] frequencyLargest;
+
+	public static Map<Character, Double> getCharacterFrequency() {
+		if(frequencyMap == null) {
+			frequencyMap = new HashMap<Character, Double>();
+			frequencyMap.put('A', 12.920);
+			frequencyMap.put('B', 2.844D);
+			frequencyMap.put('C', 1.463 + 1.156);
+			frequencyMap.put('D', 5.206D);
+			frequencyMap.put('E', 9.912);
+			frequencyMap.put('F', 0.461D);
+			frequencyMap.put('G', 1.253D + 	1.125);
+			frequencyMap.put('H', 1.212D);
+			frequencyMap.put('I', 9.600);
+			frequencyMap.put('J', 0.034D);
+			frequencyMap.put('K', 5.683D);
+			frequencyMap.put('L', 5.922);
+			frequencyMap.put('M', 3.752D);
+			frequencyMap.put('N', 7.987);
+			frequencyMap.put('O', 2.976 + 0.777);
+			frequencyMap.put('P', 0.886D);
+			frequencyMap.put('Q', 0D);
+			frequencyMap.put('R', 7.722D);
+			frequencyMap.put('S', 3.014 + 1.780);
+			frequencyMap.put('T', 3.314D);
+			frequencyMap.put('U', 3.235 + 1.854);
+			frequencyMap.put('V', 	0.959);
+			frequencyMap.put('W', 0D);
+			frequencyMap.put('X', 0D);
+			frequencyMap.put('Y', 3.336);
+			frequencyMap.put('Z', 1.500);	
+		}
+		return frequencyMap;
+	}
+	
 	public static void main(String[] args) {
 		Timer timer = new Timer();
-
-
-		char[] text = "IFYOUA".toCharArray();
-		char[] text2 = "MAGIC".toCharArray();
-		char[] text3 = "MAN".toCharArray();
-		int len = text.length;
-	
-		
-		
-		timer.restart();
-		for(int i = 0; i < 20000000; i++)
-			System.out.println(ArrayUtil.concat(text, text2));
-		timer.displayTime();
-
-		
-		timer.restart();
-		for(int i = 0; i < 20000000; i++)
-			ArrayUtil.concat(text, text2);
-		timer.displayTime();
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		char[] plainText = "PTEFUQDGCSSWGQUNYKVLCWBTAJPCBYAIRGFYYLCOSBVATSYFMVVMQLRGVXXXMXXSDMKNKGTAACTLLWWTSUJKPHFWQARTZUWZPEDJMGBDMKSBDCCIDOLRJWAYQJQAHYKGVPVAUSTBAACKKYEAUZSJODJBEBETGFCRSUDGHOQFKHPRJIYMVBIMQNLUQMDFDIIOQASYJOZCIMLBVKCHTCKBJWEBEDXMPINDOMHOTYHIVCTUSUQWLKEGDDQZOIFOQUYNUQARAXMFVQOSGTXSTVHSEIZGYGDQGXORNYREUYSNCZYJPHDPTVWGGKCHLDYYRBWKEGMJTBKDJLIYDJDFEGFYWNJUWVTFAFDLKQZLYMPKLQVGIGUXSVNXXJXGXTMKGARMGSHALGZDDUTTOXHMOVPUPTYJKIIGZJPYVBCGRYZZHDOPMPVYANJAVXHFGFDSMGHCJYLQCTZIAAHBFPYTGVEMLAPSNCWKHIWLBOYYSSQKWIZNZDGGLKQPIVRXKYJNQWXECVZCTTPFZATLLXWXMYVFPUVYOXBUQHDJLHSODKPLVOLZJCGHCJCVXGBALHYJHGJSZGOUWUCQOWDOGTTUGLVSJZEQXSKOIBWXLUWCWZCDVYUTYNUWKIDFPGPBNUHVAWEHZGMKGZTUBJBLMHJCCHZAQTGOMKMGCIOZQZUQNBAGMQPKPJGURMKQWYATGVMERODREKCYNHWKZLYCPBSHCZOPSJWVZGWEVICKZCYLWHDXZXLQWTIPOFRRTBBHDKTFJKPOKFWTGQWRDCMCBSYVRTOTQZQBNYTIRNCCIDFJFGJSBNYBZXFXEVXZBMHQBEJZUUMYNWVCNLXTAMUDAUYQTGUCIKEXNXWESESQQZSFOREYKJFMDUCWMUGHBQTHPIMQHMFMMLBTRAHJUKIFDPLHDBJQZZTBJWJTMUTBCDSZZUWZLWLGZYLYMEXKQXQIQKKFHSCRWPYSGYKGBYZXSTDBSMFOEOIAUXKTTWDYJJVRALMAUIQCVXFQYQQWKLHLLZDLTXBOVSBGVBC".replaceAll(" ", "").toUpperCase().toCharArray();
+		char[] plainText = "PTEFUQDGCSSWGQUNYKVLCWBTAJPCBYAIRGFYYLCOSBVATSYFMVVMQLRGVXXXMXXSDMKNKGTAACTLLWWTSUJKPHFWQARTZUWZPEDJMGBDMKSBDCCIDOLRJWAYQJQAHYKGVPVAUSTBAACKKYEAUZSJODJBEBETGFCRSUDGHOQFKHPRJIYMVBIMQNLUQMDFDIIOQASYJOZCIMLBVKCHTCKBJWEBEDXMPINDOMHOTYHIVCTUSUQWLKEGDDQZOIFOQUYNUQARAXMFVQOSGTXSTVHSEIZGYGDQGXORNYREUYSNCZYJPHDPTVWGGKCHLDYYRBWKEGMJTBKDJLIYDJDFEGFYWNJUWVTFAFDLKQZLYMPKLQVGIGUXSVNXXJXGXTMKGARMGSHALGZDDUTTOXHMOVPUPTYJKIIGZJPYVBCGRYZZHDOPMPVYANJAVXHFGFDSMGHCJYLQCTZIAAHBFPYTGVEMLAPSNCWKHIWLBOYYSSQKWIZNZDGGLKQPIVRXKYJNQWXECVZCTTPFZATLLXWXMYVFPUVYOXBUQHDJLHSODKPLVOLZJCGHCJCVXGBALHYJHGJSZGOUWUCQOWDOGTTUGLVSJZEQXSKOIBWXLUWCWZCDVYUTYNUWKIDFPGPBNUHVAWEHZGMKGZTUBJBLMHJCCHZAQTGOMKMGCIOZQZUQNBAGMQPKPJGURMKQWYATGVMERODREKCYNHWKZLYCPBSHCZOPSJWVZGWEVICKZCYLWHDXZXLQWTIPOFRRTBBHDKTFJKPOKFWTGQWRDCMCBSYVRTOTQZQBNYTIRNCCIDFJFGJSBNYBZXFXEVXZBMHQBEJZUUMYNWVCNLXTAMUDAUYQTGUCIKEXNXWESESQQZSFOREYKJFMDUCWMUGHBQTHPIMQHMFMMLBTRAHJUKIFDPLHDBJQZZTBJWJTMUTBCDSZZUWZLWLGZYLYMEXKQXQIQKKFHSCRWPYSGYKGBYZXSTDBSMFOEOIAUXKTTWDYJJVRALMAUIQCVXFQYQQWKLHLLZDLTXBOVSBGVB".replaceAll("J", "I").toUpperCase().toCharArray();
 		byte[] plainText2 = new byte[plainText.length];
+		char[] key = KeyGeneration.ALL_25_CHARS;
+		timer.restart();
+		for(int i = 0; i < 400000; i++)
+			Playfair.decode(plainText, plainText2, key);
+		timer.displayTime();
+		
+		
+		timer.restart();
+		for(int i = 0; i < 400000; i++)
+			Playfair.decode(plainText, plainText2, key);
+		timer.displayTime();
+		
+		
+		
 		int[] ring = new int[] {0, 0, 0};
 		int[] rotors = new int[] {2, 0, 3};
 		

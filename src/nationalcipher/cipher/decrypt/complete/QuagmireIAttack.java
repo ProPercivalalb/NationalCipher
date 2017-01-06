@@ -106,8 +106,8 @@ public class QuagmireIAttack extends CipherAttack {
 			
 			String parent = StringTransformer.repeat("A", this.period);
 
-			Solution currentBestSolution = new Solution();
-			Solution lastSolution = new Solution();
+			Solution currentBestSolution = Solution.WORST_SOLUTION;
+			Solution lastSolution = Solution.WORST_SOLUTION;
 			
 			while(true) {
 				String startParent = parent;

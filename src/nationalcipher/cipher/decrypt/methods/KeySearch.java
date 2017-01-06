@@ -16,7 +16,7 @@ public abstract class KeySearch extends InternalDecryption {
 			byte[] parent = new byte[length];
 			Arrays.fill(parent, (byte)'A');
 
-			Solution currentBestSolution = new Solution();
+			Solution currentBestSolution = Solution.WORST_SOLUTION;
 			
 			while(true) {
 				boolean change = false;

@@ -31,8 +31,8 @@ public class SOLVER {
 		
 		String parent = StringTransformer.repeat("A", 3);
 
-		Solution currentBestSolution = new Solution();
-		Solution lastSolution = new Solution();
+		Solution currentBestSolution = Solution.WORST_SOLUTION;
+		Solution lastSolution = Solution.WORST_SOLUTION;
 		
 		while(true) {
 			String startParent = parent;

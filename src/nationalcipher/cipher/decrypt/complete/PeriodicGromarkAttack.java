@@ -95,7 +95,7 @@ public class PeriodicGromarkAttack extends CipherAttack {
 			if(StringTransformer.getUniqueCharSet(key).size() == key.length())
 			
 				return new Solution(PeriodicGromark.decode(this.cipherText, this.plainText, key), this.getLanguage()).setKeyString(key).bakeSolution();
-			return new Solution();
+			return Solution.WORST_SOLUTION;
 		}
 		
 		@Override

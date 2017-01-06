@@ -91,7 +91,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 					}
 				}
 				
-				Solution currentBestSolution = new Solution();
+				Solution currentBestSolution = Solution.WORST_SOLUTION;
 				
 				while(true) {
 					for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {

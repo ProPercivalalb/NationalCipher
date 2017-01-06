@@ -7,6 +7,10 @@ import java.util.List;
 import javalibrary.Output;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.Languages;
+import javalibrary.lib.Timer;
+import javalibrary.list.DynamicResultList;
+import javalibrary.math.Units.Time;
+import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import nationalcipher.cipher.base.other.Solitaire;
@@ -17,10 +21,10 @@ import nationalcipher.cipher.decrypt.methods.Solution;
 
 public class SolitaireSolver {
 
-	public static final int LARGEST_UNKNOWNS_ITERABLE = 11;
+	public static final int LARGEST_UNKNOWNS_ITERABLE = 7;
 	
 	//No known text all ready
-	public static List<Solution> swiftAttack(String cipherText, int n, int offset, DeckParse deck, int noSol, Output out) {
+	public static DynamicResultList<Solution> swiftAttack(String cipherText, int n, int offset, DeckParse deck, int noSol, Output out) {
 		return swiftAttack(cipherText, new byte[0], n, offset, deck, noSol, out, 0);
 	}
 	
@@ -29,36 +33,38 @@ public class SolitaireSolver {
 	 * 7 chars ~ 30 seconds of processing time
 	 * However as n increases processing time increases n^2
 	 */
-	public static List<Solution> swiftAttack(String cipherText, byte[] prefix, int n, int offset, DeckParse deck, int noSol, Output out, int time) {
-		SoiltaireSwiftAttack attack = new SoiltaireSwiftAttack(cipherText.substring(offset + 0, offset + n), prefix, out);
+	public static DynamicResultList<Solution> swiftAttack(String cipherText, byte[] prefix, int n, int offset, DeckParse deck, int solutionsCarryFoward, Output out, int time) {
+		SoiltaireSwiftAttack attack = new SoiltaireSwiftAttack(cipherText.substring(offset + 0, offset + n), prefix, solutionsCarryFoward, out, time);
+		Timer timer = new Timer();
 		Solitaire.specialAttack(attack, deck.order, deck.unknownCards);
-		Collections.sort(attack.solutions);
-		
-		attack.solutions = attack.solutions.subList(0, Math.min(noSol, attack.solutions.size()));
-		
-		out.println("Completed %s round order", new String[]{"first", "second", "third", "fouth", "fifth"}[time]);
+		attack.solutions.sort();
+		//out.println(attack.solutions.getList().toString());
+		out.println(StringTransformer.repeat("   ", time) + " Completed %s round order in %fs", new String[]{"first", "second", "third", "fouth", "fifth"}[time], timer.getTimeRunning(Time.SECOND));
 		return attack.solutions;
 	}
 	
 	public static void startCompleteAttack(String cipherText, int n, int solutionsCarryFoward, DeckParse startingDeck, Output out, int time) {
-		completeAttack(cipherText, new byte[0], n, solutionsCarryFoward, 0, startingDeck, out, time);
+		completeAttack(new SolitaireSolutionEver(), cipherText, new byte[0], n, solutionsCarryFoward, 0, startingDeck, out, time);
 	}
 	
-	public static void completeAttack(String cipherText, byte[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
-		out.println("Starting unknowns: " + startingDeck.countUnknowns());
-		List<Solution> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, solutionsCarryFoward, out, time);
+	public static void completeAttack(SolitaireSolutionEver bestSolutionEver, String cipherText, byte[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
+		out.println(StringTransformer.repeat("   ", time) + "Starting unknowns: " + startingDeck.countUnknowns());
+		DynamicResultList<Solution> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, solutionsCarryFoward, out, time);
 		
 		
-		SolitaireSolution task = new SolitaireSolution(ArrayUtil.convertCharType(cipherText.substring(offset + n, cipherText.length()).toCharArray()), offset + n, out);
-		out.println("Solutions: " + solutions.size());
-		for(Solution solution : solutions) {
+		SolitaireSolution task = new SolitaireSolution(bestSolutionEver, ArrayUtil.convertCharType(cipherText.substring(offset + n, cipherText.length()).toCharArray()), offset + n, out, time);
+		//out.println("Solutions: " + solutions.size());
+		for(int i = 0; i < solutions.size(); i++) {
+			Solution solution = solutions.get(i);
+			out.println(StringTransformer.repeat("   ", time) + "%d/%d %s", i + 1, solutions.size(), new String(solution.getText()));
+			
 			DeckParse deck = new DeckParse(solution.keyString);
 			task.incompleteOrder = deck.order;
 			task.emptyIndex = deck.emptyIndex;
 			//out.println(deck.toString());
 			
 			if(deck.countUnknowns() > LARGEST_UNKNOWNS_ITERABLE) {
-				completeAttack(cipherText, solution.getText(), n, solutionsCarryFoward, offset + n, deck, out, time + 1);
+				completeAttack(bestSolutionEver, cipherText, solution.getText(), n, solutionsCarryFoward, offset + n, deck, out, time + 1);
 			}
 			else {
 				for(int k = 0; k < n + offset; k++)
@@ -70,20 +76,31 @@ public class SolitaireSolver {
 		}
 	}
 
+	public static class SolitaireSolutionEver {
+		public Solution bestSolution = Solution.WORST_SOLUTION;
+		@Override
+		public String toString() {
+			return this.bestSolution.toString();
+		}
+	}
+	
 	public static class SolitaireSolution implements IntegerOrderedKey {
 		
+		public SolitaireSolutionEver bestSolutionEver;
 		public byte[] text;
 		public int startingLength;
 		public int[] incompleteOrder;
 		public int[] emptyIndex;
-		public Solution lastSolution, bestSolution;
+		public Solution lastSolution;
 		public Output out;
+		public int time;
 		
-		public SolitaireSolution(byte[] text, int startingLength, Output out) {
-			this.bestSolution = new Solution();
+		public SolitaireSolution(SolitaireSolutionEver bestSolutionEver, byte[] text, int startingLength, Output out, int time) {
+			this.bestSolutionEver = bestSolutionEver;
 			this.text = ArrayUtil.concat(new byte[startingLength], text);
 			this.startingLength = startingLength;
 			this.out = out;
+			this.time = time;
 		}
 		
 		@Override
@@ -93,10 +110,10 @@ public class SolitaireSolver {
 			
 			this.lastSolution = new Solution(Solitaire.decode(this.text, this.startingLength, this.incompleteOrder), Languages.english.getTrigramData());
 			
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString(ListUtil.toString(this.incompleteOrder, 1));
-				this.out.println("%s", this.bestSolution);
+			if(this.lastSolution.score >= this.bestSolutionEver.bestSolution.score) {
+				this.bestSolutionEver.bestSolution = this.lastSolution;
+				this.bestSolutionEver.bestSolution.setKeyString(ListUtil.toString(this.incompleteOrder, 1));
+				this.out.println(StringTransformer.repeat("   ", time) + "%s", this.bestSolutionEver);
 			}
 		}
 	}
@@ -104,15 +121,16 @@ public class SolitaireSolver {
 	private static class SoiltaireSwiftAttack implements SolitaireAttack {
 
     	public Solution bestSolution;
-    	public List<Solution> solutions;
+    	public DynamicResultList<Solution> solutions;
     	public byte[] intText;
     	public byte[] prefix;
     	public double minFitness;
     	public Output out;
+    	public int time;
     	
-    	private SoiltaireSwiftAttack(String cipherText, byte[] prefix, Output out) {
-    		this.bestSolution = new Solution();
-    		this.solutions = new ArrayList<Solution>();
+    	private SoiltaireSwiftAttack(String cipherText, byte[] prefix, int solutionsCarryFoward, Output out, int time) {
+    		this.bestSolution = Solution.WORST_SOLUTION;
+    		this.solutions = new DynamicResultList<Solution>(solutionsCarryFoward);
     		this.intText = new byte[cipherText.length() + prefix.length];
     		this.prefix = prefix;
     		int i = 0;
@@ -124,6 +142,7 @@ public class SolitaireSolver {
     		this.minFitness = TextFitness.getEstimatedFitness(this.intText.length, Languages.english.getTrigramData()) * 1.5D;
     		System.out.println("Min fitness: " + this.minFitness);
     		this.out = out;
+    		this.time = time;
     	}
    
 		@Override
@@ -133,19 +152,12 @@ public class SolitaireSolver {
 
 			Solution last = new Solution(chars, Languages.english.getTrigramData());
 			
-			if(last.score > this.minFitness) {
+			if(this.solutions.addResult(last))
 				last.setKeyString(ListUtil.toCardString(lastOrder, 0));
-				this.solutions.add(last);
-			}
-			
+			//Will mirror previous if statement
 			if(this.bestSolution.score < last.score) {
 				this.bestSolution = last;
-
-				
-				
-				this.bestSolution.setKeyString(ListUtil.toCardString(lastOrder, 0));
-				
-				this.out.println("%s", this.bestSolution);
+				this.out.println(StringTransformer.repeat("   ", time) + "%s", this.bestSolution);
 			}
 			
 		}

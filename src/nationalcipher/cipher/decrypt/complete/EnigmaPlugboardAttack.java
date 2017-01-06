@@ -267,7 +267,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 
 				bestSolution.setKeyString("%s, Plugs:[%s]", trial.toKeyString(), EnigmaUtil.convertMappingToReadablePlugboard(plugboard));
 				/**
-				Solution bestSolution2 = new Solution();
+				Solution bestSolution2 = Solution.WORST_SOLUTION;
 				for(int s2 = 0; s2 < 26; s2++) {
 					for(int s3 = 0; s3 < 26; s3++) {
 						int[] indicator = trial.copyIndicator();
