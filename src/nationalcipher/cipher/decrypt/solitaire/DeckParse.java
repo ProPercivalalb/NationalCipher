@@ -13,20 +13,17 @@ public class DeckParse {
 	public int[] unknownCards;
 	public boolean complete;
 	
-	public DeckParse(int[] deckOld) {
+	public DeckParse(int[] oldOrder) {
 		this.order = new int[54];
 		Arrays.fill(this.order, -1);
 		
 		List<Integer> emptyIndex = new ArrayList<Integer>();
 		
-		for(int i = 0; i < deckOld.length; i++) {
-			int card = deckOld[i];
-			if(card < 0) {
+		for(int i = 0; i < oldOrder.length; i++) {
+			if(oldOrder[i] < 0)
 				emptyIndex.add(i);
-				continue;
-			}
-			
-			this.order[i] = card;
+			else
+				this.order[i] = oldOrder[i];
 			
 		}
 		
@@ -42,7 +39,7 @@ public class DeckParse {
 		this.order = new int[54];
 		Arrays.fill(this.order, -1);
 
-		parse =	parse.substring(parse.startsWith("[") ? 1 : 0, parse.length() - (parse.endsWith("]") ? 1 : 0));
+		parse =	parse.substring(parse.startsWith("[") ? 1 : 0, parse.length() - (parse.endsWith("]") ? 1 : 0)).replaceAll(" ", "");
 		
 		String[] cards = parse.split(",");
 		List<Integer> emptyIndex = new ArrayList<Integer>();

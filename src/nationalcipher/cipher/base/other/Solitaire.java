@@ -1,8 +1,11 @@
 package nationalcipher.cipher.base.other;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.ListUtil;
+import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -508,6 +511,19 @@ public class Solitaire implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return encode(plainText, KeyGeneration.createOrder(54));
+		int[] order = KeyGeneration.createOrder(54);
+		int[] halfOrder = ArrayUtil.copy(order);
+	
+		List<Integer> all = ListUtil.range(0, 53);
+		while(all.size() > 54 - 16) {
+			int index = RandomUtil.pickRandomElement(all);
+			if(Solitaire.isJoker(index)) continue;
+				
+			all.remove((Object)index);
+			halfOrder[ArrayUtil.indexOf(order, index)] = -1;
+		}
+		System.out.println(Arrays.toString(order));
+		System.out.println(Arrays.toString(halfOrder));
+		return encode(plainText, order);
 	}
 }
