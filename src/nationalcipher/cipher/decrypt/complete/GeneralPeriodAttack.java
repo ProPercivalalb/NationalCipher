@@ -7,6 +7,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import javalibrary.lib.Timer;
+import javalibrary.math.Units.Time;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
@@ -38,6 +40,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		char[] cipherText = text.toCharArray();
 		GeneralPeriodTask task = new GeneralPeriodTask(text, app);
+		app.out().println("Recommended SA settings: 20.0 - 0.1 - 10000");
 		
 		//Settings grab
 		task.period = SettingParse.getInteger(this.spinner);
@@ -59,7 +62,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			app.getProgress().setIndeterminate(true);
-			task.run(task.period, task.period);
+			task.run(task.period);
 		}
 		
 		app.out().println(task.getBestSolution());
@@ -74,85 +77,88 @@ public class GeneralPeriodAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 		
-		public void run(int minLength, int maxLength) {
-			for(int length = minLength; length <= maxLength; length++) {
-				int rowsMin = this.cipherText.length / length;
-				int colLeft = this.cipherText.length % length;
-				int[] height = new int[length]; //Number of rows in the 'i'th column
-				char[][] keysIndex = new char[length][26];
+		public void run(int length) {
+			int rowsMin = this.cipherText.length / length;
+			int colLeft = this.cipherText.length % length;
+			int[] height = new int[length]; //Number of rows in the 'i'th column
+			char[][] keysIndex = new char[length][26];
 				
-				byte[] editText = ArrayUtil.convertCharType(Arrays.copyOf(this.cipherText, this.cipherText.length));
+			byte[] editText = ArrayUtil.convertCharType(Arrays.copyOf(this.cipherText, this.cipherText.length));
 				
-				for(int p = 0; p < length; p++) {
-					height[p] = rowsMin + (colLeft > p ? 1 : 0);
+			for(int p = 0; p < length; p++) {
+				height[p] = rowsMin + (colLeft > p ? 1 : 0);
 					
-					for(int i = 0; i < 26; i++) {
-						keysIndex[p][i] = (char)(i + 'A');
-					}
+				for(int i = 0; i < 26; i++) {
+					keysIndex[p][i] = (char)(i + 'A');
 				}
+			}
 				
-				Solution currentBestSolution = Solution.WORST_SOLUTION;
-				
-				while(true) {
-					for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {
-						for(int count = 0; count < this.getSettings().getSACount(); count++) { 
-							
-							for(int p = 0; p < length; p++) {
-								byte ch1 = (byte)RandomUtil.pickRandomInt('A', 'Z');
-								byte ch2 = (byte)RandomUtil.pickRandomInt('A', 'Z');
+			Solution currentBestSolution = Solution.WORST_SOLUTION;
+			Timer timer = new Timer();
+			boolean done = true;
+			while(true) {
+				for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {
+					for(int count = 0; count < this.getSettings().getSACount(); count++) { 
+						//int p = RandomUtil.pickRandomInt(length);
+						for(int p = 0; p < length; p++) {
+							byte ch1 = (byte)RandomUtil.pickRandomInt('A', 'Z');
+							byte ch2 = (byte)RandomUtil.pickRandomInt('A', 'Z');
 	
-								for(int i = 0; i < height[p]; i++) {
-									int pos = i * length + p;
-									byte ch = editText[pos];
-									if(ch == ch1) editText[pos] = ch2;
-									else if(ch == ch2) editText[pos] = ch1;
-								}
+							for(int i = 0; i < height[p]; i++) {
+								int pos = i * length + p;
+								byte ch = editText[pos];
+								if(ch == ch1) editText[pos] = ch2;
+								else if(ch == ch2) editText[pos] = ch1;
+							}
 								
-								this.lastSolution = new Solution(editText, this.getLanguage()).bakeSolution();
-
-								double lastDF = this.lastSolution.score - currentBestSolution.score;
+							this.lastSolution = new Solution(editText, this.getLanguage());
+							this.addSolution(this.lastSolution);
+							if(done && this.lastSolution.score > -3730)  {
+								this.out().println("TIME: %f", timer.getTimeRunning(Time.SECOND));
+								done = false;	
+							}
+							
+							double lastDF = this.lastSolution.score - currentBestSolution.score;
 								
-							    if(lastDF >= 0) {
-							    	currentBestSolution = this.lastSolution;
+							if(lastDF >= 0) {
+							    currentBestSolution = this.lastSolution;
 									
+							    char temp = keysIndex[p][ch1 - 'A'];
+								keysIndex[p][ch1 - 'A'] = keysIndex[p][ch2 - 'A'];
+								keysIndex[p][ch2 - 'A'] = temp;
+							}
+							else if(TEMP > 0) { 
+								double prob = Math.exp(lastDF / TEMP);
+							    if(prob > RandomUtil.pickDouble()) {
+							    	currentBestSolution = this.lastSolution;
+										
 							    	char temp = keysIndex[p][ch1 - 'A'];
 									keysIndex[p][ch1 - 'A'] = keysIndex[p][ch2 - 'A'];
 									keysIndex[p][ch2 - 'A'] = temp;
 							    }
-							    else if(TEMP > 0) { 
-							    	double prob = Math.exp(lastDF / TEMP);
-							        if(prob > RandomUtil.pickDouble()) {
-							        	currentBestSolution = this.lastSolution;
-										
-										char temp = keysIndex[p][ch1 - 'A'];
-										keysIndex[p][ch1 - 'A'] = keysIndex[p][ch2 - 'A'];
-										keysIndex[p][ch2 - 'A'] = temp;
-						
-							        }
-							        else {
-							        	for(int i = 0; i < height[p]; i++) {
-											int pos = i * length + p;
-											byte ch = editText[pos];
-											if(ch == ch1) editText[pos] = ch2;
-											else if(ch == ch2) editText[pos] = ch1;
-										}
-							        }
-								}
-							    
-								if(currentBestSolution.score > this.bestSolution.score) {
-									this.bestSolution = currentBestSolution;
-									String str = "";
-									for(int j = 0; j < length; j++) {
-										str += new String(keysIndex[j]) + ", ";
+							    else {
+							        for(int i = 0; i < height[p]; i++) {
+										int pos = i * length + p;
+										byte ch = editText[pos];
+										if(ch == ch1) editText[pos] = ch2;
+										else if(ch == ch2) editText[pos] = ch1;
 									}
-									this.bestSolution.setKeyString(str);
-									this.solutionFound();
-								}
+							    }
 							}
-							
-							
-							this.onIteration();
+							    
+							if(currentBestSolution.score > this.bestSolution.score) {
+								this.bestSolution = currentBestSolution;
+								String str = "";
+								for(int j = 0; j < length; j++) {
+									str += new String(keysIndex[j]) + ", ";
+								}
+								this.bestSolution.setKeyString(str);
+								this.bestSolution.bakeSolution();
+								this.solutionFound();
+							}
 						}
+							
+						this.onIteration();
 					}
 				}
 			}

@@ -46,6 +46,7 @@ import nationalcipher.cipher.decrypt.complete.PortaPKAttack;
 import nationalcipher.cipher.decrypt.complete.PortaxAttack;
 import nationalcipher.cipher.decrypt.complete.QuagmireIAttack;
 import nationalcipher.cipher.decrypt.complete.QuagmireIIAttack;
+import nationalcipher.cipher.decrypt.complete.RagbabyAttack;
 import nationalcipher.cipher.decrypt.complete.RailFenceAttack;
 import nationalcipher.cipher.decrypt.complete.RedefenceAttack;
 import nationalcipher.cipher.decrypt.complete.RouteAttack;
@@ -177,9 +178,10 @@ public class AttackRegistry {
 		registerCipher(new StraddleCheckerboardAttack(), settings);
 		registerCipher(new PeriodicGromarkAttack(), settings);
 		registerCipher(new PolybusSquareAttack(), settings);
+		registerCipher(new RagbabyAttack(), settings);
 		
 		//
-		//registerCipher(new GrilleAttack(), settings);
+		//registerCipher(new RagbabyAttack(), settings);
 		//registerCipher(new EnigmaThinRotor(), settings);
 		//registerCipher(new (), settings);
 		//registerCipher(new (), settings);
