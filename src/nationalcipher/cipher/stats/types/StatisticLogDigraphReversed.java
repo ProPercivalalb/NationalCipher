@@ -10,7 +10,8 @@ public class StatisticLogDigraphReversed extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateRDI(this.text);
+		return this;
 	}
 }

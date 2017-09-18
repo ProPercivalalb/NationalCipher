@@ -10,7 +10,8 @@ public class StatisticMaxTrifid3to15 extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateMaxTrifidDiagraphicIC(this.text, 3, 15);
+		return this;
 	}
 }

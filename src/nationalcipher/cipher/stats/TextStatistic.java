@@ -9,7 +9,8 @@ public abstract class TextStatistic {
 		this.text = text;
 	}
 	
-	public abstract void calculateStatistic();
+	/** Computes the associated statistic. Usually invoked directly after object initialisation */
+	public abstract TextStatistic calculateStatistic();
 	
 	public double quantify(DataHolder data) {
 		return data.quantify(this.value);

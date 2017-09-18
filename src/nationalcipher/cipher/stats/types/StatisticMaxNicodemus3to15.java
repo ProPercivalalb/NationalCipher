@@ -10,7 +10,8 @@ public class StatisticMaxNicodemus3to15 extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateMaxNicodemusIC(this.text, 3, 15);
+		return this;
 	}
 }

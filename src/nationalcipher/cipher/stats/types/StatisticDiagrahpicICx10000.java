@@ -10,7 +10,8 @@ public class StatisticDiagrahpicICx10000 extends TextStatistic {
 	}
 	
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateIC(this.text, 2, true) * 10000;
+		return this;
 	}
 }

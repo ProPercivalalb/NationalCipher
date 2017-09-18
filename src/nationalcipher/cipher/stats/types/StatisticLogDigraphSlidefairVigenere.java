@@ -10,7 +10,8 @@ public class StatisticLogDigraphSlidefairVigenere extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateSlidefairVigenereLDI(this.text);
+		return this;
 	}
 }

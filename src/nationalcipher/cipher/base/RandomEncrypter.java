@@ -54,22 +54,22 @@ import nationalcipher.cipher.transposition.RouteTransposition;
 
 public class RandomEncrypter {
 
-	public static Map<String, IRandEncrypter> ciphers = new HashMap<String, IRandEncrypter>();
-	public static Map<String, Integer> ciphersDifficulty = new HashMap<String, Integer>();
+	public static Map<String, IRandEncrypter> CIPHER = new HashMap<>();
+	public static Map<String, Integer> CIPHER_DIFFICUTLY = new HashMap<>();
 	
 	public static IRandEncrypter getFromName(String name) {
-		return ciphers.get(name);
+		return CIPHER.get(name);
 	}
 	
 	public static IRandEncrypter getDifficulty(String name) {
-		return ciphers.get(name);
+		return CIPHER.get(name);
 	}
 	
 	public static List<String> getAllWithDifficulty(int maxDifficulty) {
 		List<String> below = new ArrayList<String>();
-		for(String key : ciphersDifficulty.keySet())
-			if(ciphersDifficulty.get(key) <= maxDifficulty)
-				for(int i = 0; i < Math.log(ciphersDifficulty.get(key)) / Math.log(2) + 1; i++) 
+		for(String key : CIPHER_DIFFICUTLY.keySet())
+			if(CIPHER_DIFFICUTLY.get(key) <= maxDifficulty)
+				for(int i = 0; i < Math.log(CIPHER_DIFFICUTLY.get(key)) / Math.log(2) + 1; i++) 
 					below.add(key);
 
 		return below;
@@ -86,8 +86,8 @@ public class RandomEncrypter {
 	 * @param difficulty Integer 1 to 10 inclusive, 1 being easier to decrypt that 10
 	 */
 	public static void registerEncrypter(IRandEncrypter randEncrypter, int difficulty) {
-		ciphers.put(randEncrypter.getClass().getSimpleName(), randEncrypter);
-		ciphersDifficulty.put(randEncrypter.getClass().getSimpleName(), difficulty);
+		CIPHER.put(randEncrypter.getClass().getSimpleName(), randEncrypter);
+		CIPHER_DIFFICUTLY.put(randEncrypter.getClass().getSimpleName(), difficulty);
 	}
 	
 	static {

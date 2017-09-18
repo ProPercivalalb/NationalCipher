@@ -10,7 +10,8 @@ public class StatisticSingleLetterDigraphDiscrepancy extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateSDD(this.text);
+		return this;
 	}
 }

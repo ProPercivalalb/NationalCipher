@@ -10,7 +10,8 @@ public class StatisticLogDigraphCaesar extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateCaesarLDI(this.text);
+		return this;
 	}
 }

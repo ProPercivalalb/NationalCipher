@@ -1,6 +1,6 @@
-package nationalcipher.cipher.stats;
+package nationalcipher.lib;
 
-public class StatisticsRef {
+public class StatisticsLib {
 
 	public static final String IC_x1000 = "ic_1_x10000";
 	public static final String IC_MAX_1to15_x1000 = "ic_max_x1000";

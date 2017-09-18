@@ -1,5 +1,6 @@
 package nationalcipher.cipher.stats;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -45,21 +46,22 @@ import nationalcipher.cipher.stats.types.StatisticNormalOrder;
 import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTextLengthMultiple;
 import nationalcipher.cipher.stats.types.StatisticTrigraphNoOverlapICx100000;
+import nationalcipher.lib.StatisticsLib;
 
 public class StatisticHandler {
 	
-	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
-	public static HashMap<String, String> shortNameMap = new HashMap<String, String>();
+	public static final LinkedHashMap<String, Class<? extends TextStatistic>> TEXT_STATISTIC_MAP = new LinkedHashMap<String, Class<? extends TextStatistic>>();
+	public static final HashMap<String, String> DISPLAY_NAME_MAP = new HashMap<String, String>();
 	
 	public static boolean registerStatistic(String id, Class<? extends TextStatistic> textStatistic) {
 		return registerStatistic(id, textStatistic, id);
 	}
 	
 	public static boolean registerStatistic(String id, Class<? extends TextStatistic> textStatistic, String shortName) {
-		if(map.containsKey(id)) return false;
+		if(TEXT_STATISTIC_MAP.containsKey(id)) return false;
 		
-		map.put(id, textStatistic);
-		shortNameMap.put(id, shortName);
+		TEXT_STATISTIC_MAP.put(id, textStatistic);
+		DISPLAY_NAME_MAP.put(id, shortName);
 		return true;
 	}
 	
@@ -68,44 +70,44 @@ public class StatisticHandler {
 	}
 	
 	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic> stats) {
-		return orderCipherProbibitly(stats, new ArrayList<String>(map.keySet()));
+		return orderCipherProbibitly(stats, new ArrayList<String>(TEXT_STATISTIC_MAP.keySet()));
 	}
 	
 	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic> stats, List<String> doOnly) {
-		List<IdentifyOutput> num_dev = new ArrayList<IdentifyOutput>();
+		List<IdentifyOutput> computedResult = new ArrayList<IdentifyOutput>();
 		
 		TreeMap<String, Object> statistic = CipherStatistics.getOtherCipherStatistics();
-		traverseDataTree(stats, doOnly, num_dev, new ArrayList<String>(), statistic);
+		traverseDataTree(stats, doOnly, computedResult, new ArrayList<String>(), statistic);
 		
-		return num_dev;
+		return computedResult;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void traverseDataTree(HashMap<String, TextStatistic> stats, List<String> doOnly, List<IdentifyOutput> num_dev, List<String> keyBefore, Map<String, Object> toCheck) {
+	public static void traverseDataTree(HashMap<String, TextStatistic> stats, List<String> doOnly, List<IdentifyOutput> computedResult, List<String> keyBefore, Map<String, Object> toCheck) {
 		for(String key : toCheck.keySet()) {
-			Map<String, ?> next = (Map<String, ?>)toCheck.get(key);
+			Map<String, ?> nextBranch = (Map<String, ?>)toCheck.get(key);
 			List<String> copy = new ArrayList<String>(keyBefore);
 			copy.add(key);
 			
 			//Determines which tree is next (true = end of tree, false = recursive function)
 			boolean type = false;
 			
-			for(String dKey : next.keySet()) {
-				if(next.get(dKey) instanceof DataHolder)
-					type = true;
+			//Checks the first value to see if is DataHolder instance, if it is we have reached the end of the true
+			for(Object value : nextBranch.values()) {
+				type = value instanceof DataHolder;
 				break;
 			}
 			
 			if(type) {
-				double value = scoreCipher(stats, (Map<String, DataHolder>)next, doOnly);
+				double value = scoreCipher(stats, (Map<String, DataHolder>)nextBranch, doOnly);
 				
-				IdentifyOutput identifyOutput = null;
-				List<IdentifyOutput> last = num_dev;
+				IdentifyOutput identifyOutput;
+				List<IdentifyOutput> last = computedResult;
 				for(int i = 0; i < copy.size(); i++) {
 					int index = indexOf(copy.get(i), last);
 					if(index != -1) {
-						identifyOutput = last.get(index);
-						identifyOutput.score = Math.min(identifyOutput.score, value);
+						identifyOutput = new IdentifyOutput(last.get(index).id, Math.min(last.get(index).score, value));
+						last.set(index, identifyOutput);
 					}
 					else {
 						identifyOutput = new IdentifyOutput(copy.get(i), value);
@@ -116,21 +118,28 @@ public class StatisticHandler {
 				}
 			}
 			else
-				traverseDataTree(stats, doOnly, num_dev, copy, (Map<String, Object>)next);
+				traverseDataTree(stats, doOnly, computedResult, copy, (Map<String, Object>)nextBranch);
 		}
 	}
 	
-	public static int indexOf(String key, List<IdentifyOutput> num_dev) {
-		for(int i = 0; i < num_dev.size(); i++)
-			if(num_dev.get(i).id.equals(key))
+	public static int indexOf(String key, List<IdentifyOutput> computedResult) {
+		for(int i = 0; i < computedResult.size(); i++)
+			if(computedResult.get(i).id.equals(key))
 				return i;
 		return -1;
 	}
 	
+	/**
+	 * Return a number larger than 0, the closer to zero the better
+	 * @param stats Pre-calculated statistics about a particular piece of text
+	 * @param data Map of statistics IDs and their expected values for a specific cipher
+	 * @param doOnly A list of statistics IDs to test @see nationalcipher.lib.StatisticsLib
+	 * @return A quantised idea of how likely this text is to this cipher attributes  
+	 */
 	public static double scoreCipher(Map<String, TextStatistic> stats, Map<String, DataHolder> data, List<String> doOnly) {
 		double value = 0.0D;
 		
-		for(String id : data.keySet()) 
+		for(String id : data.keySet())
 			if(doOnly.contains(id))
 				value += stats.get(id).quantify(data.get(id));
 		
@@ -140,10 +149,9 @@ public class StatisticHandler {
 	public static HashMap<String, TextStatistic> createTextStatistics(String text) {
 		HashMap<String, TextStatistic> stats = new HashMap<String, TextStatistic>();
 		try {
-			for(String id : map.keySet()) {
-				TextStatistic stat = map.get(id).getConstructor(String.class).newInstance(text);
-				stat.calculateStatistic();
-				stats.put(id, stat);
+			for(String id : TEXT_STATISTIC_MAP.keySet()) {
+				TextStatistic stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
+				stats.put(id, stat.calculateStatistic());
 			}
 		}
 		catch(Exception e) {
@@ -156,12 +164,11 @@ public class StatisticHandler {
 	public static HashMap<String, TextStatistic> createTextStatistics(String text, JProgressBar value) {
 		HashMap<String, TextStatistic> stats = new HashMap<String, TextStatistic>();
 		try {
-			value.setMaximum(map.size());
-			for(String id : map.keySet()) {
-				value.setString(shortNameMap.get(id));
-				TextStatistic stat = map.get(id).getConstructor(String.class).newInstance(text);
-				stat.calculateStatistic();
-				stats.put(id, stat);
+			value.setMaximum(TEXT_STATISTIC_MAP.size());
+			for(String id : TEXT_STATISTIC_MAP.keySet()) {
+				value.setString(DISPLAY_NAME_MAP.get(id));
+				TextStatistic stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
+				stats.put(id, stat.calculateStatistic());
 				value.setValue(value.getValue() + 1);
 			}
 		}
@@ -220,46 +227,46 @@ public class StatisticHandler {
 	
 	public static void registerStatistics() {
 		//Default all ciphers
-		registerStatistic(StatisticsRef.IC_x1000, StatisticICx1000.class, "IC");
-		registerStatistic(StatisticsRef.IC_MAX_1to15_x1000, StatisticMaxICx1000.class, "MIC");
-		registerStatistic(StatisticsRef.IC_2_TRUE_x10000, StatisticDiagrahpicICx10000.class, "DIC");
-		registerStatistic(StatisticsRef.IC_2_FALSE_x10000, StatisticEvenDiagrahpicICx10000.class, "DIC_E");
-		registerStatistic(StatisticsRef.IC_3_FALSE_x100000, StatisticTrigraphNoOverlapICx100000.class, "TIC_E");
-		registerStatistic(StatisticsRef.IC_KAPPA_x1000, StatisticKappaICx1000.class, "MKA");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH, StatisticLogDigraph.class, "LDI");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_REVERSED, StatisticLogDigraphReversed.class, "LDI_R");
-		registerStatistic(StatisticsRef.LONG_REPEAT, StatisticLongRepeat.class, "LR");
-		registerStatistic(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, StatisticPercentageOddRepeats.class, "LR_OP");
-		registerStatistic(StatisticsRef.NORMAL_ORDER, StatisticNormalOrder.class, "NOR");
+		registerStatistic(StatisticsLib.IC_x1000, StatisticICx1000.class, "IC");
+		registerStatistic(StatisticsLib.IC_MAX_1to15_x1000, StatisticMaxICx1000.class, "MIC");
+		registerStatistic(StatisticsLib.IC_2_TRUE_x10000, StatisticDiagrahpicICx10000.class, "DIC");
+		registerStatistic(StatisticsLib.IC_2_FALSE_x10000, StatisticEvenDiagrahpicICx10000.class, "DIC_E");
+		registerStatistic(StatisticsLib.IC_3_FALSE_x100000, StatisticTrigraphNoOverlapICx100000.class, "TIC_E");
+		registerStatistic(StatisticsLib.IC_KAPPA_x1000, StatisticKappaICx1000.class, "MKA");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH, StatisticLogDigraph.class, "LDI");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_REVERSED, StatisticLogDigraphReversed.class, "LDI_R");
+		registerStatistic(StatisticsLib.LONG_REPEAT, StatisticLongRepeat.class, "LR");
+		registerStatistic(StatisticsLib.LONG_REPEAT_ODD_PERCENTAGE, StatisticPercentageOddRepeats.class, "LR_OP");
+		registerStatistic(StatisticsLib.NORMAL_ORDER, StatisticNormalOrder.class, "NOR");
 		
-		registerStatistic(StatisticsRef.BIFID_MAX_3to15, StatisticMaxBifid3to15.class, "BIC");
-		registerStatistic(StatisticsRef.BIFID_0, StatisticBifid0.class, "BIC_Z");
-		registerStatistic(StatisticsRef.NICODEMUS_MAX_3to15, StatisticMaxNicodemus3to15.class, "NIC");
-		registerStatistic(StatisticsRef.TRIFID_MAX_3to15, StatisticMaxTrifid3to15.class, "TIC");
+		registerStatistic(StatisticsLib.BIFID_MAX_3to15, StatisticMaxBifid3to15.class, "BIC");
+		registerStatistic(StatisticsLib.BIFID_0, StatisticBifid0.class, "BIC_Z");
+		registerStatistic(StatisticsLib.NICODEMUS_MAX_3to15, StatisticMaxNicodemus3to15.class, "NIC");
+		registerStatistic(StatisticsLib.TRIFID_MAX_3to15, StatisticMaxTrifid3to15.class, "TIC");
 		
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_CAESAR, StatisticLogDigraphCaesar.class, "LDI_CAE");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_AFFINE, StatisticLogDigraphAffine.class, "LDI_AFF");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_CAESAR, StatisticLogDigraphCaesar.class, "LDI_CAE");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_AFFINE, StatisticLogDigraphAffine.class, "LDI_AFF");
 		
 		//Vigenere Family
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_BEAUFORT, StatisticLogDigraphBeaufort.class, "LDI_BEU");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_PORTA, StatisticLogDigraphPorta.class, "LDI_POR");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_PORTAX, StatisticLogDigraphPortax.class, "LDI_PTX");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_VARIANT, StatisticLogDigraphVariant.class, "LDI_VAR");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_VIGENERE, StatisticLogDigraphVigenere.class, "LDI_VIG");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_BEAUFORT, StatisticLogDigraphBeaufort.class, "LDI_BEU");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_PORTA, StatisticLogDigraphPorta.class, "LDI_POR");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_PORTAX, StatisticLogDigraphPortax.class, "LDI_PTX");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_VARIANT, StatisticLogDigraphVariant.class, "LDI_VAR");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_VIGENERE, StatisticLogDigraphVigenere.class, "LDI_VIG");
 		
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_AUTOKEY_BEAUFORT, StatisticLogDigraphAutokeyBeaufort.class, "LDI_A_BEU");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_AUTOKEY_PORTA, StatisticLogDigraphAutokeyPorta.class, "LDI_A_POR");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_AUTOKEY_VARIANT, StatisticLogDigraphAutokeyVariant.class, "LDI_A_VAR");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_AUTOKEY_VIGENERE, StatisticLogDigraphAutokeyVigenere.class, "LDI_A_VIG");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_AUTOKEY_BEAUFORT, StatisticLogDigraphAutokeyBeaufort.class, "LDI_A_BEU");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_AUTOKEY_PORTA, StatisticLogDigraphAutokeyPorta.class, "LDI_A_POR");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_AUTOKEY_VARIANT, StatisticLogDigraphAutokeyVariant.class, "LDI_A_VAR");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_AUTOKEY_VIGENERE, StatisticLogDigraphAutokeyVigenere.class, "LDI_A_VIG");
 		
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_SLIDEFAIR_BEAUFORT, StatisticLogDigraphSlidefairBeaufort.class, "LDI_SLI_BEU");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_SLIDEFAIR_VARIANT, StatisticLogDigraphSlidefairVariant.class, "LDI_SLI_VAR");
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_SLIDEFAIR_VIGENERE, StatisticLogDigraphSlidefairVigenere.class, "LDI_SLI_VIG");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_SLIDEFAIR_BEAUFORT, StatisticLogDigraphSlidefairBeaufort.class, "LDI_SLI_BEU");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_SLIDEFAIR_VARIANT, StatisticLogDigraphSlidefairVariant.class, "LDI_SLI_VAR");
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_SLIDEFAIR_VIGENERE, StatisticLogDigraphSlidefairVigenere.class, "LDI_SLI_VIG");
 		
 		//Boolean statitics
-		registerStatistic(StatisticsRef.DOUBLE_LETTER_EVEN, StatisticDoubleLetter.class, "DBL_PLAY");
-		registerStatistic(StatisticsRef.DOUBLE_LETTER_EVEN_2to40, StatisticDoubleLetter2to40.class, "DBL_SERP");
-		registerStatistic(StatisticsRef.MAX_UNIQUE_CHARACTERS, StatisticMaxUniqueCharacters.class, "MAX_UNIQUE");
-		registerStatistic(StatisticsRef.TEXT_LENGTH_MULTIPLE, StatisticTextLengthMultiple.class, "DIV_N");
+		registerStatistic(StatisticsLib.DOUBLE_LETTER_EVEN, StatisticDoubleLetter.class, "DBL_PLAY");
+		registerStatistic(StatisticsLib.DOUBLE_LETTER_EVEN_2to40, StatisticDoubleLetter2to40.class, "DBL_SERP");
+		registerStatistic(StatisticsLib.MAX_UNIQUE_CHARACTERS, StatisticMaxUniqueCharacters.class, "MAX_UNIQUE");
+		registerStatistic(StatisticsLib.TEXT_LENGTH_MULTIPLE, StatisticTextLengthMultiple.class, "DIV_N");
 	}
 }

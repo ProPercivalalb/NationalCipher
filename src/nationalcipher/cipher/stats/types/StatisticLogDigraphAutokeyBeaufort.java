@@ -10,7 +10,8 @@ public class StatisticLogDigraphAutokeyBeaufort extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateAutokeyBeaufortLDI(this.text);
+		return this;
 	}
 }

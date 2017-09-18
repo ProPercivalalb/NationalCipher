@@ -59,7 +59,7 @@ public class HillSubstitutionAttack extends CipherAttack {
 				
 				KeyIterator.permutateArray(task, (byte)0, size, 26, true);
 				
-				Collections.sort(task.best, this.comparator);
+				Collections.sort(task.best);
 				
 				if(task.best.size() < size) {
 					app.out().println("Did not find enought key columns that produces good characters %d/%d.", task.best.size(), size);
@@ -79,7 +79,7 @@ public class HillSubstitutionAttack extends CipherAttack {
 				KeyIterator.permutateArray(task, (byte)1, size, task.best.size(), false);
 				app.out().println("%d out of a possible %d trials remain to be tested.", task.bestNext.size(), MathUtil.factorial(task.best.size(), size));
 				
-				Collections.sort(task.bestNext, this.comparator);
+				Collections.sort(task.bestNext);
 
 				
 				for(int i = 0; i < task.bestNext.size(); i++) {
@@ -107,14 +107,6 @@ public class HillSubstitutionAttack extends CipherAttack {
 		
 		app.out().println(task.getBestSolution());
 	}
-	
-    public Comparator<HillSection> comparator = new Comparator<HillSection>() {
-    	@Override
-        public int compare(HillSection c1, HillSection c2) {
-        	double diff = c1.score - c2.score;
-        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
-        }
-    };
 	
 	public class HillTask extends InternalDecryption implements ArrayPermutations {
 

@@ -10,7 +10,8 @@ public class StatisticDoubleLetter2to40 extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateSeriatedPlayfair(this.text, 2, 40) ? 0 : 1;
+		return this;
 	}
 }

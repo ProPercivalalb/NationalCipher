@@ -3,7 +3,9 @@ package nationalcipher.cipher.stats;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-public class CipherStatistics extends StatisticsRef {
+import nationalcipher.lib.StatisticsLib;
+
+public class CipherStatistics extends StatisticsLib {
 
 	private static TreeMap<String, Object> map;
 	

@@ -10,7 +10,8 @@ public class StatisticLogDigraphVariant extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateVariantLDI(this.text);
+		return this;
 	}
 }

@@ -10,7 +10,8 @@ public class StatisticLogDigraphAutokeyVigenere extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateAutokeyVigenereLDI(this.text);
+		return this;
 	}
 }

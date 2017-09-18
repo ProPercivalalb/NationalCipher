@@ -10,7 +10,8 @@ public class StatisticMaxICx1000 extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateMaxIC(this.text, 1, 15) * 1000;
+		return this;
 	}
 }

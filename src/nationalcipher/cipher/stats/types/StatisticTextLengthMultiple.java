@@ -10,8 +10,9 @@ public class StatisticTextLengthMultiple extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = this.text.length();
+		return this;
 	}
 	
 	@Override

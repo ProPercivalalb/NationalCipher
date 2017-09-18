@@ -17,7 +17,6 @@ import nationalcipher.cipher.base.other.Playfair;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
-import nationalcipher.cipher.stats.StatisticsRef;
 import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
@@ -34,6 +33,7 @@ import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTrigraphNoOverlapICx100000;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.transposition.Routes;
+import nationalcipher.lib.StatisticsLib;
 
 public class StatCompiler {
 	public static LinkedHashMap<String, Class<? extends TextStatistic>> map = new LinkedHashMap<String, Class<? extends TextStatistic>>();
@@ -138,21 +138,21 @@ public static Map<Character, Double> frequencyMap;
 
 		
 		//Default all ciphers
-		registerStatistic(StatisticsRef.IC_x1000, StatisticICx1000.class);
-		registerStatistic(StatisticsRef.IC_MAX_1to15_x1000, StatisticMaxICx1000.class);
-		registerStatistic(StatisticsRef.IC_2_TRUE_x10000, StatisticDiagrahpicICx10000.class);
-		registerStatistic(StatisticsRef.IC_2_FALSE_x10000, StatisticEvenDiagrahpicICx10000.class);
-		registerStatistic(StatisticsRef.IC_3_FALSE_x100000, StatisticTrigraphNoOverlapICx100000.class);
-		registerStatistic(StatisticsRef.IC_KAPPA_x1000, StatisticKappaICx1000.class);
-		registerStatistic(StatisticsRef.LOG_DIGRAPH, StatisticLogDigraph.class);
-		registerStatistic(StatisticsRef.LOG_DIGRAPH_REVERSED, StatisticLogDigraphReversed.class);
-		registerStatistic(StatisticsRef.LONG_REPEAT, StatisticLongRepeat.class);
-		registerStatistic(StatisticsRef.LONG_REPEAT_ODD_PERCENTAGE, StatisticPercentageOddRepeats.class);
-		registerStatistic(StatisticsRef.NORMAL_ORDER, StatisticNormalOrder.class);
+		registerStatistic(StatisticsLib.IC_x1000, StatisticICx1000.class);
+		registerStatistic(StatisticsLib.IC_MAX_1to15_x1000, StatisticMaxICx1000.class);
+		registerStatistic(StatisticsLib.IC_2_TRUE_x10000, StatisticDiagrahpicICx10000.class);
+		registerStatistic(StatisticsLib.IC_2_FALSE_x10000, StatisticEvenDiagrahpicICx10000.class);
+		registerStatistic(StatisticsLib.IC_3_FALSE_x100000, StatisticTrigraphNoOverlapICx100000.class);
+		registerStatistic(StatisticsLib.IC_KAPPA_x1000, StatisticKappaICx1000.class);
+		registerStatistic(StatisticsLib.LOG_DIGRAPH, StatisticLogDigraph.class);
+		registerStatistic(StatisticsLib.LOG_DIGRAPH_REVERSED, StatisticLogDigraphReversed.class);
+		registerStatistic(StatisticsLib.LONG_REPEAT, StatisticLongRepeat.class);
+		registerStatistic(StatisticsLib.LONG_REPEAT_ODD_PERCENTAGE, StatisticPercentageOddRepeats.class);
+		registerStatistic(StatisticsLib.NORMAL_ORDER, StatisticNormalOrder.class);
 		
 		
-		registerStatistic(StatisticsRef.BIFID_0, StatisticBifid0.class);
-		registerStatistic(StatisticsRef.BIFID_MAX_3to15, StatisticMaxBifid3to15.class);
+		registerStatistic(StatisticsLib.BIFID_0, StatisticBifid0.class);
+		registerStatistic(StatisticsLib.BIFID_MAX_3to15, StatisticMaxBifid3to15.class);
 		//registerStatistic(StatisticsRef.NICODEMUS_MAX_3to15, StatisticMaxNicodemus3to15.class);
 		//registerStatistic(StatisticsRef.TRIFID_MAX_3to15, StatisticMaxTrifid3to15.class);
 		

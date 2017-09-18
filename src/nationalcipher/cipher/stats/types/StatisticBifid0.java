@@ -10,7 +10,8 @@ public class StatisticBifid0 extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateMaxBifidDiagraphicIC(this.text, 0, 0);
+		return this;
 	}
 }

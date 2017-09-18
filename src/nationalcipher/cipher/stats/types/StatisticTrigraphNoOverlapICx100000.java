@@ -10,7 +10,8 @@ public class StatisticTrigraphNoOverlapICx100000 extends TextStatistic {
 	}
 	
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateIC(this.text, 3, false) * 100000;
+		return this;
 	}
 }

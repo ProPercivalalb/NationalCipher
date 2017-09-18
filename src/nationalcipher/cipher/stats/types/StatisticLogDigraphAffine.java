@@ -10,7 +10,8 @@ public class StatisticLogDigraphAffine extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateAffineLDI(this.text);
+		return this;
 	}
 }

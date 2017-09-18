@@ -11,7 +11,8 @@ public class StatisticNormalOrder extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateNormalOrder(text, Languages.english);
+		return this;
 	}
 }

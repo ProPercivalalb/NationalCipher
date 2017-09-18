@@ -10,7 +10,8 @@ public class StatisticKappaICx1000 extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateMaxKappaIC(this.text, 1, 15) * 1000;
+		return this;
 	}
 }

@@ -10,7 +10,8 @@ public class StatisticPercentageOddRepeats extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateROD(text);
+		return this;
 	}
 }

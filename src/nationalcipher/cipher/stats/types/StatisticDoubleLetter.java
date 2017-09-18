@@ -10,7 +10,8 @@ public class StatisticDoubleLetter extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateDBL(this.text) ? 1 : 0;
+		return this;
 	}
 }

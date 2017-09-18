@@ -10,7 +10,8 @@ public class StatisticLogDigraphSlidefairBeaufort extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculateSlidefairBeaufortLDI(this.text);
+		return this;
 	}
 }

@@ -10,7 +10,8 @@ public class StatisticLongRepeat extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = StatCalculator.calculateLR(this.text);
+		return this;
 	}
 }

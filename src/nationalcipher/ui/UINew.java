@@ -716,7 +716,7 @@ public class UINew extends JFrame implements IApplication {
         
         this.menuItemEncodeChose.setText("Specific");
         MenuScroller.setScrollerFor(this.menuItemEncodeChose, 15, 125, 0, 0);
-        for(final String key : RandomEncrypter.ciphers.keySet()) {
+        for(final String key : RandomEncrypter.CIPHER.keySet()) {
         	JMenuItem jmi = new JMenuItem(key);
         	jmi.addActionListener(new ActionListener() {
 
@@ -2681,8 +2681,8 @@ public class UINew extends JFrame implements IApplication {
 	        JPanel optionPanel = new JPanel();
 	        optionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
 	        optionPanel.setLayout(new GridLayout(0, 4));
-	        for(String key : StatisticHandler.map.keySet()) {
-	        	JCheckBox checkBox = new JCheckBox(StatisticHandler.shortNameMap.get(key));
+	        for(String key : StatisticHandler.TEXT_STATISTIC_MAP.keySet()) {
+	        	JCheckBox checkBox = new JCheckBox(StatisticHandler.DISPLAY_NAME_MAP.get(key));
 	        	statCheckBoxes.put(key, checkBox);
 	        	checkBox.setFont(checkBox.getFont().deriveFont(Font.BOLD));
 	        	checkBox.addActionListener(new ActionListener() {
@@ -2760,14 +2760,6 @@ public class UINew extends JFrame implements IApplication {
     		this.dialog.setVisible(true);
      		addDialog(this.dialog);
 		}
-    	
-	    public Comparator<IdentifyOutput> comparator = new Comparator<IdentifyOutput>() {
-	    	@Override
-	        public int compare(IdentifyOutput c1, IdentifyOutput c2) {
-	        	double diff = c1.score - c2.score;
-	        	return diff == 0.0D ? 0 : diff > 0 ? 1 : -1; 
-	        }
-	    };
 	    
     	public void openDialog(String title, List<IdentifyOutput> num_dev) {
     		JDialog dialog = new JDialog();
@@ -2788,7 +2780,7 @@ public class UINew extends JFrame implements IApplication {
 		    basePanel.add(cipherScorePanel);
 		    panel.add(scrollPane);
 		    
-		    Collections.sort(num_dev, this.comparator);
+		    Collections.sort(num_dev);
 	
 		    
 		    
@@ -2869,7 +2861,7 @@ public class UINew extends JFrame implements IApplication {
 				List<IdentifyOutput> num_dev = StatisticHandler.orderCipherProbibitly(this.stats, doOnly);
 				System.out.println(num_dev);
 
-			    Collections.sort(num_dev, this.comparator);
+			    Collections.sort(num_dev);
 		
 			    
 			    

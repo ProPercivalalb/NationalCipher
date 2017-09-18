@@ -10,7 +10,8 @@ public class StatisticLogDigraphPortax extends TextStatistic {
 	}
 
 	@Override
-	public void calculateStatistic() {
+	public TextStatistic calculateStatistic() {
 		this.value = PolyalphabeticIdentifier.calculatePTX(this.text);
+		return this;
 	}
 }

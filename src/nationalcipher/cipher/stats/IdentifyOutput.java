@@ -3,15 +3,17 @@ package nationalcipher.cipher.stats;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdentifyOutput {
+import javalibrary.list.ResultNegative;
+import javalibrary.list.ResultPositive;
+
+public class IdentifyOutput extends ResultPositive {
 	
 	public String id;
-	public double score;
 	public List<IdentifyOutput> subOutput;
 	
 	public IdentifyOutput(String id, double score) {
+		super(score);
 		this.id = id;
-		this.score = score;
 		this.subOutput = new ArrayList<IdentifyOutput>();
 	}
 	
