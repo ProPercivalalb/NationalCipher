@@ -10,11 +10,12 @@ import javalibrary.util.ArrayUtil;
 
 public class Solution extends ResultNegative {
 	
+	public static final String UNKNOWN_KEY = "UNKNOWN";
+	public static final Solution WORST_SOLUTION = new Solution(new byte[0], Double.NEGATIVE_INFINITY);
+	
 	private byte[] text;
 	private boolean beenBaked;
 	public String keyString;
-	public static final String UNKNOWN_KEY = "UNKNOWN";
-	public static final Solution WORST_SOLUTION = new Solution(new byte[0], Double.NEGATIVE_INFINITY);
 	
 	public Solution(byte[] text, double score) {
 		super(score);
@@ -52,6 +53,9 @@ public class Solution extends ResultNegative {
 		return this.setKeyString(String.format(keyString, args));
 	}
 	
+	/** 
+	 * Makes a copy of the text array as quite often this array reference is reused so it can change
+	 */
 	public Solution bakeSolution() {
 		if(!this.beenBaked) {
 			this.beenBaked = true;
@@ -62,7 +66,7 @@ public class Solution extends ResultNegative {
 	
 	@Override
 	public int hashCode() {
-	    return Arrays.hashCode(this.text);
+	    return Double.hashCode(this.score);
 	}
 	
 	@Override
@@ -74,7 +78,7 @@ public class Solution extends ResultNegative {
 		if(this.getClass() != obj.getClass())
 			return false;
 	    Solution other = (Solution)obj;
-	    if(!Arrays.equals(this.getText(), other.getText()))
+	    if(this.score != other.score)
 	    	return false;
 	    return true;
 		

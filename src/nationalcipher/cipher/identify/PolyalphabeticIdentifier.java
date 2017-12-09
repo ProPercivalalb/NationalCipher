@@ -280,7 +280,7 @@ public class PolyalphabeticIdentifier {
         return rvalue;
 	}
 	
-	public static int calculateRDI(String text) {
+	public static double calculateRDI(String text) {
 		if(StatCalculator.containsDigit(text) || StatCalculator.containsHash(text) || text.length() % 2 == 1)
 			return 0; 
 		
@@ -293,7 +293,7 @@ public class PolyalphabeticIdentifier {
 			}
 		}
 		
-		return (int)Math.floor(score * 100 / n);
+		return score * 100 / n;
 	}
 	
 	//First row is AA - AZ, last ZA - ZZ etc score indicates how common the digraph is on a log scale, larger = more common

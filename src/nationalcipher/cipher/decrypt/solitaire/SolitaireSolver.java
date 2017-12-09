@@ -137,7 +137,7 @@ public class SolitaireSolver {
 			for(int i = 0; i < this.emptyIndex.length; i++)
 				this.incompleteOrder[this.emptyIndex[i]] = order[i];
 			
-			this.lastSolution = new Solution(Solitaire.decode(this.text, this.startingLength, this.incompleteOrder), Languages.english.getTrigramData());
+			this.lastSolution = new Solution(Solitaire.decode(this.text, this.startingLength, this.incompleteOrder), Languages.ENGLISH.getTrigramData());
 			
 			if(this.lastSolution.score >= this.bestSolutionEver.bestSolution.score) {
 				this.bestSolutionEver.bestSolution = this.lastSolution;
@@ -169,7 +169,7 @@ public class SolitaireSolver {
     		
     		for(; i < this.intText.length; i++)
     			this.intText[i] = (byte)(cipherText.charAt(i - prefix.length) - 'A');
-    		this.minFitness = TextFitness.getEstimatedFitness(this.intText.length, Languages.english.getTrigramData()) * 1.5D;
+    		this.minFitness = TextFitness.getEstimatedFitness(this.intText.length, Languages.ENGLISH.getTrigramData()) * 1.5D;
     		//System.out.println("Min fitness: " + this.minFitness);
     		this.out = out;
     		this.time = time;
@@ -180,7 +180,7 @@ public class SolitaireSolver {
 			
 			byte[] chars = Solitaire.decodeWithKeyStream(this.intText, this.prefix.length, keyStream);
 
-			SolutionWithDeck last = new SolutionWithDeck(chars, Languages.english.getTrigramData(), lastOrder);
+			SolutionWithDeck last = new SolutionWithDeck(chars, Languages.ENGLISH.getTrigramData(), lastOrder);
 			
 			if(this.solutions.addResult(last))
 				last.bakeDeck();

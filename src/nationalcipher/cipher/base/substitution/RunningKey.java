@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.substitution;
 
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 
 public class RunningKey implements IRandEncrypter {
 

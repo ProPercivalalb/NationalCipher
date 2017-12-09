@@ -3,8 +3,8 @@ package nationalcipher.cipher.base.substitution;
 import java.util.Arrays;
 
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Slidefair implements IRandEncrypter {

@@ -4,7 +4,7 @@ import javalibrary.lib.Timer;
 import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class PeriodicGromark implements IRandEncrypter {

@@ -20,7 +20,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class SolitaireTester {
 
 	public static void main(String[] args) throws InterruptedException {
-		Languages.english.loadNGramData();
+		Languages.ENGLISH.loadNGramData();
 		
 		int found = 0;
 		

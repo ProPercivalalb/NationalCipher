@@ -84,7 +84,6 @@ import javax.swing.text.JTextComponent;
 
 import javalibrary.Output;
 import javalibrary.cipher.stats.ReadableText;
-import javalibrary.cipher.stats.ReadableText;
 import javalibrary.dict.Dictionary;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
@@ -114,10 +113,7 @@ import javalibrary.thread.Threads;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
-import nationalcipher.LoadElement;
 import nationalcipher.Settings;
-import nationalcipher.cipher.base.IRandEncrypter;
-import nationalcipher.cipher.base.RandomEncrypter;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
@@ -126,10 +122,13 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
+import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.cipher.stats.IdentifyOutput;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.stats.TextStatistic;
+import nationalcipher.registry.EncrypterRegistry;
 
 /**
  *
@@ -716,14 +715,14 @@ public class UINew extends JFrame implements IApplication {
         
         this.menuItemEncodeChose.setText("Specific");
         MenuScroller.setScrollerFor(this.menuItemEncodeChose, 15, 125, 0, 0);
-        for(final String key : RandomEncrypter.CIPHER.keySet()) {
+        for(final String key : EncrypterRegistry.CIPHER.keySet()) {
         	JMenuItem jmi = new JMenuItem(key);
         	jmi.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent event) {
 					String text = getInputTextOnlyAlpha();
-	    			String cipherText = RandomEncrypter.getFromName(key).randomlyEncrypt(text);
+	    			String cipherText = EncrypterRegistry.getFromName(key).randomlyEncrypt(text);
 	 
 	    			StringSelection selection = new StringSelection(cipherText);
 		    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
@@ -1279,6 +1278,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	private JTextArea textOutput;
     	public DynamicResultList<Solution> solutions;
+    	private JButton copyText;
     	private boolean updateNeed;
     	
     	public ShowTopSolutionsAction() {
@@ -1305,6 +1305,19 @@ public class UINew extends JFrame implements IApplication {
 	        });
 	        
 	        panel.add(button);
+	        
+	        this.copyText = new JButton("Copy");
+	    	this.copyText.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					StringSelection selection = new StringSelection(ShowTopSolutionsAction.this.textOutput.getText());
+					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+				}
+	    		
+	    	});
+	    	this.copyText.setHorizontalAlignment(JButton.LEFT);
+	    	panel.add(this.copyText);
 	        
     		this.dialog.add(panel);
     		
@@ -2431,7 +2444,7 @@ public class UINew extends JFrame implements IApplication {
     	public void updateOnWithTextArea() {
 			this.resetCharts();
 			
-    		String text = getInputTextOnlyAlpha();
+    		String text = getInputText();
     		if(!text.isEmpty()) {
     			int bestPeriod = -1;
     		    double bestKappa = Double.MAX_VALUE;
@@ -2473,7 +2486,7 @@ public class UINew extends JFrame implements IApplication {
     	}
     }
     
-    private class SolitaireAction extends NCCDialog implements ActionListener, LoadElement {
+    private class SolitaireAction extends NCCDialog implements ActionListener, ILoadElement {
     	
     	private JTextField passKeyStartingOrder;
     	private JButton copyOrder;
@@ -2666,7 +2679,7 @@ public class UINew extends JFrame implements IApplication {
     	private JPanel cipherScorePanel;
     	private JScrollPane scrollPane;
     	private HashMap<String, JCheckBox> statCheckBoxes;
-    	private HashMap<String, TextStatistic> stats;
+    	private HashMap<String, TextStatistic<?>> stats;
     	private List<IdentifyOutput> lastNumDev;
     	
     	public IdentifyAction() {
@@ -3100,8 +3113,8 @@ public class UINew extends JFrame implements IApplication {
     		}
     		
     		if(!text.isEmpty()) {
-    			List<String> possible = RandomEncrypter.getAllWithDifficulty(UINew.this.encodingDiffSlider.getValue());
-    			IRandEncrypter randomEncrypt = RandomEncrypter.getFromName(RandomUtil.pickRandomElement(possible));
+    			List<String> possible = EncrypterRegistry.getAllWithDifficulty(UINew.this.encodingDiffSlider.getValue());
+    			IRandEncrypter randomEncrypt = EncrypterRegistry.getFromName(RandomUtil.pickRandomElement(possible));
     			String cipherText = randomEncrypt.randomlyEncrypt(text);
     			UINew.this.output.println(randomEncrypt.getClass().getSimpleName());
     			UINew.this.output.println(StringTransformer.repeat("\n", 25));

@@ -1,8 +1,8 @@
 package nationalcipher.cipher.base.substitution;
 
 import javalibrary.lib.Alphabet;
-import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.Quagmire;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class QuagmireII implements IRandEncrypter {

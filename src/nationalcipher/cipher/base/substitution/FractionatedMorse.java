@@ -5,7 +5,7 @@ import java.util.List;
 
 import javalibrary.string.MorseCode;
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class FractionatedMorse implements IRandEncrypter {

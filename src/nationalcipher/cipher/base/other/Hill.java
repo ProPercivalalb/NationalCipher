@@ -4,7 +4,7 @@ import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Hill implements IRandEncrypter {
@@ -83,7 +83,7 @@ public class Hill implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		do {
 			try {
-				return encode(plainText, KeyGeneration.createMatrix(RandomUtil.pickRandomInt(3, 3), 26));
+				return encode(plainText, KeyGeneration.createMatrix(RandomUtil.pickRandomInt(4, 4), 26));
 			}
 			catch(MatrixNoInverse noInverse) {}
 		}

@@ -45,7 +45,8 @@ public class HillAttack extends CipherAttack {
 	public JSpinner gramSearchRange;
 	public JComboBox<String> trigramSets;
 	public final String[][] BI_GRAM = new String[][] {new String[] {"TH", "HE"}}; 
-	public final String[][] TRI_GRAM = new String[][] {new String[] {"THE", "AND", "ING"}, new String[] {"THE", "ING", "ENT"}, new String[] {"THE", "ING", "ION"}, new String[] {"THE", "ENT", "ION"}, new String[] {"ING", "ENT", "HER"}, new String[] {"ING", "ENT", "FOR"}, new String[] {"ENT", "ION", "HER"}, new String[] {"ING", "ENT", "THA"}, new String[] {"ING", "ENT", "NTH"}};
+	public final String[][] TRI_GRAM = new String[][] {new String[] {"ENT", "LES", "ION"}, new String[] {"THE", "ING", "ENT"}, new String[] {"THE", "ING", "ION"}, new String[] {"THE", "ENT", "ION"}, new String[] {"ING", "ENT", "HER"}, new String[] {"ING", "ENT", "FOR"}, new String[] {"ENT", "ION", "HER"}, new String[] {"ING", "ENT", "THA"}, new String[] {"ING", "ENT", "NTH"}};
+	//public final String[][] TRI_GRAM = new String[][] {new String[] {"THE", "AND", "ING"}, new String[] {"THE", "ING", "ENT"}, new String[] {"THE", "ING", "ION"}, new String[] {"THE", "ENT", "ION"}, new String[] {"ING", "ENT", "HER"}, new String[] {"ING", "ENT", "FOR"}, new String[] {"ENT", "ION", "HER"}, new String[] {"ING", "ENT", "THA"}, new String[] {"ING", "ENT", "NTH"}};
 	public final String[] TRI_GRAM_DISPLAY = new String[] {"THE AND ING", "THE ING ENT", "THE ING ION", "THE ENT ION", "ING ENT HER", "ING ENT FOR", "ENT ION HER", "ING ENT THA", "ING ENT NTH"};
 	
 	public HillAttack() {

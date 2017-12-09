@@ -1,29 +1,17 @@
 package nationalcipher.cipher.stats;
 
-public class DataHolder {
+public abstract class DataHolder<T> {
 
-	public final double value, sD;
+	public T value;
 	
-	public DataHolder(double value, double sD) {
+	public DataHolder(T value) {
 		this.value = value;
-		this.sD = Math.max(sD, 0.001D);
-	}
-	
-	public DataHolder(double value) {
-		this(value, 0);
-	}
-	
-	public DataHolder(boolean value) {
-		this(value ? 1 : 0, 0);
 	}
 	
 	//Default calculator see TextStatistic.quantify(DataHolder);
-	public double quantify(double value) {
-		return Math.abs((value - this.value)) / this.sD;
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("[%f, %f]", this.value, this.sD);
-	}
+    public abstract double quantify(T value, double weight);
+    
+    public double quantify(T value) {
+    	return this.quantify(value, 1.0D);
+    }
 }

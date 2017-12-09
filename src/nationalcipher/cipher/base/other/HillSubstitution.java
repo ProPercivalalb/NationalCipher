@@ -4,8 +4,8 @@ import javalibrary.exception.MatrixNoInverse;
 import javalibrary.exception.MatrixNotSquareException;
 import javalibrary.math.matrics.Matrix;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.substitution.Keyword;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class HillSubstitution implements IRandEncrypter {

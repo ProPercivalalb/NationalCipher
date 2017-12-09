@@ -1,0 +1,2705 @@
+{
+    "Autokey": {
+        "Beaufort[END]": {
+            "normal_order": {
+                "value": 206.95,
+                "sD": 25.4
+            },
+            "log_digraph_autokey_variant": {
+                "value": 567.29,
+                "sD": 24.57
+            },
+            "log_digraph": {
+                "value": 440.05,
+                "sD": 12.71
+            },
+            "ic_kappa_x1000": {
+                "value": 51.67,
+                "sD": 5.75
+            },
+            "ic_2_true_x10000": {
+                "value": 16.72,
+                "sD": 1.58
+            },
+            "ic_max_x1000": {
+                "value": 41.37,
+                "sD": 1.89
+            },
+            "log_digraph_autokey_vignere": {
+                "value": 533.37,
+                "sD": 33.17
+            },
+            "long_repeat": {
+                "value": 6.1,
+                "sD": 1.2
+            },
+            "log_digraph_autokey_porta": {
+                "value": 464.2,
+                "sD": 23.0
+            },
+            "log_digraph_reversed": {
+                "value": 151.06,
+                "sD": 209.34
+            },
+            "ic_2_false_x10000": {
+                "value": 16.68,
+                "sD": 2.14
+            },
+            "ic_3_false_x100000": {
+                "value": 11.37,
+                "sD": 13.78
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.74,
+                "sD": 2.95
+            },
+            "ic_1_x10000": {
+                "value": 39.8,
+                "sD": 0.77
+            },
+            "log_digraph_autokey_beaufort": {
+                "value": 759.59,
+                "sD": 6.66
+            }
+        },
+        "Porta[END]": {
+            "normal_order": {
+                "value": 224.47,
+                "sD": 28.31
+            },
+            "log_digraph_autokey_variant": {
+                "value": 532.39,
+                "sD": 33.03
+            },
+            "log_digraph": {
+                "value": 428.91,
+                "sD": 14.65
+            },
+            "ic_kappa_x1000": {
+                "value": 50.75,
+                "sD": 5.65
+            },
+            "ic_2_true_x10000": {
+                "value": 16.29,
+                "sD": 1.64
+            },
+            "ic_max_x1000": {
+                "value": 40.96,
+                "sD": 1.9
+            },
+            "log_digraph_autokey_vignere": {
+                "value": 532.28,
+                "sD": 32.78
+            },
+            "long_repeat": {
+                "value": 6.02,
+                "sD": 1.3
+            },
+            "log_digraph_autokey_porta": {
+                "value": 616.85,
+                "sD": 147.33
+            },
+            "log_digraph_reversed": {
+                "value": 147.2,
+                "sD": 204.01
+            },
+            "ic_2_false_x10000": {
+                "value": 16.26,
+                "sD": 2.22
+            },
+            "ic_3_false_x100000": {
+                "value": 11.47,
+                "sD": 14.61
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.5,
+                "sD": 2.86
+            },
+            "ic_1_x10000": {
+                "value": 39.32,
+                "sD": 0.68
+            },
+            "log_digraph_autokey_beaufort": {
+                "value": 532.18,
+                "sD": 31.99
+            }
+        },
+        "Variant[END]": {
+            "normal_order": {
+                "value": 204.98,
+                "sD": 24.77
+            },
+            "log_digraph_autokey_variant": {
+                "value": 759.63,
+                "sD": 6.65
+            },
+            "log_digraph": {
+                "value": 440.8,
+                "sD": 12.92
+            },
+            "ic_kappa_x1000": {
+                "value": 51.63,
+                "sD": 5.76
+            },
+            "ic_2_true_x10000": {
+                "value": 16.75,
+                "sD": 1.64
+            },
+            "ic_max_x1000": {
+                "value": 41.39,
+                "sD": 1.87
+            },
+            "log_digraph_autokey_vignere": {
+                "value": 533.99,
+                "sD": 32.91
+            },
+            "long_repeat": {
+                "value": 6.12,
+                "sD": 1.23
+            },
+            "log_digraph_autokey_porta": {
+                "value": 463.9,
+                "sD": 22.99
+            },
+            "log_digraph_reversed": {
+                "value": 151.16,
+                "sD": 209.43
+            },
+            "ic_2_false_x10000": {
+                "value": 16.71,
+                "sD": 2.22
+            },
+            "ic_3_false_x100000": {
+                "value": 11.42,
+                "sD": 14.19
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.74,
+                "sD": 2.95
+            },
+            "ic_1_x10000": {
+                "value": 39.79,
+                "sD": 0.77
+            },
+            "log_digraph_autokey_beaufort": {
+                "value": 568.11,
+                "sD": 24.42
+            }
+        },
+        "Vigenere[END]": {
+            "normal_order": {
+                "value": 195.94,
+                "sD": 22.13
+            },
+            "log_digraph_autokey_variant": {
+                "value": 533.27,
+                "sD": 33.13
+            },
+            "log_digraph": {
+                "value": 442.89,
+                "sD": 13.09
+            },
+            "ic_kappa_x1000": {
+                "value": 65.58,
+                "sD": 8.7
+            },
+            "ic_2_true_x10000": {
+                "value": 16.88,
+                "sD": 1.69
+            },
+            "ic_max_x1000": {
+                "value": 41.52,
+                "sD": 2.01
+            },
+            "log_digraph_autokey_vignere": {
+                "value": 759.59,
+                "sD": 6.73
+            },
+            "long_repeat": {
+                "value": 6.23,
+                "sD": 1.22
+            },
+            "log_digraph_autokey_porta": {
+                "value": 463.89,
+                "sD": 23.86
+            },
+            "log_digraph_reversed": {
+                "value": 152.26,
+                "sD": 211.0
+            },
+            "ic_2_false_x10000": {
+                "value": 16.87,
+                "sD": 2.25
+            },
+            "ic_3_false_x100000": {
+                "value": 11.85,
+                "sD": 14.23
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.6,
+                "sD": 2.85
+            },
+            "ic_1_x10000": {
+                "value": 39.84,
+                "sD": 0.74
+            },
+            "log_digraph_autokey_beaufort": {
+                "value": 533.36,
+                "sD": 33.31
+            }
+        }
+    },
+    "Bazeries[END]": {
+        "normal_order": {
+            "value": 238.77,
+            "sD": 20.61
+        },
+        "log_digraph_vigenere": {
+            "value": 578.51,
+            "sD": 25.18
+        },
+        "log_digraph": {
+            "value": 485.48,
+            "sD": 36.77
+        },
+        "ic_kappa_x1000": {
+            "value": 78.5,
+            "sD": 7.52
+        },
+        "ic_2_true_x10000": {
+            "value": 63.89,
+            "sD": 6.21
+        },
+        "ic_max_x1000": {
+            "value": 68.47,
+            "sD": 3.22
+        },
+        "log_digraph_beaufort": {
+            "value": 579.48,
+            "sD": 25.5
+        },
+        "long_repeat": {
+            "value": 19.16,
+            "sD": 2.07
+        },
+        "nicodemus_max_3to15": {
+            "value": 67.62,
+            "sD": 2.96
+        },
+        "bifid_max_3to15": {
+            "value": 405.23,
+            "sD": 44.16
+        },
+        "bifid_0": {
+            "value": 272.98,
+            "sD": 29.53
+        },
+        "ic_2_false_x10000": {
+            "value": 64.93,
+            "sD": 8.15
+        },
+        "long_repeat_odd_percentage": {
+            "value": 49.4,
+            "sD": 1.7
+        },
+        "log_digraph_porta": {
+            "value": 555.82,
+            "sD": 25.0
+        },
+        "ic_1_x10000": {
+            "value": 66.21,
+            "sD": 2.7
+        },
+        "trifid_max_3to15": {
+            "value": 2133.32,
+            "sD": 631.66
+        }
+    },
+    "Beaufort[END]": {
+        "normal_order": {
+            "value": 224.29,
+            "sD": 31.48
+        },
+        "log_digraph_vigenere": {
+            "value": 576.84,
+            "sD": 23.53
+        },
+        "log_digraph": {
+            "value": 427.12,
+            "sD": 26.45
+        },
+        "ic_kappa_x1000": {
+            "value": 69.11,
+            "sD": 9.74
+        },
+        "ic_2_true_x10000": {
+            "value": 24.55,
+            "sD": 7.86
+        },
+        "ic_max_x1000": {
+            "value": 66.59,
+            "sD": 3.2
+        },
+        "log_digraph_portax": {
+            "value": 148.38,
+            "sD": 205.96
+        },
+        "log_digraph_beaufort": {
+            "value": 759.74,
+            "sD": 6.58
+        },
+        "log_digraph_variant": {
+            "value": 576.71,
+            "sD": 23.25
+        },
+        "long_repeat": {
+            "value": 10.4,
+            "sD": 2.88
+        },
+        "log_digraph_reversed": {
+            "value": 146.47,
+            "sD": 203.46
+        },
+        "ic_2_false_x10000": {
+            "value": 30.56,
+            "sD": 15.41
+        },
+        "ic_3_false_x100000": {
+            "value": 50.17,
+            "sD": 48.68
+        },
+        "long_repeat_odd_percentage": {
+            "value": 39.32,
+            "sD": 11.92
+        },
+        "log_digraph_porta": {
+            "value": 558.38,
+            "sD": 20.65
+        },
+        "ic_1_x10000": {
+            "value": 42.02,
+            "sD": 3.53
+        }
+    },
+    "Bifid": {
+        "P:0": {
+            "Conjugated[END]": {
+                "normal_order": {
+                    "value": 232.04,
+                    "sD": 27.02
+                },
+                "log_digraph": {
+                    "value": 485.04,
+                    "sD": 29.57
+                },
+                "ic_kappa_x1000": {
+                    "value": 64.87,
+                    "sD": 8.67
+                },
+                "ic_2_true_x10000": {
+                    "value": 24.27,
+                    "sD": 3.33
+                },
+                "ic_max_x1000": {
+                    "value": 47.53,
+                    "sD": 3.56
+                },
+                "long_repeat": {
+                    "value": 8.67,
+                    "sD": 1.31
+                },
+                "bifid_max_3to15": {
+                    "value": 157.91,
+                    "sD": 24.59
+                },
+                "bifid_0": {
+                    "value": 374.11,
+                    "sD": 86.62
+                },
+                "log_digraph_reversed": {
+                    "value": 154.54,
+                    "sD": 214.59
+                },
+                "ic_2_false_x10000": {
+                    "value": 24.72,
+                    "sD": 4.06
+                },
+                "ic_3_false_x100000": {
+                    "value": 19.23,
+                    "sD": 12.92
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 49.16,
+                    "sD": 2.78
+                },
+                "ic_1_x10000": {
+                    "value": 45.82,
+                    "sD": 3.09
+                }
+            },
+            "Single[END]": {
+                "normal_order": {
+                    "value": 195.67,
+                    "sD": 27.71
+                },
+                "bifid_max_3to15": {
+                    "value": 158.13,
+                    "sD": 24.58
+                },
+                "bifid_0": {
+                    "value": 375.02,
+                    "sD": 86.87
+                },
+                "log_digraph": {
+                    "value": 485.04,
+                    "sD": 29.57
+                },
+                "ic_kappa_x1000": {
+                    "value": 64.95,
+                    "sD": 8.69
+                },
+                "ic_2_false_x10000": {
+                    "value": 24.7,
+                    "sD": 3.98
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 49.17,
+                    "sD": 2.64
+                },
+                "ic_2_true_x10000": {
+                    "value": 24.3,
+                    "sD": 3.34
+                },
+                "ic_max_x1000": {
+                    "value": 47.56,
+                    "sD": 3.54
+                },
+                "ic_1_x10000": {
+                    "value": 45.71,
+                    "sD": 3.06
+                },
+                "long_repeat": {
+                    "value": 8.64,
+                    "sD": 1.31
+                }
+            }
+        },
+        "P:3-15": {
+            "Conjugated[END]": {
+                "normal_order": {
+                    "value": 231.95,
+                    "sD": 27.02
+                },
+                "log_digraph": {
+                    "value": 485.04,
+                    "sD": 29.57
+                },
+                "ic_kappa_x1000": {
+                    "value": 60.42,
+                    "sD": 8.26
+                },
+                "ic_2_true_x10000": {
+                    "value": 24.26,
+                    "sD": 4.82
+                },
+                "ic_max_x1000": {
+                    "value": 51.98,
+                    "sD": 4.35
+                },
+                "long_repeat": {
+                    "value": 8.5,
+                    "sD": 1.98
+                },
+                "bifid_max_3to15": {
+                    "value": 347.12,
+                    "sD": 120.85
+                },
+                "bifid_0": {
+                    "value": 131.74,
+                    "sD": 21.57
+                },
+                "log_digraph_reversed": {
+                    "value": 154.16,
+                    "sD": 214.02
+                },
+                "ic_2_false_x10000": {
+                    "value": 27.95,
+                    "sD": 15.04
+                },
+                "ic_3_false_x100000": {
+                    "value": 29.74,
+                    "sD": 45.1
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 46.95,
+                    "sD": 7.56
+                },
+                "ic_1_x10000": {
+                    "value": 45.68,
+                    "sD": 3.12
+                }
+            },
+            "Single[END]": {
+                "normal_order": {
+                    "value": 192.41,
+                    "sD": 27.67
+                },
+                "bifid_max_3to15": {
+                    "value": 334.4,
+                    "sD": 126.1
+                },
+                "bifid_0": {
+                    "value": 149.14,
+                    "sD": 69.68
+                },
+                "log_digraph": {
+                    "value": 488.75,
+                    "sD": 29.66
+                },
+                "ic_kappa_x1000": {
+                    "value": 60.6,
+                    "sD": 8.31
+                },
+                "ic_2_false_x10000": {
+                    "value": 27.41,
+                    "sD": 14.12
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 47.21,
+                    "sD": 7.22
+                },
+                "ic_2_true_x10000": {
+                    "value": 24.18,
+                    "sD": 4.71
+                },
+                "ic_max_x1000": {
+                    "value": 51.69,
+                    "sD": 4.42
+                },
+                "ic_1_x10000": {
+                    "value": 45.71,
+                    "sD": 3.08
+                },
+                "long_repeat": {
+                    "value": 8.47,
+                    "sD": 1.91
+                }
+            }
+        }
+    },
+    "Cadenus": {
+        "!w/x[END]": {
+            "normal_order": {
+                "value": 76.69,
+                "sD": 31.99
+            },
+            "text_length_multiple": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "log_digraph": {
+                "value": 658.0,
+                "sD": 9.13
+            },
+            "log_digraph_reversed": {
+                "value": 488.87,
+                "sD": 289.3
+            },
+            "ic_2_false_x10000": {
+                "value": 44.42,
+                "sD": 6.05
+            },
+            "ic_3_false_x100000": {
+                "value": 31.48,
+                "sD": 15.17
+            },
+            "ic_kappa_x1000": {
+                "value": 80.65,
+                "sD": 7.91
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.43,
+                "sD": 2.44
+            },
+            "ic_2_true_x10000": {
+                "value": 44.07,
+                "sD": 4.22
+            },
+            "ic_max_x1000": {
+                "value": 68.47,
+                "sD": 3.52
+            },
+            "ic_1_x10000": {
+                "value": 66.14,
+                "sD": 2.73
+            },
+            "long_repeat": {
+                "value": 11.86,
+                "sD": 1.43
+            }
+        },
+        "w/x[END]": {
+            "normal_order": {
+                "value": 83.5,
+                "sD": 29.86
+            },
+            "text_length_multiple": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "log_digraph": {
+                "value": 630.82,
+                "sD": 29.4
+            },
+            "log_digraph_reversed": {
+                "value": 473.01,
+                "sD": 277.33
+            },
+            "ic_2_false_x10000": {
+                "value": 66.14,
+                "sD": 70.1
+            },
+            "ic_3_false_x100000": {
+                "value": 193.88,
+                "sD": 459.83
+            },
+            "ic_kappa_x1000": {
+                "value": 109.06,
+                "sD": 39.35
+            },
+            "long_repeat_odd_percentage": { "value": 49.57, "sD": 1.72 },
+            "ic_2_true_x10000": {
+                "value": 66.37,
+                "sD": 70.9
+            },
+            "ic_max_x1000": {
+                "value": 66.22,
+                "sD": 7.63
+            },
+            "ic_1_x10000": {
+                "value": 64.81,
+                "sD": 7.69
+            },
+            "long_repeat": {
+                "value": 16.4,
+                "sD": 9.74
+            }
+        }
+    },
+    "Digraph Substitution": {
+        "Four Square[END]": {
+            "normal_order": {
+                "value": 232.13,
+                "sD": 27.1
+            },
+            "log_digraph": {
+                "value": 449.57,
+                "sD": 28.82
+            },
+            "log_digraph_reversed": {
+                "value": 449.29,
+                "sD": 31.43
+            },
+            "ic_2_false_x10000": {
+                "value": 76.93,
+                "sD": 7.27
+            },
+            "ic_3_false_x100000": {
+                "value": 47.18,
+                "sD": 16.16
+            },
+            "ic_kappa_x1000": {
+                "value": 61.92,
+                "sD": 6.74
+            },
+            "long_repeat_odd_percentage": {
+                "value": 22.08,
+                "sD": 3.81
+            },
+            "max_unique_characters": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "ic_2_true_x10000": {
+                "value": 35.43,
+                "sD": 2.96
+            },
+            "ic_max_x1000": {
+                "value": 54.21,
+                "sD": 2.44
+            },
+            "ic_1_x10000": {
+                "value": 46.24,
+                "sD": 1.72
+            },
+            "long_repeat": {
+                "value": 12.33,
+                "sD": 1.18
+            }
+        },
+        "Playfair[END]": {
+            "normal_order": {
+                "value": 232.68,
+                "sD": 33.07
+            },
+            "text_length_multiple": {
+                "value": 2.0,
+                "sD": 0.001
+            },
+            "log_digraph": {
+                "value": 449.58,
+                "sD": 42.83
+            },
+            "double_letter_even": {
+                "value": 0.0,
+                "sD": 0.001
+            },
+            "ic_kappa_x1000": {
+                "value": 62.89,
+                "sD": 6.94
+            },
+            "max_unique_characters": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "ic_2_true_x10000": {
+                "value": 39.93,
+                "sD": 3.8
+            },
+            "ic_max_x1000": {
+                "value": 53.45,
+                "sD": 3.26
+            },
+            "long_repeat": {
+                "value": 13.12,
+                "sD": 1.28
+            },
+            "log_digraph_reversed": {
+                "value": 448.26,
+                "sD": 44.98
+            },
+            "ic_2_false_x10000": {
+                "value": 76.88,
+                "sD": 7.37
+            },
+            "ic_3_false_x100000": {
+                "value": 53.17,
+                "sD": 18.66
+            },
+            "long_repeat_odd_percentage": {
+                "value": 30.4,
+                "sD": 3.64
+            },
+            "ic_1_x10000": {
+                "value": 50.37,
+                "sD": 2.82
+            }
+        },
+        "Two Square[END]": {
+            "normal_order": {
+                "value": 190.71,
+                "sD": 33.16
+            },
+            "log_digraph": {
+                "value": 485.88,
+                "sD": 30.91
+            },
+            "log_digraph_reversed": {
+                "value": 503.94,
+                "sD": 34.83
+            },
+            "ic_2_false_x10000": {
+                "value": 76.84,
+                "sD": 7.28
+            },
+            "ic_3_false_x100000": {
+                "value": 46.08,
+                "sD": 17.66
+            },
+            "ic_kappa_x1000": {
+                "value": 61.02,
+                "sD": 7.35
+            },
+            "long_repeat_odd_percentage": {
+                "value": 22.94,
+                "sD": 3.75
+            },
+            "max_unique_characters": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "ic_2_true_x10000": {
+                "value": 35.67,
+                "sD": 3.1
+            },
+            "ic_max_x1000": {
+                "value": 52.91,
+                "sD": 3.57
+            },
+            "ic_1_x10000": {
+                "value": 46.1,
+                "sD": 2.25
+            },
+            "long_repeat": {
+                "value": 12.33,
+                "sD": 1.15
+            }
+        }
+    },
+    "Enigma": {
+        "NOPLUGBOARD[END]": {
+            "normal_order": {
+                "value": 248.33,
+                "sD": 27.69
+            },
+            "log_digraph_autokey_variant": {
+                "value": 531.94,
+                "sD": 32.9
+            },
+            "log_digraph": {
+                "value": 418.27,
+                "sD": 12.27
+            },
+            "ic_kappa_x1000": {
+                "value": 49.87,
+                "sD": 5.66
+            },
+            "ic_2_true_x10000": {
+                "value": 14.82,
+                "sD": 0.89
+            },
+            "ic_max_x1000": {
+                "value": 40.07,
+                "sD": 1.69
+            },
+            "log_digraph_portax": {
+                "value": 149.94,
+                "sD": 205.56
+            },
+            "log_digraph_autokey_vignere": {
+                "value": 531.81,
+                "sD": 32.98
+            },
+            "long_repeat": {
+                "value": 5.15,
+                "sD": 0.9
+            },
+            "nicodemus_max_3to15": {
+                "value": 40.15,
+                "sD": 1.95
+            },
+            "bifid_max_3to15": {
+                "value": 105.43,
+                "sD": 12.67
+            },
+            "log_digraph_autokey_porta": {
+                "value": 464.62,
+                "sD": 23.28
+            },
+            "bifid_0": {
+                "value": 92.89,
+                "sD": 10.65
+            },
+            "ic_2_false_x10000": {
+                "value": 14.85,
+                "sD": 1.72
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.56,
+                "sD": 3.09
+            },
+            "log_digraph_porta": {
+                "value": 518.66,
+                "sD": 29.14
+            },
+            "ic_1_x10000": {
+                "value": 38.5,
+                "sD": 0.43
+            },
+            "trifid_max_3to15": {
+                "value": 234.66,
+                "sD": 160.42
+            },
+            "log_digraph_autokey_beaufort": {
+                "value": 531.92,
+                "sD": 33.05
+            }
+        }
+    },
+    "Fractionated Morse[END]": {
+        "normal_order": {
+            "value": 229.47,
+            "sD": 26.68
+        },
+        "log_digraph": {
+            "value": 428.02,
+            "sD": 48.31
+        },
+        "log_digraph_reversed": {
+            "value": 262.88,
+            "sD": 211.72
+        },
+        "ic_2_false_x10000": {
+            "value": 57.68,
+            "sD": 3.29
+        },
+        "ic_3_false_x100000": {
+            "value": 103.28,
+            "sD": 24.2
+        },
+        "ic_kappa_x1000": {
+            "value": 70.24,
+            "sD": 8.16
+        },
+        "long_repeat_odd_percentage": {
+            "value": 49.43,
+            "sD": 2.02
+        },
+        "ic_2_true_x10000": {
+            "value": 57.22,
+            "sD": 2.57
+        },
+        "ic_max_x1000": {
+            "value": 59.29,
+            "sD": 1.89
+        },
+        "ic_1_x10000": {
+            "value": 57.53,
+            "sD": 1.5
+        },
+        "long_repeat": {
+            "value": 19.48,
+            "sD": 0.89
+        }
+    },
+    "Hill": {
+        "2x2[END]": {
+            "normal_order": {
+                "value": 215.51,
+                "sD": 30.18
+            },
+            "text_length_multiple": {
+                "value": 2.0,
+                "sD": 0.001
+            },
+            "log_digraph": {
+                "value": 435.93,
+                "sD": 26.44
+            },
+            "ic_2_false_x10000": {
+                "value": 76.77,
+                "sD": 7.28
+            },
+            "ic_3_false_x100000": {
+                "value": 40.67,
+                "sD": 16.8
+            },
+            "ic_kappa_x1000": {
+                "value": 56.24,
+                "sD": 8.47
+            },
+            "long_repeat_odd_percentage": {
+                "value": 21.86,
+                "sD": 3.43
+            },
+            "ic_2_true_x10000": {
+                "value": 32.75,
+                "sD": 2.99
+            },
+            "ic_max_x1000": {
+                "value": 47.18,
+                "sD": 5.07
+            },
+            "ic_1_x10000": {
+                "value": 42.0,
+                "sD": 2.61
+            },
+            "long_repeat": {
+                "value": 11.07,
+                "sD": 1.48
+            }
+        },
+        "3x3[END]": {
+            "normal_order": {
+                "value": 221.35,
+                "sD": 28.74
+            },
+            "text_length_multiple": {
+                "value": 3.0,
+                "sD": 0.001
+            },
+            "log_digraph": {
+                "value": 428.97,
+                "sD": 16.43
+            },
+            "ic_2_false_x10000": {
+                "value": 18.89,
+                "sD": 2.49
+            },
+            "ic_3_false_x100000": {
+                "value": 169.82,
+                "sD": 58.61
+            },
+            "ic_kappa_x1000": {
+                "value": 51.43,
+                "sD": 6.54
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.89,
+                "sD": 3.07
+            },
+            "ic_2_true_x10000": {
+                "value": 19.03,
+                "sD": 2.05
+            },
+            "ic_max_x1000": {
+                "value": 41.99,
+                "sD": 2.28
+            },
+            "ic_1_x10000": {
+                "value": 39.19,
+                "sD": 0.79
+            },
+            "long_repeat": {
+                "value": 10.46,
+                "sD": 1.35
+            }
+        }
+    },
+    "Nicodemus": {
+        "Beaufort[END]": {
+            "nicodemus_max_3to15": {
+                "value": 66.57,
+                "sD": 3.23
+            },
+            "normal_order": {
+                "value": 223.57,
+                "sD": 31.44
+            },
+            "log_digraph": {
+                "value": 427.68,
+                "sD": 23.64
+            },
+            "log_digraph_reversed": {
+                "value": 146.9,
+                "sD": 203.87
+            },
+            "ic_2_false_x10000": {
+                "value": 17.88,
+                "sD": 3.03
+            },
+            "ic_3_false_x100000": {
+                "value": 8.29,
+                "sD": 6.37
+            },
+            "ic_kappa_x1000": {
+                "value": 62.84,
+                "sD": 7.94
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.48,
+                "sD": 2.62
+            },
+            "ic_2_true_x10000": {
+                "value": 17.92,
+                "sD": 2.7
+            },
+            "ic_max_x1000": {
+                "value": 46.82,
+                "sD": 6.4
+            },
+            "ic_1_x10000": {
+                "value": 41.37,
+                "sD": 2.51
+            },
+            "long_repeat": {
+                "value": 6.14,
+                "sD": 1.11
+            }
+        },
+        "Porta[END]": {
+            "nicodemus_max_3to15": {
+                "value": 66.53,
+                "sD": 3.23
+            },
+            "normal_order": {
+                "value": 227.18,
+                "sD": 34.74
+            },
+            "log_digraph": {
+                "value": 426.53,
+                "sD": 27.65
+            },
+            "log_digraph_reversed": {
+                "value": 146.44,
+                "sD": 203.39
+            },
+            "ic_2_false_x10000": {
+                "value": 18.4,
+                "sD": 3.23
+            },
+            "ic_3_false_x100000": {
+                "value": 8.63,
+                "sD": 6.96
+            },
+            "ic_kappa_x1000": {
+                "value": 64.43,
+                "sD": 7.93
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.52,
+                "sD": 2.67
+            },
+            "ic_2_true_x10000": {
+                "value": 18.33,
+                "sD": 2.81
+            },
+            "ic_max_x1000": {
+                "value": 46.09,
+                "sD": 6.67
+            },
+            "ic_1_x10000": {
+                "value": 41.49,
+                "sD": 2.67
+            },
+            "long_repeat": {
+                "value": 6.3,
+                "sD": 1.15
+            }
+        },
+        "Variant[END]": {
+            "nicodemus_max_3to15": {
+                "value": 66.55,
+                "sD": 3.21
+            },
+            "normal_order": {
+                "value": 223.26,
+                "sD": 32.23
+            },
+            "log_digraph": {
+                "value": 428.13,
+                "sD": 23.01
+            },
+            "log_digraph_reversed": {
+                "value": 146.6,
+                "sD": 203.44
+            },
+            "ic_2_false_x10000": {
+                "value": 17.98,
+                "sD": 3.07
+            },
+            "ic_3_false_x100000": {
+                "value": 8.22,
+                "sD": 6.23
+            },
+            "ic_kappa_x1000": {
+                "value": 62.8,
+                "sD": 7.84
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.46,
+                "sD": 2.71
+            },
+            "ic_2_true_x10000": {
+                "value": 17.93,
+                "sD": 2.69
+            },
+            "ic_max_x1000": {
+                "value": 46.9,
+                "sD": 6.55
+            },
+            "ic_1_x10000": {
+                "value": 41.37,
+                "sD": 2.5
+            },
+            "long_repeat": {
+                "value": 6.1,
+                "sD": 1.11
+            }
+        },
+        "Vigenere[END]": {
+            "nicodemus_max_3to15": {
+                "value": 66.52,
+                "sD": 3.19
+            },
+            "normal_order": {
+                "value": 223.68,
+                "sD": 31.92
+            },
+            "log_digraph": {
+                "value": 427.76,
+                "sD": 23.49
+            },
+            "log_digraph_reversed": {
+                "value": 146.4,
+                "sD": 203.18
+            },
+            "ic_2_false_x10000": {
+                "value": 17.94,
+                "sD": 3.17
+            },
+            "ic_3_false_x100000": {
+                "value": 8.16,
+                "sD": 6.01
+            },
+            "ic_kappa_x1000": {
+                "value": 62.95,
+                "sD": 7.91
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.52,
+                "sD": 2.78
+            },
+            "ic_2_true_x10000": {
+                "value": 17.96,
+                "sD": 2.69
+            },
+            "ic_max_x1000": {
+                "value": 46.85,
+                "sD": 6.54
+            },
+            "ic_1_x10000": {
+                "value": 41.38,
+                "sD": 2.51
+            },
+            "long_repeat": {
+                "value": 6.14,
+                "sD": 1.14
+            }
+        }
+    },
+    "Phillips": {
+        "Columns[END]": {
+            "normal_order": {
+                "value": 239.62,
+                "sD": 25.92
+            },
+            "log_digraph": {
+                "value": 439.49,
+                "sD": 36.29
+            },
+            "log_digraph_reversed": {
+                "value": 151.08,
+                "sD": 210.3
+            },
+            "ic_2_false_x10000": {
+                "value": 35.78,
+                "sD": 4.55
+            },
+            "ic_3_false_x100000": {
+                "value": 38.96,
+                "sD": 18.47
+            },
+            "ic_kappa_x1000": {
+                "value": 63.29,
+                "sD": 7.18
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.32,
+                "sD": 1.96
+            },
+            "max_unique_characters": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "ic_2_true_x10000": {
+                "value": 35.58,
+                "sD": 3.9
+            },
+            "ic_max_x1000": {
+                "value": 55.24,
+                "sD": 3.01
+            },
+            "ic_1_x10000": {
+                "value": 51.88,
+                "sD": 2.78
+            },
+            "long_repeat": {
+                "value": 12.48,
+                "sD": 1.63
+            }
+        },
+        "Rows[END]": {
+            "normal_order": {
+                "value": 240.0,
+                "sD": 25.53
+            },
+            "log_digraph": {
+                "value": 439.3,
+                "sD": 37.1
+            },
+            "log_digraph_reversed": {
+                "value": 150.22,
+                "sD": 209.12
+            },
+            "ic_2_false_x10000": {
+                "value": 35.81,
+                "sD": 4.66
+            },
+            "ic_3_false_x100000": {
+                "value": 38.88,
+                "sD": 18.28
+            },
+            "ic_kappa_x1000": {
+                "value": 63.32,
+                "sD": 7.15
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.28,
+                "sD": 1.94
+            },
+            "max_unique_characters": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "ic_2_true_x10000": {
+                "value": 35.64,
+                "sD": 3.92
+            },
+            "ic_max_x1000": {
+                "value": 55.24,
+                "sD": 3.04
+            },
+            "ic_1_x10000": {
+                "value": 51.88,
+                "sD": 2.75
+            },
+            "long_repeat": {
+                "value": 12.48,
+                "sD": 1.61
+            }
+        },
+        "Rows \u0026 Columns[END]": {
+            "normal_order": {
+                "value": 241.57,
+                "sD": 25.93
+            },
+            "log_digraph": {
+                "value": 439.81,
+                "sD": 29.37
+            },
+            "log_digraph_reversed": {
+                "value": 150.74,
+                "sD": 209.46
+            },
+            "ic_2_false_x10000": {
+                "value": 27.73,
+                "sD": 3.45
+            },
+            "ic_3_false_x100000": {
+                "value": 24.71,
+                "sD": 13.79
+            },
+            "ic_kappa_x1000": {
+                "value": 57.99,
+                "sD": 6.68
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.1,
+                "sD": 2.21
+            },
+            "max_unique_characters": {
+                "value": 25.0,
+                "sD": 0.001
+            },
+            "ic_2_true_x10000": {
+                "value": 27.45,
+                "sD": 2.71
+            },
+            "ic_max_x1000": {
+                "value": 51.66,
+                "sD": 2.79
+            },
+            "ic_1_x10000": {
+                "value": 47.06,
+                "sD": 2.16
+            },
+            "long_repeat": {
+                "value": 10.12,
+                "sD": 1.43
+            }
+        }
+    },
+    "Porta[END]": {
+        "normal_order": {
+            "value": 227.19,
+            "sD": 35.3
+        },
+        "log_digraph_vigenere": {
+            "value": 595.53,
+            "sD": 22.93
+        },
+        "log_digraph": {
+            "value": 424.35,
+            "sD": 30.25
+        },
+        "ic_kappa_x1000": {
+            "value": 68.88,
+            "sD": 9.6
+        },
+        "ic_2_true_x10000": {
+            "value": 24.58,
+            "sD": 8.08
+        },
+        "ic_max_x1000": {
+            "value": 66.56,
+            "sD": 3.18
+        },
+        "log_digraph_portax": {
+            "value": 145.88,
+            "sD": 202.51
+        },
+        "log_digraph_beaufort": {
+            "value": 575.25,
+            "sD": 22.92
+        },
+        "log_digraph_variant": {
+            "value": 594.95,
+            "sD": 22.62
+        },
+        "long_repeat": {
+            "value": 10.41,
+            "sD": 2.89
+        },
+        "log_digraph_reversed": {
+            "value": 145.19,
+            "sD": 201.84
+        },
+        "ic_2_false_x10000": {
+            "value": 29.96,
+            "sD": 15.07
+        },
+        "ic_3_false_x100000": {
+            "value": 49.68,
+            "sD": 48.22
+        },
+        "long_repeat_odd_percentage": {
+            "value": 39.36,
+            "sD": 12.19
+        },
+        "log_digraph_porta": {
+            "value": 759.66,
+            "sD": 6.73
+        },
+        "ic_1_x10000": {
+            "value": 42.25,
+            "sD": 3.82
+        }
+    },
+    "Portax[END]": {
+        "normal_order": {
+            "value": 219.68,
+            "sD": 15.77
+        },
+        "text_length_multiple": {
+            "value": 2.0,
+            "sD": 0.001
+        },
+        "log_digraph_vigenere": {
+            "value": 546.8,
+            "sD": 28.51
+        },
+        "log_digraph": {
+            "value": 438.81,
+            "sD": 14.72
+        },
+        "ic_kappa_x1000": {
+            "value": 54.79,
+            "sD": 6.67
+        },
+        "ic_2_true_x10000": {
+            "value": 19.43,
+            "sD": 1.71
+        },
+        "ic_max_x1000": {
+            "value": 48.63,
+            "sD": 3.74
+        },
+        "log_digraph_portax": {
+            "value": 663.47,
+            "sD": 41.26
+        },
+        "log_digraph_beaufort": {
+            "value": 546.34,
+            "sD": 28.84
+        },
+        "log_digraph_variant": {
+            "value": 546.62,
+            "sD": 28.31
+        },
+        "long_repeat": {
+            "value": 6.76,
+            "sD": 1.06
+        },
+        "log_digraph_reversed": {
+            "value": 437.86,
+            "sD": 16.21
+        },
+        "ic_2_false_x10000": {
+            "value": 20.95,
+            "sD": 3.37
+        },
+        "ic_3_false_x100000": {
+            "value": 12.72,
+            "sD": 9.66
+        },
+        "long_repeat_odd_percentage": {
+            "value": 46.65,
+            "sD": 3.66
+        },
+        "log_digraph_porta": {
+            "value": 525.09,
+            "sD": 26.0
+        },
+        "ic_1_x10000": {
+            "value": 42.77,
+            "sD": 1.26
+        }
+    },
+    "Progressive Key": {
+        "Same Period": {
+            "Beaufort[END]": {
+                "normal_order": {
+                    "value": 223.22,
+                    "sD": 28.39
+                },
+                "log_digraph": {
+                    "value": 427.76,
+                    "sD": 13.24
+                },
+                "log_digraph_reversed": {
+                    "value": 146.28,
+                    "sD": 202.69
+                },
+                "ic_2_false_x10000": {
+                    "value": 15.82,
+                    "sD": 3.36
+                },
+                "ic_3_false_x100000": {
+                    "value": 8.65,
+                    "sD": 9.56
+                },
+                "ic_kappa_x1000": {
+                    "value": 51.49,
+                    "sD": 6.47
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 48.28,
+                    "sD": 4.17
+                },
+                "ic_2_true_x10000": {
+                    "value": 15.34,
+                    "sD": 1.71
+                },
+                "ic_max_x1000": {
+                    "value": 42.96,
+                    "sD": 4.89
+                },
+                "ic_1_x10000": {
+                    "value": 38.57,
+                    "sD": 0.76
+                },
+                "long_repeat": {
+                    "value": 5.65,
+                    "sD": 1.2
+                }
+            },
+            "Porta[END]": {
+                "normal_order": {
+                    "value": 216.78,
+                    "sD": 26.92
+                },
+                "log_digraph": {
+                    "value": 430.15,
+                    "sD": 12.31
+                },
+                "log_digraph_reversed": {
+                    "value": 147.78,
+                    "sD": 204.77
+                },
+                "ic_2_false_x10000": {
+                    "value": 16.12,
+                    "sD": 2.94
+                },
+                "ic_3_false_x100000": {
+                    "value": 9.21,
+                    "sD": 9.09
+                },
+                "ic_kappa_x1000": {
+                    "value": 52.19,
+                    "sD": 6.83
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 48.13,
+                    "sD": 4.43
+                },
+                "ic_2_true_x10000": {
+                    "value": 15.66,
+                    "sD": 1.53
+                },
+                "ic_max_x1000": {
+                    "value": 42.76,
+                    "sD": 4.84
+                },
+                "ic_1_x10000": {
+                    "value": 38.66,
+                    "sD": 0.71
+                },
+                "long_repeat": {
+                    "value": 5.8,
+                    "sD": 1.21
+                }
+            },
+            "Variant[END]": {
+                "normal_order": {
+                    "value": 223.02,
+                    "sD": 29.01
+                },
+                "log_digraph": {
+                    "value": 427.14,
+                    "sD": 13.25
+                },
+                "log_digraph_reversed": {
+                    "value": 146.58,
+                    "sD": 203.11
+                },
+                "ic_2_false_x10000": {
+                    "value": 15.7,
+                    "sD": 2.99
+                },
+                "ic_3_false_x100000": {
+                    "value": 8.52,
+                    "sD": 9.21
+                },
+                "ic_kappa_x1000": {
+                    "value": 51.53,
+                    "sD": 6.46
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 48.23,
+                    "sD": 4.14
+                },
+                "ic_2_true_x10000": {
+                    "value": 15.35,
+                    "sD": 1.73
+                },
+                "ic_max_x1000": {
+                    "value": 43.04,
+                    "sD": 5.0
+                },
+                "ic_1_x10000": {
+                    "value": 38.56,
+                    "sD": 0.68
+                },
+                "long_repeat": {
+                    "value": 5.61,
+                    "sD": 1.21
+                }
+            },
+            "Vigenere[END]": {
+                "normal_order": {
+                    "value": 222.92,
+                    "sD": 28.55
+                },
+                "log_digraph": {
+                    "value": 427.38,
+                    "sD": 13.26
+                },
+                "log_digraph_reversed": {
+                    "value": 146.46,
+                    "sD": 202.94
+                },
+                "ic_2_false_x10000": {
+                    "value": 15.74,
+                    "sD": 3.07
+                },
+                "ic_3_false_x100000": {
+                    "value": 8.45,
+                    "sD": 8.8
+                },
+                "ic_kappa_x1000": {
+                    "value": 51.64,
+                    "sD": 6.58
+                },
+                "long_repeat_odd_percentage": {
+                    "value": 48.28,
+                    "sD": 4.1
+                },
+                "ic_2_true_x10000": {
+                    "value": 15.36,
+                    "sD": 1.76
+                },
+                "ic_max_x1000": {
+                    "value": 43.01,
+                    "sD": 5.0
+                },
+                "ic_1_x10000": {
+                    "value": 38.58,
+                    "sD": 0.77
+                },
+                "long_repeat": {
+                    "value": 5.65,
+                    "sD": 1.22
+                }
+            }
+        }
+    },
+    "Seriated Playfair[END]": {
+        "normal_order": {
+            "value": 232.46,
+            "sD": 32.85
+        },
+        "text_length_multiple": {
+            "value": 2.0,
+            "sD": 0.001
+        },
+        "log_digraph_vigenere": {
+            "value": 552.18,
+            "sD": 27.97
+        },
+        "log_digraph": {
+            "value": 450.54,
+            "sD": 39.54
+        },
+        "ic_kappa_x1000": {
+            "value": 61.54,
+            "sD": 6.77
+        },
+        "ic_2_true_x10000": {
+            "value": 26.42,
+            "sD": 2.85
+        },
+        "ic_max_x1000": {
+            "value": 50.98,
+            "sD": 3.01
+        },
+        "log_digraph_beaufort": {
+            "value": 551.36,
+            "sD": 28.03
+        },
+        "long_repeat": {
+            "value": 8.59,
+            "sD": 1.26
+        },
+        "nicodemus_max_3to15": {
+            "value": 50.7,
+            "sD": 3.0
+        },
+        "bifid_max_3to15": {
+            "value": 227.3,
+            "sD": 70.01
+        },
+        "bifid_0": {
+            "value": 150.77,
+            "sD": 19.73
+        },
+        "ic_2_false_x10000": {
+            "value": 26.67,
+            "sD": 3.58
+        },
+        "long_repeat_odd_percentage": {
+            "value": 49.44,
+            "sD": 2.34
+        },
+        "log_digraph_porta": {
+            "value": 538.39,
+            "sD": 25.16
+        },
+        "double_letter_even_2to40": {
+            "value": 0.0,
+            "sD": 0.001
+        },
+        "ic_1_x10000": {
+            "value": 49.11,
+            "sD": 2.5
+        },
+        "trifid_max_3to15": {
+            "value": 552.35,
+            "sD": 348.77
+        }
+    },
+    "Simple Substitution": {
+        "Affine[END]": {
+            "normal_order": {
+                "value": 225.51,
+                "sD": 27.86
+            },
+            "log_digraph": {
+                "value": 429.37,
+                "sD": 59.85
+            },
+            "ic_kappa_x1000": {
+                "value": 80.69,
+                "sD": 8.86
+            },
+            "ic_2_true_x10000": {
+                "value": 76.71,
+                "sD": 6.7
+            },
+            "ic_max_x1000": {
+                "value": 68.38,
+                "sD": 3.08
+            },
+            "log_digraph_caesar": {
+                "value": 543.08,
+                "sD": 24.88
+            },
+            "long_repeat": {
+                "value": 23.91,
+                "sD": 2.04
+            },
+            "log_digraph_affine": {
+                "value": 760.04,
+                "sD": 6.7
+            },
+            "log_digraph_reversed": {
+                "value": 147.42,
+                "sD": 207.11
+            },
+            "ic_2_false_x10000": {
+                "value": 76.99,
+                "sD": 7.24
+            },
+            "ic_3_false_x100000": {
+                "value": 168.14,
+                "sD": 61.95
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.67,
+                "sD": 1.56
+            },
+            "ic_1_x10000": {
+                "value": 66.05,
+                "sD": 2.72
+            }
+        },
+        "Caesar Shift[END]": {
+            "normal_order": {
+                "value": 232.01,
+                "sD": 24.12
+            },
+            "log_digraph": {
+                "value": 419.22,
+                "sD": 49.38
+            },
+            "ic_kappa_x1000": {
+                "value": 80.69,
+                "sD": 8.86
+            },
+            "ic_2_true_x10000": {
+                "value": 76.71,
+                "sD": 6.7
+            },
+            "ic_max_x1000": {
+                "value": 68.38,
+                "sD": 3.08
+            },
+            "log_digraph_caesar": {
+                "value": 760.04,
+                "sD": 6.7
+            },
+            "long_repeat": {
+                "value": 23.91,
+                "sD": 2.04
+            },
+            "log_digraph_affine": {
+                "value": 602.31,
+                "sD": 9.15
+            },
+            "log_digraph_reversed": {
+                "value": 144.43,
+                "sD": 201.92
+            },
+            "ic_2_false_x10000": {
+                "value": 76.99,
+                "sD": 7.24
+            },
+            "ic_3_false_x100000": {
+                "value": 168.14,
+                "sD": 61.95
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.67,
+                "sD": 1.56
+            },
+            "ic_1_x10000": {
+                "value": 66.05,
+                "sD": 2.72
+            }
+        },
+        "Generic[END]": {
+            "normal_order": {
+                "value": 225.46,
+                "sD": 28.28
+            },
+            "log_digraph": {
+                "value": 426.4,
+                "sD": 58.37
+            },
+            "ic_kappa_x1000": {
+                "value": 80.69,
+                "sD": 8.86
+            },
+            "ic_2_true_x10000": {
+                "value": 76.71,
+                "sD": 6.7
+            },
+            "ic_max_x1000": {
+                "value": 68.38,
+                "sD": 3.08
+            },
+            "log_digraph_caesar": {
+                "value": 539.81,
+                "sD": 22.21
+            },
+            "long_repeat": {
+                "value": 23.91,
+                "sD": 2.04
+            },
+            "log_digraph_affine": {
+                "value": 576.99,
+                "sD": 15.98
+            },
+            "log_digraph_reversed": {
+                "value": 147.15,
+                "sD": 206.55
+            },
+            "ic_2_false_x10000": {
+                "value": 76.99,
+                "sD": 7.24
+            },
+            "ic_3_false_x100000": {
+                "value": 168.14,
+                "sD": 61.95
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.67,
+                "sD": 1.56
+            },
+            "ic_1_x10000": {
+                "value": 66.05,
+                "sD": 2.72
+            }
+        }
+    },
+    "Slidefair": {
+        "Beaufort[END]": {
+            "log_digraph_slidefair_beaufort": {
+                "value": 747.42,
+                "sD": 8.51
+            },
+            "normal_order": {
+                "value": 235.75,
+                "sD": 30.16
+            },
+            "log_digraph": {
+                "value": 419.53,
+                "sD": 25.15
+            },
+            "ic_kappa_x1000": {
+                "value": 57.16,
+                "sD": 11.13
+            },
+            "ic_2_true_x10000": {
+                "value": 19.62,
+                "sD": 4.37
+            },
+            "ic_max_x1000": {
+                "value": 56.99,
+                "sD": 7.41
+            },
+            "long_repeat": {
+                "value": 7.03,
+                "sD": 1.56
+            },
+            "log_digraph_slidefair_variant": {
+                "value": 553.56,
+                "sD": 26.85
+            },
+            "log_digraph_reversed": {
+                "value": 422.77,
+                "sD": 27.03
+            },
+            "ic_2_false_x10000": {
+                "value": 24.23,
+                "sD": 8.09
+            },
+            "ic_3_false_x100000": {
+                "value": 17.28,
+                "sD": 13.32
+            },
+            "long_repeat_odd_percentage": {
+                "value": 44.38,
+                "sD": 3.87
+            },
+            "log_digraph_slidefair_vigenere": {
+                "value": 553.88,
+                "sD": 26.67
+            },
+            "ic_1_x10000": {
+                "value": 41.86,
+                "sD": 3.4
+            }
+        },
+        "Variant[END]": {
+            "log_digraph_slidefair_beaufort": {
+                "value": 554.14,
+                "sD": 26.65
+            },
+            "normal_order": {
+                "value": 239.82,
+                "sD": 37.68
+            },
+            "log_digraph": {
+                "value": 422.12,
+                "sD": 25.51
+            },
+            "ic_kappa_x1000": {
+                "value": 56.45,
+                "sD": 10.88
+            },
+            "ic_2_true_x10000": {
+                "value": 18.56,
+                "sD": 3.16
+            },
+            "ic_max_x1000": {
+                "value": 57.03,
+                "sD": 7.23
+            },
+            "long_repeat": {
+                "value": 6.74,
+                "sD": 1.36
+            },
+            "log_digraph_slidefair_variant": {
+                "value": 748.43,
+                "sD": 7.98
+            },
+            "log_digraph_reversed": {
+                "value": 427.09,
+                "sD": 31.96
+            },
+            "ic_2_false_x10000": {
+                "value": 25.43,
+                "sD": 8.01
+            },
+            "ic_3_false_x100000": {
+                "value": 16.46,
+                "sD": 12.88
+            },
+            "long_repeat_odd_percentage": {
+                "value": 40.22,
+                "sD": 6.14
+            },
+            "log_digraph_slidefair_vigenere": {
+                "value": 748.52,
+                "sD": 7.86
+            },
+            "ic_1_x10000": {
+                "value": 40.23,
+                "sD": 1.94
+            }
+        },
+        "Vigenere[END]": {
+            "log_digraph_slidefair_beaufort": {
+                "value": 554.22,
+                "sD": 26.75
+            },
+            "normal_order": {
+                "value": 239.49,
+                "sD": 37.85
+            },
+            "log_digraph": {
+                "value": 421.89,
+                "sD": 24.81
+            },
+            "ic_kappa_x1000": {
+                "value": 56.72,
+                "sD": 10.95
+            },
+            "ic_2_true_x10000": {
+                "value": 18.64,
+                "sD": 3.19
+            },
+            "ic_max_x1000": {
+                "value": 57.17,
+                "sD": 7.32
+            },
+            "long_repeat": {
+                "value": 6.71,
+                "sD": 1.33
+            },
+            "log_digraph_slidefair_variant": {
+                "value": 748.67,
+                "sD": 7.85
+            },
+            "log_digraph_reversed": {
+                "value": 426.44,
+                "sD": 31.2
+            },
+            "ic_2_false_x10000": {
+                "value": 25.4,
+                "sD": 7.99
+            },
+            "ic_3_false_x100000": {
+                "value": 16.91,
+                "sD": 13.29
+            },
+            "long_repeat_odd_percentage": {
+                "value": 40.22,
+                "sD": 6.29
+            },
+            "log_digraph_slidefair_vigenere": {
+                "value": 748.52,
+                "sD": 8.04
+            },
+            "ic_1_x10000": {
+                "value": 40.23,
+                "sD": 1.92
+            }
+        }
+    },
+    "Solitaire[END]": {
+        "normal_order": {
+            "value": 222.46,
+            "sD": 29.75
+        },
+        "log_digraph_vigenere": {
+            "value": 531.75,
+            "sD": 33.0
+        },
+        "log_digraph": {
+            "value": 427.6,
+            "sD": 12.22
+        },
+        "ic_kappa_x1000": {
+            "value": 40.03,
+            "sD": 1.68
+        },
+        "ic_2_true_x10000": {
+            "value": 14.79,
+            "sD": 0.87
+        },
+        "ic_max_x1000": {
+            "value": 49.92,
+            "sD": 5.73
+        },
+        "log_digraph_beaufort": {
+            "value": 531.78,
+            "sD": 32.8
+        },
+        "long_repeat": {
+            "value": 5.14,
+            "sD": 0.89
+        },
+        "nicodemus_max_3to15": {
+            "value": 40.0,
+            "sD": 2.58
+        },
+        "bifid_max_3to15": {
+            "value": 105.27,
+            "sD": 13.88
+        },
+        "bifid_0": {
+            "value": 92.37,
+            "sD": 10.5
+        },
+        "ic_2_false_x10000": {
+            "value": 14.78,
+            "sD": 1.63
+        },
+        "long_repeat_odd_percentage": {
+            "value": 49.62,
+            "sD": 2.96
+        },
+        "log_digraph_porta": {
+            "value": 517.67,
+            "sD": 28.99
+        },
+        "ic_1_x10000": {
+            "value": 38.46,
+            "sD": 0.42
+        },
+        "trifid_max_3to15": {
+            "value": 233.81,
+            "sD": 159.81
+        }
+    },
+    "Substitution[END]": {
+        "normal_order": {
+            "value": 225.32,
+            "sD": 27.91
+        },
+        "log_digraph_vigenere": {
+            "value": 582.17,
+            "sD": 25.37
+        },
+        "log_digraph": {
+            "value": 428.49,
+            "sD": 60.44
+        },
+        "ic_kappa_x1000": {
+            "value": 80.63,
+            "sD": 8.91
+        },
+        "ic_2_true_x10000": {
+            "value": 76.8,
+            "sD": 6.7
+        },
+        "ic_max_x1000": {
+            "value": 68.32,
+            "sD": 3.07
+        },
+        "log_digraph_beaufort": {
+            "value": 581.67,
+            "sD": 24.57
+        },
+        "long_repeat": {
+            "value": 23.97,
+            "sD": 2.01
+        },
+        "nicodemus_max_3to15": {
+            "value": 66.02,
+            "sD": 8.48
+        },
+        "bifid_max_3to15": {
+            "value": 474.12,
+            "sD": 76.01
+        },
+        "bifid_0": {
+            "value": 271.18,
+            "sD": 26.95
+        },
+        "ic_2_false_x10000": {
+            "value": 77.11,
+            "sD": 7.21
+        },
+        "long_repeat_odd_percentage": {
+            "value": 49.65,
+            "sD": 1.57
+        },
+        "log_digraph_porta": {
+            "value": 563.44,
+            "sD": 24.75
+        },
+        "ic_1_x10000": {
+            "value": 66.01,
+            "sD": 2.71
+        },
+        "trifid_max_3to15": {
+            "value": 3739.1,
+            "sD": 1076.86
+        }
+    },
+    "Transposition[END]": {
+        "AMSCO": {
+            "normal_order": {
+                "value": 72.55,
+                "sD": 30.11
+            },
+            "log_digraph_vigenere": {
+                "value": 693.02,
+                "sD": 7.01
+            },
+            "log_digraph": {
+                "value": 691.99,
+                "sD": 7.79
+            },
+            "ic_kappa_x1000": {
+                "value": 80.85,
+                "sD": 7.47
+            },
+            "ic_2_true_x10000": {
+                "value": 46.67,
+                "sD": 4.14
+            },
+            "ic_max_x1000": {
+                "value": 68.12,
+                "sD": 3.15
+            },
+            "log_digraph_beaufort": {
+                "value": 579.08,
+                "sD": 25.3
+            },
+            "long_repeat": {
+                "value": 12.36,
+                "sD": 1.22
+            },
+            "nicodemus_max_3to15": {
+                "value": 66.88,
+                "sD": 8.69
+            },
+            "bifid_max_3to15": {
+                "value": 307.49,
+                "sD": 48.82
+            },
+            "bifid_0": {
+                "value": 277.92,
+                "sD": 31.4
+            },
+            "ic_2_false_x10000": {
+                "value": 46.68,
+                "sD": 4.95
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.51,
+                "sD": 1.71
+            },
+            "log_digraph_porta": {
+                "value": 565.05,
+                "sD": 22.86
+            },
+            "ic_1_x10000": {
+                "value": 66.0,
+                "sD": 2.71
+            },
+            "trifid_max_3to15": {
+                "value": 930.32,
+                "sD": 328.88
+            }
+        },
+        "Myszkowski[END]": {
+            "normal_order": {
+                "value": 73.71,
+                "sD": 28.63
+            },
+            "log_digraph": {
+                "value": 660.63,
+                "sD": 12.1
+            },
+            "log_digraph_reversed": {
+                "value": 225.34,
+                "sD": 312.03
+            },
+            "ic_2_false_x10000": {
+                "value": 45.45,
+                "sD": 6.08
+            },
+            "ic_3_false_x100000": {
+                "value": 33.19,
+                "sD": 16.3
+            },
+            "ic_kappa_x1000": {
+                "value": 81.33,
+                "sD": 7.65
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.33,
+                "sD": 2.04
+            },
+            "ic_2_true_x10000": {
+                "value": 45.19,
+                "sD": 5.14
+            },
+            "ic_max_x1000": {
+                "value": 68.15,
+                "sD": 3.13
+            },
+            "ic_1_x10000": {
+                "value": 66.05,
+                "sD": 2.72
+            },
+            "long_repeat": {
+                "value": 12.13,
+                "sD": 1.66
+            }
+        },
+        "Railfence[END]": {
+            "normal_order": {
+                "value": 73.71,
+                "sD": 28.63
+            },
+            "log_digraph": {
+                "value": 656.59,
+                "sD": 8.12
+            },
+            "log_digraph_reversed": {
+                "value": 225.26,
+                "sD": 311.93
+            },
+            "ic_2_false_x10000": {
+                "value": 45.2,
+                "sD": 5.78
+            },
+            "ic_3_false_x100000": {
+                "value": 32.93,
+                "sD": 14.72
+            },
+            "ic_kappa_x1000": {
+                "value": 81.1,
+                "sD": 8.02
+            },
+            "long_repeat_odd_percentage": {
+                "value": 49.37,
+                "sD": 1.78
+            },
+            "ic_2_true_x10000": {
+                "value": 45.07,
+                "sD": 4.93
+            },
+            "ic_max_x1000": {
+                "value": 68.16,
+                "sD": 3.22
+            },
+            "ic_1_x10000": {
+                "value": 66.05,
+                "sD": 2.72
+            },
+            "long_repeat": {
+                "value": 12.09,
+                "sD": 1.5
+            }
+        }
+    },
+    "Tri Square[END]": {
+        "normal_order": {
+            "value": 194.46,
+            "sD": 28.14
+        },
+        "text_length_multiple": {
+            "value": 3.0,
+            "sD": 0.001
+        },
+        "log_digraph": {
+            "value": 473.9,
+            "sD": 19.35
+        },
+        "ic_kappa_x1000": {
+            "value": 53.28,
+            "sD": 4.89
+        },
+        "max_unique_characters": {
+            "value": 25.0,
+            "sD": 0.001
+        },
+        "ic_2_true_x10000": {
+            "value": 20.83,
+            "sD": 1.12
+        },
+        "ic_max_x1000": {
+            "value": 47.47,
+            "sD": 2.14
+        },
+        "long_repeat": {
+            "value": 7.45,
+            "sD": 0.61
+        },
+        "log_digraph_reversed": {
+            "value": 256.81,
+            "sD": 236.13
+        },
+        "ic_2_false_x10000": {
+            "value": 20.88,
+            "sD": 1.61
+        },
+        "ic_3_false_x100000": {
+            "value": 30.96,
+            "sD": 7.9
+        },
+        "long_repeat_odd_percentage": {
+            "value": 49.45,
+            "sD": 1.76
+        },
+        "ic_1_x10000": {
+            "value": 42.41,
+            "sD": 1.05
+        }
+    },
+    "Trifid[END]": {
+        "normal_order": {
+            "value": 0.1,
+            "sD": 4.28
+        },
+        "log_digraph_vigenere": {
+            "value": 0.0,
+            "sD": 0.001
+        },
+        "log_digraph": {
+            "value": 417.69,
+            "sD": 25.51
+        },
+        "ic_kappa_x1000": {
+            "value": 54.23,
+            "sD": 7.88
+        },
+        "ic_2_true_x10000": {
+            "value": 17.11,
+            "sD": 2.63
+        },
+        "ic_max_x1000": {
+            "value": 46.2,
+            "sD": 4.32
+        },
+        "log_digraph_beaufort": {
+            "value": 0.0,
+            "sD": 0.001
+        },
+        "long_repeat": {
+            "value": 6.41,
+            "sD": 1.77
+        },
+        "nicodemus_max_3to15": {
+            "value": 0.01,
+            "sD": 0.68
+        },
+        "bifid_max_3to15": {
+            "value": 0.05,
+            "sD": 3.05
+        },
+        "bifid_0": {
+            "value": 0.04,
+            "sD": 2.17
+        },
+        "ic_2_false_x10000": {
+            "value": 17.6,
+            "sD": 3.56
+        },
+        "long_repeat_odd_percentage": {
+            "value": 48.72,
+            "sD": 3.73
+        },
+        "log_digraph_porta": {
+            "value": 0.0,
+            "sD": 0.001
+        },
+        "ic_1_x10000": {
+            "value": 39.94,
+            "sD": 2.34
+        },
+        "trifid_max_3to15": {
+            "value": 1598.23,
+            "sD": 1572.71
+        }
+    },
+    "Variant[END]": {
+        "normal_order": {
+            "value": 223.77,
+            "sD": 32.07
+        },
+        "log_digraph_vigenere": {
+            "value": 759.74,
+            "sD": 6.59
+        },
+        "log_digraph": {
+            "value": 426.96,
+            "sD": 25.72
+        },
+        "ic_kappa_x1000": {
+            "value": 69.03,
+            "sD": 9.75
+        },
+        "ic_2_true_x10000": {
+            "value": 24.44,
+            "sD": 7.95
+        },
+        "ic_max_x1000": {
+            "value": 66.56,
+            "sD": 3.19
+        },
+        "log_digraph_portax": {
+            "value": 148.52,
+            "sD": 206.13
+        },
+        "log_digraph_beaufort": {
+            "value": 576.18,
+            "sD": 22.98
+        },
+        "log_digraph_variant": {
+            "value": 759.76,
+            "sD": 6.53
+        },
+        "long_repeat": {
+            "value": 10.41,
+            "sD": 2.91
+        },
+        "log_digraph_reversed": {
+            "value": 146.57,
+            "sD": 203.59
+        },
+        "ic_2_false_x10000": {
+            "value": 30.21,
+            "sD": 15.46
+        },
+        "ic_3_false_x100000": {
+            "value": 49.2,
+            "sD": 46.13
+        },
+        "long_repeat_odd_percentage": {
+            "value": 39.64,
+            "sD": 11.87
+        },
+        "log_digraph_porta": {
+            "value": 567.5,
+            "sD": 21.75
+        },
+        "ic_1_x10000": {
+            "value": 42.11,
+            "sD": 3.65
+        }
+    },
+    "Vigenere[END]": {
+        "normal_order": {
+            "value": 223.29,
+            "sD": 32.66
+        },
+        "log_digraph_vigenere": {
+            "value": 759.72,
+            "sD": 6.62
+        },
+        "log_digraph": {
+            "value": 427.82,
+            "sD": 26.26
+        },
+        "ic_kappa_x1000": {
+            "value": 68.84,
+            "sD": 9.57
+        },
+        "ic_2_true_x10000": {
+            "value": 24.4,
+            "sD": 7.92
+        },
+        "ic_max_x1000": {
+            "value": 66.55,
+            "sD": 3.21
+        },
+        "log_digraph_portax": {
+            "value": 148.42,
+            "sD": 205.99
+        },
+        "log_digraph_beaufort": {
+            "value": 576.47,
+            "sD": 23.67
+        },
+        "log_digraph_variant": {
+            "value": 759.74,
+            "sD": 6.61
+        },
+        "long_repeat": {
+            "value": 10.42,
+            "sD": 2.89
+        },
+        "log_digraph_reversed": {
+            "value": 145.92,
+            "sD": 202.62
+        },
+        "ic_2_false_x10000": {
+            "value": 30.04,
+            "sD": 15.28
+        },
+        "ic_3_false_x100000": {
+            "value": 47.32,
+            "sD": 45.42
+        },
+        "long_repeat_odd_percentage": {
+            "value": 39.7,
+            "sD": 11.85
+        },
+        "log_digraph_porta": {
+            "value": 566.66,
+            "sD": 22.35
+        },
+        "ic_1_x10000": {
+            "value": 42.11,
+            "sD": 3.63
+        }
+    }
+}

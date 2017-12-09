@@ -1,7 +1,7 @@
 package nationalcipher.cipher.base.transposition;
 
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 
 /**
  * @author Alex Barter (10AS)

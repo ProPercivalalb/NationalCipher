@@ -18,6 +18,7 @@ import javalibrary.language.Languages;
 import javalibrary.lib.OSIdentifier;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringTransformer;
+import nationalcipher.cipher.interfaces.ILoadElement;
 
 public class Settings {
 
@@ -32,12 +33,12 @@ public class Settings {
 	public boolean updateProgressBars;
 	public boolean collectSolutions;
 	
-	private List<LoadElement> loadElements;
+	private List<ILoadElement> loadElements;
 	private Gson gson;
 	
 	public Settings() {
 		//Default
-		this.language = Languages.english;
+		this.language = Languages.ENGLISH;
 		this.keywordCreation = 0;
 		this.simulatedAnnealing = Arrays.asList(20.0D, 0.1D, 500.0D);
 		this.checkShift = true;
@@ -46,7 +47,7 @@ public class Settings {
 		this.updateProgressBars = false;
 		this.collectSolutions = false;
 		
-		this.loadElements = new ArrayList<LoadElement>();
+		this.loadElements = new ArrayList<ILoadElement>();
 		this.gson = new Gson();
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
@@ -151,7 +152,7 @@ public class Settings {
 			map.put("collect_solutions", this.collectSolutions);
 			
 			
-			for(LoadElement loadElement : this.loadElements)
+			for(ILoadElement loadElement : this.loadElements)
 				loadElement.write(map);
 			
 		    writer.append(gson.toJson(map));
@@ -197,7 +198,7 @@ public class Settings {
 			this.updateProgressBars = SettingsUtil.getSetting("update_progress_bars", map, Boolean.TYPE, false);
 			this.collectSolutions = SettingsUtil.getSetting("collect_solutions", map, Boolean.TYPE, false);
 			
-			for(LoadElement loadElement : this.loadElements)
+			for(ILoadElement loadElement : this.loadElements)
 				loadElement.read(map);
 		}
 		catch(Exception e) {
@@ -205,7 +206,7 @@ public class Settings {
 		}
 	}
 
-	public void addLoadElement(LoadElement loadElement) {
+	public void addLoadElement(ILoadElement loadElement) {
 		this.loadElements.add(loadElement);
 	}
 	

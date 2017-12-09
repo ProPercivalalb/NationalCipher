@@ -1,7 +1,7 @@
 package nationalcipher.cipher.base.substitution;
 
-import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.Quagmire;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class QuagmireIII implements IRandEncrypter {

@@ -1,18 +1,19 @@
 package nationalcipher.cipher.stats;
 
-public abstract class TextStatistic {
+public abstract class TextStatistic<T> {
 
 	public String text;
-	public double value;
+	public T value;
 	
 	public TextStatistic(String text) {
 		this.text = text;
 	}
 	
 	/** Computes the associated statistic. Usually invoked directly after object initialisation */
-	public abstract TextStatistic calculateStatistic();
+	public abstract TextStatistic<T> calculateStatistic();
 	
-	public double quantify(DataHolder data) {
+	public double quantify(DataHolder<T> data) {
+		System.out.println(this.getClass().getSimpleName());
 		return data.quantify(this.value);
 	}
 	

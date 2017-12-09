@@ -5,7 +5,7 @@ import java.util.Map;
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.CipherUtils;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SeriatedPlayfair implements IRandEncrypter {

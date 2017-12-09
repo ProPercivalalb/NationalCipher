@@ -1,5 +1,6 @@
 package nationalcipher.cipher.decrypt.complete;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -9,6 +10,8 @@ import javax.swing.JSpinner;
 
 import javalibrary.lib.Timer;
 import javalibrary.math.Units.Time;
+import javalibrary.string.LetterCount;
+import javalibrary.string.StringAnalyzer;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
@@ -17,6 +20,7 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -86,17 +90,23 @@ public class GeneralPeriodAttack extends CipherAttack {
 			byte[] editText = ArrayUtil.convertCharType(Arrays.copyOf(this.cipherText, this.cipherText.length));
 				
 			for(int p = 0; p < length; p++) {
-				height[p] = rowsMin + (colLeft > p ? 1 : 0);
-					
-				for(int i = 0; i < 26; i++) {
-					keysIndex[p][i] = (char)(i + 'A');
+				height[p] = (rowsMin + (colLeft > p ? 1 : 0)) * length;
+				
+				//keysIndex[p] = KeyGeneration.createLongKey26().toCharArray();
+				String row = StringTransformer.getEveryNthChar(this.cipherText, p, length);
+				ArrayList<LetterCount> d = StringAnalyzer.countLettersInSizeOrder(row);
+				
+				for(int i = 0; i < d.size(); i++) {
+					keysIndex[p][i] = d.get(i).ch;
 				}
+				//for(int i = 0; i < 26; i++)
+				//	keysIndex[p][i] = (char)(i + 'A');
 			}
 				
 			Solution currentBestSolution = Solution.WORST_SOLUTION;
-			Timer timer = new Timer();
-			boolean done = true;
-			while(true) {
+			int before = 0;
+			int l = 0;
+			while(l++ == 0) {
 				for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {
 					for(int count = 0; count < this.getSettings().getSACount(); count++) { 
 						//int p = RandomUtil.pickRandomInt(length);
@@ -104,19 +114,14 @@ public class GeneralPeriodAttack extends CipherAttack {
 							byte ch1 = (byte)RandomUtil.pickRandomInt('A', 'Z');
 							byte ch2 = (byte)RandomUtil.pickRandomInt('A', 'Z');
 	
-							for(int i = 0; i < height[p]; i++) {
-								int pos = i * length + p;
-								byte ch = editText[pos];
-								if(ch == ch1) editText[pos] = ch2;
-								else if(ch == ch2) editText[pos] = ch1;
+							for(int i = p; i < height[p]; i += length) {
+								byte ch = editText[i];
+								if(ch == ch1) editText[i] = ch2;
+								else if(ch == ch2) editText[i] = ch1;
 							}
 								
-							this.lastSolution = new Solution(editText, this.getLanguage());
+							this.lastSolution = new Solution(editText, this.getLanguage());before++;
 							this.addSolution(this.lastSolution);
-							if(done && this.lastSolution.score > -3730)  {
-								this.out().println("TIME: %f", timer.getTimeRunning(Time.SECOND));
-								done = false;	
-							}
 							
 							double lastDF = this.lastSolution.score - currentBestSolution.score;
 								
@@ -131,24 +136,23 @@ public class GeneralPeriodAttack extends CipherAttack {
 								double prob = Math.exp(lastDF / TEMP);
 							    if(prob > RandomUtil.pickDouble()) {
 							    	currentBestSolution = this.lastSolution;
-										
+									
 							    	char temp = keysIndex[p][ch1 - 'A'];
 									keysIndex[p][ch1 - 'A'] = keysIndex[p][ch2 - 'A'];
 									keysIndex[p][ch2 - 'A'] = temp;
 							    }
 							    else {
-							        for(int i = 0; i < height[p]; i++) {
-										int pos = i * length + p;
-										byte ch = editText[pos];
-										if(ch == ch1) editText[pos] = ch2;
-										else if(ch == ch2) editText[pos] = ch1;
+							        for(int i = p; i < height[p]; i += length) {
+										byte ch = editText[i];
+										if(ch == ch1) editText[i] = ch2;
+										else if(ch == ch2) editText[i] = ch1;
 									}
 							    }
 							}
 							    
 							if(currentBestSolution.score > this.bestSolution.score) {
 								this.bestSolution = currentBestSolution;
-								String str = "";
+								String str = before + "";
 								for(int j = 0; j < length; j++) {
 									str += new String(keysIndex[j]) + ", ";
 								}

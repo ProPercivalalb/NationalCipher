@@ -107,7 +107,7 @@ public class VigenereAttack extends CipherAttack {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString(key);
 				this.bestSolution.bakeSolution();
-				this.out().println("%s", this.bestSolution);	
+				this.out().println("%s", this.bestSolution);
 				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
 			

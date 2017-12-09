@@ -22,6 +22,7 @@ import nationalcipher.ui.UINew;
 
 public class QuagmireIAttack extends CipherAttack {
 
+	private QuagmireITask task;
 	public JSpinner spinner;
 	
 	public QuagmireIAttack() {
@@ -37,17 +38,17 @@ public class QuagmireIAttack extends CipherAttack {
 	
 	@Override
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		QuagmireITask task = new QuagmireITask(text, app);
+		this.task = new QuagmireITask(text, app);
 		
 		//Settings grab
-		task.period = SettingParse.getInteger(this.spinner);
+		this.task.period = SettingParse.getInteger(this.spinner);
 		
 		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
-			task.run();
+			this.task.run();
 		}
 		
-		app.out().println(task.getBestSolution());
+		app.out().println(this.task.getBestSolution());
 	}
 	
 	public class QuagmireITask extends SimulatedAnnealing {
@@ -166,5 +167,11 @@ public class QuagmireIAttack extends CipherAttack {
 			
 			return plainText;
 		}
+	}
+	
+	@Override
+	public void onTermination(boolean forced) {
+		if(forced)
+			this.task.app.out().println("%s", this.task.bestSolution);
 	}
 }

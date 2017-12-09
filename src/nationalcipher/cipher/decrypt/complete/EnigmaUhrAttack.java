@@ -3,6 +3,7 @@ package nationalcipher.cipher.decrypt.complete;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -18,6 +19,7 @@ import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -38,9 +40,8 @@ public class EnigmaUhrAttack extends CipherAttack {
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
 		this.plugboardDefinition = new JTextField();
-		for(EnigmaMachine machine : EnigmaLib.MACHINES)
-			if(machine.isSolvable() && machine.canPlugboard() && !machine.hasThinRotor() && machine.canUhr())
-				this.machineSelection.addItem(machine);
+		
+		Stream.of(EnigmaLib.MACHINES).filter(m -> m.isSolvable() && m.canPlugboard() && !m.hasThinRotor() && m.canUhr()).forEach(m -> this.machineSelection.addItem(m));
 		
 		this.machineSelection.addActionListener(new ActionListener() {
 
@@ -176,50 +177,6 @@ public class EnigmaUhrAttack extends CipherAttack {
 						trialSolution.makeCopy();
 				}
 			}
-		}
-	}
-	
-	public static class EnigmaSection extends ResultNegative {
-		
-		public EnigmaMachine machine;
-		public int[] indicator;
-		public int[] ring;
-		public int[] rotors;
-		public int reflector;
-
-		public EnigmaSection(double score, EnigmaMachine machine, int[] notchKey, int[] rotors, int reflector) {
-			super(score);
-			this.machine = machine;
-			this.indicator = notchKey;
-			this.rotors = rotors;
-			this.reflector = reflector;
-		}
-
-		public void makeCopy() {
-			this.indicator = Arrays.copyOf(this.indicator, this.indicator.length);
-			this.rotors = Arrays.copyOf(this.rotors, this.rotors.length);
-			if(this.ring != null) this.ring = Arrays.copyOf(this.ring, this.ring.length);
-		}
-		
-		public int[] copyIndicator() {
-			return Arrays.copyOf(this.indicator, this.indicator.length);
-		}
-		
-		public String displaySetting(int[] order) {
-			if(order == null) return "null";
-			char[] text = new char[3];
-			for(int i = 0; i < order.length; i++)
-				text[i] = (char)(order[i] + 'A');
-			return new String(text);
-		}
-		
-		public String toKeyString() {
-			return String.format("Machine Type: %s, Rotors:%s: Ind:%s, Ring:%s, Reflector:%d", this.machine, Arrays.toString(this.rotors), this.displaySetting(this.indicator), this.displaySetting(this.ring), this.reflector);
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("%f, %s", this.score, this.toKeyString());
 		}
 	}
 }

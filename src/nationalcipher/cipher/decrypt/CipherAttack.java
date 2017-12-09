@@ -8,11 +8,11 @@ import java.util.Map;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import nationalcipher.LoadElement;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
+import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.ui.IApplication;
 
-public class CipherAttack implements LoadElement {
+public class CipherAttack implements ILoadElement {
 	
 	private String displayName;
 	private String saveId;

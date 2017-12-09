@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 
 public class Affine implements IRandEncrypter {
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Homophonic implements IRandEncrypter {

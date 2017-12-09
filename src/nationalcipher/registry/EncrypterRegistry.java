@@ -1,4 +1,4 @@
-package nationalcipher.cipher.base;
+package nationalcipher.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,9 +50,10 @@ import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.transposition.RouteTransposition;
 
-public class RandomEncrypter {
+public class EncrypterRegistry {
 
 	public static Map<String, IRandEncrypter> CIPHER = new HashMap<>();
 	public static Map<String, Integer> CIPHER_DIFFICUTLY = new HashMap<>();
@@ -65,6 +66,10 @@ public class RandomEncrypter {
 		return CIPHER.get(name);
 	}
 	
+	/**
+	 * @param maxDifficulty Picks all ciphers with this described difficulty or less
+	 * @return A weighted list (towards the harder ciphers)
+	 */
 	public static List<String> getAllWithDifficulty(int maxDifficulty) {
 		List<String> below = new ArrayList<String>();
 		for(String key : CIPHER_DIFFICUTLY.keySet())

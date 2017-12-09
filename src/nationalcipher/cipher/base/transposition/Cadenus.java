@@ -1,6 +1,6 @@
 package nationalcipher.cipher.base.transposition;
 
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Cadenus implements IRandEncrypter {

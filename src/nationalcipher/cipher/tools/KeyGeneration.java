@@ -136,7 +136,7 @@ public class KeyGeneration {
 				}
 				return key;
 			}
-			catch(Exception e) {} //If the key is invalid will attept again till it gets it gets a valid key
+			catch(Exception e) {} //If the key is invalid will attempt again till it gets it gets a valid key
 		}
 	}
 	

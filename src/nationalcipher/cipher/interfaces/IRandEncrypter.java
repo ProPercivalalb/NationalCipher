@@ -1,4 +1,4 @@
-package nationalcipher.cipher.base;
+package nationalcipher.cipher.interfaces;
 
 public interface IRandEncrypter {
 

@@ -1,6 +1,5 @@
 package nationalcipher.cipher.stats;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -12,7 +11,7 @@ import javax.swing.JProgressBar;
 
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
@@ -50,14 +49,14 @@ import nationalcipher.lib.StatisticsLib;
 
 public class StatisticHandler {
 	
-	public static final LinkedHashMap<String, Class<? extends TextStatistic>> TEXT_STATISTIC_MAP = new LinkedHashMap<String, Class<? extends TextStatistic>>();
-	public static final HashMap<String, String> DISPLAY_NAME_MAP = new HashMap<String, String>();
+	public static final LinkedHashMap<String, Class<? extends TextStatistic<?>>> TEXT_STATISTIC_MAP = new LinkedHashMap<>();
+	public static final HashMap<String, String> DISPLAY_NAME_MAP = new HashMap<>();
 	
-	public static boolean registerStatistic(String id, Class<? extends TextStatistic> textStatistic) {
+	public static boolean registerStatistic(String id, Class<? extends TextStatistic<?>> textStatistic) {
 		return registerStatistic(id, textStatistic, id);
 	}
 	
-	public static boolean registerStatistic(String id, Class<? extends TextStatistic> textStatistic, String shortName) {
+	public static boolean registerStatistic(String id, Class<? extends TextStatistic<?>> textStatistic, String shortName) {
 		if(TEXT_STATISTIC_MAP.containsKey(id)) return false;
 		
 		TEXT_STATISTIC_MAP.put(id, textStatistic);
@@ -69,11 +68,11 @@ public class StatisticHandler {
 		return orderCipherProbibitly(createTextStatistics(text));
 	}
 	
-	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic> stats) {
+	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic<?>> stats) {
 		return orderCipherProbibitly(stats, new ArrayList<String>(TEXT_STATISTIC_MAP.keySet()));
 	}
 	
-	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic> stats, List<String> doOnly) {
+	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic<?>> stats, List<String> doOnly) {
 		List<IdentifyOutput> computedResult = new ArrayList<IdentifyOutput>();
 		
 		TreeMap<String, Object> statistic = CipherStatistics.getOtherCipherStatistics();
@@ -83,7 +82,7 @@ public class StatisticHandler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void traverseDataTree(HashMap<String, TextStatistic> stats, List<String> doOnly, List<IdentifyOutput> computedResult, List<String> keyBefore, Map<String, Object> toCheck) {
+	public static void traverseDataTree(HashMap<String, TextStatistic<?>> stats, List<String> doOnly, List<IdentifyOutput> computedResult, List<String> keyBefore, Map<String, Object> toCheck) {
 		for(String key : toCheck.keySet()) {
 			Map<String, ?> nextBranch = (Map<String, ?>)toCheck.get(key);
 			List<String> copy = new ArrayList<String>(keyBefore);
@@ -106,14 +105,17 @@ public class StatisticHandler {
 				for(int i = 0; i < copy.size(); i++) {
 					int index = indexOf(copy.get(i), last);
 					if(index != -1) {
-						identifyOutput = new IdentifyOutput(last.get(index).id, Math.min(last.get(index).score, value));
+						IdentifyOutput old = last.get(index);
+						identifyOutput = new IdentifyOutput(old.id, Math.min(old.score, value));
+						identifyOutput.subOutput.addAll(old.subOutput);
+						old.subOutput.clear(); //Not sure it this is necessary, it may free up some memory but since all the object referenced in the list are still in use I assume this list just points to memory locations that are still in use
 						last.set(index, identifyOutput);
 					}
 					else {
 						identifyOutput = new IdentifyOutput(copy.get(i), value);
 						last.add(identifyOutput);
 					}
-						
+					
 					last = identifyOutput.subOutput;
 				}
 			}
@@ -136,7 +138,7 @@ public class StatisticHandler {
 	 * @param doOnly A list of statistics IDs to test @see nationalcipher.lib.StatisticsLib
 	 * @return A quantised idea of how likely this text is to this cipher attributes  
 	 */
-	public static double scoreCipher(Map<String, TextStatistic> stats, Map<String, DataHolder> data, List<String> doOnly) {
+	public static double scoreCipher(Map<String, TextStatistic<?>> stats, Map<String, DataHolder> data, List<String> doOnly) {
 		double value = 0.0D;
 		
 		for(String id : data.keySet())
@@ -146,11 +148,11 @@ public class StatisticHandler {
 		return value;
 	}
 	
-	public static HashMap<String, TextStatistic> createTextStatistics(String text) {
-		HashMap<String, TextStatistic> stats = new HashMap<String, TextStatistic>();
+	public static HashMap<String, TextStatistic<?>> createTextStatistics(String text) {
+		HashMap<String, TextStatistic<?>> stats = new HashMap<String, TextStatistic<?>>();
 		try {
 			for(String id : TEXT_STATISTIC_MAP.keySet()) {
-				TextStatistic stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
+				TextStatistic<?> stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
 				stats.put(id, stat.calculateStatistic());
 			}
 		}
@@ -161,13 +163,13 @@ public class StatisticHandler {
 		return stats;
 	}
 	
-	public static HashMap<String, TextStatistic> createTextStatistics(String text, JProgressBar value) {
-		HashMap<String, TextStatistic> stats = new HashMap<String, TextStatistic>();
+	public static HashMap<String, TextStatistic<?>> createTextStatistics(String text, JProgressBar value) {
+		HashMap<String, TextStatistic<?>> stats = new HashMap<String, TextStatistic<?>>();
 		try {
 			value.setMaximum(TEXT_STATISTIC_MAP.size());
 			for(String id : TEXT_STATISTIC_MAP.keySet()) {
 				value.setString(DISPLAY_NAME_MAP.get(id));
-				TextStatistic stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
+				TextStatistic<?> stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
 				stats.put(id, stat.calculateStatistic());
 				value.setValue(value.getValue() + 1);
 			}
@@ -179,11 +181,11 @@ public class StatisticHandler {
 		return stats;
 	}
 	
-	public static void calculateStatPrint(IRandEncrypter randEncrypt, Class<? extends TextStatistic> textStatistic, int times) {
+	public static void calculateStatPrint(IRandEncrypter randEncrypt, Class<? extends TextStatistic<?>> textStatistic, int times) {
 		List<String> list = FileReader.compileTextFromResource("/plainText.txt", true);
 		
 		List<Double> values = new ArrayList<Double>();
-		TextStatistic test = null;
+		TextStatistic<?> test = null;
 		try {
 			test = textStatistic.getConstructor(String.class).newInstance("");
 		} 
@@ -201,8 +203,8 @@ public class StatisticHandler {
 				//System.out.println(test.text);
 				test.calculateStatistic();
 				try {
-				//	if(test.value != 0)
-						values.add(test.value);
+					if(test.value instanceof Number)
+						values.add(((Number)test.value).doubleValue());
 				} 
 				catch(Exception e) {
 					e.printStackTrace();

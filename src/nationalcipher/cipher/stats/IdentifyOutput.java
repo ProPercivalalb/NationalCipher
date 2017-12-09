@@ -3,7 +3,6 @@ package nationalcipher.cipher.stats;
 import java.util.ArrayList;
 import java.util.List;
 
-import javalibrary.list.ResultNegative;
 import javalibrary.list.ResultPositive;
 
 public class IdentifyOutput extends ResultPositive {

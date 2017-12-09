@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.CipherUtils;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class ConjugatedBifid implements IRandEncrypter {

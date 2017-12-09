@@ -1,8 +1,8 @@
 package nationalcipher.cipher.base.substitution;
 
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Nicodemus implements IRandEncrypter {
@@ -38,7 +38,7 @@ public class Nicodemus implements IRandEncrypter {
 	
 	public static byte[] decode(char[] cipherText, byte[] plainText, String key, VigenereType type) {
 		//Possible settings
-		int READ_OFF = 5;
+		int READ_OFF = 1;
 
 		byte[] order = new byte[key.length()];
 		

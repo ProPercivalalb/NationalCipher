@@ -1,7 +1,7 @@
 package nationalcipher.cipher.base.transposition;
 
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.IRandEncrypter;
+import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class NihilistTransposition implements IRandEncrypter {
