@@ -102,7 +102,7 @@ public class VigenereAttack extends CipherAttack {
 		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.VIGENERE), this.getLanguage());
-			
+			//this.lastSolution = new Solution(Challenge7Attack.decode(this.cipherText, this.plainText, key, VigenereType.VIGENERE), this.getLanguage());
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
 				this.bestSolution.setKeyString(key);

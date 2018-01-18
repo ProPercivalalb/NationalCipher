@@ -106,7 +106,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 			Solution currentBestSolution = Solution.WORST_SOLUTION;
 			int before = 0;
 			int l = 0;
-			while(l++ == 0) {
+			while(true) {
 				for(double TEMP = this.getSettings().getSATempStart(); TEMP >= 0; TEMP -= this.getSettings().getSATempStep()) {
 					for(int count = 0; count < this.getSettings().getSACount(); count++) { 
 						//int p = RandomUtil.pickRandomInt(length);

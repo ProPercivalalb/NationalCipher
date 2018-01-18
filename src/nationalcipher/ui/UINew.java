@@ -1820,7 +1820,7 @@ public class UINew extends JFrame implements IApplication {
 				int bestPeriod = -1;
 				double bestIC = Double.MIN_VALUE;
 				
-			    for(int period = 2; period <= 10; period++) {
+			    for(int period = 2; period <= 12; period++) {
 			        double score = StatCalculator.calculateLongIC(text, period, 26);
 			        this.barCharts[0].values.add(new ChartData("" + period, score));
 			        if(bestIC < score)
@@ -1867,7 +1867,7 @@ public class UINew extends JFrame implements IApplication {
         			int bestPeriod = -1;
         		    double bestIC = Double.POSITIVE_INFINITY;
     		    
-	    		    for(int period = 2; period <= 40; ++period) {
+	    		    for(int period = 2; period <= 50; ++period) {
 	    		    	double sqDiff = Math.abs(StatCalculator.calculateNicodemusIC(text, i + 1, period) - UINew.this.settings.getLanguage().getNormalCoincidence()) * 1000;
 	    		    	
 	    		    	if(sqDiff < bestIC)

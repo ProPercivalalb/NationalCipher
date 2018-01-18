@@ -181,7 +181,7 @@ public class AttackRegistry {
 		registerCipher(new PolybusSquareAttack(), settings);
 		registerCipher(new RagbabyAttack(), settings);
 		
-		registerCipher(new Challenge7Attack(), settings);
+		//registerCipher(new Challenge7Attack(), settings);
 		
 		//
 		//registerCipher(new RagbabyAttack(), settings);
