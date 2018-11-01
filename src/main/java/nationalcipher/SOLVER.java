@@ -174,7 +174,7 @@ public class SOLVER {
 		double total = 0.0D;
 		
 		   HashMap<String, Double> mapping2 = new HashMap<String, Double>();
-		List<String> list2 = FileReader.compileTextFromResource("/resources/data/bigram_count.txt", true);
+		List<String> list2 = FileReader.compileTextFromResource("/assets/bigram_count.txt", true);
 		for(String line : list2) {
 			String[] str = line.split("% ");
 			for(String data : str) {
@@ -197,7 +197,7 @@ public class SOLVER {
 			//System.out.println(entries);
 		
 		
-		List<String> list = FileReader.compileTextFromResource("/resources/data/bigram_count.txt");
+		List<String> list = FileReader.compileTextFromResource("/assets/bigram_count.txt");
 
 		for(String line : list) {
 			String[] str = line.split(" ");

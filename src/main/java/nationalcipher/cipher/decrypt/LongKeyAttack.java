@@ -28,7 +28,7 @@ public abstract class LongKeyAttack extends CipherAttack {
 		if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
 
-			DictionaryAttack.tryKeysWithOptions(task, Dictionary.WORDS_CHAR, KeyGeneration.ALL_25_CHARS, app.getSettings().checkShift(), app.getSettings().checkReverse());
+			DictionaryAttack.tryKeysWithOptions(task, Dictionary.WORDS_CHAR, KeyGeneration.ALL_26_CHARS, app.getSettings().checkShift(), app.getSettings().checkReverse());
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());

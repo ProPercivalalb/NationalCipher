@@ -52,7 +52,7 @@ public class KeyIterator {
 	}
 	
 	public static void iterateShort26Key(ShortCustomKey capturer, int length, boolean repeats) {
-		iterateShortCustomKey(capturer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", length, repeats);
+		iterateShortCustomKey(capturer, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", length, repeats);
 	}
 	
 	public static void iterateShortCustomKey(ShortCustomKey capturer, String chars, int length, boolean repeats) {

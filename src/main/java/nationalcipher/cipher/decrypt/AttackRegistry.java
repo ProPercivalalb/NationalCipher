@@ -16,7 +16,6 @@ import nationalcipher.cipher.decrypt.complete.BeaufortSFAttack;
 import nationalcipher.cipher.decrypt.complete.BifidAttack;
 import nationalcipher.cipher.decrypt.complete.CadenusAttack;
 import nationalcipher.cipher.decrypt.complete.CaesarAttack;
-import nationalcipher.cipher.decrypt.complete.Challenge7Attack;
 import nationalcipher.cipher.decrypt.complete.ColumnarTranspositionAttack;
 import nationalcipher.cipher.decrypt.complete.ConjugatedBifidAttack;
 import nationalcipher.cipher.decrypt.complete.DigrafidAttack;

@@ -30,7 +30,7 @@ public class CalculateAllValidMatrices {
 		double fitnessPerChar = 0.0D;
 		
 		PrintWriter writer = new PrintWriter("commontrigrampairings.txt", "UTF-8");
-		List<String> list = FileReader.compileTextFromResource("/javalibrary/fitness/english_trigrams.txt");
+		List<String> list = FileReader.compileTextFromResource("/files/english_trigrams.txt");
 		int length = -1;
 		
 		for(String line : list) {
@@ -45,7 +45,7 @@ public class CalculateAllValidMatrices {
 			trigram.add(str[0]);
 		}
 		
-		NGramData data = TextFitness.loadFile("/javalibrary/fitness/english_trigrams.txt");
+		NGramData data = TextFitness.loadFile("/files/english_trigrams.txt");
 		int[][] pickPattern = generatePickPattern(128);
 		List<String> contains = new ArrayList<String>();
 		for(int i = 0; i < pickPattern.length; i++) {
@@ -84,7 +84,7 @@ public class CalculateAllValidMatrices {
 		System.out.println("None same one, " + contains.size());
 		writer.close();**/
 		List<String> list = FileReader.compileTextFromResource("/resources/commontrigrampairings.txt");
-		NGramData data = TextFitness.loadFile("/javalibrary/fitness/english_trigrams.txt");
+		NGramData data = TextFitness.loadFile("/files/english_trigrams.txt");
 		HashMap<String, Double> mapping = new HashMap<String, Double>();
 		for(String line : list) {
 			String[] split = StringTransformer.splitInto(line, 3);

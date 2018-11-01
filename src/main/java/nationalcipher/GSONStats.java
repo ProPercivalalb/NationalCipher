@@ -62,7 +62,7 @@ public class GSONStats {
 	                 String n = jsonReader.nextName();
 	                 jsonReader.beginObject();
 	 	             while (jsonReader.hasNext()) {
-	 	                 String n = jsonReader.nextName();
+	 	                // String n = jsonReader.nextName();
 	 	                 
 	 	            }
 	            }

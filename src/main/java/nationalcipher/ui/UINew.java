@@ -244,7 +244,7 @@ public class UINew extends JFrame implements IApplication {
 					UINew.this.progressBar.setValue(progressBar.getValue() + 1);
 				}
 			
-				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(UINew.class.getResourceAsStream("/resources/data/trigraph.txt")));
+				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(UINew.class.getResourceAsStream("/assets/trigraph.txt")));
 
 				String[] split = null;
 				try {
