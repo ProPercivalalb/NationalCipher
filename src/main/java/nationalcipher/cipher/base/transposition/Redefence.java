@@ -1,7 +1,11 @@
 package nationalcipher.cipher.base.transposition;
 
+import java.util.Arrays;
+
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 /**
  * @author Alex Barter (10AS)
@@ -68,9 +72,34 @@ public class Redefence implements IRandEncrypter {
 		}
 		return plainText;
 	}
+	
+	public static String encode(String plainText, int[] order) {
+		int rows = order.length;
+		
+		StringBuilder[] cipherText = new StringBuilder[rows];
+		for(int i = 0; i < rows; ++i)
+			cipherText[i] = new StringBuilder();
+		
+		int branchTotal = rows * 2 - 2;
+		
+		for(int i = 0; i < plainText.length(); ++i) {
+			char character = plainText.charAt(i);
+			int index_in_ite = i % branchTotal;
+			if(index_in_ite < rows)
+				cipherText[index_in_ite].append(character);
+			else
+				cipherText[rows - (index_in_ite - rows) - 2].append(character);
+		}
+		
+		String last = "";
+		
+		for(int o : order)
+			last += cipherText[o].toString();
+		return last;
+	}
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		return null;
+		return encode(plainText, KeyGeneration.createOrder(2, 7));
 	}
 }
