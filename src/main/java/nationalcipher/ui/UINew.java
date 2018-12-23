@@ -3096,7 +3096,7 @@ public class UINew extends JFrame implements IApplication {
     			Object[] options = {"Yes", "Cancel"};
     			
     			Image img = ImageUtil.createImageIcon("/image/error.png", "Error").getImage() ;  
-    			Image newimg = img.getScaledInstance( 40, 40,  java.awt.Image.SCALE_SMOOTH ) ;  
+    			Image newimg = img.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH) ;  
     			ImageIcon icon = new ImageIcon(newimg);
     			
     			int n = JOptionPane.showOptionDialog(UINew.this,
