@@ -1,7 +1,9 @@
 package nationalcipher.cipher.decrypt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.VigenereType;
@@ -67,41 +69,60 @@ import nationalcipher.cipher.decrypt.complete.VigenereAttack;
 import nationalcipher.cipher.decrypt.complete.VigenerePKAttack;
 import nationalcipher.cipher.decrypt.complete.VigenereSFAttack;
 import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.lib.CipherLib;
 
 public class AttackRegistry {
 
-	public static List<CipherAttack> ciphers = new ArrayList<CipherAttack>();
+	private static Map<String, CipherAttack> CIPHERS = new HashMap<String, CipherAttack>();
 	
 	public static String[] getNames() {
-		String[] names = new String[ciphers.size()];
-		for(int i = 0; i < ciphers.size(); ++i)
-			names[i] = ciphers.get(i).getDisplayName();
+		String[] names = new String[CIPHERS.size()];
+		int i = 0;
+		for(CipherAttack attack : CIPHERS.values())
+			names[i++] = attack.getDisplayName();
 		return names;
 	}
 	
 	public static CipherAttack[] getObjects() {
-		CipherAttack[] names = new CipherAttack[ciphers.size()];
-		for(int i = 0; i < ciphers.size(); ++i)
-			names[i] = ciphers.get(i);
+		CipherAttack[] names = new CipherAttack[CIPHERS.size()];
+		int i = 0;
+		for(CipherAttack attack : CIPHERS.values())
+			names[i++] = attack;
 		return names;
 	}
 	
 	public static CipherAttack getFromName(String name) {
-		for(CipherAttack attack : ciphers)
+		for(CipherAttack attack : CIPHERS.values())
 			if(attack.getDisplayName().equals(name))
 				return attack;
 		return null;
 	}
 	
+	public static CipherAttack getFromId(String id) {
+		return CIPHERS.get(id);
+	}
+	
 	public static void registerCipher(CipherAttack cipherAttack, Settings settings) {
-		ciphers.add(cipherAttack);
+		registerCipher("CIPHER_" + CIPHERS.size(), cipherAttack, settings);
+	}
+
+	
+	public static void registerCipher(String id, CipherAttack cipherAttack, Settings settings) {
+		if(CIPHERS.containsKey(id)) {
+			System.err.println("AttackRegistry already contains ID " + id);
+			
+			return;
+		}
+		
+		
+		CIPHERS.put(id, cipherAttack);
 		settings.addLoadElement(cipherAttack);
 	}
 	
 	public static void loadCiphers(Settings settings) {
 		//Substitution
-		registerCipher(new CaesarAttack(), settings);		
-		registerCipher(new AffineAttack(), settings);
+		registerCipher(CipherLib.CAESAR, new CaesarAttack(), settings);		
+		registerCipher(CipherLib.AFFINE, new AffineAttack(), settings);
 		registerCipher(new SimpleSubstitutionAttack(), settings);
 		registerCipher(new BazeriesAttack(), settings);
 		registerCipher(new TwoSquareAttack(), settings);

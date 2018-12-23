@@ -13,7 +13,6 @@ public abstract class TextStatistic<T> {
 	public abstract TextStatistic<T> calculateStatistic();
 	
 	public double quantify(DataHolder<T> data) {
-		System.out.println(this.getClass().getSimpleName());
 		return data.quantify(this.value);
 	}
 	

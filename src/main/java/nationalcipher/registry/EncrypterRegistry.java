@@ -50,6 +50,7 @@ import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
+import nationalcipher.cipher.base.transposition.Redefence;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.transposition.RouteTransposition;
 
@@ -133,7 +134,7 @@ public class EncrypterRegistry {
 		registerEncrypter(new QuagmireIII(), 7);
 		registerEncrypter(new QuagmireIV(), 8);
 		registerEncrypter(new RailFence(), 1);
-		//registerEncrypter(new Redefence(), 2);
+		registerEncrypter(new Redefence(), 2);
 		registerEncrypter(new RouteTransposition(), 4);
 		registerEncrypter(new RunningKey(), 10);
 		registerEncrypter(new SeriatedPlayfair(), 8);

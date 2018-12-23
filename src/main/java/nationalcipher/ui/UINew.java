@@ -114,6 +114,7 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.MapHelper;
 import javalibrary.util.RandomUtil;
 import nationalcipher.Settings;
+import nationalcipher.auto.AutoSolver;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.ProgressiveKey;
 import nationalcipher.cipher.base.transposition.ColumnarTransposition;
@@ -314,6 +315,7 @@ public class UINew extends JFrame implements IApplication {
         this.toolBarSettings = new JButton();
         this.toolBarStart = new JButton();
         this.toolBarStop = new JButton();
+        this.toolBarSolve = new JButton();
         this.menuBar = new JMenuBar();
         this.menuItemFile = new JMenu();
         this.menuItemClearOutput = new JMenuItem();
@@ -451,6 +453,12 @@ public class UINew extends JFrame implements IApplication {
         this.toolBarStop.setToolTipText("Terminates the current process.");
         this.toolBarStop.addActionListener(new TerminateAction());
         this.toolBar.add(this.toolBarStop);
+        
+        this.toolBarSolve.setText("Solve!!");
+        //this.toolBarStop.setIcon(ImageUtil.createImageIcon("/image/stop.png", "Terminate"));
+        this.toolBarSolve.setToolTipText("Automaticly Solves Given Text.");
+        this.toolBarSolve.addActionListener(new SolveAction());
+        this.toolBar.add(this.toolBarSolve);
    
         //this.toolBar.add(ButtonUtil.createIconButton(ImageUtil.createImageIcon("/image/text_letterspacing.png", "Remove Letters")));
 		
@@ -1196,6 +1204,26 @@ public class UINew extends JFrame implements IApplication {
 				UINew.this.progressValue.setIndeterminate(false);
 				UINew.this.progressBar.setValue(0);
 			}
+		}
+    }
+    
+    public class SolveAction implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			final String text = UINew.this.inputTextArea.getText();
+			
+			if(text == null || text.isEmpty())
+				return;
+			
+			UINew.this.thread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					AutoSolver.solve(text, output);
+				}
+			});
+			UINew.this.thread.start();
 		}
     }
     
@@ -3524,6 +3552,7 @@ public class UINew extends JFrame implements IApplication {
     private JButton toolBarSettings;
     private JButton toolBarStart;
     private JButton toolBarStop;
+    private JButton toolBarSolve;
     private JMenuBar menuBar;
     private JMenu menuItemFile;
 	private JMenuItem menuItemClearOutput;
