@@ -135,7 +135,7 @@ import nationalcipher.registry.EncrypterRegistry;
  *
  * @author Alex
  */
-public class UINew extends JFrame implements IApplication {
+public class NationalCipherUI extends JFrame implements IApplication {
 
 	public static byte[] BEST_SOULTION;
 	public static ShowTopSolutionsAction topSolutions;
@@ -149,7 +149,7 @@ public class UINew extends JFrame implements IApplication {
 	private List<JDialog> dialogs;
 	private List<JDialog> lastStates;
 	
-    public UINew() {
+    public NationalCipherUI() {
     	super("Cryptography Solver");
     	this.settings = new Settings();
     	this.threadTimer = new Timer();
@@ -217,7 +217,7 @@ public class UINew extends JFrame implements IApplication {
 			this.dialog.add(new JLabel(imageIcon));
 			this.dialog.setMinimumSize(new Dimension(imageIcon.getIconWidth() + 20, imageIcon.getIconHeight() + this.dialog.getHeight() + 30));
 			this.dialog.setVisible(true);
-			UINew.this.addDialog(this.dialog, false);
+			NationalCipherUI.this.addDialog(this.dialog, false);
 		}
     }
 
@@ -229,23 +229,23 @@ public class UINew extends JFrame implements IApplication {
 		Threads.runTask(new Runnable() {
 			@Override
 			public void run() {
-				UINew.this.output.println("Loading data files\n	TranverseTree");
+				NationalCipherUI.this.output.println("Loading data files\n	TranverseTree");
 				//TraverseTree.onLoad();
-				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
-				UINew.this.output.println("	Dictinary");
+				NationalCipherUI.this.progressBar.setValue(progressBar.getValue() + 1);
+				NationalCipherUI.this.output.println("	Dictinary");
 				Dictionary.onLoad();
-				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
-				UINew.this.output.println("	Word statitics");
+				NationalCipherUI.this.progressBar.setValue(progressBar.getValue() + 1);
+				NationalCipherUI.this.output.println("	Word statitics");
 				ReadableText.loadFile();
-				UINew.this.progressBar.setValue(progressBar.getValue() + 1);
+				NationalCipherUI.this.progressBar.setValue(progressBar.getValue() + 1);
 				
 				for(ILanguage language : Languages.languages) {
-					UINew.this.output.println("	Lang(" + language.getName() + ")");
+					NationalCipherUI.this.output.println("	Lang(" + language.getName() + ")");
 					language.loadNGramData();
-					UINew.this.progressBar.setValue(progressBar.getValue() + 1);
+					NationalCipherUI.this.progressBar.setValue(progressBar.getValue() + 1);
 				}
 			
-				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(UINew.class.getResourceAsStream("/assets/trigraph.txt")));
+				BufferedReader updateReader3 = new BufferedReader(new InputStreamReader(NationalCipherUI.class.getResourceAsStream("/assets/trigraph.txt")));
 
 				String[] split = null;
 				try {
@@ -261,8 +261,8 @@ public class UINew extends JFrame implements IApplication {
 				
 				SwingHelper.rewindAllChildComponents(stateMap);
 		
-				UINew.this.progressBar.setValue(0);
-				UINew.this.output.clear();
+				NationalCipherUI.this.progressBar.setValue(0);
+				NationalCipherUI.this.output.clear();
 			}
 		});
 		
@@ -275,7 +275,7 @@ public class UINew extends JFrame implements IApplication {
 			public void windowStateChanged(WindowEvent event) {
 				int newState = event.getNewState();
 				if((newState & Frame.ICONIFIED) == Frame.ICONIFIED)
-					for(JDialog dialog : UINew.this.dialogs) 
+					for(JDialog dialog : NationalCipherUI.this.dialogs) 
 						dialog.setVisible(false);
 			}
 		});
@@ -283,14 +283,14 @@ public class UINew extends JFrame implements IApplication {
 			
             @Override
             public void windowDeactivated(WindowEvent e) {
-            	for(JDialog dialog : UINew.this.dialogs)
+            	for(JDialog dialog : NationalCipherUI.this.dialogs)
             		dialog.setVisible(false);
             }
 
             @Override
             public void windowActivated(WindowEvent e) {
-            	for(JDialog dialog : UINew.this.dialogs)
-            		dialog.setVisible(UINew.this.lastStates.contains(dialog));
+            	for(JDialog dialog : NationalCipherUI.this.dialogs)
+            		dialog.setVisible(NationalCipherUI.this.lastStates.contains(dialog));
             }
         });
 		
@@ -925,9 +925,9 @@ public class UINew extends JFrame implements IApplication {
 
     		this.dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource(icon)));
     		this.dialog.setFocusableWindowState(false);
-    		UINew.this.dialogs.add(this.dialog);
+    		NationalCipherUI.this.dialogs.add(this.dialog);
     		
-    		UINew.this.inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
+    		NationalCipherUI.this.inputTextArea.getDocument().addDocumentListener(new DocumentUtil.DocumentChangeAdapter() {
 				@Override
 				public void onUpdate(DocumentEvent event) {
 					if(NCCDialog.this.dialog.isVisible())
@@ -1002,12 +1002,12 @@ public class UINew extends JFrame implements IApplication {
 				statText += "\n *?!: " + StringTransformer.countOtherChars(inputText);
 				Set<Character> uniqueChars = StringTransformer.getUniqueCharSet(inputText);
 				statText += "\n Unique Characters: " + uniqueChars.size() + " \n" + uniqueChars;
-				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, UINew.this.getLanguage());
-				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, UINew.this.getLanguage());
-				UINew.this.statTextArea.setText(statText);
+				statText += "\nSuggested Fitness: " + TextFitness.getEstimatedFitness(inputText, NationalCipherUI.this.getLanguage());
+				statText += "\nActual Fitness: " + TextFitness.scoreFitnessQuadgrams(inputText, NationalCipherUI.this.getLanguage());
+				NationalCipherUI.this.statTextArea.setText(statText);
 				
-				UINew.this.menuItemBinary.setEnabled(inputText.length() != 0 && inputText.replaceAll("[^0-1]", "").length() == inputText.length());
-				UINew.this.menuItemEncode.setEnabled(inputText.length() != 0);
+				NationalCipherUI.this.menuItemBinary.setEnabled(inputText.length() != 0 && inputText.replaceAll("[^0-1]", "").length() == inputText.length());
+				NationalCipherUI.this.menuItemEncode.setEnabled(inputText.length() != 0);
 			} 
 			catch(BadLocationException e) {
 				e.printStackTrace();
@@ -1082,17 +1082,17 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		DecryptionMethod lastMethod = (DecryptionMethod)UINew.this.decryptionType.getSelectedItem();
-    		UINew.this.decryptionType.removeAllItems();
-    		if(UINew.this.hasCipherAttack()) {
-	    		CipherAttack decrypt = UINew.this.getCipherAttack();
+    		DecryptionMethod lastMethod = (DecryptionMethod)NationalCipherUI.this.decryptionType.getSelectedItem();
+    		NationalCipherUI.this.decryptionType.removeAllItems();
+    		if(NationalCipherUI.this.hasCipherAttack()) {
+	    		CipherAttack decrypt = NationalCipherUI.this.getCipherAttack();
 	    		List<DecryptionMethod> methods = decrypt.getAttackMethods();
 	    		
 	    		for(DecryptionMethod method : methods)
-	    			UINew.this.decryptionType.addItem(method);
+	    			NationalCipherUI.this.decryptionType.addItem(method);
 	    		
 	    		if(methods.contains(lastMethod))
-	    			UINew.this.decryptionType.setSelectedItem(lastMethod);
+	    			NationalCipherUI.this.decryptionType.setSelectedItem(lastMethod);
     		}
     	}
     }
@@ -1101,7 +1101,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		JDialog dialog = new JDialog(UINew.this);
+    		JDialog dialog = new JDialog(NationalCipherUI.this);
     		
     		dialog.setTitle("Cipher Settings");
     		
@@ -1127,7 +1127,7 @@ public class UINew extends JFrame implements IApplication {
     		
 	        CipherAttack force = getCipherAttack();
 	        force.createSettingsUI(dialog, panel);
-    		dialog.setLocationRelativeTo(UINew.this);
+    		dialog.setLocationRelativeTo(NationalCipherUI.this);
     		
 	        
     		dialog.pack();
@@ -1139,28 +1139,28 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-			final String text = UINew.this.inputTextArea.getText();
+			final String text = NationalCipherUI.this.inputTextArea.getText();
 			
 			if(text == null || text.isEmpty())
 				return;
 			
-			UINew.this.thread = new Thread(new Runnable() {
+			NationalCipherUI.this.thread = new Thread(new Runnable() {
 
 				@Override
 				public void run() {
-					UINew.this.threadTimer.restart();
-					UINew.BEST_SOULTION = null;
-					UINew.topSolutions.reset();
+					NationalCipherUI.this.threadTimer.restart();
+					NationalCipherUI.BEST_SOULTION = null;
+					NationalCipherUI.topSolutions.reset();
 					
-					CipherAttack force = UINew.this.getCipherAttack();
-					DecryptionMethod method = (DecryptionMethod)UINew.this.decryptionType.getSelectedItem();
-					UINew.this.output.println("Cipher: %s, Method: %s",force.getDisplayName(), method);
-					UINew.this.output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
-					UINew.this.progressValue = new ProgressValueNC(1000, UINew.this.progressBar, UINew.this.getSettings());
+					CipherAttack force = NationalCipherUI.this.getCipherAttack();
+					DecryptionMethod method = (DecryptionMethod)NationalCipherUI.this.decryptionType.getSelectedItem();
+					NationalCipherUI.this.output.println("Cipher: %s, Method: %s",force.getDisplayName(), method);
+					NationalCipherUI.this.output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
+					NationalCipherUI.this.progressValue = new ProgressValueNC(1000, NationalCipherUI.this.progressBar, NationalCipherUI.this.getSettings());
 					if(!settings.updateProgress())
-						UINew.this.progressValue.setIndeterminate(true);
+						NationalCipherUI.this.progressValue.setIndeterminate(true);
 					try {
-						force.attemptAttack(text, method, UINew.this);
+						force.attemptAttack(text, method, NationalCipherUI.this);
 					}
 					catch(Exception e) {
 						output.println(e.toString());
@@ -1168,22 +1168,22 @@ public class UINew extends JFrame implements IApplication {
 					}
 					force.onTermination(false);
 					DecimalFormat df = new DecimalFormat("#.#");
-					UINew.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+					NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
 		
-					UINew.this.toolBarStart.setEnabled(true);
-					UINew.this.toolBarStop.setEnabled(false);
-					UINew.this.menuItemSettings.setEnabled(true);
+					NationalCipherUI.this.toolBarStart.setEnabled(true);
+					NationalCipherUI.this.toolBarStop.setEnabled(false);
+					NationalCipherUI.this.menuItemSettings.setEnabled(true);
 					
-					UINew.this.progressValue.setIndeterminate(false);
-					UINew.this.progressBar.setValue(0);
+					NationalCipherUI.this.progressValue.setIndeterminate(false);
+					NationalCipherUI.this.progressBar.setValue(0);
 				}
 				
 			});
-			UINew.this.thread.setDaemon(true);
-			UINew.this.toolBarStart.setEnabled(false);
-			UINew.this.toolBarStop.setEnabled(true);
-			UINew.this.menuItemSettings.setEnabled(false);
-			UINew.this.thread.start();
+			NationalCipherUI.this.thread.setDaemon(true);
+			NationalCipherUI.this.toolBarStart.setEnabled(false);
+			NationalCipherUI.this.toolBarStop.setEnabled(true);
+			NationalCipherUI.this.menuItemSettings.setEnabled(false);
+			NationalCipherUI.this.thread.start();
 		}
     }
     
@@ -1191,18 +1191,18 @@ public class UINew extends JFrame implements IApplication {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			if(UINew.this.thread != null) {
-				UINew.this.thread.stop();
-				CipherAttack force = UINew.this.getCipherAttack();
+			if(NationalCipherUI.this.thread != null) {
+				NationalCipherUI.this.thread.stop();
+				CipherAttack force = NationalCipherUI.this.getCipherAttack();
 				force.onTermination(true);
 				DecimalFormat df = new DecimalFormat("#.#");
-				UINew.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
-				UINew.this.toolBarStart.setEnabled(true);
-				UINew.this.toolBarStop.setEnabled(false);
-				UINew.this.menuItemSettings.setEnabled(true);
+				NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+				NationalCipherUI.this.toolBarStart.setEnabled(true);
+				NationalCipherUI.this.toolBarStop.setEnabled(false);
+				NationalCipherUI.this.menuItemSettings.setEnabled(true);
 				
-				UINew.this.progressValue.setIndeterminate(false);
-				UINew.this.progressBar.setValue(0);
+				NationalCipherUI.this.progressValue.setIndeterminate(false);
+				NationalCipherUI.this.progressBar.setValue(0);
 			}
 		}
     }
@@ -1211,19 +1211,19 @@ public class UINew extends JFrame implements IApplication {
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			final String text = UINew.this.inputTextArea.getText();
+			final String text = NationalCipherUI.this.inputTextArea.getText();
 			
 			if(text == null || text.isEmpty())
 				return;
 			
-			UINew.this.thread = new Thread(new Runnable() {
+			NationalCipherUI.this.thread = new Thread(new Runnable() {
 
 				@Override
 				public void run() {
 					AutoSolver.solve(text, output);
 				}
 			});
-			UINew.this.thread.start();
+			NationalCipherUI.this.thread.start();
 		}
     }
     
@@ -1239,22 +1239,22 @@ public class UINew extends JFrame implements IApplication {
 
 				@Override
 				public void run() {
-					UINew.this.dispose();
+					NationalCipherUI.this.dispose();
 					if(!isUndecorated()) {
-						FullScreenAction.this.lastSize = UINew.this.getSize();
-						FullScreenAction.this.lastLocation = UINew.this.getLocation();
-						FullScreenAction.this.lastState = UINew.this.getExtendedState();
-						UINew.this.setExtendedState(Frame.MAXIMIZED_BOTH);
-						UINew.this.setUndecorated(true);
+						FullScreenAction.this.lastSize = NationalCipherUI.this.getSize();
+						FullScreenAction.this.lastLocation = NationalCipherUI.this.getLocation();
+						FullScreenAction.this.lastState = NationalCipherUI.this.getExtendedState();
+						NationalCipherUI.this.setExtendedState(Frame.MAXIMIZED_BOTH);
+						NationalCipherUI.this.setUndecorated(true);
 					}
 					else {
-						UINew.this.setSize(lastSize);
-						UINew.this.setLocation(lastLocation);
-						UINew.this.setExtendedState(lastState);
-						UINew.this.setUndecorated(false);
+						NationalCipherUI.this.setSize(lastSize);
+						NationalCipherUI.this.setLocation(lastLocation);
+						NationalCipherUI.this.setExtendedState(lastState);
+						NationalCipherUI.this.setUndecorated(false);
 					}
 					
-					UINew.this.setVisible(true);
+					NationalCipherUI.this.setVisible(true);
 				}
 			});
 		}
@@ -1264,7 +1264,7 @@ public class UINew extends JFrame implements IApplication {
 
   		@Override
   		public void actionPerformed(ActionEvent event) {
-  			UINew.this.output.clear();
+  			NationalCipherUI.this.output.clear();
   		}
     }
     
@@ -1283,7 +1283,7 @@ public class UINew extends JFrame implements IApplication {
 		public void actionPerformed(ActionEvent event) {
     		try {
 				String data = (String)Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-				UINew.this.inputTextArea.setText(data);
+				NationalCipherUI.this.inputTextArea.setText(data);
 			} 
     		catch(Exception e) {
 				e.printStackTrace();
@@ -1355,7 +1355,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
 		}
     	
     	public void sortSolutions() {
@@ -1385,7 +1385,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = UINew.this.inputTextArea.getText();
+    		String binaryText = NationalCipherUI.this.inputTextArea.getText();
 			String[] split = StringTransformer.splitInto(binaryText, 5);
 			
 			String cipherText = "";
@@ -1404,7 +1404,7 @@ public class UINew extends JFrame implements IApplication {
 					break;
 				}
 			}
-			UINew.this.inputTextArea.setText(cipherText);
+			NationalCipherUI.this.inputTextArea.setText(cipherText);
 		}
     }
     
@@ -1412,7 +1412,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = UINew.this.inputTextArea.getText();
+    		String binaryText = NationalCipherUI.this.inputTextArea.getText();
 			//TODO
 			//inputTextArea.setText(cipherText);
 		}
@@ -1422,10 +1422,10 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = UINew.this.inputTextArea.getText();
+    		String binaryText = NationalCipherUI.this.inputTextArea.getText();
     		char[] chars = binaryText.toCharArray();
     		ArrayUtil.shuffle(chars);
-    		UINew.this.inputTextArea.setText(new String(chars));	
+    		NationalCipherUI.this.inputTextArea.setText(new String(chars));	
 		}
     }
     
@@ -1433,8 +1433,8 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		String binaryText = StringTransformer.reverseString(UINew.this.inputTextArea.getText());
-    		UINew.this.inputTextArea.setText(binaryText);	
+    		String binaryText = StringTransformer.reverseString(NationalCipherUI.this.inputTextArea.getText());
+    		NationalCipherUI.this.inputTextArea.setText(binaryText);	
 		}
     }
     
@@ -1476,14 +1476,14 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		UINew.this.addDialog(this.dialog);
+     		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
     	
     	@Override
     	public void updateOnWithTextArea() {
-    		String split = ReadableText.parseText(UINew.this.inputTextArea.getText().replaceAll(" ", ""));
+    		String split = ReadableText.parseText(NationalCipherUI.this.inputTextArea.getText().replaceAll(" ", ""));
     		WordSplitAction.this.textOutput.setText(split.toLowerCase());
     		WordSplitAction.this.textOutput.revalidate();
     	}
@@ -1500,7 +1500,7 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void windowClosed(WindowEvent event) {
-			UINew.this.removeDialog(this.dialog);
+			NationalCipherUI.this.removeDialog(this.dialog);
 		}
     }
     
@@ -1514,7 +1514,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.updateOnWithTextArea();
 		}
@@ -1641,7 +1641,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.updateOnWithTextArea();
 		}
@@ -1676,7 +1676,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -1723,7 +1723,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.updateOnWithTextArea();
 		}
@@ -1827,7 +1827,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -1874,7 +1874,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		UINew.this.addDialog(this.dialog);
+     		NationalCipherUI.this.addDialog(this.dialog);
     		this.updateOnWithTextArea();
 		}
     	
@@ -1896,7 +1896,7 @@ public class UINew extends JFrame implements IApplication {
         		    double bestIC = Double.POSITIVE_INFINITY;
     		    
 	    		    for(int period = 2; period <= 50; ++period) {
-	    		    	double sqDiff = Math.abs(StatCalculator.calculateNicodemusIC(text, i + 1, period) - UINew.this.settings.getLanguage().getNormalCoincidence()) * 1000;
+	    		    	double sqDiff = Math.abs(StatCalculator.calculateNicodemusIC(text, i + 1, period) - NationalCipherUI.this.settings.getLanguage().getNormalCoincidence()) * 1000;
 	    		    	
 	    		    	if(sqDiff < bestIC)
 	    		    		bestPeriod = period;
@@ -1923,7 +1923,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.updateOnWithTextArea();
 		}
@@ -1991,7 +1991,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.updateOnWithTextArea();
 		}
@@ -2096,7 +2096,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.threadCancel.restart();
 		}
@@ -2206,7 +2206,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		UINew.this.addDialog(this.dialog);
+     		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -2240,7 +2240,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		UINew.this.addDialog(this.dialog);
+     		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -2293,7 +2293,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
     		
     		this.updateOnWithTextArea();
 		}
@@ -2348,7 +2348,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		UINew.this.addDialog(this.dialog);
+     		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -2686,7 +2686,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-     		UINew.this.addDialog(this.dialog);
+     		NationalCipherUI.this.addDialog(this.dialog);
     		//this.cardOrder = Solitaire.nextCardOrder(this.cardOrder);
 		}
 
@@ -2999,7 +2999,7 @@ public class UINew extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		this.dialog.setVisible(true);
-    		UINew.this.addDialog(this.dialog);
+    		NationalCipherUI.this.addDialog(this.dialog);
      		
     		this.updateOnWithTextArea();
 		}
@@ -3010,7 +3010,7 @@ public class UINew extends JFrame implements IApplication {
     		int length = text.length();
     		
     		String outputText = "Length: " + length;
-			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, UINew.this.getLanguage()), 4);
+			outputText += "\nEstimated Fitness for length: " + Rounder.round(TextFitness.getEstimatedFitness(text, NationalCipherUI.this.getLanguage()), 4);
     		
     		if(!text.isEmpty()) {
 
@@ -3127,7 +3127,7 @@ public class UINew extends JFrame implements IApplication {
     			Image newimg = img.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH) ;  
     			ImageIcon icon = new ImageIcon(newimg);
     			
-    			int n = JOptionPane.showOptionDialog(UINew.this,
+    			int n = JOptionPane.showOptionDialog(NationalCipherUI.this,
     					"This text doesn't seem to be English\nDo you wish to continue?",
     					"Random Encryption",
     				    JOptionPane.YES_NO_CANCEL_OPTION,
@@ -3141,15 +3141,15 @@ public class UINew extends JFrame implements IApplication {
     		}
     		
     		if(!text.isEmpty()) {
-    			List<String> possible = EncrypterRegistry.getAllWithDifficulty(UINew.this.encodingDiffSlider.getValue());
+    			List<String> possible = EncrypterRegistry.getAllWithDifficulty(NationalCipherUI.this.encodingDiffSlider.getValue());
     			IRandEncrypter randomEncrypt = EncrypterRegistry.getFromName(RandomUtil.pickRandomElement(possible));
     			String cipherText = randomEncrypt.randomlyEncrypt(text);
-    			UINew.this.output.println(randomEncrypt.getClass().getSimpleName());
-    			UINew.this.output.println(StringTransformer.repeat("\n", 25));
+    			NationalCipherUI.this.output.println(randomEncrypt.getClass().getSimpleName());
+    			NationalCipherUI.this.output.println(StringTransformer.repeat("\n", 25));
     			StringSelection selection = new StringSelection(cipherText);
 	    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
     			
-	    		UINew.this.output.println(cipherText);
+	    		NationalCipherUI.this.output.println(cipherText);
     		}
 		}
     }
@@ -3165,8 +3165,8 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		UINew.this.getSettings().setLanguage(this.language);
-    		UINew.this.menuItemCurrentLanguage.setText("Current: " + this.language.getName());
+    		NationalCipherUI.this.getSettings().setLanguage(this.language);
+    		NationalCipherUI.this.menuItemCurrentLanguage.setText("Current: " + this.language.getName());
 		}
     }
     
@@ -3180,7 +3180,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		UINew.this.getSettings().setKeywordCreationId(this.id);
+    		NationalCipherUI.this.getSettings().setKeywordCreationId(this.id);
 		}
     }
 
@@ -3194,7 +3194,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		UINew.this.getSettings().checkShift = this.menuItem.isSelected();
+    		NationalCipherUI.this.getSettings().checkShift = this.menuItem.isSelected();
 		}
     }
     
@@ -3208,7 +3208,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		UINew.this.getSettings().checkReverse = this.menuItem.isSelected();
+    		NationalCipherUI.this.getSettings().checkReverse = this.menuItem.isSelected();
 		}
     }
     
@@ -3222,7 +3222,7 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		UINew.this.getSettings().checkRoutes = this.menuItem.isSelected();
+    		NationalCipherUI.this.getSettings().checkRoutes = this.menuItem.isSelected();
 		}
     }
     private class SimulatedAnnealingAction implements KeyListener {
@@ -3242,7 +3242,7 @@ public class UINew extends JFrame implements IApplication {
 
 		@Override
 		public void keyReleased(KeyEvent arg0) {
-			UINew.this.getSettings().getSA().set(this.id, Double.valueOf(this.textComponent.getText()));
+			NationalCipherUI.this.getSettings().getSA().set(this.id, Double.valueOf(this.textComponent.getText()));
 		}
 
 		@Override
@@ -3271,9 +3271,9 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			UINew.this.getSettings().getSA().set(0, this.tempStart);
-			UINew.this.getSettings().getSA().set(1, this.tempStep);
-			UINew.this.getSettings().getSA().set(2, (double)this.count);
+			NationalCipherUI.this.getSettings().getSA().set(0, this.tempStart);
+			NationalCipherUI.this.getSettings().getSA().set(1, this.tempStep);
+			NationalCipherUI.this.getSettings().getSA().set(2, (double)this.count);
 			this.tempSetting.setText(ValueFormat.getNumber(this.tempStart));
 
 			this.tempStepSetting.setText(ValueFormat.getNumber(this.tempStep));
@@ -3293,16 +3293,16 @@ public class UINew extends JFrame implements IApplication {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			if(this.checkBox.isSelected()) {
-				UINew.this.getSettings().updateProgressBars = true;
-				UINew.this.progressBar.setString("0.0%");
+				NationalCipherUI.this.getSettings().updateProgressBars = true;
+				NationalCipherUI.this.progressBar.setString("0.0%");
 			}
 			else {
-				UINew.this.progressBar.setValue(0);
-				UINew.this.progressBar.setString("Inactive");
-				UINew.this.settings.updateProgressBars = false;
+				NationalCipherUI.this.progressBar.setValue(0);
+				NationalCipherUI.this.progressBar.setString("Inactive");
+				NationalCipherUI.this.settings.updateProgressBars = false;
 			}
 
-			UINew.this.keyPanel.setIterationUnsed();
+			NationalCipherUI.this.keyPanel.setIterationUnsed();
 		}
     }
     
@@ -3316,7 +3316,7 @@ public class UINew extends JFrame implements IApplication {
     	
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			UINew.this.settings.collectSolutions = this.checkBox.isSelected();
+			NationalCipherUI.this.settings.collectSolutions = this.checkBox.isSelected();
 		}
     }
     
@@ -3324,7 +3324,7 @@ public class UINew extends JFrame implements IApplication {
 
     	@Override
     	public void actionPerformed(ActionEvent event) {
-    		JDialog dialog = new JDialog(UINew.this);
+    		JDialog dialog = new JDialog(NationalCipherUI.this);
     		
     		dialog.setTitle("Crib Input");
     		
@@ -3349,7 +3349,7 @@ public class UINew extends JFrame implements IApplication {
     	    dialog.add(panel);
     		
     	    panel.add(new JTextArea());
-    		dialog.setLocationRelativeTo(UINew.this);
+    		dialog.setLocationRelativeTo(NationalCipherUI.this);
     		
 	        
     		dialog.pack();
@@ -3362,7 +3362,7 @@ public class UINew extends JFrame implements IApplication {
 
     	@Override
     	public void actionPerformed(ActionEvent event) {
-    		JDialog dialog = new JDialog(UINew.this);
+    		JDialog dialog = new JDialog(NationalCipherUI.this);
     		
     		dialog.setTitle("Add words to Dictonary");
     		
@@ -3431,7 +3431,7 @@ public class UINew extends JFrame implements IApplication {
     	    });
     	    panel.add(scrollArea);
     	    panel.add(button);
-    		dialog.setLocationRelativeTo(UINew.this);
+    		dialog.setLocationRelativeTo(NationalCipherUI.this);
     		
 	        
     		dialog.pack();
@@ -3450,12 +3450,12 @@ public class UINew extends JFrame implements IApplication {
     	
     	@Override
 		public void actionPerformed(ActionEvent event) {
-    		UINew.this.menuItemCurrentAttack.setText("Target: " + this.menuItem.getText());
+    		NationalCipherUI.this.menuItemCurrentAttack.setText("Target: " + this.menuItem.getText());
     		
     		int index = 0;
     		for(String name : AttackRegistry.getNames()) {
     			if(this.menuItem.getText().equals(name)) {
-    				UINew.this.cipherSelect.setSelectedIndex(index);
+    				NationalCipherUI.this.cipherSelect.setSelectedIndex(index);
     				break;
     			}
     			index++;

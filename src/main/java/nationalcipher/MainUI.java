@@ -6,11 +6,11 @@ import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import nationalcipher.ui.UINew;
+import nationalcipher.ui.NationalCipherUI;
 
-public class MainNew {
+public class MainUI {
 	
-	public static UINew ui;
+	public static NationalCipherUI ui;
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -19,10 +19,10 @@ public class MainNew {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } 
                 catch(Exception ex) {
-                    Logger.getLogger(MainNew.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                ui = new UINew();
+                ui = new NationalCipherUI();
                 ui.setVisible(true);
             }
         });

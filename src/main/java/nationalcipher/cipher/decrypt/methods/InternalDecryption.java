@@ -7,7 +7,7 @@ import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.KeyPanel;
-import nationalcipher.ui.UINew;
+import nationalcipher.ui.NationalCipherUI;
 
 public class InternalDecryption {
 
@@ -40,13 +40,13 @@ public class InternalDecryption {
 	public void addSolution(Solution solution) {
 		if(this.getSettings().collectSolutions())
 			if(solution.score > this.UPPER_ESTIMATE)
-				if(UINew.topSolutions.addSolution(solution))
+				if(NationalCipherUI.topSolutions.addSolution(solution))
 					solution.bakeSolution();
 	}
 	
 	public void resetSolution() {
 		this.bestSolution = Solution.WORST_SOLUTION;
-		UINew.topSolutions.reset();
+		NationalCipherUI.topSolutions.reset();
 	}
 	
 	public void resetIteration() {

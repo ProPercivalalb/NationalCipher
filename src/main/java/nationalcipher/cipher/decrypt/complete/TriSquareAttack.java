@@ -10,7 +10,7 @@ import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
-import nationalcipher.ui.UINew;
+import nationalcipher.ui.NationalCipherUI;
 
 public class TriSquareAttack extends CipherAttack {
 
@@ -112,7 +112,7 @@ public class TriSquareAttack extends CipherAttack {
 		@Override
 		public boolean endIteration() {
 			this.out().println("%s", this.bestSolution);
-			UINew.BEST_SOULTION = this.bestSolution.getText();
+			NationalCipherUI.BEST_SOULTION = this.bestSolution.getText();
 			this.getProgress().setValue(0);
 			return false;
 		}

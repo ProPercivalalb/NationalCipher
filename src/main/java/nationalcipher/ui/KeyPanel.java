@@ -60,6 +60,6 @@ public class KeyPanel extends JPanel {
 	public void updateSolution(Solution solution) {
 		this.fitness.setText("" + solution.score);
 		this.key.setText(solution.keyString);
-		UINew.BEST_SOULTION = solution.getText();
+		NationalCipherUI.BEST_SOULTION = solution.getText();
 	}
 }
