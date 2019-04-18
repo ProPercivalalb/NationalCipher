@@ -9,7 +9,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.AffineKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
@@ -26,7 +25,7 @@ public class AffineAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			app.getProgress().addMaxValue(312);
-			KeyIterator.iterateAffineKey(task);
+			KeyIterator.iterateAffineKey(task::onIteration);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			List<Character> chars = StringAnalyzer.getOrderedCharacterCount(task.cipherText);
@@ -45,13 +44,12 @@ public class AffineAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class AffineTask extends InternalDecryption implements AffineKey {
+	public class AffineTask extends InternalDecryption {
 
 		public AffineTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(int a, int b) {
 			this.lastSolution = new Solution(Affine.decode(this.cipherText, a, b), this.getLanguage());
 			

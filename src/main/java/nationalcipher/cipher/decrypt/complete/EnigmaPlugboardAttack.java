@@ -25,7 +25,7 @@ import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -308,7 +308,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class EnigmaTask extends InternalDecryption implements ArrayPermutations {
+	public class EnigmaTask extends InternalDecryption implements IntArrayPermutations {
 
 		private EnigmaMachine machine;
 		private int reflectorTest; //-1 if test all, otherwise is the index of the reflector to test

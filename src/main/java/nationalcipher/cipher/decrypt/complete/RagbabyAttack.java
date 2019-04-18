@@ -5,7 +5,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
@@ -22,19 +21,18 @@ public class RagbabyAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			app.getProgress().addMaxValue(26);
-			KeyIterator.iterateIntegerKey(task, 0, 26, 1);
+			KeyIterator.iterateIntegerKey(task::onIteration, 0, 26, 1);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class RagbabyTask extends InternalDecryption implements IntegerKey {
+	public class RagbabyTask extends InternalDecryption {
 
 		public RagbabyTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(int no) {
 			this.lastSolution = new Solution(Caesar.decode(this.cipherText, no), this.getLanguage());
 			

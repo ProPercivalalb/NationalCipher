@@ -11,7 +11,6 @@ import nationalcipher.cipher.base.other.Pollux;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.CharacterKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -32,7 +31,7 @@ public class PolluxAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			app.getProgress().addMaxValue(59049);
-			KeyIterator.iteratePollux(task);
+			KeyIterator.iterateObject(task::onIteration, Character.class, 10, KeyGeneration.ALL_POLLUX_CHARS);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			app.out().println("WORK IN PROGROSS");
@@ -57,16 +56,15 @@ public class PolluxAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PolluxTask extends SimulatedAnnealing implements CharacterKey {
+	public class PolluxTask extends SimulatedAnnealing {
 
-		public char[] bestKey, bestMaximaKey, lastKey;
+		public Character[] bestKey, bestMaximaKey, lastKey;
 		
 		public PolluxTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
-		public void onIteration(char[] key) {
+		public void onIteration(Character[] key) {
 			this.lastSolution = new Solution(Pollux.decode(this.cipherText, key), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {

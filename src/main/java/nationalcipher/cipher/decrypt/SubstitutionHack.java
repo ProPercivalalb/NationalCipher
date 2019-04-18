@@ -53,7 +53,7 @@ public class SubstitutionHack extends SimulatedAnnealing {
 		
 	}
 	
-	public char[] getAlphabet() {
+	public Character[] getAlphabet() {
 		return KeyGeneration.ALL_26_CHARS;
 	}
 }

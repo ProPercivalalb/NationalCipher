@@ -218,8 +218,8 @@ public class KeyManipulation {
 		return copy;
 	}
 	
-	public static char[] swapMorseIndex(char[] order) {
-	    order[RandomUtil.pickRandomInt(order.length)] = RandomUtil.pickRandomChar(KeyGeneration.ALL_POLLUX_CHARS);
+	public static Character[] swapMorseIndex(Character[] order) {
+	    order[RandomUtil.pickRandomInt(order.length)] = RandomUtil.pickRandomElement(KeyGeneration.ALL_POLLUX_CHARS);
 	    return order;
 	}
 	

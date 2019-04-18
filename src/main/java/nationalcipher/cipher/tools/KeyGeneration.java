@@ -4,26 +4,27 @@ import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.math.matrics.Matrix;
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 
 public class KeyGeneration {
 
-	public final static char[] ALL_POLLUX_CHARS = "X.-".toCharArray();
+	public final static Character[] ALL_POLLUX_CHARS = PrimTypeUtil.toCharacterArray("X.-");
 	
-	public final static char[] ALL_36_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-	public final static char[] ALL_27_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".toCharArray();
-	public final static char[] ALL_26_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-	public final static char[] ALL_25_CHARS = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
+	public final static Character[] ALL_36_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+	public final static Character[] ALL_27_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ#");
+	public final static Character[] ALL_26_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	public final static Character[] ALL_25_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWXYZ");
 	
 	public static String createRepeatingShortKey26(int length) {
-		char[] key = new char[length];
+		Character[] key = new Character[length];
 		
 		for(int i = 0; i < length; i++)
-			key[i] = RandomUtil.pickRandomChar(ALL_26_CHARS);
+			key[i] = RandomUtil.pickRandomElement(ALL_26_CHARS);
 		
-		return new String(key);
+		return PrimTypeUtil.toString(key);
 	}
 	
 	public static String createShortKey26(int length) {
@@ -55,7 +56,7 @@ public class KeyGeneration {
 		return createLongKeyUniversal(ALL_36_CHARS);
 	}
 	
-	public static String createLongKeyUniversal(char[] charList) {
+	public static String createLongKeyUniversal(Character[] charList) {
 		List<Character> characters = ListUtil.toList(charList);
 		
 		char[] key = new char[characters.size()];
@@ -91,10 +92,10 @@ public class KeyGeneration {
 	
 	//Specific key generators
 	
-	public static char[] createPolluxKey() {
+	public static Character[] createPolluxKey() {
 		List<Character> characters = ListUtil.toList(ALL_POLLUX_CHARS);
 		
-		char[] key = new char[10];
+		Character[] key = new Character[10];
 		int i = 0;
 		
 		for(; i < characters.size(); i++) {
@@ -104,7 +105,7 @@ public class KeyGeneration {
 		}
 		
 		for(; i < key.length; i++)
-			key[i] = RandomUtil.pickRandomChar(ALL_POLLUX_CHARS);
+			key[i] = RandomUtil.pickRandomElement(ALL_POLLUX_CHARS);
 		
 		return ArrayUtil.shuffle(key);
 	}

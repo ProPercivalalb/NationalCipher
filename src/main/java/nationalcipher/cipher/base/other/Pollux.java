@@ -7,7 +7,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Pollux implements IRandEncrypter {
 	
-	public static String encode(String plainText, char[] key) {
+	public static String encode(String plainText, Character[] key) {
 		
 		String cipherText = "";
 		String morseText = "";
@@ -24,7 +24,7 @@ public class Pollux implements IRandEncrypter {
 		return cipherText;
 	}
 	
-	public static byte[] decode(char[] cipherText, char[] key) {
+	public static byte[] decode(char[] cipherText, Character[] key) {
 
 		char[] morseText = new char[cipherText.length];
 		

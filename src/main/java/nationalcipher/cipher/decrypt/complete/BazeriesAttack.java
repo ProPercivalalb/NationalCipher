@@ -5,7 +5,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
@@ -22,19 +21,18 @@ public class BazeriesAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			app.getProgress().addMaxValue(1000000);
-			KeyIterator.iterateIntegerKey(task, 1, 1000000, 1);
+			KeyIterator.iterateIntegerKey(task::onIteration, 1, 1000000, 1);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class BazeriesTask extends InternalDecryption implements IntegerKey {
+	public class BazeriesTask extends InternalDecryption {
 
 		public BazeriesTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(int no) {
 			this.lastSolution = new Solution(Bazeries.decode(this.cipherText, no), this.getLanguage());
 			

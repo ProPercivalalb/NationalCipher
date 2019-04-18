@@ -36,14 +36,14 @@ public class Keyword implements IRandEncrypter {
 	}
 	
 	
-	public static byte[] decodeWithAlphabet(char[] cipherText, byte[] plainText, char[] alphabet, String keyword) {
+	public static byte[] decodeWithAlphabet(char[] cipherText, byte[] plainText, Character[] alphabet, String keyword) {
 		
 		for(int i = 0; i < cipherText.length; i++) {
 			int index = keyword.indexOf(cipherText[i]);
 			if(index == -1)
 				plainText[i] = '@';
 			else
-				plainText[i] = (byte)alphabet[index];
+				plainText[i] = (byte)(char)alphabet[index];
 		}
 			
 

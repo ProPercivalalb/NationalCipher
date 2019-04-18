@@ -15,8 +15,7 @@ import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Nicodemus;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.PermutateString;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -116,7 +115,7 @@ public class NicodemusAttack extends CipherAttack {
 		}
 	}
 	
-	public class NicodemusTask extends KeySearch implements ShortCustomKey, PermutateString, ArrayPermutations {
+	public class NicodemusTask extends KeySearch implements ShortCustomKey, IntArrayPermutations {
 		
 		public NicodemusResult[] results;
 		
@@ -159,11 +158,10 @@ public class NicodemusAttack extends CipherAttack {
 		//Key search finds the characters in the key, permutate to find the real solution
 		@Override
 		public void foundBestSolutionForLength(Solution currentBestSolution) {
-			KeyIterator.permutateString(this, currentBestSolution.keyString);
+			KeyIterator.permutateString(this::onPermutate, currentBestSolution.keyString);
 		}
 	
 
-		@Override
 		public void onPermutate(String key) {
 			this.lastSolution = new Solution(Nicodemus.decode(this.cipherText, this.plainText, key, NicodemusAttack.this.type), this.getLanguage());
 			

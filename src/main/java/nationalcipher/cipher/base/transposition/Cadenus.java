@@ -1,5 +1,7 @@
 package nationalcipher.cipher.base.transposition;
 
+import java.util.Arrays;
+
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -42,22 +44,27 @@ public class Cadenus implements IRandEncrypter {
 	}
 	
 	public static byte[] decode(char[] cipherText, String key) {
-		int keyLength = key.length();
-
 	
 		int[] order = new int[key.length()];
 		
 		int p = 0;
-		for(char ch = 'A'; ch <= 'Z'; ++ch)
-			for(int i = 0; i < order.length; i++)
-				if(ch == key.charAt(i))
+		for(char ch = 'A'; ch <= 'Z'; ++ch) {
+			for(int i = 0; i < order.length; i++) {
+				if(ch == key.charAt(i)) {
 					order[p++] = i;
+				}
+			}
+		}
 
+		return decode(cipherText, key, order);
+	}
+	
+	public static byte[] decode(char[] cipherText, String key, int[] order) {
+		int keyLength = order.length;
 		
-
 		//Creates grid
 		byte[] grid = new byte[cipherText.length];
-		
+				
 		for(int j = 0; j < 25; j++) {
 			for(int i = 0; i < keyLength; i++) {
 				int newColumn = order[i];

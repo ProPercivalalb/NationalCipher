@@ -15,7 +15,7 @@ import nationalcipher.cipher.base.other.PeriodicGromark;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -66,7 +66,7 @@ public class PeriodicGromarkAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PeriodicGromarkTask extends KeySearch implements ShortCustomKey, ArrayPermutations {
+	public class PeriodicGromarkTask extends KeySearch implements ShortCustomKey, IntArrayPermutations {
 
 		public PeriodicGromarkTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

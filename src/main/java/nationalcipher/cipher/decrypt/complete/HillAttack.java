@@ -28,8 +28,7 @@ import nationalcipher.cipher.base.other.Hill;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.SquareMatrixKey;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -80,7 +79,7 @@ public class HillAttack extends CipherAttack {
 				app.getProgress().addMaxValue(TWENTY_SIX.pow((int)Math.pow(size, 2)));
 			
 			for(int size = sizeRange[0]; size <= sizeRange[1]; size++)
-				KeyIterator.iteratorSquareMatrixKey(task, size);
+				KeyIterator.iteratorSquareMatrixKey(task::onIteration, size);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			for(int size = sizeRange[0]; size <= sizeRange[1]; size++) {
@@ -190,7 +189,7 @@ public class HillAttack extends CipherAttack {
 		return equation;
 	}
 	
-	public class HillTask extends SimulatedAnnealing implements SquareMatrixKey, ArrayPermutations {
+	public class HillTask extends SimulatedAnnealing implements IntArrayPermutations {
 
 		private int size;
 		private int lengthSub;
@@ -202,7 +201,6 @@ public class HillAttack extends CipherAttack {
 			this.resultList = new DynamicResultList<HillSection>(8);
 		}
 
-		@Override
 		public void onIteration(Matrix matrix) {
 			try {
 				this.lastSolution = new Solution(Hill.decode(this.cipherText, this.plainText, matrix), this.getLanguage());

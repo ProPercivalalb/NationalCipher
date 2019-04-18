@@ -17,7 +17,7 @@ import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -89,7 +89,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class ColumnarTranspositionTask extends SimulatedAnnealing implements IntegerOrderedKey, ArrayPermutations {
+	public class ColumnarTranspositionTask extends SimulatedAnnealing implements IntegerOrderedKey, IntArrayPermutations {
 
 		public int period1;
 		public boolean readOffDefault;

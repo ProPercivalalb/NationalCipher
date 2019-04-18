@@ -10,7 +10,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -40,19 +39,18 @@ public class RailFenceAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
 			app.getProgress().addMaxValue(periodRange[1] - periodRange[0]);
-			KeyIterator.iterateIntegerKey(task, periodRange[0], periodRange[1], 1);
+			KeyIterator.iterateIntegerKey(task::onIteration, periodRange[0], periodRange[1], 1);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class RailFenceTask extends InternalDecryption implements IntegerKey {
+	public class RailFenceTask extends InternalDecryption {
 
 		public RailFenceTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(int no) {
 			for(int i = 0; i < (no - 1) * 2; i++) {
 				this.lastSolution = new Solution(RailFence.decode(this.cipherText, no, i), this.getLanguage());

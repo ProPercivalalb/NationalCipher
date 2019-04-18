@@ -16,7 +16,7 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -64,7 +64,7 @@ public class HillExtendedAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class HillExtendedTask extends InternalDecryption implements ArrayPermutations {
+	public class HillExtendedTask extends InternalDecryption implements IntArrayPermutations {
 
 		private int size;
 		private int lengthSub;

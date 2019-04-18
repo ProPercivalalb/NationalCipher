@@ -6,7 +6,7 @@ import java.util.HashSet;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ArrayPermutations;
+import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -144,7 +144,7 @@ public class Grille implements IRandEncrypter {
 			for(int c = 0; c < cols; c++)
 				key[count++] = r * size + c;
 		
-		KeyIterator.permutateArray(new ArrayPermutations() {
+		KeyIterator.permutateArray(new IntArrayPermutations() {
 
 			@Override
 			public void onList(byte id, int[] data, Object... extra) {
