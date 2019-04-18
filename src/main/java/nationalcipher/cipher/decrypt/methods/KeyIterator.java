@@ -145,6 +145,49 @@ public class KeyIterator {
 	    	    arr[i] = j;
 	        }
 	}
+	
+	public static interface HuttonKey {
+		public void onIteration(String key1, String key2);
+	}
+	
+	public static void iterateHutton(HuttonKey task, int length1, int length2) {
+		iterateHuttonKey1(task, "ABCDEFGHIJKLMNOPQRSTUVWXY".toCharArray(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray(), length1, length2, 0, "");
+	}
+	
+	private static void iterateHuttonKey1(HuttonKey capturer, char[] characters, char[] characters2, int no, int no2, int time, String key) {
+		for(char character : characters) {
+			String backup = key;
+			
+			backup += character;
+			
+			if(time + 1 >= no) {
+				iterateHuttonKey2(capturer, backup, characters2, no2, 0, "");
+				continue;
+			}
+			
+			iterateHuttonKey1(capturer, characters, characters2, no, no2, time + 1, backup);
+		}
+	}
+	
+	
+	private static void iterateHuttonKey2(HuttonKey capturer, String key1, char[] characters2, int no, int time, String key) {
+		for(char character : characters2) {
+			String backup = key;
+			if(key.contains("" + character))
+				continue;
+			
+			backup += character;
+			
+			if(time + 1 >= no) {
+				capturer.onIteration(key1, backup);
+				continue;
+			}
+			
+			iterateHuttonKey2(capturer, key1, characters2, no, time + 1, backup);
+		}
+	}
+	
+	
 	       
 	
 	public static interface PermutateString {

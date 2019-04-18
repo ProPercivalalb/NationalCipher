@@ -33,6 +33,7 @@ import nationalcipher.cipher.decrypt.complete.HillAttack;
 import nationalcipher.cipher.decrypt.complete.HillExtendedAttack;
 import nationalcipher.cipher.decrypt.complete.HillSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.HomophonicAttack;
+import nationalcipher.cipher.decrypt.complete.HuttonAttack;
 import nationalcipher.cipher.decrypt.complete.MyszkowskiAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistSubstitutionAttack;
 import nationalcipher.cipher.decrypt.complete.NihilistTranspositionAttack;
@@ -121,6 +122,8 @@ public class AttackRegistry {
 	
 	public static void loadCiphers(Settings settings) {
 		//Substitution
+		registerCipher(new HuttonAttack(), settings);
+		
 		registerCipher(CipherLib.CAESAR, new CaesarAttack(), settings);		
 		registerCipher(CipherLib.AFFINE, new AffineAttack(), settings);
 		registerCipher(new SimpleSubstitutionAttack(), settings);

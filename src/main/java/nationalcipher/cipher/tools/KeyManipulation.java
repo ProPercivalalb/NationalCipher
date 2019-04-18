@@ -1,6 +1,7 @@
 package nationalcipher.cipher.tools;
 
 import javalibrary.math.matrics.Matrix;
+import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 
 public class KeyManipulation {
@@ -16,6 +17,53 @@ public class KeyManipulation {
 	    keySquare[i1] = keySquare[i2];
 	    keySquare[i2] = temp;
 	    return keySquare;
+	}
+	
+	public static String changeCharacters(String key, String characters, boolean canHaveRepeats) {
+		return new String(changeCharacters(key.toCharArray(), characters.toCharArray(), canHaveRepeats));
+	}
+	
+	public static char[] changeCharacters(char[] keySquare, char[] characters, boolean canHaveRepeats) {
+	    int i1 = RandomUtil.pickRandomInt(keySquare.length);
+	    do {
+		    int i2 = RandomUtil.pickRandomInt(characters.length);
+		    char tempChar = characters[i2];
+	    	if(canHaveRepeats || !ArrayUtil.contains(keySquare, tempChar)) {
+			    keySquare[i1] = tempChar;
+			    return keySquare;
+	    	}
+	    } 
+	    while(true);
+	}
+	
+	public static String changeLength(String key, int min, int max, String characters, boolean canHaveRepeats) {
+		return new String(changeLength(key.toCharArray(), min, max, characters.toCharArray(), canHaveRepeats));
+	}
+	
+	public static char[] changeLength(char[] keySquare, int min, int max, char[] characters, boolean canHaveRepeats) {
+	    int newLength = RandomUtil.pickRandomInt(min, max);
+    	char[] newKey = new char[newLength];
+    	
+	    if(newLength < keySquare.length) {
+	    	System.arraycopy(keySquare, 0, newKey, 0, newLength);
+	    	return newKey;
+	    }
+	    else if(newLength == keySquare.length) {
+	    	return keySquare;
+	    }
+	    else {
+	    	System.arraycopy(keySquare, 0, newKey, 0, keySquare.length);
+	    	int pos = keySquare.length;
+	    	do {
+	    	    int i2 = RandomUtil.pickRandomInt(characters.length);
+	    	    char tempChar = characters[i2];
+		    	if(canHaveRepeats || !ArrayUtil.contains(keySquare, tempChar)) {
+		    		newKey[pos++] = tempChar;
+				    return keySquare;
+		    	}
+		    } 
+		    while(true);
+	    }
 	}
 	
 	public static String swapTwoRows(String keySquare, int columns, int rows) {
@@ -173,5 +221,25 @@ public class KeyManipulation {
 	public static char[] swapMorseIndex(char[] order) {
 	    order[RandomUtil.pickRandomInt(order.length)] = RandomUtil.pickRandomChar(KeyGeneration.ALL_POLLUX_CHARS);
 	    return order;
+	}
+	
+	public static String modifyHuttonKey1(String key1) {
+		double d = RandomUtil.pickDouble();
+		if(d < 0.1) {
+			if(d < 0.00) return changeLength(key1, 2, 8, "ABCDEFGHIJKLMNOPQRSTUVWXY", true);
+			else return swapTwoCharacters(key1);
+		}
+		else 
+			return changeCharacters(key1, "ABCDEFGHIJKLMNOPQRSTUVWXY", true);
+	}
+	
+	public static String modifyHuttonKey2(String key1) {
+		double d = RandomUtil.pickDouble();
+		if(d < 0.1) {
+			if(d < 0.00) return changeLength(key1, 2, 8, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", false);
+			else return swapTwoCharacters(key1);
+		}
+		else 
+			return changeCharacters(key1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", false);
 	}
 }
