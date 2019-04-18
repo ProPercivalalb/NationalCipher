@@ -16,7 +16,6 @@ import javalibrary.math.matrics.Matrix;
 import javalibrary.streams.FileReader;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.MapHelper;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.SquareMatrixKey;
 
 public class CalculateAllValidMatrices {
 	

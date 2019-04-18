@@ -1,4 +1,4 @@
-package nationalcipher;
+package nationalcipher.wip;
 
 import javalibrary.dict.Dictionary;
 import javalibrary.math.MathUtil;

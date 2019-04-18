@@ -1,4 +1,4 @@
-package nationalcipher;
+package nationalcipher.wip;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
