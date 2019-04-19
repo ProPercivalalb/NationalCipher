@@ -1,23 +1,18 @@
 package nationalcipher.wip;
 
-import javalibrary.dict.Dictionary;
-import javalibrary.math.MathUtil;
-import nationalcipher.cipher.base.substitution.Affine;
-import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Keyword;
-import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
+
+import javalibrary.dict.Dictionary;
+import javalibrary.math.MathUtil;
+import nationalcipher.cipher.base.substitution.Keyword;
+import nationalcipher.cipher.decrypt.methods.KeyIterator;
 
 public class CyberSec {
 

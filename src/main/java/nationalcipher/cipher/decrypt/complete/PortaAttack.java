@@ -20,7 +20,6 @@ import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -87,7 +86,7 @@ public class PortaAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(13, length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShortCustomKey(task, "ACEGIKMOQSUWY", length, true);
+				KeyIterator.iterateShortCustomKey(task::onIteration, "ACEGIKMOQSUWY", length, true);
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			app.getProgress().setIndeterminate(true);
@@ -97,7 +96,7 @@ public class PortaAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PortaTask extends KeySearch implements ShortCustomKey {
+	public class PortaTask extends KeySearch {
 
 		public boolean shiftRight;
 		
@@ -105,7 +104,6 @@ public class PortaAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.PORTA), this.getLanguage());
 			

@@ -12,7 +12,6 @@ import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -51,7 +50,7 @@ public abstract class SlidefairAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(26, length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShort26Key(task, length, true);
+				KeyIterator.iterateShort26Key(task::onIteration, length, true);
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			app.getProgress().setIndeterminate(true);
@@ -61,13 +60,12 @@ public abstract class SlidefairAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SlidefairTask extends KeySearch implements ShortCustomKey {
+	public class SlidefairTask extends KeySearch {
 		
 		public SlidefairTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(SlidefairAttack.this.decode(this.cipherText, this.plainText, key), this.getLanguage());
 			

@@ -3,6 +3,7 @@ package nationalcipher.cipher.base.other;
 import java.util.Map;
 
 import javalibrary.math.MathUtil;
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
@@ -88,10 +89,10 @@ public class SeriatedPlayfair implements IRandEncrypter {
 	}
 	
 	public static byte[] decode(char[] cipherText, byte[] plainText, String key, int period) {
-		return decode(cipherText, plainText, key.toCharArray(), period);
+		return decode(cipherText, plainText, PrimTypeUtil.toCharacterArray(key), period);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, char[] key, int period) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Character[] key, int period) {
 		if(period == 0) period = cipherText.length / 2;
 
 		Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);

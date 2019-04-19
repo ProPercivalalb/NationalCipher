@@ -6,7 +6,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class NihilistTransposition implements IRandEncrypter {
 
-	public static String encode(String plainText, int[] order, boolean readDefault) {
+	public static String encode(String plainText, Integer[] order, boolean readDefault) {
 		int blockSize = order.length * order.length;
 		
 		while(plainText.length() % (blockSize) != 0)
@@ -35,12 +35,12 @@ public class NihilistTransposition implements IRandEncrypter {
 
 	}
 	
-	public static String decode(String cipherText, int[] order, boolean readDefault) {
+	public static String decode(String cipherText, Integer[] order, boolean readDefault) {
 		return new String(decode(cipherText.toCharArray(), new byte[cipherText.length()], order, readDefault));
 	}
 	
 	//readDefault true : read across rows, false : is read down columns
-	public static byte[] decode(char[] cipherText, byte[] plainText, int[] order, boolean readDefault) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Integer[] order, boolean readDefault) {
 		
 		int index = 0;
 		int columns = order.length;

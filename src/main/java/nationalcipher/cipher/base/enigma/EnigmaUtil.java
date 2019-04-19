@@ -57,7 +57,7 @@ public class EnigmaUtil {
 		return positions;
 	}
 	
-	public static String convertMappingToReadablePlugboard(int[] mapping) {
+	public static String convertMappingToReadablePlugboard(Integer[] mapping) {
 		int[] plugboardTracker = new int[26];
 		for(int i = 0; i < 26; i++) plugboardTracker[i] = i;
 		String str = "";

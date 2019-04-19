@@ -1,7 +1,5 @@
 package nationalcipher.cipher.base.transposition;
 
-import java.util.Arrays;
-
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 

@@ -16,7 +16,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -55,7 +54,7 @@ public class NihilistTranspositionAttack extends CipherAttack {
 				app.out().println("Factor: %d", factor);
 				for(String word : Dictionary.WORDS) {
 					if(word.length() == sqrt) {
-						int[] order = new int[word.length()];
+						Integer[] order = new Integer[word.length()];
 						
 						int p = 0;
 						for(char ch = 'A'; ch <= 'Z'; ++ch)
@@ -73,13 +72,13 @@ public class NihilistTranspositionAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.factorialBig((int)Math.sqrt(factor)));
 			
 			for(int factor : factors)
-				KeyIterator.iterateIntegerOrderedKey(task, (int)Math.sqrt(factor));
+				KeyIterator.permuteIntegerOrderedKey(task::onIteration, (int)Math.sqrt(factor));
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class NihilistTranspositionTask extends InternalDecryption implements IntegerOrderedKey {
+	public class NihilistTranspositionTask extends InternalDecryption {
 
 		public boolean readOffDefault;
 		
@@ -87,8 +86,7 @@ public class NihilistTranspositionAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
-		public void onIteration(int[] order) {
+		public void onIteration(Integer[] order) {
 			int blockSize = (int)Math.pow(order.length, 2);
 			this.plainText = new byte[blockSize];
 			byte[] plainText = new byte[0];

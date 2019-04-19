@@ -1,10 +1,7 @@
 package nationalcipher.cipher.transposition;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;

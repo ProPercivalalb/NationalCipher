@@ -2,6 +2,7 @@ package nationalcipher.cipher.base.other;
 
 import java.util.Map;
 
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
@@ -41,10 +42,10 @@ public class ConjugatedBifid implements IRandEncrypter {
 	}
 	
 	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare1, String keysquare2, int period) {
-		return decode(cipherText, plainText, keysquare1.toCharArray(), keysquare2.toCharArray(), period);
+		return decode(cipherText, plainText, PrimTypeUtil.toCharacterArray(keysquare1), PrimTypeUtil.toCharacterArray(keysquare2), period);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, char[] keysquare1, char[] keysquare2, int period) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Character[] keysquare1, Character[] keysquare2, int period) {
 		if(period == 0) period = cipherText.length;
 		
 		Map<Character, Integer> keyIndex2 = CipherUtils.createCharacterIndexMapping(keysquare2);
@@ -81,7 +82,7 @@ public class ConjugatedBifid implements IRandEncrypter {
 		for(int i = 0; i < numberText.length; i += 2) {
 			int a = numberText[i];
 			int b = numberText[i + 1];
-			plainText[index++] = (byte)keysquare1[a * 5 + b];
+			plainText[index++] = (byte)(char)keysquare1[a * 5 + b];
 		}
 		
 		return plainText;

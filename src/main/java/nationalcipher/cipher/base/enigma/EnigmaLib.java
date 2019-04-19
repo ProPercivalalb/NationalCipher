@@ -29,6 +29,6 @@ public class EnigmaLib {
 	public static final int[] B_PLUG_ORDER_INDEXED = ArrayUtil.toIndexedArray(B_PLUG_ORDER);
 	
 	//Please dont change
-	public static final int[] DEFAULT_SETTING = new int[] {0, 0, 0};
+	public static final Integer[] DEFAULT_SETTING = new Integer[] {0, 0, 0};
 	public static final char[] DEFAULT_ETW = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 }

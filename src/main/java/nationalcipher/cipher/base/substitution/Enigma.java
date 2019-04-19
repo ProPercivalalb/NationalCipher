@@ -9,12 +9,12 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Enigma implements IRandEncrypter {
 	
-	public static String encode(String plainText, EnigmaMachine machine, String indicatorStr, String ringStr, int[] rotors, int reflector, String... plugBoardSettings) {
-		int[] indicator = new int[3];
+	public static String encode(String plainText, EnigmaMachine machine, String indicatorStr, String ringStr, Integer[] rotors, int reflector, String... plugBoardSettings) {
+		Integer[] indicator = new Integer[3];
 		for(int i = 0; i < indicator.length; i++)
 			indicator[i] = indicatorStr.charAt(i) - 'A';
 		
-		int[] ring = new int[3];
+		Integer[] ring = new Integer[3];
 		for(int i = 0; i < ring.length; i++)
 			ring[i] = ringStr.charAt(i) - 'A';
 		
@@ -23,19 +23,19 @@ public class Enigma implements IRandEncrypter {
 	
 	//Useful functions
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflectorIndex, int[][] plugboard) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, Integer[] indicator, Integer[] ring, Integer[] rotors, int reflectorIndex, int[][] plugboard) {
 		return decode(cipherText, plainText, machine.createWithPlugboard(plugboard), indicator, ring, rotors, -1, reflectorIndex);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int thinRotor, int reflectorIndex, int[][] plugboard) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, Integer[] indicator, Integer[] ring, Integer[] rotors, int thinRotor, int reflectorIndex, int[][] plugboard) {
 		return decode(cipherText, plainText, machine.createWithPlugboard(plugboard), indicator, ring, rotors, thinRotor, reflectorIndex);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflectorIndex) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, Integer[] indicator, Integer[] ring, Integer[] rotors, int reflectorIndex) {
 		return decode(cipherText, plainText, machine, indicator, ring, rotors, -1, reflectorIndex);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int thinRotor, int reflectorIndex) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, Integer[] indicator, Integer[] ring, Integer[] rotors, int thinRotor, int reflectorIndex) {
 			
 		int reflectorSetting = 0;
 		int thinRotorSetting = 0;
@@ -68,7 +68,7 @@ public class Enigma implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int thinRotor, int reflectorIndex, int[] reflector) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, EnigmaMachine machine, Integer[] indicator, Integer[] ring, Integer[] rotors, int thinRotor, int reflectorIndex, Integer[] reflector) {
 		
 		int reflectorSetting = 0;
 		int thinRotorSetting = 0;
@@ -98,7 +98,7 @@ public class Enigma implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static byte[] decodeFast(char[] cipherText, byte[] plainText, EnigmaMachine machine, int[] indicator, int[] ring, int[] rotors, int reflectorIndex) {
+	public static byte[] decodeFast(char[] cipherText, byte[] plainText, EnigmaMachine machine, Integer[] indicator, Integer[] ring, Integer[] rotors, int reflectorIndex) {
 		for(int i = 0; i < cipherText.length; i++) {
 			nextRotorPosition(machine, rotors, indicator);
 			int ch = cipherText[i] - 'A';
@@ -123,11 +123,11 @@ public class Enigma implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static void nextRotorPosition(EnigmaMachine machine, int[] rotors, int[] indicator) {
+	public static void nextRotorPosition(EnigmaMachine machine, Integer[] rotors, Integer[] indicator) {
 		//Next settings
 		if(machine.getStepping()) { //Ratchet Setting
-			int[] middleNotches = machine.notches[rotors[1]];
-			int[] endNotches = machine.notches[rotors[2]];
+			Integer[] middleNotches = machine.notches[rotors[1]];
+			Integer[] endNotches = machine.notches[rotors[2]];
 				
 			if(ArrayUtil.contains(middleNotches, indicator[1])) {
 				indicator[0] += 1;
@@ -145,9 +145,9 @@ public class Enigma implements IRandEncrypter {
 			if(indicator[2] > 25) indicator[2] = 0;
 		}
 		else { //Cog Setting
-			int[] endNotches = machine.notches[rotors[2]];
+			Integer[] endNotches = machine.notches[rotors[2]];
 			if(ArrayUtil.contains(endNotches, indicator[2])) {
-				int[] middleNotches = machine.notches[rotors[1]];
+				Integer[] middleNotches = machine.notches[rotors[1]];
 				
 				if(ArrayUtil.contains(middleNotches, indicator[1])) {
 					//TODO need to add non fixed reflector
@@ -164,11 +164,11 @@ public class Enigma implements IRandEncrypter {
 		}
 	}
 	
-	public static int nextCharacter(int ch, int[] key) {
+	public static int nextCharacter(int ch, Integer[] key) {
 		return key[ch];
 	}
 
-	public static int nextCharacter(int ch, int[] key, int offset) {
+	public static int nextCharacter(int ch, Integer[] key, int offset) {
 		if(offset > 0) {
 			ch += offset;
 			if(ch > 25) ch -= 26;

@@ -1,15 +1,14 @@
 package nationalcipher.wip;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 
 public class Test {
 
 	public static void main(String[] args) {
-		KeyIterator.iterateObject(t -> System.out.println(Arrays.toString(t)), Integer.class, 2, new Integer[] {2,3,1,7});
-
+		//KeyIterator.iterateHutton((k1, k2) -> System.out.println(k1 + " " + k2), 2, 2);
+		KeyIterator.permuteDoubleIntegerOrderedKey((k1, k2) -> System.out.println(Arrays.toString(k1) + " " + Arrays.toString(k2)), 4, 3);
 	}
 
 }

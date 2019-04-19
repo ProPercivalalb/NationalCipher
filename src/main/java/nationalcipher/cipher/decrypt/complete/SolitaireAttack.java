@@ -23,8 +23,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
@@ -87,7 +85,7 @@ public class SolitaireAttack extends CipherAttack {
 		
 				app.getProgress().addMaxValue(MathUtil.factorialBig(deck.countUnknowns()));
 	
-				KeyIterator.iterateIntegerOrderedKey(task, deck.unknownCards);
+				KeyIterator.permuteObject(task::onIteration, deck.unknownCards);
 			}
 			else
 				app.out().print("Decrypting...\n%s", Solitaire.decode(text.toCharArray(), deck.order));
@@ -101,7 +99,7 @@ public class SolitaireAttack extends CipherAttack {
 				app.getProgress().addMaxValue(TWENTY_SIX.pow(length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShort26Key(task, length, true);
+				KeyIterator.iterateShort26Key(task::onIteration, length, true);
 			
 			app.out().println(task.getBestSolution());
 		}
@@ -122,17 +120,16 @@ public class SolitaireAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SolitaireTask extends InternalDecryption implements IntegerOrderedKey, ShortCustomKey {
+	public class SolitaireTask extends InternalDecryption {
 
-		public int[] incompleteOrder;
-		public int[] emptyIndex;
+		public Integer[] incompleteOrder;
+		public Integer[] emptyIndex;
 		public boolean direction;
 		
 		public SolitaireTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(Solitaire.decode(this.cipherText, Solitaire.createCardOrder(key)), this.getLanguage());
 			
@@ -147,8 +144,7 @@ public class SolitaireAttack extends CipherAttack {
 			this.getProgress().increase();
 		}
 		
-		@Override
-		public void onIteration(int[] order) {
+		public void onIteration(Integer[] order) {
 			for(int i = 0; i < this.emptyIndex.length; i++)
 				this.incompleteOrder[this.emptyIndex[this.direction ? i : this.emptyIndex.length - i - 1]] = order[i];
 			
@@ -167,7 +163,7 @@ public class SolitaireAttack extends CipherAttack {
 		
 		public double score = 0.0D;
 		
-		public byte[] decode(char[] cipherText, int[] cardOrder, double bestScore, NGramData quadgramData) {
+		public byte[] decode(char[] cipherText, Integer[] cardOrder, double bestScore, NGramData quadgramData) {
 			this.score = 0;
 			
 			int length = cipherText.length;

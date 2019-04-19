@@ -2,10 +2,6 @@ package nationalcipher.wip;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-
-import javalibrary.streams.FileReader;
-import javalibrary.string.StringTransformer;
 
 public class Challenge8B {
 	

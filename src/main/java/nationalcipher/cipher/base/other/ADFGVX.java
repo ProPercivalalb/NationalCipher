@@ -7,7 +7,7 @@ import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 
 public class ADFGVX {
 
-	public static String encode(String plainText, String keysquare, int[] order, String adfgvx, boolean defaultRead) {
+	public static String encode(String plainText, String keysquare, Integer[] order, String adfgvx, boolean defaultRead) {
 		String cipherText = "";
 		
 		for(int i = 0; i < plainText.length(); i++) {
@@ -29,12 +29,12 @@ public class ADFGVX {
 		return decode(cipherText, keysquare, key, "ADFGVX", defaultRead);
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare, int[] order, boolean defaultRead) {
+	public static char[] decode(char[] cipherText, String keysquare, Integer[] order, boolean defaultRead) {
 		return decode(cipherText, keysquare, order, "ADFGVX", defaultRead);
 	}
 	
 	public static String decode(String cipherText, String keysquare, String key, String adfgvx, boolean defaultRead) {
-		int[] order = new int[key.length()];
+		Integer[] order = new Integer[key.length()];
 		
 		char[] charArray = key.toCharArray();
 		Arrays.sort(charArray);
@@ -44,7 +44,7 @@ public class ADFGVX {
 		return new String(decode(cipherText.toCharArray(), keysquare, order, adfgvx, defaultRead));
 	}
 	
-	public static char[] decode(char[] cipherText, String keysquare, int[] order, String adfgvx, boolean defaultRead) {
+	public static char[] decode(char[] cipherText, String keysquare, Integer[] order, String adfgvx, boolean defaultRead) {
 		return decodeTransformed(ArrayUtil.convertCharType(ColumnarTransposition.decode(cipherText, new byte[cipherText.length], order, defaultRead)), keysquare, adfgvx);
 	}
 	

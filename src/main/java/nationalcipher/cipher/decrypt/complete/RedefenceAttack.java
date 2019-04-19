@@ -14,7 +14,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -48,21 +47,20 @@ public class RedefenceAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.factorialBig(length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateIntegerOrderedKey(task, length);
+				KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
 			
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class RedefenceTask extends InternalDecryption implements IntegerOrderedKey {
+	public class RedefenceTask extends InternalDecryption {
 
 		public RedefenceTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
-		public void onIteration(int[] order) {
+		public void onIteration(Integer[] order) {
 			for(int i = 0; i < (order.length - 1) * 2; i++) {
 				this.lastSolution = new Solution(Redefence.decode(this.cipherText, order, i), this.getLanguage());
 				

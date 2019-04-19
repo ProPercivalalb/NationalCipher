@@ -19,7 +19,6 @@ import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -29,11 +28,11 @@ public class ADFGXAttack extends CipherAttack {
 
 	public final char[] alphaChar;
 	public final int alphaCount;
-	public final char[] alphabet;
+	public final Character[] alphabet;
 	public JSpinner[] rangeSpinner;
 	public JComboBox<Boolean> directionOption;
 	
-	public ADFGXAttack(String displayName, String alphaChar, char[] alphabet) {
+	public ADFGXAttack(String displayName, String alphaChar, Character[] alphabet) {
 		super(displayName);
 		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION);
 		this.alphaChar = alphaChar.toCharArray();
@@ -59,7 +58,7 @@ public class ADFGXAttack extends CipherAttack {
 		
 		if(method == DecryptionMethod.KEY_MANIPULATION) {
 			for(int length = periodRange[0]; length <= periodRange[1]; length++)
-				KeyIterator.permutateArray(task, length, length, false);
+				KeyIterator.permuteIntegerOrderedKey(task::onPermute, length);
 			
 			if(task.best.size() < 1) {
 				app.out().println("No transposition order with good digraph %cIC found.", (char)916);
@@ -85,7 +84,7 @@ public class ADFGXAttack extends CipherAttack {
 				
 				SubstitutionHack substitutionHack = new SubstitutionHack(tempText, app) {
 					@Override
-					public char[] getAlphabet() {
+					public Character[] getAlphabet() {
 						return ADFGXAttack.this.alphabet;
 					}
 				};
@@ -104,7 +103,7 @@ public class ADFGXAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class ADFGXTask extends InternalDecryption implements IntArrayPermutations {
+	public class ADFGXTask extends InternalDecryption {
 
 		public boolean readDefault;
 		private DynamicResultList<ADFGXResult> best;
@@ -114,8 +113,7 @@ public class ADFGXAttack extends CipherAttack {
 			this.best = new DynamicResultList<ADFGXResult>(256);
 		}
 
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
+		public void onPermute(Integer[] data) {
 			byte[] decrypted = new byte[this.cipherText.length];
 			decrypted = ColumnarTransposition.decode(this.cipherText, decrypted, data, this.readDefault);
 			
@@ -133,9 +131,9 @@ public class ADFGXAttack extends CipherAttack {
 	public static class ADFGXResult extends ResultPositive {
 		
 		public byte[] decrypted;
-		public int[] order;
+		public Integer[] order;
 		
-		public ADFGXResult(byte[] decrypted, double score, int[] inverseCol) {
+		public ADFGXResult(byte[] decrypted, double score, Integer[] inverseCol) {
 			super(score);
 			this.decrypted = decrypted;
 			this.order = inverseCol;

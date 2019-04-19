@@ -17,8 +17,6 @@ import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -63,12 +61,12 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.factorialBig(length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateIntegerOrderedKey(task, length);
+				KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
 			for(String word : Dictionary.WORDS) {
-				int[] order = new int[word.length()];
+				Integer[] order = new Integer[word.length()];
 				
 				int p = 0;
 				for(char ch = 'A'; ch <= 'Z'; ++ch)
@@ -83,25 +81,24 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 			task.run();
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
-			KeyIterator.permutateArray(task, (byte)0, 6, task.period1, false);
+			//KeyIterator.iterateIntegerArray(task::onList, 6, task.period1, false);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class ColumnarTranspositionTask extends SimulatedAnnealing implements IntegerOrderedKey, IntArrayPermutations {
+	public class ColumnarTranspositionTask extends SimulatedAnnealing {
 
 		public int period1;
 		public boolean readOffDefault;
-		public int[] bestKey1, bestMaximaKey1, lastKey1;
+		public Integer[] bestKey1, bestMaximaKey1, lastKey1;
 		
 		public ColumnarTranspositionTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
-			int[] order = new int[this.period1];
+		public void onList(Integer[] data) {
+			Integer[] order = new Integer[this.period1];
 			int index = 0;
 			for(; index < data.length; index++)
 				order[data[index]] = index;
@@ -113,8 +110,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 			this.onIteration(order);
 		}
 		
-		@Override
-		public void onIteration(int[] order) {
+		public void onIteration(Integer[] order) {
 			this.lastSolution = new Solution(ColumnarTransposition.decode(this.cipherText, this.plainText, order, this.readOffDefault), this.getLanguage());
 			
 			if(this.lastSolution.isResultBetter(this.bestSolution)) {

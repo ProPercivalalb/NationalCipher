@@ -2,13 +2,11 @@ package nationalcipher.cipher.decrypt.complete;
 
 import java.util.Arrays;
 
-import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.transposition.Grille;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.GrilleKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
@@ -27,13 +25,13 @@ public class GrilleAttack extends CipherAttack {
 		task.size = 7;
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			KeyIterator.iterateGrille(task, task.size);
+			KeyIterator.iterateGrille(task::onIteration, task.size);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class GrilleTask extends InternalDecryption implements GrilleKey {
+	public class GrilleTask extends InternalDecryption {
 
 		public int size;
 		
@@ -41,8 +39,7 @@ public class GrilleAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
-		public void onIteration(int[] key) {
+		public void onIteration(Integer[] key) {
 			this.lastSolution = new Solution(Grille.decode(this.cipherText, this.plainText, this.size, key), this.getLanguage());
 			this.addSolution(this.lastSolution);
 			

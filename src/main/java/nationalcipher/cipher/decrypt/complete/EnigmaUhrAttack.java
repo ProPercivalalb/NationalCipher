@@ -12,7 +12,6 @@ import javax.swing.JTextField;
 
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
-import javalibrary.list.ResultNegative;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
@@ -23,7 +22,6 @@ import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -107,7 +105,7 @@ public class EnigmaUhrAttack extends CipherAttack {
 			double constant = 120 / 60000D; //Time taken per letter per rotor setting
 			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length * (task.reflectorTest == -1 ? task.machine.getNumberOfReflectors() : 1)));
 			Timer timer = new Timer();
-			KeyIterator.permutateArray(task, (byte)0, 3, task.machine.getNumberOfRotors(), false);
+			KeyIterator.iterateIntegerArray(task::onList, 3, task.machine.getNumberOfRotors(), false);
 			app.out().println("Time taken %fs", timer.getTimeRunning(Time.SECOND));
 			
 			task.squeezeFirst.sort();
@@ -119,8 +117,8 @@ public class EnigmaUhrAttack extends CipherAttack {
 				EnigmaSection trial = task.squeezeFirst.get(i);
 				for(int s2 = 0; s2 < 26; s2++) {
 					for(int s3 = 0; s3 < 26; s3++) {
-						int[] indicator = trial.copyIndicator();
-						int[] ring = new int[] {0, s2, s3};
+						Integer[] indicator = trial.copyIndicator();
+						Integer[] ring = new Integer[] {0, s2, s3};
 
 						indicator[1] = (indicator[1] + s2) % 26;
 						indicator[2] = (indicator[2] + s3) % 26;
@@ -147,7 +145,7 @@ public class EnigmaUhrAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class EnigmaTask extends InternalDecryption implements IntArrayPermutations {
+	public class EnigmaTask extends InternalDecryption {
 
 		private EnigmaMachine machine;
 		private int reflectorTest; //-1 if test all, otherwise is the index of the reflector to test
@@ -161,21 +159,18 @@ public class EnigmaUhrAttack extends CipherAttack {
 			this.squeezeSecond = new DynamicResultList<EnigmaSection>(64);
 		}
 
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
-			if(id == 0)
-				KeyIterator.permutateArray(this, (byte)1, 3, 26, true, data);
-			else if(id == 1) {
-				int[] rotor = (int[])extra[0];
-
-				for(int reflector = this.start; reflector < this.end; reflector++) {
-					
-					this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
-					EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, this.machine, data, rotor, reflector);
-					
-					if(this.squeezeFirst.addResult(trialSolution))
-						trialSolution.makeCopy();
-				}
+		public void onList(Integer[] rotor) {
+			KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
+		}
+		
+		public void onList2(Integer[] rotor, Integer[] data) {
+			for(int reflector = this.start; reflector < this.end; reflector++) {
+				
+				this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
+				EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, this.machine, data, rotor, reflector);
+				
+				if(this.squeezeFirst.addResult(trialSolution))
+					trialSolution.makeCopy();
 			}
 		}
 	}

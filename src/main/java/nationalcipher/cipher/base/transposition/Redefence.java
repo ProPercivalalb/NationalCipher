@@ -2,7 +2,6 @@ package nationalcipher.cipher.base.transposition;
 
 import java.util.Arrays;
 
-import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -12,7 +11,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
  */
 public class Redefence implements IRandEncrypter {
 
-	public static byte[] decode(char[] cipherText, int[] order, int startingRail) {
+	public static byte[] decode(char[] cipherText, Integer[] order, int startingRail) {
 		int rows = order.length;
 		
 		byte[] plainText = new byte[cipherText.length];
@@ -73,7 +72,7 @@ public class Redefence implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static String encode(String plainText, int[] order, int startingRail) {
+	public static String encode(String plainText, Integer[] order, int startingRail) {
 		System.out.println(Arrays.toString(order) + " " + startingRail);
 		int rows = order.length;
 		
@@ -101,7 +100,7 @@ public class Redefence implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		int[] order = KeyGeneration.createOrder(2, 7);
+		Integer[] order = KeyGeneration.createOrder(2, 7);
 		return encode(plainText, order, RandomUtil.pickRandomInt((order.length - 1) * 2));
 	}
 }

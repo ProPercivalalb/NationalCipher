@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -12,7 +13,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
  */
 public class ColumnarTransposition implements IRandEncrypter {
 	
-	public static String encode(String plainText, int[] order, boolean defaultRead) {
+	public static String encode(String plainText, Integer[] order, boolean defaultRead) {
 		System.out.print(Arrays.toString(order));
 		if(defaultRead) {
 			String cipherText = "";
@@ -45,8 +46,8 @@ public class ColumnarTransposition implements IRandEncrypter {
 	 * @param defaultRead True means it will read the cipherText down columns, False means the cipherText was read across rows
 	 * @return
 	 */
-	public static byte[] decode(char[] cipherText, byte[] plainText, int[] order, boolean defaultRead) {
-		int[] orderIndex = ArrayUtil.toIndexedArray(order);
+	public static byte[] decode(char[] cipherText, byte[] plainText, Integer[] order, boolean defaultRead) {
+		Integer[] orderIndex = ArrayUtil.toIndexedArray(order);
 		int period = order.length;
 		int rows = (int)Math.ceil(cipherText.length / (double)period);
 		
@@ -84,9 +85,9 @@ public class ColumnarTransposition implements IRandEncrypter {
 	
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		//return encode(plainText, KeyGeneration.createOrder(1, 8), RandomUtil.pickBoolean());
-		int[] order = KeyGeneration.createOrder(15);
-		System.out.println(Arrays.toString(order));
-		return encode(plainText, order, true);
+		return encode(plainText, KeyGeneration.createOrder(1, 9), RandomUtil.pickBoolean());
+		//Integer[] order = KeyGeneration.createOrder(15);
+		//System.out.println(Arrays.toString(order));
+		//return encode(plainText, order, true);
 	}
 }

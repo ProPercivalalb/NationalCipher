@@ -8,6 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
@@ -80,11 +81,11 @@ public class NihilistSubstitutionAttack extends CipherAttack {
 
 			}
 			if(!error) {
-				char[] alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
+				Character[] alphabet = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWXYZ");
 				
 				SubstitutionHack substitutionHack = new SubstitutionHack(tempText, app) {
 					@Override
-					public char[] getAlphabet() {
+					public Character[] getAlphabet() {
 						return alphabet;
 					}
 				};

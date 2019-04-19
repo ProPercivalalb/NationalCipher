@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 
 import javalibrary.dict.Dictionary;
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.SeriatedPlayfair;
@@ -67,12 +68,12 @@ public class SeriatedPlayfairAttack extends CipherAttack {
 		}
 
 		@Override
-		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
+		public void onKeyCreation(Character[] complete, Character[] word, int shift, boolean reversed, RouteCipherType route) {
 			this.lastSolution = new Solution(SeriatedPlayfair.decode(this.cipherText, this.plainText, complete, this.period), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
 				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s, p:%d", new String(complete), this.period);
+				this.bestSolution.setKeyString("%s, p:%d", PrimTypeUtil.toString(complete), this.period);
 				this.bestSolution.bakeSolution();
 				this.out().println("%s", this.bestSolution);	
 				this.getKeyPanel().updateSolution(this.bestSolution);

@@ -12,10 +12,8 @@ import javax.swing.JTextField;
 
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
-import javalibrary.list.ResultNegative;
 import javalibrary.math.MathUtil;
 import javalibrary.math.Units.Time;
-import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.enigma.EnigmaUtil;
@@ -25,7 +23,6 @@ import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -112,7 +109,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			double constant = 120 / 60000D; //Time taken per letter per rotor setting
 			app.out().println("Estimated time %c %ds, This may take a while...", (char)8776, (int)(constant * rotorCombos * task.cipherText.length * (task.reflectorTest == -1 ? task.machine.getNumberOfReflectors() : 1)));
 			Timer timer = new Timer();
-			KeyIterator.permutateArray(task, (byte)0, 3, task.machine.getNumberOfRotors(), false);
+			KeyIterator.iterateIntegerArray(task::onList, 3, task.machine.getNumberOfRotors(), false);
 			app.out().println("Time taken %fs", timer.getTimeRunning(Time.SECOND));
 			
 			task.squeezeFirst.sort();
@@ -124,8 +121,8 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 				EnigmaSection trial = task.squeezeFirst.get(i);
 				for(int s2 = 0; s2 < 26; s2++) {
 					for(int s3 = 0; s3 < 26; s3++) {
-						int[] indicator = trial.copyIndicator();
-						int[] ring = new int[] {0, s2, s3};
+						Integer[] indicator = trial.copyIndicator();
+						Integer[] ring = new Integer[] {0, s2, s3};
 
 						indicator[1] = (indicator[1] + s2) % 26;
 						indicator[2] = (indicator[2] + s3) % 26;
@@ -146,8 +143,8 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			for(int option = 0; option < task.squeezeSecond.size(); option++) {
 				EnigmaSection trial = task.squeezeSecond.get(option);
 				
-				int[] plugboard = new int[26];
-				int[] possiblePlugBoard = new int[26];
+				Integer[] plugboard = new Integer[26];
+				Integer[] possiblePlugBoard = new Integer[26];
 				for(int i = 0; i < 26; i++) {
 					plugboard[i] = i;
 					possiblePlugBoard[i] = i;
@@ -188,7 +185,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 					plugboard[bestPlug2] = bestPlug1;
 					plugboard[bestPlug1] = bestPlug2;
 					
-					int[] possiblePlugBoardNext = new int[possiblePlugBoard.length - 2];
+					Integer[] possiblePlugBoardNext = new Integer[possiblePlugBoard.length - 2];
 					int currentIndex = 0;
 					for(int i = 0; i < possiblePlugBoard.length; i++)
 						if(possiblePlugBoard[i] != bestPlug1 && possiblePlugBoard[i] != bestPlug2)
@@ -302,13 +299,13 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			}
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
-			KeyIterator.permutateArray(task, (byte)2, 3, 3, false);
+			KeyIterator.iterateIntegerArray(task::onList3, 3, 3, false);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class EnigmaTask extends InternalDecryption implements IntArrayPermutations {
+	public class EnigmaTask extends InternalDecryption {
 
 		private EnigmaMachine machine;
 		private int reflectorTest; //-1 if test all, otherwise is the index of the reflector to test
@@ -322,86 +319,83 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 			this.squeezeSecond = new DynamicResultList<EnigmaSection>(64 * 2);
 		}
 
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
-			if(id == 0)
-				KeyIterator.permutateArray(this, (byte)1, 3, 26, true, data);
-			else if(id == 1) {
-				int[] rotor = (int[])extra[0];
-
-				for(int reflector = this.start; reflector < this.end; reflector++) {
-					
-					this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
-					EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, this.machine, data, rotor, reflector);
-					
-					if(this.squeezeFirst.addResult(trialSolution))
-						trialSolution.makeCopy();
-				}
-			}
-			else if(id == 2)
-				KeyIterator.permutateArray(this, (byte)3, 3, 26, true, data);
-			else if(id == 3) {
-				int[] rotor = (int[])extra[0];
-
-				for(int reflector = this.start; reflector < this.end; reflector++) {
-
-					int[] plugboard = new int[26];
-					int[] possiblePlugBoard = new int[26];
-					for(int i = 0; i < 26; i++) {
-						plugboard[i] = i;
-						possiblePlugBoard[i] = i;
-					}
-					
-					while(true) {
-						this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
-						
-						Solution bestSolution = new Solution(this.plainText, StatCalculator.calculateMonoIC(this.plainText) * 1000).bakeSolution();
-						int bestPlug1 = 0;
-						int bestPlug2 = 1;
-						byte[] testText = Arrays.copyOf(this.plainText, this.plainText.length);
-						boolean foundFinalPlug = true;
-						for(int i1 = 0; i1 < possiblePlugBoard.length - 1; i1++) {
-							for(int i2 = i1 + 1; i2 < possiblePlugBoard.length; i2++) {
-								int plug1 = possiblePlugBoard[i1];
-								int plug2 = possiblePlugBoard[i2];
-								
-								plugboard[plug2] = plug1;
-								plugboard[plug1] = plug2;
-								testText = Enigma.decode(this.cipherText, testText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
-								Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000);
+		public void onList(Integer[] rotor) {
+			KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
+		}
 		
-								if(lastSolution.isResultBetter(bestSolution)) {
-									bestSolution = lastSolution;
-									bestPlug1 = plug1;
-									bestPlug2 = plug2;
-									foundFinalPlug = false;
-								}
-
-								plugboard[plug2] = plug2;
-								plugboard[plug1] = plug1;
-							}
-						}
-						
-						if(foundFinalPlug) {
-							EnigmaSection trialSolution = new EnigmaSection(bestSolution.score, this.machine.createWithPresetPlugboard(plugboard), data, rotor, reflector);
-							if(this.squeezeFirst.addResult(trialSolution)) {
-								this.app.out().println("%s", trialSolution);
-								trialSolution.makeCopy();
-							}
-							break;
-						}
+		public void onList2(Integer[] rotor, Integer[] data) {
+			for(int reflector = this.start; reflector < this.end; reflector++) {
+				
+				this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
+				EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, this.machine, data, rotor, reflector);
+				
+				if(this.squeezeFirst.addResult(trialSolution))
+					trialSolution.makeCopy();
+			}
+		}
+		
+		public void onList3(Integer[] rotor) {
+			KeyIterator.iterateIntegerArray(o -> onList2(rotor, o),  3, 26, true);
+		}
+		
+		public void onList4(Integer[] rotor, Integer[] data) {
+			for(int reflector = this.start; reflector < this.end; reflector++) {
+				Integer[] plugboard = new Integer[26];
+				Integer[] possiblePlugBoard = new Integer[26];
+				for(int i = 0; i < 26; i++) {
+					plugboard[i] = i;
+					possiblePlugBoard[i] = i;
+				}
+				
+				while(true) {
+					this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
 					
-						plugboard[bestPlug2] = bestPlug1;
-						plugboard[bestPlug1] = bestPlug2;
-						
-						int[] possiblePlugBoardNext = new int[possiblePlugBoard.length - 2];
-						int currentIndex = 0;
-						for(int i = 0; i < possiblePlugBoard.length; i++)
-							if(possiblePlugBoard[i] != bestPlug1 && possiblePlugBoard[i] != bestPlug2)
-								possiblePlugBoardNext[currentIndex++] = possiblePlugBoard[i];
-						
-						possiblePlugBoard = possiblePlugBoardNext;
+					Solution bestSolution = new Solution(this.plainText, StatCalculator.calculateMonoIC(this.plainText) * 1000).bakeSolution();
+					int bestPlug1 = 0;
+					int bestPlug2 = 1;
+					byte[] testText = Arrays.copyOf(this.plainText, this.plainText.length);
+					boolean foundFinalPlug = true;
+					for(int i1 = 0; i1 < possiblePlugBoard.length - 1; i1++) {
+						for(int i2 = i1 + 1; i2 < possiblePlugBoard.length; i2++) {
+							int plug1 = possiblePlugBoard[i1];
+							int plug2 = possiblePlugBoard[i2];
+							
+							plugboard[plug2] = plug1;
+							plugboard[plug1] = plug2;
+							testText = Enigma.decode(this.cipherText, testText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
+							Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000);
+	
+							if(lastSolution.isResultBetter(bestSolution)) {
+								bestSolution = lastSolution;
+								bestPlug1 = plug1;
+								bestPlug2 = plug2;
+								foundFinalPlug = false;
+							}
+
+							plugboard[plug2] = plug2;
+							plugboard[plug1] = plug1;
+						}
 					}
+					
+					if(foundFinalPlug) {
+						EnigmaSection trialSolution = new EnigmaSection(bestSolution.score, this.machine.createWithPresetPlugboard(plugboard), data, rotor, reflector);
+						if(this.squeezeFirst.addResult(trialSolution)) {
+							this.app.out().println("%s", trialSolution);
+							trialSolution.makeCopy();
+						}
+						break;
+					}
+				
+					plugboard[bestPlug2] = bestPlug1;
+					plugboard[bestPlug1] = bestPlug2;
+					
+					Integer[] possiblePlugBoardNext = new Integer[possiblePlugBoard.length - 2];
+					int currentIndex = 0;
+					for(int i = 0; i < possiblePlugBoard.length; i++)
+						if(possiblePlugBoard[i] != bestPlug1 && possiblePlugBoard[i] != bestPlug2)
+							possiblePlugBoardNext[currentIndex++] = possiblePlugBoard[i];
+					
+					possiblePlugBoard = possiblePlugBoardNext;
 				}
 			}
 		}

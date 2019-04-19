@@ -15,7 +15,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -53,19 +52,18 @@ public class MyszkowskiAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(Math.min(length, 26), length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShortCustomKey(task, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substring(0, Math.min(length, 26)), length, true);
+				KeyIterator.iterateShortCustomKey(task::onIteration, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substring(0, Math.min(length, 26)), length, true);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SlidefairTask extends InternalDecryption implements ShortCustomKey {
+	public class SlidefairTask extends InternalDecryption {
 		
 		public SlidefairTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(Myszkowski.decode(this.cipherText, key), this.getLanguage());
 			

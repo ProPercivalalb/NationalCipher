@@ -1,5 +1,6 @@
 package nationalcipher.cipher.base.other;
 
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -40,10 +41,10 @@ public class Bifid implements IRandEncrypter {
 	}
 	
 	public static byte[] decode(char[] cipherText, byte[] plainText, String keysquare, int period) {
-		return decode(cipherText, plainText, keysquare.toCharArray(), period);
+		return decode(cipherText, plainText, PrimTypeUtil.toCharacterArray(keysquare), period);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, char[] keysquare, int period) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Character[] keysquare, int period) {
 		return ConjugatedBifid.decode(cipherText, plainText, keysquare, keysquare, period);
 	}
 

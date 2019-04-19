@@ -1,9 +1,7 @@
 package nationalcipher.cipher.decrypt.keyfinder;
 
 import java.util.Arrays;
-import java.util.Set;
 
-import javalibrary.string.StringTransformer;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class GeneralPeriodicKey {

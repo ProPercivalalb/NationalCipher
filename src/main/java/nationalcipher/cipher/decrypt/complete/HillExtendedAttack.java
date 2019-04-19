@@ -16,7 +16,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -52,19 +51,19 @@ public class HillExtendedAttack extends CipherAttack {
 				task.size = size;
 				task.lengthSub = task.cipherText.length / size;
 				
-				KeyIterator.permutateArray(task, (byte)0, size + 1, 26, true);
+				KeyIterator.iterateIntegerArray(task::onList, size + 1, 26, true);
 				
 				if(task.best.size() < size)
 					app.out().println("Did not find enought key columns that produces good characters %d/%d", task.best.size(), size);
 				else
-					KeyIterator.permutateArray(task, (byte)1, size, task.best.size(), false);
+					KeyIterator.iterateIntegerArray(task::onList2, size, task.best.size(), false);
 			}
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class HillExtendedTask extends InternalDecryption implements IntArrayPermutations {
+	public class HillExtendedTask extends InternalDecryption {
 
 		private int size;
 		private int lengthSub;
@@ -74,77 +73,75 @@ public class HillExtendedAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
-			if(id == 0) {
-				boolean invalidDeterminate = false;
-				for(int d : new int[] {2, 13}) {
-					boolean divides = true;
-					for(int s = 0; s < this.size; s++) 
-						if(data[s] % d != 0)
-							divides = false;
+		public void onList(Integer[] data) {
+			boolean invalidDeterminate = false;
+			for(int d : new int[] {2, 13}) {
+				boolean divides = true;
+				for(int s = 0; s < this.size; s++) 
+					if(data[s] % d != 0)
+						divides = false;
 
-					invalidDeterminate = divides;
-					if(divides) break;
-				}
-				
-				if(invalidDeterminate)
-					return;
-				
-				byte[] decrypted = new byte[this.lengthSub];
-		
-				for(int i = 0; i < this.cipherText.length; i += this.size) {	
-					int total = 0;
-					for(int s = 0; s < this.size; s++)
-						total += data[s] * (this.cipherText[i + s] - 'A');
-	
-					decrypted[i / this.size] = (byte)((total + (26 - data[this.size])) % 26 + 'A');
-				}
-				
-				double currentSum = ChiSquared.calculate(decrypted, this.app.getLanguage());
-		
-				if(currentSum < 200) {
-					this.app.out().println("%s, %f, %s", Arrays.toString(data), currentSum, Arrays.toString(decrypted));
-					this.best.add(new HillSection(decrypted, Arrays.copyOf(data, data.length)));
-				}
+				invalidDeterminate = divides;
+				if(divides) break;
 			}
-			else {
+				
+			if(invalidDeterminate)
+				return;
+				
+			byte[] decrypted = new byte[this.lengthSub];
+		
+			for(int i = 0; i < this.cipherText.length; i += this.size) {	
+				int total = 0;
+				for(int s = 0; s < this.size; s++)
+					total += data[s] * (this.cipherText[i + s] - 'A');
+				
+				decrypted[i / this.size] = (byte)((total + (26 - data[this.size])) % 26 + 'A');
+			}
+				
+			double currentSum = ChiSquared.calculate(decrypted, this.app.getLanguage());
+		
+			if(currentSum < 200) {
+				this.app.out().println("%s, %f, %s", Arrays.toString(data), currentSum, Arrays.toString(decrypted));
+				this.best.add(new HillSection(decrypted, Arrays.copyOf(data, data.length)));
+			}
+		}
+		
+		public void onList2(Integer[] data) {
+			for(int s = 0; s < this.size; s++) {
+				HillSection hillSection = this.best.get(data[s]);
+				for(int i = 0; i < this.lengthSub; i++)
+					this.plainText[i * this.size + s] = hillSection.decrypted[i];
+			}
+			
+			this.lastSolution = new Solution(this.plainText, this.getLanguage());
+			
+			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.bestSolution = this.lastSolution;
+				int[] inverseMatrix = new int[this.size * this.size];
+				int[] extendedMatrix = new int[this.size];
 				for(int s = 0; s < this.size; s++) {
 					HillSection hillSection = this.best.get(data[s]);
-					for(int i = 0; i < this.lengthSub; i++)
-						this.plainText[i * this.size + s] = hillSection.decrypted[i];
+					for(int n = 0; n < this.size; n++)
+						inverseMatrix[s * this.size + n] = hillSection.inverseCol[n];
+					extendedMatrix[s] = hillSection.inverseCol[this.size];
 				}
-				
-				this.lastSolution = new Solution(this.plainText, this.getLanguage());
-				
-				if(this.lastSolution.score >= this.bestSolution.score) {
-					this.bestSolution = this.lastSolution;
-					int[] inverseMatrix = new int[this.size * this.size];
-					int[] extendedMatrix = new int[this.size];
-					for(int s = 0; s < this.size; s++) {
-						HillSection hillSection = this.best.get(data[s]);
-						for(int n = 0; n < this.size; n++)
-							inverseMatrix[s * this.size + n] = hillSection.inverseCol[n];
-						extendedMatrix[s] = hillSection.inverseCol[this.size];
-					}
-						
-					try {
-						this.bestSolution.setKeyString("%s, %s", new Matrix(inverseMatrix, this.size).inverseMod(26), Arrays.toString(extendedMatrix));
-					}
-					catch(MatrixNoInverse e) {}
 					
-					this.bestSolution.bakeSolution();
-					this.out().println("%s", this.bestSolution);	
-					this.getKeyPanel().updateSolution(this.bestSolution);
+				try {
+					this.bestSolution.setKeyString("%s, %s", new Matrix(inverseMatrix, this.size).inverseMod(26), Arrays.toString(extendedMatrix));
 				}
+				catch(MatrixNoInverse e) {}
+				
+				this.bestSolution.bakeSolution();
+				this.out().println("%s", this.bestSolution);	
+				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
 		}
 	}
 	
 	public static class HillSection {
 		public byte[] decrypted;
-		public int[] inverseCol;
-		public HillSection(byte[] decrypted, int[] inverseCol) {
+		public Integer[] inverseCol;
+		public HillSection(byte[] decrypted, Integer[] inverseCol) {
 			this.decrypted = decrypted;
 			this.inverseCol = inverseCol;
 		}

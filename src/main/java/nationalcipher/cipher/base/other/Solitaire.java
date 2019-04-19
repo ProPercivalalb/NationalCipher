@@ -17,7 +17,7 @@ public class Solitaire implements IRandEncrypter {
 	public static final int TOTAL_CARDS = 54;
 	
 	public static void main(String[] args) {
-		nextCardOrder(new int[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,53,52});
+		nextCardOrder(new Integer[] {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,53,52});
 	}
 	
 	public static boolean isJoker(int card) {
@@ -35,8 +35,8 @@ public class Solitaire implements IRandEncrypter {
 		}
 	}
 
-	public static int[] nextCardOrder(int[] oldCardOrder) {
-		int[] cardOrder = Arrays.copyOf(oldCardOrder, oldCardOrder.length);
+	public static Integer[] nextCardOrder(Integer[] oldCardOrder) {
+		Integer[] cardOrder = Arrays.copyOf(oldCardOrder, oldCardOrder.length);
 		
 		int jA, jB, jT;
 		
@@ -79,7 +79,7 @@ public class Solitaire implements IRandEncrypter {
 		
 		
 		//Triple cut the pack at the 2 Jokers
-		int[] temp = new int[54];
+		Integer[] temp = new Integer[54];
 				
 		int minJ, maxJ;
 		
@@ -127,8 +127,8 @@ public class Solitaire implements IRandEncrypter {
 		return cardOrder;
 	}
 
-	public static int[] countCut(int[] cardOrder, int deckSize, int size) {
-		int[] c = new int[deckSize];
+	public static Integer[] countCut(Integer[] cardOrder, int deckSize, int size) {
+		Integer[] c = new Integer[deckSize];
 		int distanceFromEnd = deckSize - size - 2;
 		int moveValue = size + 1;
 		int lastCardIndex = deckSize - 1;
@@ -139,12 +139,12 @@ public class Solitaire implements IRandEncrypter {
 		return c;
 	}
 	
-	public static int[] createCardOrder(String key) {
-		return createCardOrder(key, ArrayUtil.createRange(54));
+	public static Integer[] createCardOrder(String key) {
+		return createCardOrder(key, ArrayUtil.createRangeInteger(54));
 	}
 	
-	public static int[] createCardOrder(String key, int[] startingOrder) {
-		int[] cardOrder = startingOrder;
+	public static Integer[] createCardOrder(String key, Integer[] startingOrder) {
+		Integer[] cardOrder = startingOrder;
 		int deckSize = cardOrder.length;
 		
 		for(int i = 0; i < key.length(); i++) {
@@ -159,7 +159,7 @@ public class Solitaire implements IRandEncrypter {
 	
 	
 	public static interface SolitaireAttack {
-		public void tryKeyStream(int[] keyStream, int[] lastOrder);
+		public void tryKeyStream(int[] keyStream, Integer[] lastOrder);
 		
 		public int getSubBranches();
 	}
@@ -177,16 +177,16 @@ public class Solitaire implements IRandEncrypter {
 	 * @param unknowns
 	 * @throws Exception
 	 */
-	public static void specialAttack(SolitaireAttack attack, int[] deck, int[] unknowns) {
+	public static void specialAttack(SolitaireAttack attack, Integer[] deck, Integer[] unknowns) {
 		options(attack, deck, unknowns, attack.getSubBranches(), 0, new int[attack.getSubBranches()]);
 	}
 	
-	public static void options(SolitaireAttack attack, int[] lastOrder, int[] unknowns, int times, int count, int[] keyStream) {
+	public static void options(SolitaireAttack attack, Integer[] lastOrder, Integer[] unknowns, int times, int count, int[] keyStream) {
 		if(times <= count) {
 			attack.tryKeyStream(keyStream, lastOrder);
 			return;
 		}
-		int[] cardOrder = Arrays.copyOf(lastOrder, Solitaire.TOTAL_CARDS);
+		Integer[] cardOrder = Arrays.copyOf(lastOrder, Solitaire.TOTAL_CARDS);
 		
 		int jA, jB, jT;
 		
@@ -229,7 +229,7 @@ public class Solitaire implements IRandEncrypter {
 		
 		//TODO Create branches if jokers are unknown
 		//Triple cut the pack at the 2 Jokers
-		int[] tmp = new int[54];
+		Integer[] tmp = new Integer[54];
 		if (jA > jB) {
 			jT = jA;
 			jA = jB;
@@ -290,7 +290,7 @@ public class Solitaire implements IRandEncrypter {
 		}
 	}
 		
-	public static void insideOrder(SolitaireAttack attack, int[] cardOrder, int[] unknowns, int times, int count, int[] keyStream) {
+	public static void insideOrder(SolitaireAttack attack, Integer[] cardOrder, Integer[] unknowns, int times, int count, int[] keyStream) {
 		int possible;
 		
 		//Examines first card to test
@@ -381,7 +381,7 @@ public class Solitaire implements IRandEncrypter {
 	
 	
 	
-	public static String encode(String plainText, int[] cardOrder) {
+	public static String encode(String plainText, Integer[] cardOrder) {
 		String cipherText = "";
 		int index = 0;
 		
@@ -444,11 +444,11 @@ public class Solitaire implements IRandEncrypter {
 		return plainText;
 	}
 	
-	public static byte[] decode(char[] cipherText, int[] cardOrder) {
+	public static byte[] decode(char[] cipherText, Integer[] cardOrder) {
 		return decode(cipherText, 0, cardOrder);
 	}
 	
-	public static byte[] decode(char[] cipherText, int startingIndex, int[] cardOrder) {
+	public static byte[] decode(char[] cipherText, int startingIndex, Integer[] cardOrder) {
 		byte[] plainText = new byte[cipherText.length];
 		int index = startingIndex;
 		
@@ -479,7 +479,7 @@ public class Solitaire implements IRandEncrypter {
 	}
 	
 	//Byte version of above
-	public static byte[] decode(byte[] cipherText, int startingIndex, int[] cardOrder) {
+	public static byte[] decode(byte[] cipherText, int startingIndex, Integer[] cardOrder) {
 		byte[] plainText = new byte[cipherText.length];
 		int index = startingIndex;
 		
@@ -511,8 +511,8 @@ public class Solitaire implements IRandEncrypter {
 
 	@Override
 	public String randomlyEncrypt(String plainText) {
-		int[] order = KeyGeneration.createOrder(54);
-		int[] halfOrder = ArrayUtil.copy(order);
+		Integer[] order = KeyGeneration.createOrder(54);
+		Integer[] halfOrder = ArrayUtil.copy(order);
 	
 		List<Integer> all = ListUtil.range(0, 53);
 		while(all.size() > 54 - 16) {

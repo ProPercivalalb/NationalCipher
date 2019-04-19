@@ -28,7 +28,6 @@ import nationalcipher.cipher.base.other.Hill;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -79,7 +78,7 @@ public class HillAttack extends CipherAttack {
 				app.getProgress().addMaxValue(TWENTY_SIX.pow((int)Math.pow(size, 2)));
 			
 			for(int size = sizeRange[0]; size <= sizeRange[1]; size++)
-				KeyIterator.iteratorSquareMatrixKey(task::onIteration, size);
+				KeyIterator.iterateMatrix(task::onIteration, size);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			for(int size = sizeRange[0]; size <= sizeRange[1]; size++) {
@@ -135,12 +134,12 @@ public class HillAttack extends CipherAttack {
 				task.size = size;
 				task.lengthSub = task.cipherText.length / size;
 				
-				KeyIterator.permutateArray(task, (byte)0, size, 26, true);
+				KeyIterator.iterateIntegerArray(task::onList, size, 26, true);
 				
 				if(task.resultList.size() < size)
 					app.out().println("Did not find enought key columns that produces good characters %d/%d", task.resultList.size(), size);
 				else
-					KeyIterator.permutateArray(task, (byte)1, size, task.resultList.size(), false);
+					KeyIterator.iterateIntegerArray(task::onList2, size, task.resultList.size(), false);
 			}
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
@@ -189,7 +188,7 @@ public class HillAttack extends CipherAttack {
 		return equation;
 	}
 	
-	public class HillTask extends SimulatedAnnealing implements IntArrayPermutations {
+	public class HillTask extends SimulatedAnnealing {
 
 		private int size;
 		private int lengthSub;
@@ -227,18 +226,14 @@ public class HillAttack extends CipherAttack {
 		
 		@Override
 		public Solution generateKey() {
-
-					this.bestMaximaKey = KeyGeneration.createMatrix(this.size, 26);
-					return new Solution(Hill.decodeUsingInverse(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
-			
+			this.bestMaximaKey = KeyGeneration.createMatrix(this.size, 26);
+			return new Solution(Hill.decodeUsingInverse(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
 		}
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-		
-					this.lastKey = KeyManipulation.modifyMatrix(this.bestMaximaKey, count % this.size, this.size);
-					return new Solution(Hill.decodeUsingInverse(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
-			
+			this.lastKey = KeyManipulation.modifyMatrix(this.bestMaximaKey, count % this.size, this.size);
+			return new Solution(Hill.decodeUsingInverse(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
 		}
 
 		@Override
@@ -268,77 +263,77 @@ public class HillAttack extends CipherAttack {
 			return false;
 		}
 		
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
-			if(id == 0) {
-				boolean invalidDeterminate = false;
-				for(int d : new int[] {2, 13}) {
-					boolean divides = true;
-					for(int s = 0; s < this.size; s++) 
-						if(data[s] % d != 0)
-							divides = false;
+		public void onList(Integer[] data) {
+			boolean invalidDeterminate = false;
+			for(int d : new int[] {2, 13}) {
+				boolean divides = true;
+				for(int s = 0; s < this.size; s++) 
+					if(data[s] % d != 0)
+						divides = false;
 
-					invalidDeterminate = divides;
-					if(divides) break;
-				}
-				
-				if(invalidDeterminate)
-					return;
-				
-				char[] decrypted = new char[this.lengthSub];
-		
-				for(int i = 0; i < this.cipherText.length; i += this.size) {	
-					int total = 0;
-					for(int s = 0; s < this.size; s++)
-						total += data[s] * (this.cipherText[i + s] - 'A');
-	
-					decrypted[i / this.size] = (char)(total % 26 + 'A');
-				}
-				
-				double score = ChiSquared.calculate(decrypted, this.app.getLanguage());
-		
-				this.resultList.addResult(new HillSection(score, decrypted, Arrays.copyOf(data, data.length)));
-				
-				if(score < 128D)
-					this.app.out().println("%s, %f, %s", Arrays.toString(data), score, Arrays.toString(decrypted));
+				invalidDeterminate = divides;
+				if(divides) break;
 			}
-			else {
+				
+			if(invalidDeterminate)
+				return;
+				
+			char[] decrypted = new char[this.lengthSub];
+		
+			for(int i = 0; i < this.cipherText.length; i += this.size) {	
+				int total = 0;
+				for(int s = 0; s < this.size; s++)
+					total += data[s] * (this.cipherText[i + s] - 'A');
+	
+				decrypted[i / this.size] = (char)(total % 26 + 'A');
+			}
+				
+			double score = ChiSquared.calculate(decrypted, this.app.getLanguage());
+		
+			this.resultList.addResult(new HillSection(score, decrypted, Arrays.copyOf(data, data.length)));
+				
+			if(score < 128D)
+				this.app.out().println("%s, %f, %s", Arrays.toString(data), score, Arrays.toString(decrypted));
+		}
+		
+		public void onList2(Integer[] data) {
+			for(int s = 0; s < this.size; s++) {
+				HillSection hillResult = this.resultList.get(data[s]);
+				for(int i = 0; i < this.lengthSub; i++)
+					this.plainText[i * this.size + s] = (byte)hillResult.decrypted[i];
+			}
+			
+			this.lastSolution = new Solution(this.plainText, this.getLanguage());
+			
+			if(this.lastSolution.score >= this.bestSolution.score) {
+				this.bestSolution = this.lastSolution;
+				int[] inverseMatrix = new int[this.size * this.size];
 				for(int s = 0; s < this.size; s++) {
 					HillSection hillResult = this.resultList.get(data[s]);
-					for(int i = 0; i < this.lengthSub; i++)
-						this.plainText[i * this.size + s] = (byte)hillResult.decrypted[i];
+					for(int n = 0; n < this.size; n++)
+						inverseMatrix[s * this.size + n] = hillResult.inverseCol[n];
+				
+				}
+				try {
+					this.bestSolution.setKeyString(new Matrix(inverseMatrix, this.size).inverseMod(26).toString());
+				}
+				catch(MatrixNoInverse e) {
+					this.bestSolution.setKeyString("Invertible: %s", Arrays.toString(inverseMatrix));
 				}
 				
-				this.lastSolution = new Solution(this.plainText, this.getLanguage());
-				
-				if(this.lastSolution.score >= this.bestSolution.score) {
-					this.bestSolution = this.lastSolution;
-					int[] inverseMatrix = new int[this.size * this.size];
-					for(int s = 0; s < this.size; s++) {
-						HillSection hillResult = this.resultList.get(data[s]);
-						for(int n = 0; n < this.size; n++)
-							inverseMatrix[s * this.size + n] = hillResult.inverseCol[n];
-					
-					}
-					try {
-						this.bestSolution.setKeyString(new Matrix(inverseMatrix, this.size).inverseMod(26).toString());
-					}
-					catch(MatrixNoInverse e) {
-						this.bestSolution.setKeyString("Invertible: %s", Arrays.toString(inverseMatrix));
-					}
-					
-					this.bestSolution.bakeSolution();
-					this.out().println("%s", this.bestSolution);	
-					this.getKeyPanel().updateSolution(this.bestSolution);
-				}
+				this.bestSolution.bakeSolution();
+				this.out().println("%s", this.bestSolution);	
+				this.getKeyPanel().updateSolution(this.bestSolution);
 			}
 		}
 	}
 	
+
+	
 	public static class HillSection extends ResultPositive {
 		public char[] decrypted;
-		public int[] inverseCol;
-		public HillSection(double score, char[] decrypted, int[] inverseCol) {
+		public Integer[] inverseCol;
+		public HillSection(double score, char[] decrypted, Integer[] inverseCol) {
 			super(score);
 			this.decrypted = decrypted;
 			this.inverseCol = inverseCol;

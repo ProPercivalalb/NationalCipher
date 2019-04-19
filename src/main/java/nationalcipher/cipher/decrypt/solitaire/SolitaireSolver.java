@@ -1,13 +1,8 @@
 package nationalcipher.cipher.decrypt.solitaire;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javalibrary.Output;
 import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
-import javalibrary.language.ILanguage;
 import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
 import javalibrary.list.DynamicResultList;
@@ -18,7 +13,6 @@ import javalibrary.util.ListUtil;
 import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 
 public class SolitaireSolver {
@@ -86,7 +80,7 @@ public class SolitaireSolver {
 				for(int k = 0; k < n + offset; k++)
 					task.text[k] = solution.getText()[k];
 				
-				KeyIterator.iterateIntegerOrderedKey(task, deck.unknownCards);
+				KeyIterator.permuteObject(task::onIteration, deck.unknownCards);
 			}
 		}
 	}
@@ -101,9 +95,9 @@ public class SolitaireSolver {
 	
 	public static class SolutionWithDeck extends Solution {
 
-		public int[] deck;
+		public Integer[] deck;
 		
-		public SolutionWithDeck(byte[] text, NGramData nGramData, int[] deck) {
+		public SolutionWithDeck(byte[] text, NGramData nGramData, Integer[] deck) {
 			super(text, nGramData);
 			this.deck = deck;
 		}
@@ -113,13 +107,13 @@ public class SolitaireSolver {
 		}
 	}
 	
-	public static class SolitaireSolution implements IntegerOrderedKey {
+	public static class SolitaireSolution {
 		
 		public SolitaireSolutionEver bestSolutionEver;
 		public byte[] text;
 		public int startingLength;
-		public int[] incompleteOrder;
-		public int[] emptyIndex;
+		public Integer[] incompleteOrder;
+		public Integer[] emptyIndex;
 		public Solution lastSolution;
 		public Output out;
 		public int time;
@@ -132,8 +126,7 @@ public class SolitaireSolver {
 			this.time = time;
 		}
 		
-		@Override
-		public void onIteration(int[] order) {
+		public void onIteration(Integer[] order) {
 			for(int i = 0; i < this.emptyIndex.length; i++)
 				this.incompleteOrder[this.emptyIndex[i]] = order[i];
 			
@@ -176,7 +169,7 @@ public class SolitaireSolver {
     	}
    
 		@Override
-		public void tryKeyStream(int[] keyStream, int[] lastOrder) {
+		public void tryKeyStream(int[] keyStream, Integer[] lastOrder) {
 			
 			byte[] chars = Solitaire.decodeWithKeyStream(this.intText, this.prefix.length, keyStream);
 

@@ -5,7 +5,7 @@ public class SwissK extends EnigmaMachine {
 	public SwissK(String name) {
 		super(name);
 		this.setRotors("PEZUOHXSCVFMTBGLRINQJWAYDK", "ZOUESYDKFWPCIQXHMVBLGNJRAT", "EHRVXGAOBQUSIMZFLYNWKTPDJC");
-		this.setNotches(new int[][] {{24},{4},{13}});
+		this.setNotches(new Integer[][] {{24},{4},{13}});
 		this.setReflectors("IMETCGFRAYSQBZXWLHKDVUPOJN");
 		this.setReflectorNames("UKW");
 		this.setETW("QWERTZUIOASDFGHJKPYXCVBNML");

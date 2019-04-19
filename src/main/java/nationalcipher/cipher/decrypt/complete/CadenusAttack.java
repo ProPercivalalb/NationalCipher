@@ -10,7 +10,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.IApplication;
 
@@ -45,19 +44,18 @@ public class CadenusAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(26, factor));
 			
 			for(int factor : factors)
-				KeyIterator.iterateShort26Key(task, factor, true);
+				KeyIterator.iterateShort26Key(task::onIteration, factor, true);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class CadenusTask extends InternalDecryption implements ShortCustomKey {
+	public class CadenusTask extends InternalDecryption {
 
 		public CadenusTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(String key) {
 			int blockSize = key.length() * 25;
 			byte[] plainText = new byte[0];

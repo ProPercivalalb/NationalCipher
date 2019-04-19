@@ -69,8 +69,8 @@ public class KeyGeneration {
 		return new String(key);
 	}
 	
-	public static int[] createOrder(int length) {
-		return ArrayUtil.shuffle(ArrayUtil.createRange(length));
+	public static Integer[] createOrder(int length) {
+		return ArrayUtil.shuffle(ArrayUtil.createRangeInteger(length));
 	}
 	
 	public static Matrix createMatrix(int size, int range) {
@@ -193,13 +193,13 @@ public class KeyGeneration {
 		return change;
 	}
 	
-	private static int[] createGenericGrilleKey(int size) {
+	private static Integer[] createGenericGrilleKey(int size) {
 		double half = size / 2D;
 		int rows = (int)Math.ceil(half);
 		int cols = (int)Math.floor(half);
 		int keyLength = rows * cols;
 		
-		int[] key = new int[keyLength];
+		Integer[] key = new Integer[keyLength];
 		int count = 0;
 		for(int r = 0; r < rows; r++)
 			for(int c = 0; c < cols; c++)
@@ -208,8 +208,8 @@ public class KeyGeneration {
 		return key;
 	}
 	
-	public static int[] createGrilleKey(int size) {
-		int[] key = createGenericGrilleKey(size);
+	public static Integer[] createGrilleKey(int size) {
+		Integer[] key = createGenericGrilleKey(size);
 		
 		for(int i = 0; i < key.length; i++) {
 			int quadrant = RandomUtil.pickRandomInt(4);
@@ -244,12 +244,12 @@ public class KeyGeneration {
 		return createRepeatingShortKey26(length);
 	}
 	
-	public static int[] createOrder(int minLength, int maxLength) {
+	public static Integer[] createOrder(int minLength, int maxLength) {
 		int length = RandomUtil.pickRandomInt(minLength, maxLength);
 		return createOrder(length);
 	}
 	
-	public static int[] createGrilleKey(int minLength, int maxLength) {
+	public static Integer[] createGrilleKey(int minLength, int maxLength) {
 		int length = RandomUtil.pickRandomInt(minLength, maxLength);
 		return createGrilleKey(length);
 	}

@@ -160,7 +160,7 @@ public class KeyManipulation {
 			return swapTwoCharacters(keySquare);
 	}
 
-	public static int[] swapOrder(int[] order) {
+	public static Integer[] swapOrder(Integer[] order) {
 	    int i1 = RandomUtil.pickRandomInt(order.length);
 	    int i2 = RandomUtil.pickRandomInt(order.length);
 	    int temp = order[i1];
@@ -169,7 +169,7 @@ public class KeyManipulation {
 	    return order;
 	}
 	
-	public static int[] reverseOrder(int[] order) {
+	public static Integer[] reverseOrder(Integer[] order) {
 		for(int i = 0; i < order.length / 2; i++) {
 			int temp = order[i];
 			order[i] = order[order.length - i - 1];
@@ -178,8 +178,8 @@ public class KeyManipulation {
 		return order;
 	}
 	
-	public static int[] cutSwapOrder(int[] order) {
-		int[] newOrder = new int[order.length];
+	public static Integer[] cutSwapOrder(Integer[] order) {
+		Integer[] newOrder = new Integer[order.length];
 		int cut = RandomUtil.pickRandomInt(1, order.length - 2);
 		
 		int index = 0;
@@ -191,8 +191,8 @@ public class KeyManipulation {
 		return newOrder;
 	}
 	
-	public static int[] rotateOrder(int[] order) {
-		int[] newOrder = new int[order.length];
+	public static Integer[] rotateOrder(Integer[] order) {
+		Integer[] newOrder = new Integer[order.length];
 
 		int rotate = RandomUtil.pickRandomInt(1, order.length - 1);
 		for(int i = 0; i < order.length; i++)
@@ -201,7 +201,7 @@ public class KeyManipulation {
 		return newOrder;
 	}
 	
-	public static int[] modifyOrder(int[] order) {
+	public static Integer[] modifyOrder(Integer[] order) {
 	    switch(RandomUtil.pickRandomInt(30)) {
 	        case 0: return reverseOrder(order);
 	        case 1: return cutSwapOrder(order);

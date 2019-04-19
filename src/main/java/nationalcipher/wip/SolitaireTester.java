@@ -1,17 +1,14 @@
 package nationalcipher.wip;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.Output;
 import javalibrary.language.Languages;
 import javalibrary.streams.FileReader;
-import javalibrary.thread.Threads;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.other.Solitaire;
-import nationalcipher.cipher.decrypt.complete.SolitaireAttack;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver.SolitaireSolutionEver;

@@ -6,7 +6,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack.DictionaryKey;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.Long25Key;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -39,7 +38,7 @@ public class PlayfairAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PlayfairTask extends SimulatedAnnealing implements Long25Key, DictionaryKey {
+	public class PlayfairTask extends SimulatedAnnealing implements DictionaryKey {
 
 		public String bestKey, bestMaximaKey, lastKey;
 		
@@ -48,7 +47,7 @@ public class PlayfairAttack extends CipherAttack {
 		}
 		
 		@Override
-		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
+		public void onKeyCreation(Character[] complete, Character[] word, int shift, boolean reversed, RouteCipherType route) {
 			this.lastSolution = new Solution(Playfair.decode(this.cipherText, this.plainText, complete), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
@@ -63,7 +62,6 @@ public class PlayfairAttack extends CipherAttack {
 			this.getProgress().increase();
 		}
 
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(Playfair.decode(this.cipherText, this.plainText, key), this.getLanguage());
 			

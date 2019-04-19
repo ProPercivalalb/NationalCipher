@@ -2,27 +2,25 @@ package nationalcipher.cipher.base.enigma;
 
 import java.util.Arrays;
 
-import javalibrary.util.ArrayUtil;
-
 public class EnigmaMachine {
 
 	//TODO CHANGE ALL THE PUBLIC FIELDS TO PRIVATE
 	public String name;
 	
-	public int[][] rotors;
-	public int[][] rotorsInverse;
-	public int[][] notches;
+	public Integer[][] rotors;
+	public Integer[][] rotorsInverse;
+	public Integer[][] notches;
 	public int rotorCount;
 	
-	public int[][] reflector;
+	public Integer[][] reflector;
 	public String[] reflectorNames;
 	public int reflectorCount;
 	
-	public int[] etw;
-	public int[] etwInverse;
+	public Integer[] etw;
+	public Integer[] etwInverse;
 	
-	public int[][] thinRotor;
-	public int[][] thinRotorInverse;
+	public Integer[][] thinRotor;
+	public Integer[][] thinRotorInverse;
 	public String[] thinRotorNames;
 	public int thinRotorCount;
 	
@@ -40,8 +38,8 @@ public class EnigmaMachine {
 	}
 	
 	public final void setRotors(String... input) {
-		int[][] normal = new int[input.length][26];
-		int[][] inverse = new int[normal.length][26];
+		Integer[][] normal = new Integer[input.length][26];
+		Integer[][] inverse = new Integer[normal.length][26];
 		
 		for(int r = 0; r < input.length; r++) {
 			for(int i = 0; i < 26; i++) {
@@ -55,15 +53,15 @@ public class EnigmaMachine {
 		this.rotorCount = input.length;
 	}
 	
-	public final void setNotches(int[][] input) {
+	public final void setNotches(Integer[][] input) {
 		this.notches = input;
 	}
 	
 	public final void setNotches(String... input) {
-		int[][] normal = new int[input.length][];
+		Integer[][] normal = new Integer[input.length][];
 		
 		for(int r = 0; r < input.length; r++)  {
-			normal[r] = new int[input[r].length()];
+			normal[r] = new Integer[input[r].length()];
 			for(int i = 0; i < normal[r].length; i++) 
 				normal[r][i] = input[r].charAt(i) - 'A';
 		}
@@ -72,7 +70,7 @@ public class EnigmaMachine {
 	}
 	
 	public final void setReflectors(String... input) {
-		int[][] normal = new int[input.length][26];
+		Integer[][] normal = new Integer[input.length][26];
 		
 		for(int r = 0; r < input.length; r++)
 			for(int i = 0; i < input[r].length(); i++) 
@@ -88,11 +86,11 @@ public class EnigmaMachine {
 	}
 
 	public void setETW(String input) {
-		this.etw = new int[26];
+		this.etw = new Integer[26];
 		for(int i = 0; i < input.length(); i++) 
 			this.etw[i] = input.charAt(i) - 'A';
 		
-		int[] inverse = new int[26];
+		Integer[] inverse = new Integer[26];
 		for(int i = 0; i < 26; i++)
 			inverse[this.etw[i]] = i;
 			
@@ -100,8 +98,8 @@ public class EnigmaMachine {
 	}
 	
 	public final void setThinRotors(String... input) {
-		int[][] normal = new int[input.length][26];
-		int[][] inverse = new int[normal.length][26];
+		Integer[][] normal = new Integer[input.length][26];
+		Integer[][] inverse = new Integer[normal.length][26];
 		
 		for(int r = 0; r < input.length; r++) {
 			for(int i = 0; i < 26; i++) {
@@ -160,7 +158,7 @@ public class EnigmaMachine {
 		EnigmaMachine copy = new EnigmaPlugboard(this.name);
 		EnigmaMachine.copy(this, copy);
 		
-		int[] plugBoardArray = new int[26];
+		Integer[] plugBoardArray = new Integer[26];
 		for(int i = 0; i < 26; i++) plugBoardArray[i] = i;
 		
 		for(int[] swap : input) {
@@ -175,7 +173,7 @@ public class EnigmaMachine {
 		return copy;
 	}
 
-	public EnigmaMachine createWithPresetPlugboard(int[] plugBoardArray) {
+	public EnigmaMachine createWithPresetPlugboard(Integer[] plugBoardArray) {
 		EnigmaMachine copy = new EnigmaPlugboard(this.name);
 		EnigmaMachine.copy(this, copy);
 			
@@ -189,7 +187,7 @@ public class EnigmaMachine {
 		EnigmaMachine copy = new EnigmaUhr(this.name, input);
 		EnigmaMachine.copy(this, copy);
 
-		int[] plugBoardArray = new int[26];
+		Integer[] plugBoardArray = new Integer[26];
 		for(int i = 0; i < 26; i++) plugBoardArray[i] = i;
 		int uhrIndex = 0;
 		for(char[] swap : input) {
@@ -205,7 +203,7 @@ public class EnigmaMachine {
 			uhrIndex++;
 		}
 		
-		int[] inverse = new int[26];
+		Integer[] inverse = new Integer[26];
 		for(int i = 0; i < 26; i++)
 			inverse[plugBoardArray[i]] = i;
 		

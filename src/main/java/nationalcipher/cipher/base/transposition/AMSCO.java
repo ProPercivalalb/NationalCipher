@@ -10,7 +10,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class AMSCO implements IRandEncrypter {
 	
 	public static String encode(String plainText, boolean first, String key) {
-		int[] order = new int[key.length()];
+		Integer[] order = new Integer[key.length()];
 		char[] charArray = key.toCharArray();
 		Arrays.sort(charArray);
 		for(int i = 0; i < charArray.length; i++)
@@ -19,7 +19,7 @@ public class AMSCO implements IRandEncrypter {
 		return encode(plainText, first, order);
 	}
 	
-	public static String encode(String plainText, boolean first, int[] order) {
+	public static String encode(String plainText, boolean first, Integer[] order) {
 		
 		String[] columns = new String[order.length];
 		Arrays.fill(columns, "");
@@ -46,7 +46,7 @@ public class AMSCO implements IRandEncrypter {
 		return read;
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, int[] order, boolean first) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Integer[] order, boolean first) {
 		int period = order.length;
 		
 		

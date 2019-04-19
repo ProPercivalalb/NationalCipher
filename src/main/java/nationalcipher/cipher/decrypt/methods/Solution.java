@@ -1,7 +1,5 @@
 package nationalcipher.cipher.decrypt.methods;
 
-import java.util.Arrays;
-
 import javalibrary.fitness.NGramData;
 import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;

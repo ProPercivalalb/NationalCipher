@@ -4,19 +4,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javalibrary.cipher.stats.ReadableText;
-import javalibrary.dict.Dictionary;
-import javalibrary.file.DraftFile;
-import javalibrary.fitness.ChiSquared;
-import javalibrary.language.Languages;
 import javalibrary.lib.Timer;
-import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.other.Playfair;
-import nationalcipher.cipher.base.substitution.Caesar;
-import nationalcipher.cipher.base.substitution.Enigma;
-import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
@@ -32,7 +23,6 @@ import nationalcipher.cipher.stats.types.StatisticNormalOrder;
 import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTrigraphNoOverlapICx100000;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.transposition.Routes;
 import nationalcipher.lib.StatisticsLib;
 
 public class StatCompiler {

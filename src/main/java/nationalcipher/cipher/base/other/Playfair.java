@@ -3,6 +3,7 @@ package nationalcipher.cipher.base.other;
 import java.util.Map;
 
 import javalibrary.math.MathUtil;
+import javalibrary.streams.PrimTypeUtil;
 import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -78,10 +79,10 @@ public class Playfair implements IRandEncrypter {
 	
 	//Double letter 1 down to right
 	public static byte[] decode(char[] cipherText, byte[] plainText, String key) {
-		return decode(cipherText, plainText, key.toCharArray());
+		return decode(cipherText, plainText, PrimTypeUtil.toCharacterArray(key));
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, char[] key) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Character[] key) {
 		
 		Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);
 		
@@ -95,16 +96,16 @@ public class Playfair implements IRandEncrypter {
 	        int col2 = i2 % size;
 	        
 	        if(row1 == row2) {
-	        	plainText[i] = (byte)key[row1 * size + (col1 + size - 1) % size];
-	        	plainText[i + 1] = (byte)key[row2 * size + (col2 + size - 1) % size];
+	        	plainText[i] = (byte)(char)key[row1 * size + (col1 + size - 1) % size];
+	        	plainText[i + 1] = (byte)(char)key[row2 * size + (col2 + size - 1) % size];
 	        }
 	        else if(col1 == col2) {
-	        	plainText[i] = (byte)key[((row1 + size - 1) % size) * size + col1];
-	        	plainText[i + 1] = (byte)key[((row2 + size - 1) % size) * size + col2];
+	        	plainText[i] = (byte)(char)key[((row1 + size - 1) % size) * size + col1];
+	        	plainText[i + 1] = (byte)(char)key[((row2 + size - 1) % size) * size + col2];
 	        }
 	        else {
-	        	plainText[i] = (byte)key[row1 * size + col2];
-	            plainText[i + 1] = (byte)key[row2 * size + col1];
+	        	plainText[i] = (byte)(char)key[row1 * size + col2];
+	            plainText[i + 1] = (byte)(char)key[row2 * size + col1];
 	        }
 	    }
 	    

@@ -2,27 +2,14 @@ package nationalcipher.cipher.decrypt.complete;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
 
-import javalibrary.dict.Dictionary;
-import javalibrary.swing.JSpinnerUtil;
-import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.other.Hutton;
-import nationalcipher.cipher.base.other.PeriodicGromark;
-import nationalcipher.cipher.base.other.SeriatedPlayfair;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
-import nationalcipher.cipher.decrypt.methods.DictionaryAttack.DictionaryKey;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.HuttonKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
-import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.transposition.RouteCipherType;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.NationalCipherUI;
 
@@ -53,13 +40,13 @@ public class HuttonAttack extends CipherAttack {
 		else if(method == DecryptionMethod.BRUTE_FORCE) {
 			for(int i = 3; i <= 3; i++)
 				for(int j = 3; j <= 3; j++)
-					KeyIterator.iterateHutton(task, i, j);
+					KeyIterator.iterateHutton(task::onIteration, i, j);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SeriatedPlayfairTask extends SimulatedAnnealing implements HuttonKey {
+	public class SeriatedPlayfairTask extends SimulatedAnnealing {
 
 		public int period;
 		public String bestKey1, bestMaximaKey1, lastKey1;
@@ -69,7 +56,6 @@ public class HuttonAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
 		public void onIteration(String key1, String key2) {
 			this.lastSolution = new Solution(Hutton.decode(this.cipherText, key1, key2), this.getLanguage());
 			if(key1.equals("WE")) {

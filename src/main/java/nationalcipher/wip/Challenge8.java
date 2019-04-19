@@ -6,15 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javalibrary.language.Languages;
-import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import nationalcipher.cipher.base.VigenereType;
-import nationalcipher.cipher.base.substitution.Affine;
-import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.transposition.RouteCipherType;
-import nationalcipher.cipher.transposition.RouteTransposition;
-import nationalcipher.cipher.transposition.Routes;
 
 public class Challenge8 {
 

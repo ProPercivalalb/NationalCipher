@@ -16,7 +16,6 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -54,13 +53,13 @@ public class AMSCOAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.factorialBig(length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateIntegerOrderedKey(task, length);
+				KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class AMSCOTask extends InternalDecryption implements IntegerOrderedKey {
+	public class AMSCOTask extends InternalDecryption {
 
 		public boolean doubleLetterFirst;
 		
@@ -68,8 +67,7 @@ public class AMSCOAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
-		public void onIteration(int[] order) {
+		public void onIteration(Integer[] order) {
 			this.lastSolution = new Solution(AMSCO.decode(this.cipherText, this.plainText, order, this.doubleLetterFirst), this.getLanguage());
 			this.addSolution(this.lastSolution);
 			

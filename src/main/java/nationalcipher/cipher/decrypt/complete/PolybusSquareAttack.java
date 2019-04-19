@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import javalibrary.streams.PrimTypeUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
@@ -35,7 +36,7 @@ public class PolybusSquareAttack extends CipherAttack {
 			char[] tempText = new char[split.size()];
 			HashSet<String> nonDupList = new HashSet<String>(split);
 			int t = 0;
-			char[] alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray();
+			Character[] alphabet = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWXYZ");
 			
 			for(String nonDup : nonDupList) {
 				for(int i = 0; i < split.size(); i++) 
@@ -47,7 +48,7 @@ public class PolybusSquareAttack extends CipherAttack {
 				
 			SubstitutionHack substitutionHack = new SubstitutionHack(tempText, app) {
 				@Override
-				public char[] getAlphabet() {
+				public Character[] getAlphabet() {
 					return alphabet;
 				}
 			};

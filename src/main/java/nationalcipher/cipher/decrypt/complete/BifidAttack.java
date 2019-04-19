@@ -66,7 +66,7 @@ public class BifidAttack extends CipherAttack {
 		}
 
 		@Override
-		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
+		public void onKeyCreation(Character[] complete, Character[] word, int shift, boolean reversed, RouteCipherType route) {
 			this.lastSolution = new Solution(Bifid.decode(this.cipherText, this.plainText, complete, this.period), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {

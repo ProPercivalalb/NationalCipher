@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt;
 
 import javalibrary.dict.Dictionary;
+import javalibrary.streams.PrimTypeUtil;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.DictionaryAttack.DictionaryKey;
@@ -47,8 +48,8 @@ public abstract class LongKeyAttack extends CipherAttack {
 		}
 
 		@Override
-		public void onKeyCreation(char[] complete, char[] word, int shift, boolean reversed, RouteCipherType route) {
-			String key = new String(complete);
+		public void onKeyCreation(Character[] complete, Character[] word, int shift, boolean reversed, RouteCipherType route) {
+			String key = PrimTypeUtil.toString(complete);
 			this.lastSolution = new Solution(LongKeyAttack.this.decode(this.cipherText, this.plainText, key), this.getLanguage());
 			this.addSolution(this.lastSolution);
 			

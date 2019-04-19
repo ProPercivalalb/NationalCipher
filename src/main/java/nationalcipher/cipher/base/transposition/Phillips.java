@@ -2,6 +2,7 @@ package nationalcipher.cipher.base.transposition;
 
 import java.util.Map;
 
+import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
@@ -49,10 +50,10 @@ public class Phillips implements IRandEncrypter {
 	}
 	
 	public static byte[] decode(char[] cipherText, byte[] plainText, String key, boolean orderRows, boolean orderColumns) {
-		return decode(cipherText, plainText, key.toCharArray(), orderRows, orderColumns);
+		return decode(cipherText, plainText, PrimTypeUtil.toCharacterArray(key), orderRows, orderColumns);
 	}
 	
-	public static byte[] decode(char[] cipherText, byte[] plainText, char[] key, boolean orderRows, boolean orderColumns) {
+	public static byte[] decode(char[] cipherText, byte[] plainText, Character[] key, boolean orderRows, boolean orderColumns) {
 		
 		Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);
 		
@@ -80,7 +81,7 @@ public class Phillips implements IRandEncrypter {
 			else
 				newColumn = (column + 4) % 5;
 	
-			plainText[i] = (byte)key[newRow * 5 + newColumn];
+			plainText[i] = (byte)(char)key[newRow * 5 + newColumn];
 		}
 		
 		return plainText;

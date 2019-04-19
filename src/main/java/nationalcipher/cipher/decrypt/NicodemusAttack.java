@@ -15,8 +15,6 @@ import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Nicodemus;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -58,7 +56,7 @@ public class NicodemusAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(keyAlphabet.length(), length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShortCustomKey(task, keyAlphabet, length, true);
+				KeyIterator.iterateShortCustomKey(task::onIteration, keyAlphabet, length, true);
 		}
 		else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			//TODO This is old one
@@ -115,7 +113,7 @@ public class NicodemusAttack extends CipherAttack {
 		}
 	}
 	
-	public class NicodemusTask extends KeySearch implements ShortCustomKey, IntArrayPermutations {
+	public class NicodemusTask extends KeySearch {
 		
 		public NicodemusResult[] results;
 		
@@ -123,7 +121,6 @@ public class NicodemusAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(Nicodemus.decode(this.cipherText, this.plainText, key, NicodemusAttack.this.type), this.getLanguage());
 			
@@ -158,10 +155,9 @@ public class NicodemusAttack extends CipherAttack {
 		//Key search finds the characters in the key, permutate to find the real solution
 		@Override
 		public void foundBestSolutionForLength(Solution currentBestSolution) {
-			KeyIterator.permutateString(this::onPermutate, currentBestSolution.keyString);
+			KeyIterator.permuteString(this::onPermutate, currentBestSolution.keyString);
 		}
 	
-
 		public void onPermutate(String key) {
 			this.lastSolution = new Solution(Nicodemus.decode(this.cipherText, this.plainText, key, NicodemusAttack.this.type), this.getLanguage());
 			
@@ -176,8 +172,7 @@ public class NicodemusAttack extends CipherAttack {
 			this.getKeyPanel().updateIteration(this.iteration++);
 		}
 
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
+		public void onList(Integer[] data) {
 			char[] key = new char[this.results.length];
 			
 			for(int c = 0; c < this.results.length; c++) {

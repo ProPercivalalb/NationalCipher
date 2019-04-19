@@ -2,16 +2,7 @@ package nationalcipher.wip;
 
 import java.util.List;
 
-import javalibrary.language.Languages;
-import javalibrary.math.MathUtil;
 import javalibrary.streams.FileReader;
-import javalibrary.string.StringTransformer;
-import javalibrary.swing.chart.ChartData;
-import nationalcipher.cipher.base.transposition.ColumnarTransposition;
-import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.transposition.RouteCipherType;
-import nationalcipher.cipher.transposition.RouteTransposition;
-import nationalcipher.cipher.transposition.Routes;
 
 public class Challenge7 {
 

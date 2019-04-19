@@ -18,7 +18,6 @@ import nationalcipher.cipher.base.substitution.VigenereFamily;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -53,7 +52,7 @@ public class BeaufortAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(26, length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShort26Key(task, length, true);
+				KeyIterator.iterateShort26Key(task::onIteration, length, true);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			int keyLength = StatCalculator.calculateBestKappaIC(text, periodRange[0], periodRange[1], app.getLanguage());
@@ -97,13 +96,12 @@ public class BeaufortAttack extends CipherAttack {
 	    return best;
 	}
 	
-	public class BeaufortTask extends KeySearch implements ShortCustomKey {
+	public class BeaufortTask extends KeySearch {
 
 		public BeaufortTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.BEAUFORT), this.getLanguage());
 			

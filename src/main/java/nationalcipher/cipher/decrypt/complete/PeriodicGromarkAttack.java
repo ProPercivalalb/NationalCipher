@@ -15,8 +15,6 @@ import nationalcipher.cipher.base.other.PeriodicGromark;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.ShortCustomKey;
 import nationalcipher.cipher.decrypt.methods.KeySearch;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -50,11 +48,11 @@ public class PeriodicGromarkAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.pow(26, length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShort26Key(task, length, false);
+				KeyIterator.iterateShort26Key(task::onIteration, length, false);
 		}
 		else if(method == DecryptionMethod.CALCULATED) {
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length) {
-				task.onList((byte)-1, ArrayUtil.createRange(length));
+				task.onList(ArrayUtil.createRangeInteger(length));
 				//KeyIterator.permutateArray(task, length, length, false);
 			}
 		}
@@ -66,13 +64,12 @@ public class PeriodicGromarkAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PeriodicGromarkTask extends KeySearch implements ShortCustomKey, IntArrayPermutations {
+	public class PeriodicGromarkTask extends KeySearch {
 
 		public PeriodicGromarkTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 
-		@Override
 		public void onIteration(String key) {
 			this.lastSolution = new Solution(PeriodicGromark.decode(this.cipherText, this.plainText, key), this.getLanguage());
 			this.addSolution(this.lastSolution);
@@ -103,8 +100,7 @@ public class PeriodicGromarkAttack extends CipherAttack {
 			return false;
 		}
 		
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
+		public void onList(Integer[] data) {
 			int[] numericKey = new int[this.cipherText.length];
 			
 			for(int i = 0; i < data.length; i++)
@@ -149,9 +145,9 @@ public class PeriodicGromarkAttack extends CipherAttack {
 	public class PeriodicGromarkResult extends ResultPositive {
 		
 		public byte[] decrypted;
-		public int[] order;
+		public Integer[] order;
 		
-		public PeriodicGromarkResult(byte[] decrypted, double score, int[] inverseCol) {
+		public PeriodicGromarkResult(byte[] decrypted, double score, Integer[] inverseCol) {
 			super(score);
 			this.decrypted = decrypted;
 			this.order = inverseCol;

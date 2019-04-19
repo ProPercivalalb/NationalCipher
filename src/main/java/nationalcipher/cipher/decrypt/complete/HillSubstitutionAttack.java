@@ -3,7 +3,6 @@ package nationalcipher.cipher.decrypt.complete;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -21,7 +20,6 @@ import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.InternalDecryption;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.IntArrayPermutations;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -57,7 +55,7 @@ public class HillSubstitutionAttack extends CipherAttack {
 				task.size = size;
 				task.lengthSub = task.cipherText.length / size;
 				
-				KeyIterator.permutateArray(task, (byte)0, size, 26, true);
+				KeyIterator.iterateIntegerArray(task::onList, size, 26, true);
 				
 				Collections.sort(task.best);
 				
@@ -76,7 +74,7 @@ public class HillSubstitutionAttack extends CipherAttack {
 				app.out().println("Trying all combinations...");
 				app.out().println("Removing trials that have no inverse...");
 				app.out().println("Removing trials with %cIC less than 10...", (char)916);
-				KeyIterator.permutateArray(task, (byte)1, size, task.best.size(), false);
+				KeyIterator.iterateIntegerArray(task::onList2, size, task.best.size(), false);
 				app.out().println("%d out of a possible %d trials remain to be tested.", task.bestNext.size(), MathUtil.factorial(task.best.size(), size));
 				
 				Collections.sort(task.bestNext);
@@ -108,7 +106,7 @@ public class HillSubstitutionAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class HillTask extends InternalDecryption implements IntArrayPermutations {
+	public class HillTask extends InternalDecryption {
 
 		private int size;
 		private int lengthSub;
@@ -119,67 +117,65 @@ public class HillSubstitutionAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
-		public void onList(byte id, int[] data, Object... extra) {
-			if(id == 0) {
-				boolean invalidDeterminate = false;
-				for(int d : new int[] {2, 13}) {
-					boolean divides = true;
-					for(int s = 0; s < this.size; s++) 
-						if(data[s] % d != 0)
-							divides = false;
+		public void onList(Integer[] data) {
+			boolean invalidDeterminate = false;
+			for(int d : new int[] {2, 13}) {
+				boolean divides = true;
+				for(int s = 0; s < this.size; s++) 
+					if(data[s] % d != 0)
+						divides = false;
 
-					invalidDeterminate = divides;
-					if(divides) break;
-				}
+				invalidDeterminate = divides;
+				if(divides) break;
+			}
 				
-				if(invalidDeterminate)
-					return;
+			if(invalidDeterminate)
+				return;
 
 				
-				byte[] decrypted = new byte[this.lengthSub];
+			byte[] decrypted = new byte[this.lengthSub];
 		
-				for(int i = 0; i < this.cipherText.length; i += this.size) {	
-					int total = 0;
-					for(int s = 0; s < this.size; s++)
-						total += data[s] * (this.cipherText[i + s] - 'A');
+			for(int i = 0; i < this.cipherText.length; i += this.size) {	
+				int total = 0;
+				for(int s = 0; s < this.size; s++)
+					total += data[s] * (this.cipherText[i + s] - 'A');
 	
-					decrypted[i / this.size] = (byte)(total % 26 + 'A');
-				}
+				decrypted[i / this.size] = (byte)(total % 26 + 'A');
+			}
 				
-				double currentSum = Math.abs(StatCalculator.calculateMonoIC(decrypted) - this.getLanguage().getNormalCoincidence()) * 1000;
+			double currentSum = Math.abs(StatCalculator.calculateMonoIC(decrypted) - this.getLanguage().getNormalCoincidence()) * 1000;
 		
 				
-				if(currentSum < 10D)
-					this.best.add(new HillSection(decrypted, currentSum, Arrays.copyOf(data, data.length)));
+			if(currentSum < 10D)
+				this.best.add(new HillSection(decrypted, currentSum, Arrays.copyOf(data, data.length)));
+		}
+		
+		public void onList2(Integer[] data) {
+			byte[] combinedDecrypted = new byte[this.cipherText.length];
+			Integer[] inverseMatrix = new Integer[this.size * this.size];
+			
+			for(int s = 0; s < this.size; s++) {
+				HillSection hillSection = this.best.get(data[s]);
+				for(int n = 0; n < this.size; n++)
+					inverseMatrix[s * this.size + n] = hillSection.inverseCol[n];
+				for(int i = 0; i < this.lengthSub; i++)
+					combinedDecrypted[i * this.size + s] = (byte)hillSection.decrypted[i];
 			}
-			else {
-				byte[] combinedDecrypted = new byte[this.cipherText.length];
-				int[] inverseMatrix = new int[this.size * this.size];
-				
-				for(int s = 0; s < this.size; s++) {
-					HillSection hillSection = this.best.get(data[s]);
-					for(int n = 0; n < this.size; n++)
-						inverseMatrix[s * this.size + n] = hillSection.inverseCol[n];
-					for(int i = 0; i < this.lengthSub; i++)
-						combinedDecrypted[i * this.size + s] = (byte)hillSection.decrypted[i];
-				}
 
-				double score = Math.abs(StatCalculator.calculateMonoIC(combinedDecrypted) - this.getLanguage().getNormalCoincidence()) * 1000;
-				
-				if(score < 10D)
-					if(new Matrix(inverseMatrix, this.size).hasInverseMod(26))
-						this.bestNext.add(new HillSection(combinedDecrypted, score, inverseMatrix));
-			}
+			double score = Math.abs(StatCalculator.calculateMonoIC(combinedDecrypted) - this.getLanguage().getNormalCoincidence()) * 1000;
+			
+			if(score < 10D)
+				if(new Matrix(inverseMatrix, this.size).hasInverseMod(26))
+					this.bestNext.add(new HillSection(combinedDecrypted, score, inverseMatrix));
 		}
 	}
 	
 	public static class HillSection extends ResultPositive {
 		
 		public byte[] decrypted;
-		public int[] inverseCol;
+		public Integer[] inverseCol;
 		
-		public HillSection(byte[] decrypted, double score, int[] inverseCol) {
+		public HillSection(byte[] decrypted, double score, Integer[] inverseCol) {
 			super(score);
 			this.decrypted = decrypted;
 			this.inverseCol = inverseCol;

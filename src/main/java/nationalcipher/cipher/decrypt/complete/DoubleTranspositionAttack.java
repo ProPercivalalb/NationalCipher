@@ -14,7 +14,6 @@ import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.KeyIterator.DoubleIntegerOrderedKey;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -66,7 +65,7 @@ public class DoubleTranspositionAttack extends CipherAttack {
 			
 			for(int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
 				for(int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
-					KeyIterator.iterateDoubleIntegerOrderedKey(this.task, length1, length2);
+					KeyIterator.permuteDoubleIntegerOrderedKey(this.task::onIteration, length1, length2);
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
 			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
@@ -76,19 +75,18 @@ public class DoubleTranspositionAttack extends CipherAttack {
 		app.out().println(this.task.getBestSolution());
 	}
 	
-	public class DoubleTranspositionTask extends SimulatedAnnealing implements DoubleIntegerOrderedKey {
+	public class DoubleTranspositionTask extends SimulatedAnnealing {
 
 		public int period1;
 		public int period2;
-		public int[] bestKey1, bestMaximaKey1, lastKey1;
-		public int[] bestKey2, bestMaximaKey2, lastKey2;
+		public Integer[] bestKey1, bestMaximaKey1, lastKey1;
+		public Integer[] bestKey2, bestMaximaKey2, lastKey2;
 		
 		public DoubleTranspositionTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 		
-		@Override
-		public void onIteration(int[] order1, int[] order2) {
+		public void onIteration(Integer[] order1, Integer[] order2) {
 			this.lastSolution = new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, order2, true)), new byte[this.cipherText.length], order1, true), this.getLanguage());
 			
 			if(this.lastSolution.score >= this.bestSolution.score) {
@@ -114,13 +112,13 @@ public class DoubleTranspositionAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0) {
-				int[] copy = ArrayUtil.copy(this.bestMaximaKey1);
+				Integer[] copy = ArrayUtil.copy(this.bestMaximaKey1);
 				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
 					KeyManipulation.swapOrder(copy);
 				this.lastKey1 = copy;
 			}
 			else {
-				int[] copy = ArrayUtil.copy(this.bestMaximaKey2);
+				Integer[] copy = ArrayUtil.copy(this.bestMaximaKey2);
 				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
 					KeyManipulation.swapOrder(copy);
 				this.lastKey2 = copy;

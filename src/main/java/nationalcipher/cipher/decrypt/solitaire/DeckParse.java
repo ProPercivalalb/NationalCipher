@@ -8,13 +8,13 @@ import javalibrary.util.ListUtil;
 
 public class DeckParse {
 
-	public int[] order;
-	public int[] emptyIndex;
-	public int[] unknownCards;
+	public Integer[] order;
+	public Integer[] emptyIndex;
+	public Integer[] unknownCards;
 	public boolean complete;
 	
-	public DeckParse(int[] oldOrder) {
-		this.order = new int[54];
+	public DeckParse(Integer[] oldOrder) {
+		this.order = new Integer[54];
 		Arrays.fill(this.order, -1);
 		
 		List<Integer> emptyIndex = new ArrayList<Integer>();
@@ -30,13 +30,13 @@ public class DeckParse {
 		List<Integer> all = ListUtil.range(0, 53);
 		ListUtil.removeAll(all, this.order);
 	
-		this.emptyIndex = ListUtil.toArray(emptyIndex);
-		this.unknownCards = ListUtil.toArray(all);
+		this.emptyIndex = ListUtil.toArrayInteger(emptyIndex);
+		this.unknownCards = ListUtil.toArrayInteger(all);
 		this.complete = this.unknownCards.length == 0;
 	}
 	
 	public DeckParse(String parse) {
-		this.order = new int[54];
+		this.order = new Integer[54];
 		Arrays.fill(this.order, -1);
 
 		parse =	parse.substring(parse.startsWith("[") ? 1 : 0, parse.length() - (parse.endsWith("]") ? 1 : 0)).replaceAll(" ", "");
@@ -80,8 +80,8 @@ public class DeckParse {
 		List<Integer> all = ListUtil.range(0, 53);
 		ListUtil.removeAll(all, this.order);
 	
-		this.emptyIndex = ListUtil.toArray(emptyIndex);
-		this.unknownCards = ListUtil.toArray(all);
+		this.emptyIndex = ListUtil.toArrayInteger(emptyIndex);
+		this.unknownCards = ListUtil.toArrayInteger(all);
 		this.complete = this.unknownCards.length == 0;
 	}
 	
@@ -100,10 +100,10 @@ public class DeckParse {
 		return count;
 	}
 	
-	public int[] getOtherUnknowns(int staticUnknown) {
+	public Integer[] getOtherUnknowns(int staticUnknown) {
 		List<Integer> temp = ListUtil.toList(this.unknownCards);
 		temp.remove((Integer)staticUnknown);
-		return ListUtil.toArray(temp);
+		return ListUtil.toArrayInteger(temp);
 	}
 	
 	public int countUnknowns() {
@@ -114,7 +114,7 @@ public class DeckParse {
 		return this.complete;
 	}
 
-	public int[] copyKnowns() {
+	public Integer[] copyKnowns() {
 		return Arrays.copyOf(this.order, this.order.length);
 	}
 	
