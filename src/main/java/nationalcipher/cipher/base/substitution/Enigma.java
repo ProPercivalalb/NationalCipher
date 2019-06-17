@@ -193,4 +193,9 @@ public class Enigma implements IRandEncrypter {
 		EnigmaMachine machine = EnigmaLib.NORENIGMA;//RandomUtil.pickRandomElement(EnigmaLib.MACHINES);
 		return encode(plainText, machine, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3), RandomUtil.pickRandomInt(machine.getNumberOfReflectors()));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 8;
+	}
 }

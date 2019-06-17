@@ -24,4 +24,9 @@ public class QuagmireII implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey26(), KeyGeneration.createShortKey26(2, 15), 'A');
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 6;
+	}
 }

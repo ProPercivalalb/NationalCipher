@@ -61,4 +61,9 @@ public class Pollux implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createPolluxKey());
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 5;
+	}
 }

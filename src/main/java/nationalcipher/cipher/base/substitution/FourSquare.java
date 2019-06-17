@@ -56,4 +56,9 @@ public class FourSquare implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey25(), KeyGeneration.createLongKey25());
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 7;
+	}
 }

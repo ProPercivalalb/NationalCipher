@@ -73,4 +73,9 @@ public class HillExtended implements IRandEncrypter {
 		while(true);
 		
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 7;
+	}
 }

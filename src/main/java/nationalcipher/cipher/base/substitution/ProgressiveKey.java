@@ -71,4 +71,9 @@ public class ProgressiveKey implements IRandEncrypter {
 		
 		return plainText;
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 4;
+	}
 }

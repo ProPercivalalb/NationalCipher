@@ -24,4 +24,9 @@ public class RunningKey implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return "";//encode(plainText);
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 10;
+	}
 }

@@ -90,4 +90,9 @@ public class Hill implements IRandEncrypter {
 		while(true);
 		
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 7;
+	}
 }

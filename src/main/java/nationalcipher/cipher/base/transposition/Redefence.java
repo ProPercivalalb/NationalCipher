@@ -103,4 +103,9 @@ public class Redefence implements IRandEncrypter {
 		Integer[] order = KeyGeneration.createOrder(2, 7);
 		return encode(plainText, order, RandomUtil.pickRandomInt((order.length - 1) * 2));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 2;
+	}
 }

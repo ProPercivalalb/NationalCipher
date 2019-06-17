@@ -95,4 +95,9 @@ public class Phillips implements IRandEncrypter {
 			second = true;
 		return encode(plainText, KeyGeneration.createLongKey25(), first, second);
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 7;
+	}
 }

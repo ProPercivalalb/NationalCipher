@@ -55,4 +55,9 @@ public class NihilistSubstitution implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey25(), KeyGeneration.createShortKey26(2, 15));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 4;
+	}
 }

@@ -67,4 +67,9 @@ public class NihilistTransposition implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createOrder(2, 7), RandomUtil.pickBoolean());
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 6;
+	}
 }

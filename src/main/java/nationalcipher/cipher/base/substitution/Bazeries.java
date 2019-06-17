@@ -84,4 +84,9 @@ public class Bazeries implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, RandomUtil.pickRandomInt(1000000));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 3;
+	}
 }

@@ -95,4 +95,9 @@ public class RailFence implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, RandomUtil.pickRandomInt(2, 15));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 1;
+	}
 }

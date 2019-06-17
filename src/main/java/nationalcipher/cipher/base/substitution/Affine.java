@@ -43,4 +43,9 @@ public class Affine implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, RandomUtil.pickRandomElement(3,5,7,9,11,15,17,19,21,23,25), RandomUtil.pickRandomInt(26));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 1;
+	}
 }

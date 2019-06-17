@@ -92,4 +92,9 @@ public class ConjugatedBifid implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey25(), KeyGeneration.createLongKey25(), RandomUtil.pickRandomInt(2, 15));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 6;
+	}
 }

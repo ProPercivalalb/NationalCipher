@@ -66,4 +66,9 @@ public class Homophonic implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createShortKey26(4));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 5;
+	}
 }

@@ -8,7 +8,6 @@ import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-
 public class Playfair implements IRandEncrypter {
 
 	public static String encode(String plainText, String keysquare) {
@@ -115,6 +114,11 @@ public class Playfair implements IRandEncrypter {
 	@Override
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey25());
+	}
+	
+	@Override
+	public int getDifficulty() {
+		return 8;
 	}
 	
 }

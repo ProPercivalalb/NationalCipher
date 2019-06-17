@@ -22,4 +22,9 @@ public class ADFGX implements IRandEncrypter {
 		//System.out.println(Arrays.toString(o));
 		return encode(plainText, KeyGeneration.createLongKey25(), o, false);
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 10;
+	}
 }

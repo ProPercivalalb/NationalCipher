@@ -122,4 +122,9 @@ public class Grille implements IRandEncrypter {
 		int size = RandomUtil.pickRandomInt(2, 8);
 		return encode(plainText, size, KeyGeneration.createGrilleKey(size));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 5;
+	}
 }

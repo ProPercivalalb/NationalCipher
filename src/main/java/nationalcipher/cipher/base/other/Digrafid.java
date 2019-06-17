@@ -88,4 +88,9 @@ public class Digrafid implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey27(), KeyGeneration.createLongKey27(), RandomUtil.pickRandomElement(0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 5;
+	}
 }

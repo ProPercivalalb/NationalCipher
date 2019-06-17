@@ -48,4 +48,9 @@ public class Myszkowski implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createRepeatingShortKey26(2, 15));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 3;
+	}
 }

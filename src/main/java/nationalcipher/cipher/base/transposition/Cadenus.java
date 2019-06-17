@@ -84,4 +84,9 @@ public class Cadenus implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createShortKey26(2, 5));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 7;
+	}
 }

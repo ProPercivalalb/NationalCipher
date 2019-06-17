@@ -58,5 +58,8 @@ public class RouteTransposition implements IRandEncrypter {
 		return encode(plainText, factor, plainText.length() / factor, RandomUtil.pickRandomElement(Routes.getRoutes()), RandomUtil.pickRandomElement(Routes.getRoutes()));
 	}
 	
-	
+	@Override
+	public int getDifficulty() {
+		return 4;
+	}
 }

@@ -3,9 +3,6 @@ package nationalcipher.cipher.base.substitution;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-/**
- * @author Alex Barter (10AS)
- */
 public class Porta implements IRandEncrypter {
 
 	public static String encode(String plainText, String keyword, boolean move) {
@@ -39,5 +36,10 @@ public class Porta implements IRandEncrypter {
 	@Override
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createShortKey26(2, 15), true);
+	}
+	
+	@Override
+	public int getDifficulty() {
+		return 2;
 	}
 }

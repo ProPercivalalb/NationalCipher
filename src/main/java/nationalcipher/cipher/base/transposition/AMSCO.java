@@ -121,4 +121,9 @@ public class AMSCO implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, RandomUtil.pickBoolean(), KeyGeneration.createOrder(RandomUtil.pickRandomInt(3, 7)));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 3;
+	}
 }

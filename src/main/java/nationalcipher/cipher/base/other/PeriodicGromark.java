@@ -108,4 +108,9 @@ public class PeriodicGromark implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createShortKey26(RandomUtil.pickRandomInt(2, 8)));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 7;
+	}
 }

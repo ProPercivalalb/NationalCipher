@@ -526,4 +526,9 @@ public class Solitaire implements IRandEncrypter {
 		System.out.println(Arrays.toString(halfOrder));
 		return encode(plainText, order);
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 10;
+	}
 }

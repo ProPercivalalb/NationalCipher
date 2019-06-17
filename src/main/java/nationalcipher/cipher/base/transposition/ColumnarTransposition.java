@@ -90,4 +90,9 @@ public class ColumnarTransposition implements IRandEncrypter {
 		//System.out.println(Arrays.toString(order));
 		//return encode(plainText, order, true);
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 2;
+	}
 }

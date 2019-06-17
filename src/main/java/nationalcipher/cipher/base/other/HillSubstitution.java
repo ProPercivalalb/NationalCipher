@@ -52,4 +52,9 @@ public class HillSubstitution implements IRandEncrypter {
 		while(true);
 		
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 8;
+	}
 }

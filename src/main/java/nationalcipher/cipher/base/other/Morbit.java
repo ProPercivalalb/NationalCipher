@@ -79,4 +79,9 @@ public class Morbit implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createOrder(9));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 5;
+	}
 }

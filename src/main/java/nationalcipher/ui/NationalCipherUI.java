@@ -42,6 +42,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -720,20 +721,16 @@ public class NationalCipherUI extends JFrame implements IApplication {
         
         this.menuItemEncodeChose.setText("Specific");
         MenuScroller.setScrollerFor(this.menuItemEncodeChose, 15, 125, 0, 0);
-        for(final String key : EncrypterRegistry.CIPHER.keySet()) {
-        	JMenuItem jmi = new JMenuItem(key);
-        	jmi.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent event) {
-					String text = getInputTextOnlyAlpha();
-	    			String cipherText = EncrypterRegistry.getFromName(key).randomlyEncrypt(text);
+        for(Entry<String, IRandEncrypter> key : EncrypterRegistry.RAND_ENCRYPTERS.getEntries()) {
+        	JMenuItem jmi = new JMenuItem(key.getKey());
+        	jmi.addActionListener(event -> {
+				String text = getInputTextOnlyAlpha();
+	    		String cipherText = key.getValue().randomlyEncrypt(text);
 	 
-	    			StringSelection selection = new StringSelection(cipherText);
-		    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+	    		StringSelection selection = new StringSelection(cipherText);
+		    	Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
 	    			
-	    			output.println(cipherText);
-				}
+	    		output.println(cipherText);
         	});
         	this.menuItemEncodeChose.add(jmi);
         }
@@ -3138,8 +3135,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     		}
     		
     		if(!text.isEmpty()) {
-    			List<String> possible = EncrypterRegistry.getAllWithDifficulty(NationalCipherUI.this.encodingDiffSlider.getValue());
-    			IRandEncrypter randomEncrypt = EncrypterRegistry.getFromName(RandomUtil.pickRandomElement(possible));
+    			IRandEncrypter randomEncrypt = EncrypterRegistry.getEncrypterWith(NationalCipherUI.this.encodingDiffSlider.getValue());
     			String cipherText = randomEncrypt.randomlyEncrypt(text);
     			NationalCipherUI.this.output.println(randomEncrypt.getClass().getSimpleName());
     			NationalCipherUI.this.output.println(StringTransformer.repeat("\n", 25));

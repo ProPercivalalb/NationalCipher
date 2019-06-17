@@ -75,4 +75,9 @@ public class Slidefair implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createShortKey26(2, 15), RandomUtil.pickRandomElement(VigenereType.SLIDEFAIR_LIST));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 2;
+	}
 }

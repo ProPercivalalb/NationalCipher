@@ -97,4 +97,9 @@ public class FractionatedMorse implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createLongKey26());
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 5;
+	}
 }

@@ -91,4 +91,9 @@ public class Nicodemus implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, KeyGeneration.createShortKey26(3, 10), RandomUtil.pickRandomInt(1, 10), RandomUtil.pickRandomElement(VigenereType.NORMAL_LIST));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 3;
+	}
 }

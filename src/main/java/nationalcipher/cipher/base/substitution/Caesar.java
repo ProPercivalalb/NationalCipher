@@ -56,4 +56,9 @@ public class Caesar implements IRandEncrypter {
 	public String randomlyEncrypt(String plainText) {
 		return encode(plainText, RandomUtil.pickRandomInt(1, 25));
 	}
+	
+	@Override
+	public int getDifficulty() {
+		return 1;
+	}
 }
