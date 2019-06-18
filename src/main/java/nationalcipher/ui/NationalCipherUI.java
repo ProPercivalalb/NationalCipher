@@ -367,6 +367,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
         this.menuItemSAPreset = new JMenu();
         this.menuItemUpdateProgress = new JCheckBoxMenuItem();
         this.menuItemCollectSolutions = new JCheckBoxMenuItem();
+        this.menuItemUseParallel = new JCheckBoxMenuItem();
         this.menuCipherAttack = new JMenu();
         this.menuCribInput = new JMenuItem();
         this.menuItemCurrentAttack = new JMenuItem();
@@ -848,6 +849,11 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		this.menuItemCollectSolutions.setSelected(this.settings.collectSolutions());
 		this.menuItemCollectSolutions.addActionListener(new CollectSolutionsAction(this.menuItemCollectSolutions));
 		this.menuItemSettings.add(this.menuItemCollectSolutions);	
+
+		this.menuItemUseParallel.setText("Use Parallel");
+        this.menuItemUseParallel.setSelected(this.settings.useParallel());
+        this.menuItemUseParallel.addActionListener(event -> this.settings.useParallel = this.menuItemUseParallel.isSelected());
+        this.menuItemSettings.add(this.menuItemUseParallel);   
 		
         this.menuBar.add(this.menuItemSettings);
 
@@ -3599,6 +3605,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     private JMenu menuItemSAPreset;
     private JCheckBoxMenuItem menuItemUpdateProgress;
     private JCheckBoxMenuItem menuItemCollectSolutions;
+    private JCheckBoxMenuItem menuItemUseParallel;
     private JMenu menuCipherAttack;
     private JMenuItem menuCribInput;
     private JMenuItem menuItemCurrentAttack;

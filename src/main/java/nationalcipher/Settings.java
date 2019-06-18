@@ -29,6 +29,7 @@ public class Settings {
 	public boolean checkShift;
 	public boolean checkReverse;
 	public boolean checkRoutes;
+	public boolean useParallel;
 	private List<Double> simulatedAnnealing;
 	public boolean updateProgressBars;
 	public boolean collectSolutions;
@@ -46,6 +47,7 @@ public class Settings {
 		this.checkRoutes = true;
 		this.updateProgressBars = false;
 		this.collectSolutions = false;
+		this.useParallel = false;
 		
 		this.loadElements = new ArrayList<ILoadElement>();
 		this.gson = new Gson();
@@ -125,6 +127,10 @@ public class Settings {
 		return this.collectSolutions;
 	}
 	
+	public boolean useParallel() {
+        return this.useParallel;
+    }
+	
 	public void setLanguage(ILanguage language) {
 		this.language = language;
 	}
@@ -150,7 +156,7 @@ public class Settings {
 			map.put("check_routes", this.checkRoutes);
 			map.put("update_progress_bars", this.updateProgressBars);
 			map.put("collect_solutions", this.collectSolutions);
-			
+			map.put("use_parallel", this.useParallel);
 			
 			for(ILoadElement loadElement : this.loadElements)
 				loadElement.write(map);
@@ -197,6 +203,7 @@ public class Settings {
 			this.checkRoutes = SettingsUtil.getSetting("check_routes", map, Boolean.TYPE, true);
 			this.updateProgressBars = SettingsUtil.getSetting("update_progress_bars", map, Boolean.TYPE, false);
 			this.collectSolutions = SettingsUtil.getSetting("collect_solutions", map, Boolean.TYPE, false);
+			this.useParallel = SettingsUtil.getSetting("use_parallel", map, Boolean.TYPE, false);
 			
 			for(ILoadElement loadElement : this.loadElements)
 				loadElement.read(map);
