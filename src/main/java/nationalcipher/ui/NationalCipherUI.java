@@ -538,7 +538,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
         this.menuItemFile.add(this.menuScreenShot);
         
         this.menuItemExit.setText("Exit");
-        this.menuItemExit.addActionListener(new ExitAction());
+        this.menuItemExit.addActionListener(event -> System.exit(128));
         this.menuItemFile.add(this.menuItemExit);
         
         this.menuBar.add(this.menuItemFile);
@@ -774,9 +774,9 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		this.settings.keywordCreationGroup.add(this.menuItemKeywordHalf);
 		this.settings.keywordCreationGroup.add(this.menuItemKeywordReverse);
 		
-		this.menuItemKeywordNormal.addActionListener(new KeywordCreationAction(0));
-		this.menuItemKeywordHalf.addActionListener(new KeywordCreationAction(1));
-		this.menuItemKeywordReverse.addActionListener(new KeywordCreationAction(2));
+		this.menuItemKeywordNormal.addActionListener(event -> this.getSettings().setKeywordCreationId(0));
+		this.menuItemKeywordHalf.addActionListener(event -> this.getSettings().setKeywordCreationId(1));
+		this.menuItemKeywordReverse.addActionListener(event -> this.getSettings().setKeywordCreationId(2));
 		
 		this.menuItemKeyword.add(this.menuItemKeywordNormal);
 		this.menuItemKeyword.add(this.menuItemKeywordHalf);
@@ -791,9 +791,9 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		this.menuItemCheckReverse.setSelected(this.settings.checkReverse());
 		this.menuItemCheckRoutes.setSelected(this.settings.checkRoutes());
 		
-		this.menuItemCheckShift.addActionListener(new CheckShiftAction(this.menuItemCheckShift));
-		this.menuItemCheckReverse.addActionListener(new CheckReverseAction(this.menuItemCheckReverse));
-		this.menuItemCheckRoutes.addActionListener(new CheckRoutesAction(this.menuItemCheckRoutes));
+		this.menuItemCheckShift.addActionListener(event -> this.getSettings().checkShift = this.menuItemCheckShift.isSelected());
+		this.menuItemCheckReverse.addActionListener(event -> this.getSettings().checkReverse = this.menuItemCheckReverse.isSelected());
+		this.menuItemCheckRoutes.addActionListener(event -> this.getSettings().checkRoutes = this.menuItemCheckRoutes.isSelected());
 
 		this.menuItemKeyword.add(this.menuItemCheckShift);
 		this.menuItemKeyword.add(this.menuItemCheckReverse);
@@ -847,7 +847,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		
 		this.menuItemCollectSolutions.setText("Collect Solutions");
 		this.menuItemCollectSolutions.setSelected(this.settings.collectSolutions());
-		this.menuItemCollectSolutions.addActionListener(new CollectSolutionsAction(this.menuItemCollectSolutions));
+		this.menuItemCollectSolutions.addActionListener(event -> this.settings.collectSolutions = this.menuItemCollectSolutions.isSelected());
 		this.menuItemSettings.add(this.menuItemCollectSolutions);	
 
 		this.menuItemUseParallel.setText("Use Parallel");
@@ -1266,15 +1266,6 @@ public class NationalCipherUI extends JFrame implements IApplication {
   		public void actionPerformed(ActionEvent event) {
   			NationalCipherUI.this.output.clear();
   		}
-    }
-    
-    
-    private class ExitAction implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			System.exit(128);
-		}
     }
     
     public class PasteAction implements ActionListener {
@@ -3169,61 +3160,6 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		}
     }
     
-    private class KeywordCreationAction implements ActionListener {
-    	
-    	public int id;
-    	
-    	public KeywordCreationAction(int id) {
-    		this.id = id;
-    	}
-    	
-    	@Override
-		public void actionPerformed(ActionEvent event) {
-    		NationalCipherUI.this.getSettings().setKeywordCreationId(this.id);
-		}
-    }
-
-    private class CheckShiftAction implements ActionListener {
-    	
-    	public JCheckBoxMenuItem menuItem;
-    	
-    	public CheckShiftAction(JCheckBoxMenuItem menuItem) {
-    		this.menuItem = menuItem;
-    	}
-    	
-    	@Override
-		public void actionPerformed(ActionEvent event) {
-    		NationalCipherUI.this.getSettings().checkShift = this.menuItem.isSelected();
-		}
-    }
-    
-    private class CheckReverseAction implements ActionListener {
-    	
-    	public JCheckBoxMenuItem menuItem;
-    	
-    	public CheckReverseAction(JCheckBoxMenuItem menuItem) {
-    		this.menuItem = menuItem;
-    	}
-    	
-    	@Override
-		public void actionPerformed(ActionEvent event) {
-    		NationalCipherUI.this.getSettings().checkReverse = this.menuItem.isSelected();
-		}
-    }
-    
-    private class CheckRoutesAction implements ActionListener {
-    	
-    	public JCheckBoxMenuItem menuItem;
-    	
-    	public CheckRoutesAction(JCheckBoxMenuItem menuItem) {
-    		this.menuItem = menuItem;
-    	}
-    	
-    	@Override
-		public void actionPerformed(ActionEvent event) {
-    		NationalCipherUI.this.getSettings().checkRoutes = this.menuItem.isSelected();
-		}
-    }
     private class SimulatedAnnealingAction implements KeyListener {
     	
     	public JTextComponent textComponent;
@@ -3302,20 +3238,6 @@ public class NationalCipherUI extends JFrame implements IApplication {
 			}
 
 			NationalCipherUI.this.keyPanel.setIterationUnsed();
-		}
-    }
-    
-    public class CollectSolutionsAction implements ActionListener {
-
-    	public JCheckBoxMenuItem checkBox;
-    	
-    	public CollectSolutionsAction(JCheckBoxMenuItem checkBox) {
-    		this.checkBox = checkBox;
-    	}
-    	
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			NationalCipherUI.this.settings.collectSolutions = this.checkBox.isSelected();
 		}
     }
     
