@@ -1,6 +1,7 @@
 package nationalcipher.cipher.decrypt;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class CipherAttack implements ILoadElement {
 	}
 	
 	public final List<DecryptionMethod> getAttackMethods() {
-		return this.methods == null ? Arrays.asList() : this.methods;
+		return this.methods == null ? Collections.emptyList() : this.methods;
 	}
 
 	public void writeTo(Map<String, Object> map) {
