@@ -297,10 +297,12 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		this.setSize(900, 800);
         this.setVisible(true);
     }
-                     
+    
+	private String[] cipherAttackTypes;
+	
     private void initComponents() {
     	this.cipherSearch = new JTextField();
-    	this.cipherSelect = new JComboBox<String>(AttackRegistry.getNames());
+    	this.cipherSelect = new JComboBox<String>(cipherAttackTypes = AttackRegistry.CIPHERS.mapValues(CipherAttack::getDisplayName).toArray(String[]::new));
     	this.decryptionType = new JComboBox<DecryptionMethod>();
     	this.inputPanel = new JPanel();
         this.inputTextScroll = new JScrollPane();
@@ -1052,24 +1054,29 @@ public class NationalCipherUI extends JFrame implements IApplication {
 				this.searchBar.setText("Search");
 				
 				this.list.removeAllItems();
-				for(String id : AttackRegistry.getNames())
+				for(String id : cipherAttackTypes)
 					this.list.addItem(id);
 			}
 		}
 		
 		public void update() {
 			String text = this.searchBar.getText().toLowerCase();
-			if(text.equals("search")) {
-				for(String id : AttackRegistry.getNames())
+			if(text.equals("Search")) {
+				for(String id : cipherAttackTypes)
 					this.list.addItem(id);
 				return;
 			}
 			this.list.removeAllItems();
-			for(String id : AttackRegistry.getNames())
+			for(String id : cipherAttackTypes)
 				if(id.toLowerCase().contains(text))
 					this.list.addItem(id);
 
-			if(this.list.getItemCount() > 0) this.list.setSelectedIndex(0);
+			if(this.list.getItemCount() > 0) {
+			    this.list.setSelectedIndex(0);
+			    this.list.setEnabled(true);
+			} else {
+			    this.list.setEnabled(false);
+			}
 		}
 
 		@Override
@@ -3372,15 +3379,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     	@Override
 		public void actionPerformed(ActionEvent event) {
     		NationalCipherUI.this.menuItemCurrentAttack.setText("Target: " + this.menuItem.getText());
-    		
-    		int index = 0;
-    		for(String name : AttackRegistry.getNames()) {
-    			if(this.menuItem.getText().equals(name)) {
-    				NationalCipherUI.this.cipherSelect.setSelectedIndex(index);
-    				break;
-    			}
-    			index++;
-    		}
+    		NationalCipherUI.this.cipherSelect.setSelectedItem(this.menuItem.getText());
 		}
     }
     
@@ -3405,7 +3404,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     }
     
     public CipherAttack getCipherAttack() {
-    	return AttackRegistry.getFromName((String)this.cipherSelect.getSelectedItem());
+    	return AttackRegistry.CIPHERS.getMap(CipherAttack::getDisplayName).get(this.cipherSelect.getSelectedItem());
     }
      
     //IApplication methods
