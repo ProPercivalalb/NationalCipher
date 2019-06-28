@@ -33,9 +33,14 @@ public class KeyIterator {
 		permuteObject(consumer, ArrayUtil.createRangeInteger(length));
 	}
 	
+	
 	public static void permuteString(Consumer<String> consumer, String str) {
-		permuteObject(d -> consumer.accept(PrimTypeUtil.toString(d)), PrimTypeUtil.toCharacterArray(str));
-	}
+	    permuteString(consumer, PrimTypeUtil.toCharacterArray(str));
+    }
+	
+    public static void permuteString(Consumer<String> consumer, Character[] str) {
+        permuteObject(d -> consumer.accept(PrimTypeUtil.toString(d)), str);
+    }
 	       
 	public static <T> void permuteObject(Consumer<T[]> consumer, T[] items) {
 		permuteObject(consumer, items, 0);

@@ -1,6 +1,8 @@
 package nationalcipher.cipher.base.transposition;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
@@ -8,11 +10,50 @@ import nationalcipher.cipher.tools.KeyGeneration;
 
 public class Swagman implements IRandEncrypter {
 	
+    public static boolean validate(int[] key, int size) {
+        for(int row = 0; row < size; row++) {
+            Set<Integer> set = new HashSet<>();
+            for(int col = 0; col < size; col++) {
+                set.add(key[row * size + col]);
+            } 
+            if(set.size() != size || set.contains(-1)) 
+                return false;
+        }
+        
+        for(int col = 0; col < size; col++) {
+            Set<Integer> set = new HashSet<>();
+            for(int row = 0; row < size; row++) {
+                set.add(key[row * size + col]);
+            }
+            if(set.size() != size || set.contains(-1)) 
+                return false;
+        }
+        
+        return true;
+    }
+    
 	public static void main(String[] args) throws InterruptedException {
+	    
+	   for(int i = 0; i < 10000; i++) {
+	        int[] key = KeyGeneration.createSwagmanKey(3);
+            System.out.println("Key: " + validate(key, 3) + " " + i + Arrays.toString(key));
+
+	        //for(int k = 0; k < 5; k++) {
+	        ///    String s = "";
+	        //    for(int j = 0; j < 5; j++) {
+	        //        s += key[k * 5 + j] + ", ";
+	        //    }
+	        //    System.out.println(s);
+	        //}
+	        //System.out.println("Key: " + Arrays.toString(key));
+	    }
+	    
+	    /**
+	    
 		while(true) {
 			int size = RandomUtil.pickRandomInt(2, 7);
 			int[] key = KeyGeneration.createSwagmanKey(size);
-			System.out.println(Arrays.toString(key));
+			System.out.println("Key: " + Arrays.toString(key));
 			String orignal = "DONTBEAFRAIDTOTAKEABIGLEAPIFONEISINDICATEDYOUCANNOTCROSSARIVERORACHASMINTWOSMALLJUMPS";
 			while(orignal.length() % size != 0)
 				orignal += 'X';
@@ -23,10 +64,11 @@ public class Swagman implements IRandEncrypter {
 			if(!decoded.equals(orignal))
 				System.out.println("FAILED");
 			//Thread.sleep(200);
-		}
+		}**/
 	}
 	
 	public static String encode(String plainText, int[] key, int size) {
+	    System.out.println(key);
 		while(plainText.length() % size != 0) plainText += 'X';
 		
 		char[] tempText = new char[plainText.length()];

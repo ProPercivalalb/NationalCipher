@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.FutureTask;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -116,7 +118,6 @@ import nationalcipher.Settings;
 import nationalcipher.auto.AutoSolver;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.ProgressiveKey;
-import nationalcipher.cipher.decrypt.AttackRegistry;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -125,9 +126,10 @@ import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.stats.IdentifyOutput;
 import nationalcipher.cipher.stats.StatCalculator;
-import nationalcipher.cipher.stats.StatisticHandler;
 import nationalcipher.cipher.stats.TextStatistic;
+import nationalcipher.registry.AttackRegistry;
 import nationalcipher.registry.EncrypterRegistry;
+import nationalcipher.registry.StatisticRegistry;
 
 /**
  *
@@ -155,7 +157,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     	this.lastStates = new ArrayList<JDialog>();
     	
     	AttackRegistry.loadCiphers(this.settings);
-		StatisticHandler.registerStatistics();
+		StatisticRegistry.registerStatistics();
     	this.settings.readFromFile();
     	
         this.initComponents();
@@ -1151,45 +1153,42 @@ public class NationalCipherUI extends JFrame implements IApplication {
 			if(text == null || text.isEmpty())
 				return;
 			
-			NationalCipherUI.this.thread = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					NationalCipherUI.this.threadTimer.restart();
-					NationalCipherUI.BEST_SOULTION = null;
-					NationalCipherUI.topSolutions.reset();
+			NationalCipherUI.this.thread = new Thread(() -> {
+			    NationalCipherUI.this.threadTimer.restart();
+			    NationalCipherUI.BEST_SOULTION = null;
+			    NationalCipherUI.topSolutions.reset();
 					
-					CipherAttack force = NationalCipherUI.this.getCipherAttack();
-					DecryptionMethod method = (DecryptionMethod)NationalCipherUI.this.decryptionType.getSelectedItem();
-					NationalCipherUI.this.output.println("Cipher: %s, Method: %s",force.getDisplayName(), method);
-					NationalCipherUI.this.output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
-					NationalCipherUI.this.progressValue = new ProgressValueNC(1000, NationalCipherUI.this.progressBar, NationalCipherUI.this.getSettings());
-					if(!settings.updateProgress())
-						NationalCipherUI.this.progressValue.setIndeterminate(true);
-					try {
-						force.attemptAttack(text, method, NationalCipherUI.this);
-					}
-					catch(Exception e) {
-						output.println(e.toString());
-						e.printStackTrace();
-					}
-					force.onTermination(false);
-					DecimalFormat df = new DecimalFormat("#.#");
-					NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
-		
-					NationalCipherUI.this.toolBarStart.setEnabled(true);
-					NationalCipherUI.this.toolBarStop.setEnabled(false);
-					NationalCipherUI.this.menuItemSettings.setEnabled(true);
-					
-					NationalCipherUI.this.progressValue.setIndeterminate(false);
-					NationalCipherUI.this.progressBar.setValue(0);
+			    CipherAttack force = NationalCipherUI.this.getCipherAttack();
+			    DecryptionMethod method = (DecryptionMethod)NationalCipherUI.this.decryptionType.getSelectedItem();
+			    NationalCipherUI.this.output.println("Cipher: %s, Method: %s",force.getDisplayName(), method);
+			    NationalCipherUI.this.output.println("Optimizations . Progress Update: %b (" + (char)916 + "s = x3) | Collect Solutions: %b (" + (char)916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
+			    NationalCipherUI.this.progressValue = new ProgressValueNC(1000, NationalCipherUI.this.progressBar, NationalCipherUI.this.getSettings());
+			    if(!settings.updateProgress())
+			        NationalCipherUI.this.progressValue.setIndeterminate(true);
+			    try {
+			        force.attemptAttack(text, method, NationalCipherUI.this);
+			    }
+				catch(Exception e) {
+				    output.println(e.toString());
+				    e.printStackTrace();
 				}
-				
+				force.onTermination(false);
+				DecimalFormat df = new DecimalFormat("#.#");
+				NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+		
+				NationalCipherUI.this.toolBarStart.setEnabled(true);
+				NationalCipherUI.this.toolBarStop.setEnabled(false);
+				NationalCipherUI.this.menuItemSettings.setEnabled(true);
+					
+				NationalCipherUI.this.progressValue.setIndeterminate(false);
+				NationalCipherUI.this.progressBar.setValue(0);	
 			});
-			NationalCipherUI.this.thread.setDaemon(true);
+			//NationalCipherUI.this.thread.setDaemon(true);
 			NationalCipherUI.this.toolBarStart.setEnabled(false);
 			NationalCipherUI.this.toolBarStop.setEnabled(true);
 			NationalCipherUI.this.menuItemSettings.setEnabled(false);
+			NationalCipherUI.this.thread.setName("decrypter-thread");
+			NationalCipherUI.this.thread.setPriority(Thread.NORM_PRIORITY); 
 			NationalCipherUI.this.thread.start();
 		}
     }
@@ -1199,17 +1198,18 @@ public class NationalCipherUI extends JFrame implements IApplication {
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			if(NationalCipherUI.this.thread != null) {
-				NationalCipherUI.this.thread.stop();
-				CipherAttack force = NationalCipherUI.this.getCipherAttack();
-				force.onTermination(true);
-				DecimalFormat df = new DecimalFormat("#.#");
-				NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
-				NationalCipherUI.this.toolBarStart.setEnabled(true);
-				NationalCipherUI.this.toolBarStop.setEnabled(false);
-				NationalCipherUI.this.menuItemSettings.setEnabled(true);
-				
-				NationalCipherUI.this.progressValue.setIndeterminate(false);
-				NationalCipherUI.this.progressBar.setValue(0);
+			    CipherAttack force = NationalCipherUI.this.getCipherAttack();
+                force.onTermination(true);
+                DecimalFormat df = new DecimalFormat("#.#");
+                NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+                NationalCipherUI.this.toolBarStart.setEnabled(true);
+                NationalCipherUI.this.toolBarStop.setEnabled(false);
+                NationalCipherUI.this.menuItemSettings.setEnabled(true);
+                
+                NationalCipherUI.this.progressValue.setIndeterminate(false);
+                NationalCipherUI.this.progressBar.setValue(0);
+                NationalCipherUI.this.thread.interrupt();
+     
 			}
 		}
     }
@@ -2720,8 +2720,8 @@ public class NationalCipherUI extends JFrame implements IApplication {
 	        JPanel optionPanel = new JPanel();
 	        optionPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
 	        optionPanel.setLayout(new GridLayout(0, 4));
-	        for(String key : StatisticHandler.TEXT_STATISTIC_MAP.keySet()) {
-	        	JCheckBox checkBox = new JCheckBox(StatisticHandler.DISPLAY_NAME_MAP.get(key));
+	        for(String key : StatisticRegistry.TEXT_STATISTIC_MAP.getKeys()) {
+	        	JCheckBox checkBox = new JCheckBox(StatisticRegistry.DISPLAY_NAME_MAP.get(key));
 	        	statCheckBoxes.put(key, checkBox);
 	        	checkBox.setFont(checkBox.getFont().deriveFont(Font.BOLD));
 	        	checkBox.addActionListener(new ActionListener() {
@@ -2759,7 +2759,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
 
 						@Override
 						public void run() {
-							stats = StatisticHandler.createTextStatistics(getInputText(), progress);
+							stats = StatisticRegistry.createTextStatistics(getInputText(), progress);
 				     		lastNumDev = null;
 				     		updateDialog();
 				     		optionPanel.remove(progress);
@@ -2897,7 +2897,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     					doOnly.add(id);
     			}
     			
-				List<IdentifyOutput> num_dev = StatisticHandler.orderCipherProbibitly(this.stats, doOnly);
+				List<IdentifyOutput> num_dev = StatisticRegistry.orderCipherProbibitly(this.stats, doOnly);
 				System.out.println(num_dev);
 
 			    Collections.sort(num_dev);

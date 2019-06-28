@@ -1,5 +1,7 @@
 package nationalcipher.registry;
 
+import java.util.Random;
+
 import javax.annotation.Nullable;
 
 import nationalcipher.cipher.base.other.ADFGX;
@@ -48,12 +50,15 @@ import nationalcipher.cipher.base.transposition.NihilistTransposition;
 import nationalcipher.cipher.base.transposition.Phillips;
 import nationalcipher.cipher.base.transposition.RailFence;
 import nationalcipher.cipher.base.transposition.Redefence;
+import nationalcipher.cipher.base.transposition.Swagman;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.transposition.RouteTransposition;
 
 public class EncrypterRegistry {
 
-	public static IRegistry<IRandEncrypter> RAND_ENCRYPTERS = Registry.builder(IRandEncrypter.class).build();
+	public static IRegistry<String, IRandEncrypter> RAND_ENCRYPTERS = Registry.builder(IRandEncrypter.class).setAutoDiscover().build();
+	private static Random RAND = new Random();
+	
 	
 	public static IRandEncrypter getFromName(String key) {
 		return RAND_ENCRYPTERS.get(key);
@@ -67,11 +72,14 @@ public class EncrypterRegistry {
 	public static IRandEncrypter getEncrypterWith(int maxDifficulty) {
 		return RAND_ENCRYPTERS.getValues().stream()
 				.filter(v -> v.getDifficulty() <= maxDifficulty)
+				.sorted((o1, o2) -> RAND.nextBoolean() ? 1 : -1)
 				.findAny()
 				.orElse(null);
 	}
 	
 	public static void registerAll() {
+	    
+	    
 		RAND_ENCRYPTERS.registerAll(new ADFGX(), new Affine(), new Autokey(), new AMSCO());
 		RAND_ENCRYPTERS.register(new Bazeries());
 		RAND_ENCRYPTERS.register(new Bifid());
@@ -106,7 +114,7 @@ public class EncrypterRegistry {
 		RAND_ENCRYPTERS.register(new SeriatedPlayfair());
 		RAND_ENCRYPTERS.register(new Solitaire());
 		RAND_ENCRYPTERS.register(new Slidefair());
-		//TODO RAND_ENCRYPTERS.register(new Swagman());
+		RAND_ENCRYPTERS.register(new Swagman());
 		RAND_ENCRYPTERS.register(new Trifid());
 		RAND_ENCRYPTERS.register(new TwoSquare());
 		RAND_ENCRYPTERS.register(new TriSquare());
@@ -114,6 +122,7 @@ public class EncrypterRegistry {
 	}
 	
 	static {
-		registerAll();
+		//registerAll();
+	    System.out.println(RAND_ENCRYPTERS.size());
 	}
 }

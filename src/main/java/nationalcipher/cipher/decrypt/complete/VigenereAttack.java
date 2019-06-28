@@ -1,6 +1,12 @@
 package nationalcipher.cipher.decrypt.complete;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -12,6 +18,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.swing.ProgressValue;
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.VigenereFamily;
@@ -48,13 +55,30 @@ public class VigenereAttack extends CipherAttack {
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		
 		if(method == DecryptionMethod.BRUTE_FORCE) {
-			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				app.getProgress().addMaxValue(MathUtil.pow(26, length));
-			
-			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.iterateShort26Key(task::onIteration, length, true);
-		}
-		else if(method == DecryptionMethod.CALCULATED) {
+		    if(app.getSettings().useParallel()) {
+		        app.out().println("Generating Keys");
+		        //List<String> keys = Collections.synchronizedList(Collections.emptyList());
+		        //Arrays.stream(ArrayUtil.createRange(periodRange[0], periodRange[1])).parallel().forEach(length -> KeyIterator.iterateShort26Key(keys::add, length, true));
+		        List<String> keys = new ArrayList<>(1000000);
+		        for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+                    KeyIterator.iterateShort26Key(keys::add, length, true);
+		        app.out().println("Generated Keys");
+
+	            keys.stream().parallel().forEach(task::onIterationParallel);
+		    } else {
+		        for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+                    app.getProgress().addMaxValue(MathUtil.pow(26, length));
+                
+                for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+                    KeyIterator.iterateShort26Key(task::onIteration, length, true);
+		    }
+		} else if(method == DecryptionMethod.CALCULATED) {
+		    List<String> keys = new ArrayList<String>(10000);
+		    for(int length = periodRange[0]; length <= periodRange[1]; ++length)
+		        KeyIterator.iterateShort26Key(keys::add, length, true);
+		    
+		    keys.stream().parallel().forEach(task::onIterationParallel);
+		} else if(method == DecryptionMethod.CALCULATED) {
 			int keyLength = StatCalculator.calculateBestKappaIC(text, periodRange[0], periodRange[1], app.getLanguage());
 			
 			app.getProgress().addMaxValue(keyLength * 26);
@@ -66,8 +90,7 @@ public class VigenereAttack extends CipherAttack {
 	            keyword += (char)('A' + shift);
 	        }
 			task.onIteration(keyword);
-		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		} else if(method == DecryptionMethod.KEY_MANIPULATION) {
 			app.getProgress().setIndeterminate(true);
 			task.run(periodRange[0], periodRange[1]);
 		}
@@ -98,20 +121,37 @@ public class VigenereAttack extends CipherAttack {
 			super(text.toCharArray(), app);
 		}
 
-		public void onIteration(String key) {
-			this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.VIGENERE), this.getLanguage());
-			//this.lastSolution = new Solution(Challenge7Attack.decode(this.cipherText, this.plainText, key, VigenereType.VIGENERE), this.getLanguage());
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString(key);
-				this.bestSolution.bakeSolution();
-				this.out().println("%s", this.bestSolution);
-				this.getKeyPanel().updateSolution(this.bestSolution);
+		public void onIterationParallel(String key) {
+			Solution lastSolution = new Solution(VigenereFamily.decode(this.cipherText, new byte[this.cipherText.length], key, VigenereType.VIGENERE), this.getLanguage());
+			
+			synchronized(this) {
+    			if(lastSolution.score >= this.bestSolution.score) {
+    				this.bestSolution = lastSolution;
+    				this.bestSolution.setKeyString(key);
+    				//this.bestSolution.bakeSolution();
+    				this.out().println(this.bestSolution.toString());
+    				this.getKeyPanel().updateSolution(this.bestSolution);
+    			}
 			}
 			
-			this.getKeyPanel().updateIteration(this.iteration++);
-			this.getProgress().increase();
+			//this.getKeyPanel().updateIteration(this.iteration++);
+			//this.getProgress().increase();
 		}
+		
+		public void onIteration(String key) {
+            this.lastSolution = new Solution(VigenereFamily.decode(this.cipherText, this.plainText, key, VigenereType.VIGENERE), this.getLanguage());
+            
+            if(this.lastSolution.score >= this.bestSolution.score) {
+                this.bestSolution = this.lastSolution;
+                this.bestSolution.setKeyString(key);
+                this.bestSolution.bakeSolution();
+                this.out().println("%s", this.bestSolution);
+                this.getKeyPanel().updateSolution(this.bestSolution);
+            }
+            
+            //this.getKeyPanel().updateIteration(this.iteration++);
+            //this.getProgress().increase();
+        }
 		
 		@Override
 		public Solution tryModifiedKey(String key) {

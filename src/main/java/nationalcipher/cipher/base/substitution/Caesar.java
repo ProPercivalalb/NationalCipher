@@ -3,7 +3,9 @@ package nationalcipher.cipher.base.substitution;
 import javalibrary.math.MathUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
+import nationalcipher.util.Register;
 
+@Register
 public class Caesar implements IRandEncrypter {
 
 	public static String encode(String plainText, int shift) {

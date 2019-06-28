@@ -28,7 +28,7 @@ public class HuttonAttack extends CipherAttack {
 	
 	@Override
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		SeriatedPlayfairTask task = new SeriatedPlayfairTask(text, app);
+		HuttonTask task = new HuttonTask(text, app);
 		
 		//Settings grab
 		
@@ -46,13 +46,13 @@ public class HuttonAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SeriatedPlayfairTask extends SimulatedAnnealing {
+	public class HuttonTask extends SimulatedAnnealing {
 
 		public int period;
 		public String bestKey1, bestMaximaKey1, lastKey1;
 		public String bestKey2, bestMaximaKey2, lastKey2;
 		
-		public SeriatedPlayfairTask(String text, IApplication app) {
+		public HuttonTask(String text, IApplication app) {
 			super(text.toCharArray(), app);
 		}
 		

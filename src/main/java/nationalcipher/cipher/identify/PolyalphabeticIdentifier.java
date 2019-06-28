@@ -52,6 +52,8 @@ public class PolyalphabeticIdentifier {
 	}
 	
 	public static double calculateLDI(String text) {
+	    if(text.length() < 2) return 0.0D;
+	    
 		int score = 0;
 		for(int i = 0; i < text.length() - 1; i++)
 			if(Character.isLetter(text.charAt(i)) && Character.isLetter(text.charAt(i + 1)))

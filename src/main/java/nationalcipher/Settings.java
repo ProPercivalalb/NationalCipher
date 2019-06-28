@@ -2,7 +2,9 @@ package nationalcipher;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,26 +53,20 @@ public class Settings {
 		
 		this.loadElements = new ArrayList<ILoadElement>();
 		this.gson = new Gson();
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-	        public void run() {
-				writeToFile();
-	        }
-		}));
-		new Thread(new Runnable() {
-			@Override
-	        public void run() {
-				while(!Thread.interrupted()) {
-					try {
-						Thread.sleep(60 * 1000);
-					} 
-					catch(InterruptedException e) {
-						e.printStackTrace();
-					}
-					writeToFile();
-				}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> writeToFile()));
+		
+		new Thread(() -> {
+		    while(!Thread.interrupted()) {
+		        try {
+		            Thread.sleep(60 * 1000);
+		        } 
+		        catch(InterruptedException e) {
+		            e.printStackTrace();
+		        }
+		        writeToFile();
 	        }
 		}, "SAVE-THREAD").start();
+	
 	}
 	
 	public ILanguage getLanguage() {
@@ -171,11 +167,14 @@ public class Settings {
 		
 	public void readFromFile() {
 		try {
+		    
 			File myFile = new File(OSIdentifier.getMyDataFolder("nationalcipher"), "savedata.txt");
 			String input = StringTransformer.joinWith(FileReader.compileTextFromFile(myFile), "");
-				
+			Settings2.init();
+			Settings2 settings = Settings2.gson.fromJson(new InputStreamReader(new FileInputStream(myFile)), Settings2.class);
+			System.out.println("" + settings.checkReverse);
 			HashMap<String, Object> map = gson.fromJson(input, new TypeToken<HashMap<String, Object>>(){}.getType());
-			
+			System.out.print(Settings2.gson.toJson(settings));
 			if(map == null) return;
 			//READ
 			if(map.containsKey("language")) {

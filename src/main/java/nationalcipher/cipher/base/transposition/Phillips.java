@@ -4,9 +4,9 @@ import java.util.Map;
 
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.util.CipherUtils;
 
 public class Phillips implements IRandEncrypter {
 

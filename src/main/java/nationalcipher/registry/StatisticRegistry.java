@@ -1,4 +1,4 @@
-package nationalcipher.cipher.stats;
+package nationalcipher.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,12 @@ import javax.swing.JProgressBar;
 
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
+import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
+import nationalcipher.cipher.stats.CipherStatistics;
+import nationalcipher.cipher.stats.DataHolder;
+import nationalcipher.cipher.stats.IdentifyOutput;
+import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.cipher.stats.types.StatisticBifid0;
 import nationalcipher.cipher.stats.types.StatisticDiagrahpicICx10000;
 import nationalcipher.cipher.stats.types.StatisticDoubleLetter;
@@ -46,22 +51,31 @@ import nationalcipher.cipher.stats.types.StatisticPercentageOddRepeats;
 import nationalcipher.cipher.stats.types.StatisticTextLengthMultiple;
 import nationalcipher.cipher.stats.types.StatisticTrigraphNoOverlapICx100000;
 import nationalcipher.lib.StatisticsLib;
+import nationalcipher.util.ReflectionUtil;
 
-public class StatisticHandler {
-	
-	public static final LinkedHashMap<String, Class<? extends TextStatistic<?>>> TEXT_STATISTIC_MAP = new LinkedHashMap<>();
-	public static final HashMap<String, String> DISPLAY_NAME_MAP = new HashMap<>();
+public class StatisticRegistry {
+    
+    public static final IRegistry<String, Class<? extends TextStatistic<?>>> TEXT_STATISTIC_MAP = Registry.<Class<? extends TextStatistic<?>>>builder()
+            .setRegistryName("TextStatistic")
+            .addValidation(value -> ReflectionUtil.getConstructor(value, String.class).isPresent())
+            .build();
+    
+    public static final IRegistry<String, String> DISPLAY_NAME_MAP = Registry.builder(String.class).setRegistryName("StatisticDisplayName").build();
 	
 	public static boolean registerStatistic(String id, Class<? extends TextStatistic<?>> textStatistic) {
 		return registerStatistic(id, textStatistic, id);
 	}
 	
 	public static boolean registerStatistic(String id, Class<? extends TextStatistic<?>> textStatistic, String shortName) {
-		if(TEXT_STATISTIC_MAP.containsKey(id)) return false;
-		
-		TEXT_STATISTIC_MAP.put(id, textStatistic);
-		DISPLAY_NAME_MAP.put(id, shortName);
-		return true;
+	    if(TEXT_STATISTIC_MAP.register(id, textStatistic)) {
+	        if(DISPLAY_NAME_MAP.register(id, shortName)) {
+	            return true;
+	        } else {
+	            TEXT_STATISTIC_MAP.remove(id);
+	        }
+	    }
+	    
+	    return false;
 	}
 	
 	public static List<IdentifyOutput> orderCipherProbibitly(String text) {
@@ -69,7 +83,7 @@ public class StatisticHandler {
 	}
 	
 	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic<?>> stats) {
-		return orderCipherProbibitly(stats, new ArrayList<String>(TEXT_STATISTIC_MAP.keySet()));
+		return orderCipherProbibitly(stats, new ArrayList<String>(TEXT_STATISTIC_MAP.getKeys()));
 	}
 	
 	public static List<IdentifyOutput> orderCipherProbibitly(HashMap<String, TextStatistic<?>> stats, List<String> doOnly) {
@@ -151,7 +165,7 @@ public class StatisticHandler {
 	public static HashMap<String, TextStatistic<?>> createTextStatistics(String text) {
 		HashMap<String, TextStatistic<?>> stats = new HashMap<String, TextStatistic<?>>();
 		try {
-			for(String id : TEXT_STATISTIC_MAP.keySet()) {
+			for(String id : TEXT_STATISTIC_MAP.getKeys()) {
 				TextStatistic<?> stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
 				stats.put(id, stat.calculateStatistic());
 			}
@@ -167,7 +181,7 @@ public class StatisticHandler {
 		HashMap<String, TextStatistic<?>> stats = new HashMap<String, TextStatistic<?>>();
 		try {
 			value.setMaximum(TEXT_STATISTIC_MAP.size());
-			for(String id : TEXT_STATISTIC_MAP.keySet()) {
+			for(String id : TEXT_STATISTIC_MAP.getKeys()) {
 				value.setString(DISPLAY_NAME_MAP.get(id));
 				TextStatistic<?> stat = TEXT_STATISTIC_MAP.get(id).getConstructor(String.class).newInstance(text);
 				stats.put(id, stat.calculateStatistic());
@@ -265,7 +279,7 @@ public class StatisticHandler {
 		registerStatistic(StatisticsLib.LOG_DIGRAPH_SLIDEFAIR_VARIANT, StatisticLogDigraphSlidefairVariant.class, "LDI_SLI_VAR");
 		registerStatistic(StatisticsLib.LOG_DIGRAPH_SLIDEFAIR_VIGENERE, StatisticLogDigraphSlidefairVigenere.class, "LDI_SLI_VIG");
 		
-		//Boolean statitics
+		//Boolean statistics
 		registerStatistic(StatisticsLib.DOUBLE_LETTER_EVEN, StatisticDoubleLetter.class, "DBL_PLAY");
 		registerStatistic(StatisticsLib.DOUBLE_LETTER_EVEN_2to40, StatisticDoubleLetter2to40.class, "DBL_SERP");
 		registerStatistic(StatisticsLib.MAX_UNIQUE_CHARACTERS, StatisticMaxUniqueCharacters.class, "MAX_UNIQUE");

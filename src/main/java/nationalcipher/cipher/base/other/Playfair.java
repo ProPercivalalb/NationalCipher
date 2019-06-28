@@ -4,9 +4,9 @@ import java.util.Map;
 
 import javalibrary.math.MathUtil;
 import javalibrary.streams.PrimTypeUtil;
-import nationalcipher.cipher.base.CipherUtils;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.util.CipherUtils;
 
 public class Playfair implements IRandEncrypter {
 

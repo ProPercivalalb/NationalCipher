@@ -4,17 +4,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public interface IRegistry<T> {
+public interface IRegistry<K, T> {
     
-    public void register(@Nonnull String key, T value);
+    public boolean register(@Nonnull K key, T value);
     
     @SuppressWarnings("unchecked")
     default void registerAll(T... values) {
@@ -23,58 +23,52 @@ public interface IRegistry<T> {
         }
     }
     
-	default void register(T value) {
-		String key = null;
-		
-		if(value instanceof INameProvider) {
-			key = ((INameProvider)value).getKey();
-		} else {
-			key = this.getDefaultNamingScheme().apply(this, value);
-		}
-		
-		this.register(key, value);
+	default boolean register(T value) {
+		return this.register(this.getNamingScheme().getKey(this, value), value);
 	}
 	
-	public boolean remove(String key);
+	public boolean remove(K key);
 	
-	public BiFunction<IRegistry<T>, T, String> getDefaultNamingScheme();
+	public INamingScheme<K, T> getNamingScheme();
+	public String getRegistryName();
 	
-	public T get(String key);
 	
+	public T get(K key);
 	
-	public Stream<String> getKeys(T value);
+	public Stream<K> getKeys(T value);
 	
-	default Optional<String> getKey(T value) {
+	default Optional<K> getKey(T value) {
 		return this.getKeys(value).findFirst();
 	}
 	
 	// Wraps value in Optional
-	default Optional<T> getOptional(String key) {
+	default Optional<T> getWrapped(K key) {
 		return Optional.ofNullable(this.get(key));
 	}
 	
-    public boolean contains(@Nonnull String key);
+    public boolean contains(@Nonnull K key);
 	
     public int size();
 	
     public boolean isEmpty();
 	
-    public Class<T> getType();
+    public @Nullable Class<K> getKeyType();
+    public @Nullable Class<T> getType();
 	
-    public @Nonnull Collection<String>           getKeys();
+    public @Nonnull Collection<K>           getKeys();
 	public @Nonnull Collection<T> 				 getValues();
-	public @Nonnull Collection<Entry<String, T>> getEntries();
+	public @Nonnull Collection<Entry<K, T>> getEntries();
 	
 	public void freeze();
 	
 	
 	
-	default void accept(String key, Consumer<T> fun) {
-		this.getOptional(key).ifPresent(v -> fun.accept(v));
+	default void accept(K key, Consumer<T> fun) {
+		this.getWrapped(key).ifPresent(v -> fun.accept(v));
 	}
 	
-	default <R> Optional<R> apply(String key, Function<T, R> fun) {
-		return this.getOptional(key).map(fun);
+	default <R> Optional<R> apply(K key, Function<T, R> fun) {
+		return this.getWrapped(key).map(fun);
 	}
 	
 	default <R> Stream<R> mapValues(Function<T, R> fun) {
@@ -85,8 +79,8 @@ public interface IRegistry<T> {
         return this.getValues().stream().collect(Collectors.toMap(fun, Function.identity()));
     }
 
-	public static interface INameProvider {
+	public static interface INamingScheme<K, T> {
 
-		public @Nonnull String getKey();
+		public @Nonnull K getKey(IRegistry<K, T> reg, T value);
 	}
 }

@@ -58,7 +58,7 @@ public class StatCalculator {
 	}
 	
 	public static double calculateMonoIC(byte[] text) {
-		HashMap<Byte, Integer> letters = StringAnalyzer.getCharacterCount(text);
+		Map<Byte, Integer> letters = StringAnalyzer.getCharacterCount(text);
 
 		double sum = 0.0D;
 		for(int value : letters.values())
@@ -69,7 +69,7 @@ public class StatCalculator {
 	}
 	
 	public static double calculateMonoIC(char[] text) {
-		HashMap<Character, Integer> letters = StringAnalyzer.getCharacterCount(text);
+		Map<Character, Integer> letters = StringAnalyzer.getCharacterCount(text);
 
 		double sum = 0.0D;
 		for(int value : letters.values())

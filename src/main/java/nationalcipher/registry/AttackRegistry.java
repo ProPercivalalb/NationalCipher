@@ -1,10 +1,12 @@
-package nationalcipher.cipher.decrypt;
+package nationalcipher.registry;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.NicodemusAttack;
 import nationalcipher.cipher.decrypt.complete.ADFGXAttack;
 import nationalcipher.cipher.decrypt.complete.AMSCOAttack;
 import nationalcipher.cipher.decrypt.complete.AffineAttack;
@@ -69,12 +71,10 @@ import nationalcipher.cipher.decrypt.complete.VigenerePKAttack;
 import nationalcipher.cipher.decrypt.complete.VigenereSFAttack;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.lib.CipherLib;
-import nationalcipher.registry.IRegistry;
-import nationalcipher.registry.Registry;
 
 public class AttackRegistry {
 
-	public static final IRegistry<CipherAttack> CIPHERS = Registry.builder(CipherAttack.class).setNamingScheme((reg, value) -> "CIPHER_" + reg.size()).build();
+	public static final IRegistry<String, CipherAttack> CIPHERS = Registry.builder(CipherAttack.class).setNamingScheme((reg, value) -> "CIPHER_" + reg.size()).build();
 	
 	public static void registerCipher(CipherAttack cipherAttack, Settings settings) {
 		registerCipher("CIPHER_" + CIPHERS.size(), cipherAttack, settings);
@@ -132,7 +132,7 @@ public class AttackRegistry {
 		//6x6 Polybius Squares
 		registerCipher(new Playfair6x6Attack(), settings);
 		
-		//Transpostion
+		//Transposition
 		registerCipher(new CadenusAttack(), settings);
 		registerCipher(new RailFenceAttack(), settings);
 		registerCipher(new RedefenceAttack(), settings);
