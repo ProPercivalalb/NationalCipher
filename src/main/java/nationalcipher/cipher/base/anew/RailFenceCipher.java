@@ -10,10 +10,9 @@ import nationalcipher.cipher.base.keys.IntegerKeyType;
 public class RailFenceCipher extends BiKeyCipher<Integer, Integer> {
 
     // TODO Add read off diagonals mode
-    
+
     public RailFenceCipher() {
-        super(IntegerKeyType.builder().setRange(2, 30),
-                IntegerKeyType.builder().setMin(0).setVariableMax(obj -> ((BiKey<Integer, Integer>)obj).getFirstKey() * 2 - 2));
+        super(IntegerKeyType.builder().setRange(2, 30), IntegerKeyType.builder().setMin(0).setVariableMax(obj -> ((BiKey<Integer, Integer>) obj).getFirstKey() * 2 - 2));
     }
 
     @Override

@@ -15,19 +15,19 @@ import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class SeriatedPlayfairAttack extends SACipherAttack<BiKey<String, Integer>> {
 
-	public JSpinner spinner;
-	
-	public SeriatedPlayfairAttack() {
-		super(new SeriatedPlayfairCipher(), "Seriated Playfair");
-		this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] {0}, ArrayUtil.createRangeInteger(2, 101)));
-	}
-	
-	@Override
-	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		panel.add(new SubOptionPanel("Period:", this.spinner));
-	}
-	
-	@Override
+    public JSpinner spinner;
+
+    public SeriatedPlayfairAttack() {
+        super(new SeriatedPlayfairCipher(), "Seriated Playfair");
+        this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] { 0 }, ArrayUtil.createRangeInteger(2, 101)));
+    }
+
+    @Override
+    public void createSettingsUI(JDialog dialog, JPanel panel) {
+        panel.add(new SubOptionPanel("Period:", this.spinner));
+    }
+
+    @Override
     public BiKey<String, Integer> generateIntialKey(DecryptionTracker tracker) {
         return this.getCipher().randomiseKey().setSecond(SettingParse.getInteger(this.spinner));
     }

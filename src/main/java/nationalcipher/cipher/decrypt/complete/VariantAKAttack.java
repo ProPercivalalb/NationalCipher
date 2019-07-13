@@ -6,12 +6,12 @@ import nationalcipher.cipher.decrypt.AutokeyAttack;
 
 public class VariantAKAttack extends AutokeyAttack {
 
-	public VariantAKAttack() {
-		super("Variant Autokey");
-	}
+    public VariantAKAttack() {
+        super("Variant Autokey");
+    }
 
-	@Override
-	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
-		return Autokey.decode(cipherText, plainText, key, VigenereType.VARIANT);
-	}
+    @Override
+    public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+        return Autokey.decode(cipherText, plainText, key, VigenereType.VARIANT);
+    }
 }

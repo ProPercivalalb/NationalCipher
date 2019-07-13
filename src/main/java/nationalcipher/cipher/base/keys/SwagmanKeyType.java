@@ -14,12 +14,12 @@ public class SwagmanKeyType implements IKeyType<int[]> {
 
     // Both inclusive
     private final int min, max;
-    
+
     private SwagmanKeyType(int min, int max) {
         this.min = min;
         this.max = max;
     }
-    
+
     @Override
     public int[] randomise(Object partialKey) {
         return KeyGeneration.createSwagmanKey(RandomUtil.pickRandomInt(this.min, this.max));
@@ -29,45 +29,45 @@ public class SwagmanKeyType implements IKeyType<int[]> {
     public boolean isValid(Object partialKey, int[] key) {
         double sizeD = Math.sqrt(key.length);
         // Is square
-        if(sizeD != Math.floor(sizeD)) {
+        if (sizeD != Math.floor(sizeD)) {
             return false;
         }
-        
-        int size = (int)sizeD;
-        
-        for(int row = 0; row < size; row++) {
+
+        int size = (int) sizeD;
+
+        for (int row = 0; row < size; row++) {
             List<Integer> test = ListUtil.randomRange(0, size - 1);
-            for(int col = 0; col < size; col++) {
-                if(!test.remove((Integer)key[row * size + col])) {
+            for (int col = 0; col < size; col++) {
+                if (!test.remove((Integer) key[row * size + col])) {
                     return false;
                 }
             }
         }
-        
-        for(int col = 0; col < size; col++) {
+
+        for (int col = 0; col < size; col++) {
             List<Integer> test = ListUtil.randomRange(0, size - 1);
-            for(int row = 0; row < size; row++) {
-                if(!test.remove((Integer)key[row * size + col])) {
+            for (int row = 0; row < size; row++) {
+                if (!test.remove((Integer) key[row * size + col])) {
                     return false;
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     @Override
     public void iterateKeys(Object partialKey, Consumer<int[]> consumer) {
-        for(int length = this.min; length <= this.max; length++) {
-            //TODO
+        for (int length = this.min; length <= this.max; length++) {
+            // TODO
         }
     }
-    
+
     @Override
     public int[] alterKey(Object partialKey, int[] key) {
         return key;
     }
-    
+
     @Override
     public BigInteger getNumOfKeys() {
         return BigInteger.ZERO;
@@ -76,30 +76,31 @@ public class SwagmanKeyType implements IKeyType<int[]> {
     public static Builder builder() {
         return new Builder();
     }
-    
+
     public static class Builder implements IKeyBuilder<int[], SwagmanKeyType> {
-        
+
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
-        
-        private Builder() {}
-        
+
+        private Builder() {
+        }
+
         public Builder setMin(int min) {
             this.min = Optional.of(min);
             return this;
         }
-        
+
         public Builder setMax(int max) {
             this.max = Optional.of(max);
             return this;
         }
-        
+
         public Builder setRange(int min, int max) {
             this.setMin(min);
             this.setMax(max);
             return this;
         }
-        
+
         @Override
         public SwagmanKeyType create() {
             SwagmanKeyType handler = new SwagmanKeyType(this.min.orElse(3), this.max.orElse(5));

@@ -16,44 +16,43 @@ public class BazeriesCipher extends UniKeyCipher<Integer> {
     @Override
     public CharSequence padPlainText(CharSequence plainText, Integer key) {
         StringBuilder builder = new StringBuilder(plainText.length());
-        for(int i = 0; i < plainText.length(); i++) {
+        for (int i = 0; i < plainText.length(); i++) {
             char c = plainText.charAt(i);
             builder.append(c == 'J' ? 'I' : c);
         }
-        
+
         return builder;
     }
-    
+
     @Override
     public CharSequence encode(CharSequence plainText, Integer key, IFormat format) {
         String alphabetSquare = "AFLQVBGMRWCHNSXDIOTYEKPUZ";
-        
+
         String numberSquare = "";
-        for(char j : NumberString.convert(key).toCharArray())
-            if(numberSquare.indexOf(j) == -1)
+        for (char j : NumberString.convert(key).toCharArray())
+            if (numberSquare.indexOf(j) == -1)
                 numberSquare += j;
-        
-        for(char j : "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray())
-            if(numberSquare.indexOf(j) == -1)
+
+        for (char j : "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray())
+            if (numberSquare.indexOf(j) == -1)
                 numberSquare += j;
-        
-        
+
         String s = "" + key;
         String cipherText = "";
-        
+
         int textPos = 0;
         int count = 0;
         int split = s.charAt(0) - '0';
-        while(true) {
-            for(int j = textPos + split - 1; j >= textPos; --j) {
-                if(j < plainText.length()) {
+        while (true) {
+            for (int j = textPos + split - 1; j >= textPos; --j) {
+                if (j < plainText.length()) {
                     char c = plainText.charAt(j);
                     cipherText += numberSquare.charAt(alphabetSquare.indexOf(c));
                 }
             }
-            if(textPos + split >= plainText.length())
+            if (textPos + split >= plainText.length())
                 break;
-            
+
             textPos += split;
             count += 1;
             split = s.charAt(count % s.length()) - '0';
@@ -65,40 +64,40 @@ public class BazeriesCipher extends UniKeyCipher<Integer> {
     public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] unused, Integer key) {
 
         String alphabetSquare = "AFLQVBGMRWCHNSXDIOTYEKPUZ";
-        
+
         String numberSquare = "";
-        for(char j : NumberString.convert(key).toCharArray())
-            if(numberSquare.indexOf(j) == -1)
+        for (char j : NumberString.convert(key).toCharArray())
+            if (numberSquare.indexOf(j) == -1)
                 numberSquare += j;
-        
-        for(char j : "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray())
-            if(numberSquare.indexOf(j) == -1)
+
+        for (char j : "ABCDEFGHIKLMNOPQRSTUVWXYZ".toCharArray())
+            if (numberSquare.indexOf(j) == -1)
                 numberSquare += j;
-        
+
         String s = "" + key;
         StringBuilder plainText = new StringBuilder();
-        
+
         int textPos = 0;
         int count = 0;
         int split = s.charAt(0) - '0';
-        while(true) {
+        while (true) {
             System.out.println("DECODE " + key);
-            for(int j = textPos + split - 1; j >= textPos; --j) {
-                if(j < cipherText.length()) {
+            for (int j = textPos + split - 1; j >= textPos; --j) {
+                if (j < cipherText.length()) {
                     char c = cipherText.charAt(j);
                     plainText.append(alphabetSquare.charAt(numberSquare.indexOf(c)));
                 }
             }
-            if(textPos + split >= cipherText.length())
+            if (textPos + split >= cipherText.length())
                 break;
-            
+
             textPos += split;
             count += 1;
             split = s.charAt(count % s.length()) - '0';
         }
-        return plainText.toString().toCharArray(); //TODO Unchecked
+        return plainText.toString().toCharArray(); // TODO Unchecked
     }
-    
+
     @Override
     public char[] decodeEfficently(CharSequence cipherText, Integer key) {
         return decodeEfficently(cipherText, null, key);

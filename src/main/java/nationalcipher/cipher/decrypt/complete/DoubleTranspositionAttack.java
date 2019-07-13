@@ -25,139 +25,137 @@ import nationalcipher.ui.NationalCipherUI;
 
 public class DoubleTranspositionAttack extends CipherAttack {
 
-	public JSpinner[] rangeSpinner1;
-	public JSpinner[] rangeSpinner2;
-	public JSpinner spinner1;
-	public JSpinner spinner2;
-	private DoubleTranspositionTask task;
-	
-	public DoubleTranspositionAttack() {
-		super("Double Transposition");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.SIMULATED_ANNEALING);
-		this.rangeSpinner1 = JSpinnerUtil.createRangeSpinners(2, 6, 2, 100, 1);
-		this.rangeSpinner2 = JSpinnerUtil.createRangeSpinners(2, 6, 2, 100, 1);
-		this.spinner1 = JSpinnerUtil.createSpinner(4, 2, 100, 1);
-		this.spinner2 = JSpinnerUtil.createSpinner(5, 2, 100, 1);
-	}
-	
-	@Override
-	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		panel.add(new SubOptionPanel("Period 1 Range:", this.rangeSpinner1));
-		panel.add(new SubOptionPanel("Period 2 Range:", this.rangeSpinner2));
-		panel.add(new SubOptionPanel("SA Period 1:", this.spinner1));
-		panel.add(new SubOptionPanel("SA Period 2:", this.spinner2));
-	}
-	
-	@Override
-	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		this.task = new DoubleTranspositionTask(text, app);
-		
-		//Settings grab
-		int[] periodRange1 = SettingParse.getIntegerRange(this.rangeSpinner1);
-		int[] periodRange2 = SettingParse.getIntegerRange(this.rangeSpinner2);
-		this.task.period1 = SettingParse.getInteger(this.spinner1);
-		this.task.period2 = SettingParse.getInteger(this.spinner2);
-		
-		if(method == DecryptionMethod.BRUTE_FORCE) {
-			for(int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
-				for(int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
-					app.getProgress().addMaxValue(MathUtil.factorialBig(length1).multiply(MathUtil.factorialBig(length2)));
-			
-			for(int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
-				for(int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
-					KeyIterator.permuteDoubleIntegerOrderedKey(this.task::onIteration, length1, length2);
-		}
-		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
-			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
-			this.task.run();
-		}
-		
-		app.out().println(this.task.getBestSolution());
-	}
-	
-	public class DoubleTranspositionTask extends SimulatedAnnealing {
+    public JSpinner[] rangeSpinner1;
+    public JSpinner[] rangeSpinner2;
+    public JSpinner spinner1;
+    public JSpinner spinner2;
+    private DoubleTranspositionTask task;
 
-		public int period1;
-		public int period2;
-		public Integer[] bestKey1, bestMaximaKey1, lastKey1;
-		public Integer[] bestKey2, bestMaximaKey2, lastKey2;
-		
-		public DoubleTranspositionTask(String text, IApplication app) {
-			super(text.toCharArray(), app);
-		}
-		
-		public void onIteration(Integer[] order1, Integer[] order2) {
-			this.lastSolution = new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, order2, true)), new byte[this.cipherText.length], order1, true), this.getLanguage());
-			
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s %s", Arrays.toString(order1), Arrays.toString(order2));
-				this.out().println("%s", this.bestSolution);	
-				this.getKeyPanel().updateSolution(this.bestSolution);
-			}
-			
-			this.getKeyPanel().updateIteration(this.iteration++);
-			this.getProgress().increase();
-		}
-		
-		@Override
-		public Solution generateKey() {
-			this.bestMaximaKey1 = KeyGeneration.createOrder(this.period1);
-			this.bestMaximaKey2 = KeyGeneration.createOrder(this.period2);
-			this.lastKey1 = this.bestMaximaKey1;
-			this.lastKey2 = this.bestMaximaKey2;
-			return new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, this.bestMaximaKey2, true)), new byte[this.cipherText.length], this.bestMaximaKey1, true), this.getLanguage());
-		}
+    public DoubleTranspositionAttack() {
+        super("Double Transposition");
+        this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.SIMULATED_ANNEALING);
+        this.rangeSpinner1 = JSpinnerUtil.createRangeSpinners(2, 6, 2, 100, 1);
+        this.rangeSpinner2 = JSpinnerUtil.createRangeSpinners(2, 6, 2, 100, 1);
+        this.spinner1 = JSpinnerUtil.createSpinner(4, 2, 100, 1);
+        this.spinner2 = JSpinnerUtil.createSpinner(5, 2, 100, 1);
+    }
 
-		@Override
-		public Solution modifyKey(double temp, int count, double lastDF) {
-			if(count % 2 == 0) {
-				Integer[] copy = ArrayUtil.copy(this.bestMaximaKey1);
-				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
-					KeyManipulation.swapOrder(copy);
-				this.lastKey1 = copy;
-			}
-			else {
-				Integer[] copy = ArrayUtil.copy(this.bestMaximaKey2);
-				for(int i = 0; i < RandomUtil.pickRandomInt(1, (int)Math.ceil(this.period1 / 2D)); i++)
-					KeyManipulation.swapOrder(copy);
-				this.lastKey2 = copy;
-			}
-			return new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, this.lastKey2, true)), new byte[this.cipherText.length], this.lastKey1, true), this.getLanguage());
-		}
+    @Override
+    public void createSettingsUI(JDialog dialog, JPanel panel) {
+        panel.add(new SubOptionPanel("Period 1 Range:", this.rangeSpinner1));
+        panel.add(new SubOptionPanel("Period 2 Range:", this.rangeSpinner2));
+        panel.add(new SubOptionPanel("SA Period 1:", this.spinner1));
+        panel.add(new SubOptionPanel("SA Period 2:", this.spinner2));
+    }
 
-		@Override
-		public void storeKey() {
-			this.bestMaximaKey1 = this.lastKey1;
-			this.bestMaximaKey2 = this.lastKey2;
-		}
+    @Override
+    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+        this.task = new DoubleTranspositionTask(text, app);
 
-		@Override
-		public void solutionFound() {
-			this.bestKey1 = this.bestMaximaKey1;
-			this.bestKey2 = this.bestMaximaKey2;
-			this.bestSolution.setKeyString("%s %s", Arrays.toString(this.bestKey1), Arrays.toString(this.bestKey2));
-			this.getKeyPanel().updateSolution(this.bestSolution);
-		}
-		
-		@Override
-		public void onIteration() {
-			this.getProgress().increase();
-			this.getKeyPanel().updateIteration(this.iteration++);
-		}
+        // Settings grab
+        int[] periodRange1 = SettingParse.getIntegerRange(this.rangeSpinner1);
+        int[] periodRange2 = SettingParse.getIntegerRange(this.rangeSpinner2);
+        this.task.period1 = SettingParse.getInteger(this.spinner1);
+        this.task.period2 = SettingParse.getInteger(this.spinner2);
 
-		@Override
-		public boolean endIteration() {
-			this.out().println("%s", this.bestSolution);
-			NationalCipherUI.BEST_SOULTION = this.bestSolution.getText();
-			this.getProgress().setValue(0);
-			return false;
-		}
-	}
-	
-	@Override
-	public void onTermination(boolean forced) {
-		if(forced)
-			this.task.app.out().println("%s", this.task.bestSolution);
-	}
+        if (method == DecryptionMethod.BRUTE_FORCE) {
+            for (int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
+                for (int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
+                    app.getProgress().addMaxValue(MathUtil.factorialBig(length1).multiply(MathUtil.factorialBig(length2)));
+
+            for (int length1 = periodRange1[0]; length1 <= periodRange1[1]; ++length1)
+                for (int length2 = periodRange2[0]; length2 <= periodRange2[1]; ++length2)
+                    KeyIterator.permuteDoubleIntegerOrderedKey(this.task::onIteration, length1, length2);
+        } else if (method == DecryptionMethod.SIMULATED_ANNEALING) {
+            app.getProgress().addMaxValue(app.getSettings().getSAIteration());
+            this.task.run();
+        }
+
+        app.out().println(this.task.getBestSolution());
+    }
+
+    public class DoubleTranspositionTask extends SimulatedAnnealing {
+
+        public int period1;
+        public int period2;
+        public Integer[] bestKey1, bestMaximaKey1, lastKey1;
+        public Integer[] bestKey2, bestMaximaKey2, lastKey2;
+
+        public DoubleTranspositionTask(String text, IApplication app) {
+            super(text.toCharArray(), app);
+        }
+
+        public void onIteration(Integer[] order1, Integer[] order2) {
+            this.lastSolution = new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, order2, true)), new byte[this.cipherText.length], order1, true), this.getLanguage());
+
+            if (this.lastSolution.score >= this.bestSolution.score) {
+                this.bestSolution = this.lastSolution;
+                this.bestSolution.setKeyString("%s %s", Arrays.toString(order1), Arrays.toString(order2));
+                this.out().println("%s", this.bestSolution);
+                this.getKeyPanel().updateSolution(this.bestSolution);
+            }
+
+            this.getKeyPanel().updateIteration(this.iteration++);
+            this.getProgress().increase();
+        }
+
+        @Override
+        public Solution generateKey() {
+            this.bestMaximaKey1 = KeyGeneration.createOrder(this.period1);
+            this.bestMaximaKey2 = KeyGeneration.createOrder(this.period2);
+            this.lastKey1 = this.bestMaximaKey1;
+            this.lastKey2 = this.bestMaximaKey2;
+            return new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, this.bestMaximaKey2, true)), new byte[this.cipherText.length], this.bestMaximaKey1, true), this.getLanguage());
+        }
+
+        @Override
+        public Solution modifyKey(double temp, int count, double lastDF) {
+            if (count % 2 == 0) {
+                Integer[] copy = ArrayUtil.copy(this.bestMaximaKey1);
+                for (int i = 0; i < RandomUtil.pickRandomInt(1, (int) Math.ceil(this.period1 / 2D)); i++)
+                    KeyManipulation.swapOrder(copy);
+                this.lastKey1 = copy;
+            } else {
+                Integer[] copy = ArrayUtil.copy(this.bestMaximaKey2);
+                for (int i = 0; i < RandomUtil.pickRandomInt(1, (int) Math.ceil(this.period1 / 2D)); i++)
+                    KeyManipulation.swapOrder(copy);
+                this.lastKey2 = copy;
+            }
+            return new Solution(ColumnarTransposition.decode(ArrayUtil.convertCharType(ColumnarTransposition.decode(this.cipherText, this.plainText, this.lastKey2, true)), new byte[this.cipherText.length], this.lastKey1, true), this.getLanguage());
+        }
+
+        @Override
+        public void storeKey() {
+            this.bestMaximaKey1 = this.lastKey1;
+            this.bestMaximaKey2 = this.lastKey2;
+        }
+
+        @Override
+        public void solutionFound() {
+            this.bestKey1 = this.bestMaximaKey1;
+            this.bestKey2 = this.bestMaximaKey2;
+            this.bestSolution.setKeyString("%s %s", Arrays.toString(this.bestKey1), Arrays.toString(this.bestKey2));
+            this.getKeyPanel().updateSolution(this.bestSolution);
+        }
+
+        @Override
+        public void onIteration() {
+            this.getProgress().increase();
+            this.getKeyPanel().updateIteration(this.iteration++);
+        }
+
+        @Override
+        public boolean endIteration() {
+            this.out().println("%s", this.bestSolution);
+            NationalCipherUI.BEST_SOULTION = this.bestSolution.getText();
+            this.getProgress().setValue(0);
+            return false;
+        }
+    }
+
+    @Override
+    public void onTermination(boolean forced) {
+        if (forced)
+            this.task.app.out().println("%s", this.task.bestSolution);
+    }
 }

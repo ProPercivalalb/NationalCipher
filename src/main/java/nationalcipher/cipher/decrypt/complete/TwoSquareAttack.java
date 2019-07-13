@@ -5,13 +5,13 @@ import nationalcipher.cipher.decrypt.DoubleKeySquareAttack;
 
 public class TwoSquareAttack extends DoubleKeySquareAttack {
 
-	public TwoSquareAttack() {
-		super("Two Square");
-	}
+    public TwoSquareAttack() {
+        super("Two Square");
+    }
 
-	@Override
-	public byte[] decode(char[] cipherText, byte[] plainText, String key1, String key2) {
-		return TwoSquare.decode(cipherText, plainText, key1, key2);
-	}
+    @Override
+    public byte[] decode(char[] cipherText, byte[] plainText, String key1, String key2) {
+        return TwoSquare.decode(cipherText, plainText, key1, key2);
+    }
 
 }

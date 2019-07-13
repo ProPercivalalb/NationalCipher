@@ -17,51 +17,51 @@ import nationalcipher.ui.IApplication;
 
 public class NicodemusAttack extends CipherAttack<BiKey<String, Integer>> implements IKeySearchAttack<BiKey<String, Integer>> {
 
-	public JSpinner[] rangeSpinner;
-	
+    public JSpinner[] rangeSpinner;
+
     public NicodemusAttack(ICipher<BiKey<String, Integer>> cipher, String displayName) {
         super(cipher, displayName);
-		this.setAttackMethods(DecryptionMethod.DICTIONARY, DecryptionMethod.BRUTE_FORCE, DecryptionMethod.PERIODIC_KEY);
-		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
-	}
-	
-	@Override
-	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
-	}	
-	
-	@Override
-	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		
-		//Settings grab
-		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
-		switch(method) {
+        this.setAttackMethods(DecryptionMethod.DICTIONARY, DecryptionMethod.BRUTE_FORCE, DecryptionMethod.PERIODIC_KEY);
+        this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
+    }
+
+    @Override
+    public void createSettingsUI(JDialog dialog, JPanel panel) {
+        panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
+    }
+
+    @Override
+    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+
+        // Settings grab
+        int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
+        switch (method) {
         case PERIODIC_KEY:
-        	app.getProgress().setIndeterminate(true);
-        	this.periodicKey.setSecond(5);
-        	this.tryKeySearch(new DecryptionTracker(text, app), app.getProgress(), periodRange[0], periodRange[1]);
-        	break;
+            app.getProgress().setIndeterminate(true);
+            this.periodicKey.setSecond(5);
+            this.tryKeySearch(new DecryptionTracker(text, app), app.getProgress(), periodRange[0], periodRange[1]);
+            break;
         case DICTIONARY:
-        	DecryptionTracker tracker = new DecryptionTracker(text, app);
-			app.getProgress().addMaxValue(Dictionary.wordCount());
-			BiKey<String, Integer> key = BiKey.of("", 5);
-			for(String word : Dictionary.WORDS) {
-				tracker.lastSolution = this.toSolution(tracker, key.setFirst(word));
-				if(this.isBetterThanBest(tracker, tracker.lastSolution)) {
-					this.updateBestSolution(tracker, tracker.lastSolution, key);
-				}
-			}
-			break;
-		default:
-			super.attemptAttack(text, method, app);
-			break;
-		}
-	}
+            DecryptionTracker tracker = new DecryptionTracker(text, app);
+            app.getProgress().addMaxValue(Dictionary.wordCount());
+            BiKey<String, Integer> key = BiKey.of("", 5);
+            for (String word : Dictionary.WORDS) {
+                tracker.lastSolution = this.toSolution(tracker, key.setFirst(word));
+                if (this.isBetterThanBest(tracker, tracker.lastSolution)) {
+                    this.updateBestSolution(tracker, tracker.lastSolution, key);
+                }
+            }
+            break;
+        default:
+            super.attemptAttack(text, method, app);
+            break;
+        }
+    }
 
-	private BiKey<String, Integer> periodicKey = BiKey.empty();
+    private BiKey<String, Integer> periodicKey = BiKey.empty();
 
-	@Override
-	public BiKey<String, Integer> getKey(String periodicPart) {
-		return this.periodicKey.setFirst(periodicPart);
-	}
+    @Override
+    public BiKey<String, Integer> getKey(String periodicPart) {
+        return this.periodicKey.setFirst(periodicPart);
+    }
 }

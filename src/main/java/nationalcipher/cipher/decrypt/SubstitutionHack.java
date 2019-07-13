@@ -8,54 +8,54 @@ import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.ui.IApplication;
 
 /**
- * For ciphers that can be converted into a substitution cipher and solved
- * e.g. ADFGX or Hill Substitution
+ * For ciphers that can be converted into a substitution cipher and solved e.g.
+ * ADFGX or Hill Substitution
  */
 public class SubstitutionHack extends SimulatedAnnealing {
 
     private KeywordCipher keywordCipher;
-	public String bestKey, bestMaximaKey, lastKey;
-	
-	public SubstitutionHack(char[] text, IApplication app) {
-		super(text, app);
-		this.keywordCipher = new KeywordCipher();
-	}
-	
-	@Override
-	public Solution generateKey() {
-		this.bestMaximaKey = KeyGeneration.createLongKeyUniversal(this.getAlphabet());
-		return new Solution(Keyword.decodeWithAlphabet(this.cipherText, this.plainText, this.getAlphabet(), this.bestMaximaKey), this.getLanguage());
-	}
+    public String bestKey, bestMaximaKey, lastKey;
 
-	@Override
-	public Solution modifyKey(double temp, int count, double lastDF) {
-		this.lastKey = KeyManipulation.swapTwoCharacters(this.bestMaximaKey);
-		return new Solution(Keyword.decodeWithAlphabet(this.cipherText, this.plainText, this.getAlphabet(), this.lastKey), this.getLanguage());
-	}
+    public SubstitutionHack(char[] text, IApplication app) {
+        super(text, app);
+        this.keywordCipher = new KeywordCipher();
+    }
 
-	@Override
-	public void storeKey() {
-		this.bestMaximaKey = this.lastKey;
-	}
+    @Override
+    public Solution generateKey() {
+        this.bestMaximaKey = KeyGeneration.createLongKeyUniversal(this.getAlphabet());
+        return new Solution(Keyword.decodeWithAlphabet(this.cipherText, this.plainText, this.getAlphabet(), this.bestMaximaKey), this.getLanguage());
+    }
 
-	@Override
-	public void solutionFound() {
-		this.bestKey = this.bestMaximaKey;
-		this.bestSolution.setKeyString(this.bestKey);
-		this.bestSolution.bakeSolution();
-	}
+    @Override
+    public Solution modifyKey(double temp, int count, double lastDF) {
+        this.lastKey = KeyManipulation.swapTwoCharacters(this.bestMaximaKey);
+        return new Solution(Keyword.decodeWithAlphabet(this.cipherText, this.plainText, this.getAlphabet(), this.lastKey), this.getLanguage());
+    }
 
-	@Override
-	public boolean endIteration() {
-		return true;
-	}
+    @Override
+    public void storeKey() {
+        this.bestMaximaKey = this.lastKey;
+    }
 
-	@Override
-	public void onIteration() {
-		
-	}
-	
-	public Character[] getAlphabet() {
-		return KeyGeneration.ALL_26_CHARS;
-	}
+    @Override
+    public void solutionFound() {
+        this.bestKey = this.bestMaximaKey;
+        this.bestSolution.setKeyString(this.bestKey);
+        this.bestSolution.bakeSolution();
+    }
+
+    @Override
+    public boolean endIteration() {
+        return true;
+    }
+
+    @Override
+    public void onIteration() {
+
+    }
+
+    public Character[] getAlphabet() {
+        return KeyGeneration.ALL_26_CHARS;
+    }
 }

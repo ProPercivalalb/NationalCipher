@@ -10,15 +10,15 @@ import nationalcipher.Settings;
 
 public interface IApplication {
 
-	public Settings getSettings();
-	
-	public ILanguage getLanguage();
-	
-	public Output out();
-	
-	public KeyPanel getKeyPanel();
-	
-	public ProgressValue getProgress();
-	
-	public JDialog openGraph(JBarChart barChart);
+    public Settings getSettings();
+
+    public ILanguage getLanguage();
+
+    public Output out();
+
+    public KeyPanel getKeyPanel();
+
+    public ProgressValue getProgress();
+
+    public JDialog openGraph(JBarChart barChart);
 }

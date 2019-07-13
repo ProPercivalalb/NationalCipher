@@ -19,49 +19,51 @@ public class VariableStringKeyType implements IKeyType<String> {
     private final int min, max;
     private final Character[] alphabet;
     private boolean repeats;
-    
+
     private VariableStringKeyType(Character[] alphabet, int min, int max, boolean repeats) {
         this.alphabet = alphabet;
         this.min = min;
         this.max = max;
         this.repeats = repeats;
     }
-    
+
     @Override
     public String randomise(Object partialKey) {
-        BiFunction<Character[], Integer, String> func = this.repeats ? 
-                KeyGeneration::createRepeatingShortKeyUniversal : KeyGeneration::createShortKeyUniversal;
-        
+        BiFunction<Character[], Integer, String> func = this.repeats ? KeyGeneration::createRepeatingShortKeyUniversal : KeyGeneration::createShortKeyUniversal;
+
         return func.apply(this.alphabet, RandomUtil.pickRandomInt(this.min, this.max));
     }
 
     @Override
     public boolean isValid(Object partialKey, String key) {
-        for(int i = 0; i < key.length(); i++) {
-            if(!ArrayUtil.contains(this.alphabet, key.charAt(i))) {
+        for (int i = 0; i < key.length(); i++) {
+            if (!ArrayUtil.contains(this.alphabet, key.charAt(i))) {
                 return false;
-            } else if(!this.repeats && i < key.length() - 1) {
-                if(ArrayUtil.contains(key, i + 1, key.length(), key.charAt(i))) {
+            } else if (!this.repeats && i < key.length() - 1) {
+                if (ArrayUtil.contains(key, i + 1, key.length(), key.charAt(i))) {
                     return false;
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     @Override
     public void iterateKeys(Object partialKey, Consumer<String> consumer) {
-        for(int length = this.min; length <= this.max; length++) {
+        for (int length = this.min; length <= this.max; length++) {
             KeyIterator.iterateShortKey(consumer, this.alphabet, length, this.repeats);
         }
     }
-    
+
     @Override
     public String alterKey(Object fullKey, String key) {
-        return new String(KeyManipulation.changeCharacters(key.toCharArray(), alphabet, this.repeats)); //TODO decrease copying into new arrays so much
+        return new String(KeyManipulation.changeCharacters(key.toCharArray(), alphabet, this.repeats)); // TODO decrease
+                                                                                                        // copying into
+                                                                                                        // new arrays so
+                                                                                                        // much
     }
-    
+
     @Override
     public BigInteger getNumOfKeys() {
         return BigInteger.ZERO;
@@ -70,52 +72,50 @@ public class VariableStringKeyType implements IKeyType<String> {
     public static Builder builder() {
         return new Builder();
     }
-    
+
     public static class Builder implements IKeyBuilder<String, VariableStringKeyType> {
-        
+
         private Optional<Character[]> alphabet = Optional.empty();
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
         private boolean repeats = false;
-        
-        private Builder() {}
-        
+
+        private Builder() {
+        }
+
         public Builder setAlphabet(String alphabet) {
             return this.setAlphabet(PrimTypeUtil.toCharacterArray(alphabet));
         }
-        
+
         public Builder setAlphabet(Character[] alphabet) {
             this.alphabet = Optional.of(alphabet);
             return this;
         }
-        
+
         public Builder setMin(int min) {
             this.min = Optional.of(min);
             return this;
         }
-        
+
         public Builder setMax(int max) {
             this.max = Optional.of(max);
             return this;
         }
-        
+
         public Builder setRange(int min, int max) {
             this.setMin(min);
             this.setMax(max);
             return this;
         }
-        
+
         public Builder setRepeats() {
             this.repeats = true;
             return this;
         }
-        
+
         @Override
         public VariableStringKeyType create() {
-            VariableStringKeyType handler = new VariableStringKeyType(
-                    this.alphabet.orElse(KeyGeneration.ALL_26_CHARS), 
-                    this.min.orElse(2), 
-                    this.max.orElse(6), this.repeats);
+            VariableStringKeyType handler = new VariableStringKeyType(this.alphabet.orElse(KeyGeneration.ALL_26_CHARS), this.min.orElse(2), this.max.orElse(6), this.repeats);
             return handler;
         }
 

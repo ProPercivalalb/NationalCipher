@@ -8,11 +8,11 @@ import nationalcipher.api.IKeyType;
 public class ConstantKeyType<T> implements IKeyType<T> {
 
     private final T constant;
-    
+
     private ConstantKeyType(T constant) {
         this.constant = constant;
     }
-    
+
     @Override
     public T randomise(Object partialKey) {
         return this.constant;
@@ -32,7 +32,7 @@ public class ConstantKeyType<T> implements IKeyType<T> {
     public BigInteger getNumOfKeys() {
         return BigInteger.ONE;
     }
-    
+
     @Override
     public T alterKey(Object fullKey, T key) {
         return key;
@@ -41,15 +41,15 @@ public class ConstantKeyType<T> implements IKeyType<T> {
     public static <T> Builder<T> builder(T constant) {
         return new Builder<>(constant);
     }
-    
+
     public static class Builder<T> implements IKeyBuilder<T, ConstantKeyType<T>> {
 
         private final T constant;
-        
+
         private Builder(T constant) {
             this.constant = constant;
         }
-        
+
         @Override
         public ConstantKeyType<T> create() {
             return new ConstantKeyType<>(this.constant);

@@ -8,19 +8,19 @@ import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.ui.IApplication;
 
 public class PlayfairAttack extends CipherAttack<String> implements ISimulatedAnnealingAttack<String> {
-    
+
     public PlayfairAttack() {
         super(new PlayfairCipher(), "Playfair");
-        this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING); //TODO Dictionary Attack
+        this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING); // TODO Dictionary Attack
     }
-    
+
     @Override
     public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-        switch(method) {
+        switch (method) {
         case SIMULATED_ANNEALING:
             this.trySimulatedAnnealing(new DecryptionTracker(text, app), app.getProgress());
             break;
-        default: 
+        default:
             super.attemptAttack(text, method, app);
             break;
         }

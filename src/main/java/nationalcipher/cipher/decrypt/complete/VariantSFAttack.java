@@ -6,12 +6,12 @@ import nationalcipher.cipher.decrypt.SlidefairAttack;
 
 public class VariantSFAttack extends SlidefairAttack {
 
-	public VariantSFAttack() {
-		super("Variant Slidefair");
-	}
+    public VariantSFAttack() {
+        super("Variant Slidefair");
+    }
 
-	@Override
-	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
-		return Slidefair.decode(cipherText, plainText, key, VigenereType.VARIANT);
-	}
+    @Override
+    public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+        return Slidefair.decode(cipherText, plainText, key, VigenereType.VARIANT);
+    }
 }

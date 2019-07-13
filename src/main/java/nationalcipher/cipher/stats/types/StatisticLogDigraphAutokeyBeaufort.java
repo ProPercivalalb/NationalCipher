@@ -5,13 +5,13 @@ import nationalcipher.cipher.stats.TextStatistic;
 
 public class StatisticLogDigraphAutokeyBeaufort extends TextStatistic<Double> {
 
-	public StatisticLogDigraphAutokeyBeaufort(String text) {
-		super(text);
-	}
+    public StatisticLogDigraphAutokeyBeaufort(String text) {
+        super(text);
+    }
 
-	@Override
-	public TextStatistic<Double> calculateStatistic() {
-		this.value = PolyalphabeticIdentifier.calculateAutokeyBeaufortLDI(this.text);
-		return this;
-	}
+    @Override
+    public TextStatistic<Double> calculateStatistic() {
+        this.value = PolyalphabeticIdentifier.calculateAutokeyBeaufortLDI(this.text);
+        return this;
+    }
 }

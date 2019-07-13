@@ -10,34 +10,34 @@ import nationalcipher.cipher.tools.KeyGeneration;
 public class CadenusCipher extends UniKeyCipher<String> {
 
     public CadenusCipher() {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 5));;
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 5));
+        ;
     }
 
     @Override
     public CharSequence encode(CharSequence plainText, String key, IFormat format) {
-        
-        if(plainText.length() != key.length() * 25) {
+
+        if (plainText.length() != key.length() * 25) {
             String combinedMulti = "";
-            for(int i = 0; i < plainText.length() / (key.length() * 25); i++)
+            for (int i = 0; i < plainText.length() / (key.length() * 25); i++)
                 combinedMulti += encode(plainText.subSequence(i * key.length() * 25, (i + 1) * key.length() * 25), key);
             return combinedMulti;
-        }
-        else {
+        } else {
             int keyLength = key.length();
-    
+
             int[] order = new int[key.length()];
-            
+
             int p = 0;
-            for(char ch = 'A'; ch <= 'Z'; ++ch)
-                for(int i = 0; i < order.length; i++)
-                    if(ch == key.charAt(i))
+            for (char ch = 'A'; ch <= 'Z'; ++ch)
+                for (int i = 0; i < order.length; i++)
+                    if (ch == key.charAt(i))
                         order[i] = p++;
-            
-            //Creates grid
+
+            // Creates grid
             char[] temp_grid = new char[plainText.length()];
-    
-            for(int j = 0; j < 25; j++) {
-                for(int i = 0; i < keyLength; i++) {
+
+            for (int j = 0; j < 25; j++) {
+                for (int i = 0; i < keyLength; i++) {
                     int newColumn = order[i];
                     int newIndex = (j - charValue(key.charAt(i)) + 25) % 25;
                     temp_grid[newIndex * keyLength + newColumn] = plainText.charAt(j * keyLength + i);
@@ -47,15 +47,15 @@ public class CadenusCipher extends UniKeyCipher<String> {
         }
 
     }
-    
+
     @Override
     public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, String key) {
         int[] order = new int[key.length()];
-        
+
         int p = 0;
-        for(char ch = 'A'; ch <= 'Z'; ++ch) {
-            for(int i = 0; i < order.length; i++) {
-                if(ch == key.charAt(i)) {
+        for (char ch = 'A'; ch <= 'Z'; ++ch) {
+            for (int i = 0; i < order.length; i++) {
+                if (ch == key.charAt(i)) {
                     order[p++] = i;
                 }
             }
@@ -63,15 +63,15 @@ public class CadenusCipher extends UniKeyCipher<String> {
 
         return decode(cipherText, key, order);
     }
-    
+
     public static char[] decode(CharSequence cipherText, String key, int[] order) {
         int keyLength = order.length;
-        
-        //Creates grid
+
+        // Creates grid
         char[] grid = new char[cipherText.length()];
-                
-        for(int j = 0; j < 25; j++) {
-            for(int i = 0; i < keyLength; i++) {
+
+        for (int j = 0; j < 25; j++) {
+            for (int i = 0; i < keyLength; i++) {
                 int newColumn = order[i];
                 int newIndex = (j + charValue(key.charAt(newColumn))) % 25;
                 grid[newIndex * keyLength + newColumn] = cipherText.charAt(j * keyLength + i);
@@ -82,7 +82,7 @@ public class CadenusCipher extends UniKeyCipher<String> {
     }
 
     public static int charValue(char character) {
-        if(character >= 'W')
+        if (character >= 'W')
             return ('Z' - character + 1) % 25;
         return ('Z' - character) % 25;
     }

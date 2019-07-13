@@ -3,7 +3,7 @@ package nationalcipher.cipher.util;
 public abstract class AlphabetMap {
 
     private int[] map;
-    
+
     public AlphabetMap() {
         this.map = new int[26];
     }

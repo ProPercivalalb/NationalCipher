@@ -16,18 +16,18 @@ import com.google.gson.JsonSerializer;
 public class Settings2 {
 
     public static Gson gson;
-    
+
     public boolean checkShift;
     public boolean checkReverse;
     public boolean checkRoutes;
     public boolean useParallel;
-    
+
     public static void init() {
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithModifiers(Modifier.STATIC).setPrettyPrinting();
         builder.registerTypeAdapter(Settings2.class, new SettingsSerializer());
         gson = builder.create();
     }
-    
+
     public static class SettingsSerializer implements JsonSerializer<Settings2>, JsonDeserializer<Settings2> {
 
         @Override
@@ -35,13 +35,11 @@ public class Settings2 {
             Settings2 settings = new Settings2();
             final JsonObject jsonObject = json.getAsJsonObject();
 
- 
             settings.checkShift = jsonObject.has("checkShift") ? jsonObject.get("checkShift").getAsBoolean() : true;
             settings.checkReverse = jsonObject.has("checkReverse") ? jsonObject.get("checkReverse").getAsBoolean() : true;
             settings.checkRoutes = jsonObject.has("checkRoutes") ? jsonObject.get("checkRoutes").getAsBoolean() : true;
             settings.useParallel = jsonObject.has("useParallel") ? jsonObject.get("useParallel").getAsBoolean() : false;
-            
-            
+
             return settings;
         }
 
@@ -53,15 +51,15 @@ public class Settings2 {
             jsonObject.addProperty("checkRoutes", src.useParallel);
             jsonObject.addProperty("useParallel", src.checkRoutes);
 
-            //final JsonArray jsonAuthorsArray = new JsonArray();
-            //for (final String author : book.getAuthors()) {
-            //    final JsonPrimitive jsonAuthor = new JsonPrimitive(author);
-            //    jsonAuthorsArray.add(jsonAuthor);
-           // }
-            //jsonObject.add("authors", jsonAuthorsArray);
+            // final JsonArray jsonAuthorsArray = new JsonArray();
+            // for (final String author : book.getAuthors()) {
+            // final JsonPrimitive jsonAuthor = new JsonPrimitive(author);
+            // jsonAuthorsArray.add(jsonAuthor);
+            // }
+            // jsonObject.add("authors", jsonAuthorsArray);
 
             return jsonObject;
         }
-        
+
     }
 }

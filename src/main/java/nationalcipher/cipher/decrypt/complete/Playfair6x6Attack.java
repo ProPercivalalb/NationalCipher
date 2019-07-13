@@ -12,68 +12,68 @@ import nationalcipher.ui.NationalCipherUI;
 
 public class Playfair6x6Attack extends CipherAttack {
 
-	public Playfair6x6Attack() {
-		super("Playfair 6x6");
-		this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
-	}
-	
-	@Override
-	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		PlayfairTask task = new PlayfairTask(text, app);
-		
-		if(method == DecryptionMethod.SIMULATED_ANNEALING) {
-			app.getProgress().addMaxValue(app.getSettings().getSAIteration());
-			task.run();
-		}
-		
-		app.out().println(task.getBestSolution());
-	}
-	
-	public class PlayfairTask extends SimulatedAnnealing {
+    public Playfair6x6Attack() {
+        super("Playfair 6x6");
+        this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
+    }
 
-		public String bestKey, bestMaximaKey, lastKey;
-		
-		public PlayfairTask(String text, IApplication app) {
-			super(text.toCharArray(), app);
-		}
+    @Override
+    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+        PlayfairTask task = new PlayfairTask(text, app);
 
-		@Override
-		public Solution generateKey() {
-			this.bestMaximaKey = KeyGeneration.createLongKey36();
-			return new Solution(Playfair6x6.decode(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
-		}
+        if (method == DecryptionMethod.SIMULATED_ANNEALING) {
+            app.getProgress().addMaxValue(app.getSettings().getSAIteration());
+            task.run();
+        }
 
-		@Override
-		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeyManipulation.modifyKeySquare(this.bestMaximaKey, 6, 6);
-			return new Solution(Playfair6x6.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
-		}
+        app.out().println(task.getBestSolution());
+    }
 
-		@Override
-		public void storeKey() {
-			this.bestMaximaKey = this.lastKey;
-		}
+    public class PlayfairTask extends SimulatedAnnealing {
 
-		@Override
-		public void solutionFound() {
-			this.bestKey = this.bestMaximaKey;
-			this.bestSolution.setKeyString(this.bestKey);
-			this.bestSolution.bakeSolution();
-			this.getKeyPanel().updateSolution(this.bestSolution);
-		}
-		
-		@Override
-		public void onIteration() {
-			this.getProgress().increase();
-			this.getKeyPanel().updateIteration(this.iteration++);
-		}
+        public String bestKey, bestMaximaKey, lastKey;
 
-		@Override
-		public boolean endIteration() {
-			this.out().println("%s", this.bestSolution);
-			NationalCipherUI.BEST_SOULTION = this.bestSolution.getText();
-			this.getProgress().setValue(0);
-			return false;
-		}
-	}
+        public PlayfairTask(String text, IApplication app) {
+            super(text.toCharArray(), app);
+        }
+
+        @Override
+        public Solution generateKey() {
+            this.bestMaximaKey = KeyGeneration.createLongKey36();
+            return new Solution(Playfair6x6.decode(this.cipherText, this.plainText, this.bestMaximaKey), this.getLanguage());
+        }
+
+        @Override
+        public Solution modifyKey(double temp, int count, double lastDF) {
+            this.lastKey = KeyManipulation.modifyKeySquare(this.bestMaximaKey, 6, 6);
+            return new Solution(Playfair6x6.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
+        }
+
+        @Override
+        public void storeKey() {
+            this.bestMaximaKey = this.lastKey;
+        }
+
+        @Override
+        public void solutionFound() {
+            this.bestKey = this.bestMaximaKey;
+            this.bestSolution.setKeyString(this.bestKey);
+            this.bestSolution.bakeSolution();
+            this.getKeyPanel().updateSolution(this.bestSolution);
+        }
+
+        @Override
+        public void onIteration() {
+            this.getProgress().increase();
+            this.getKeyPanel().updateIteration(this.iteration++);
+        }
+
+        @Override
+        public boolean endIteration() {
+            this.out().println("%s", this.bestSolution);
+            NationalCipherUI.BEST_SOULTION = this.bestSolution.getText();
+            this.getProgress().setValue(0);
+            return false;
+        }
+    }
 }

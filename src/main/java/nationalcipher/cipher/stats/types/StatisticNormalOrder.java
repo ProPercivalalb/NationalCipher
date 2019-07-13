@@ -6,13 +6,13 @@ import nationalcipher.cipher.stats.TextStatistic;
 
 public class StatisticNormalOrder extends TextStatistic<Double> {
 
-	public StatisticNormalOrder(String text) {
-		super(text);
-	}
+    public StatisticNormalOrder(String text) {
+        super(text);
+    }
 
-	@Override
-	public TextStatistic<Double> calculateStatistic() {
-		this.value = StatCalculator.calculateNormalOrder(text, Languages.ENGLISH);
-		return this;
-	}
+    @Override
+    public TextStatistic<Double> calculateStatistic() {
+        this.value = StatCalculator.calculateNormalOrder(text, Languages.ENGLISH);
+        return this;
+    }
 }

@@ -6,12 +6,12 @@ import nationalcipher.cipher.decrypt.SlidefairAttack;
 
 public class VigenereSFAttack extends SlidefairAttack {
 
-	public VigenereSFAttack() {
-		super("Vigenere Slidefair");
-	}
+    public VigenereSFAttack() {
+        super("Vigenere Slidefair");
+    }
 
-	@Override
-	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
-		return Slidefair.decode(cipherText, plainText, key, VigenereType.VIGENERE);
-	}
+    @Override
+    public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+        return Slidefair.decode(cipherText, plainText, key, VigenereType.VIGENERE);
+    }
 }

@@ -5,13 +5,13 @@ import nationalcipher.cipher.stats.TextStatistic;
 
 public class StatisticLogDigraphSlidefairBeaufort extends TextStatistic<Double> {
 
-	public StatisticLogDigraphSlidefairBeaufort(String text) {
-		super(text);
-	}
+    public StatisticLogDigraphSlidefairBeaufort(String text) {
+        super(text);
+    }
 
-	@Override
-	public TextStatistic<Double> calculateStatistic() {
-		this.value = PolyalphabeticIdentifier.calculateSlidefairBeaufortLDI(this.text);
-		return this;
-	}
+    @Override
+    public TextStatistic<Double> calculateStatistic() {
+        this.value = PolyalphabeticIdentifier.calculateSlidefairBeaufortLDI(this.text);
+        return this;
+    }
 }

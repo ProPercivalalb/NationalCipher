@@ -23,81 +23,81 @@ import nationalcipher.ui.IApplication;
 
 public class AMSCOAttack extends CipherAttack {
 
-	private JSpinner[] rangeSpinner;
-	private JComboBox<Boolean> doubleLetterChose;
-	
-	public AMSCOAttack() {
-		super("AMSCO");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
-		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
-		this.doubleLetterChose = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
-		this.doubleLetterChose.setSelectedItem(true);
-	}
-	
-	@Override
-	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
-		panel.add(new SubOptionPanel("Double char first? ", this.doubleLetterChose));
-	}
-	
-	@Override
-	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		AMSCOTask task = new AMSCOTask(text, app);
-		
-		//Settings grab
-		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
-		task.doubleLetterFirst = SettingParse.getBooleanValue(this.doubleLetterChose);
-		
-		if(method == DecryptionMethod.BRUTE_FORCE) {
-			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				app.getProgress().addMaxValue(MathUtil.factorialBig(length));
-			
-			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
-		}
-		
-		app.out().println(task.getBestSolution());
-	}
-	
-	public class AMSCOTask extends DecryptionTracker {
+    private JSpinner[] rangeSpinner;
+    private JComboBox<Boolean> doubleLetterChose;
 
-		public boolean doubleLetterFirst;
-		
-		public AMSCOTask(String text, IApplication app) {
-			super(text.toCharArray(), app);
-		}
+    public AMSCOAttack() {
+        super("AMSCO");
+        this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
+        this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
+        this.doubleLetterChose = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
+        this.doubleLetterChose.setSelectedItem(true);
+    }
 
-		public void onIteration(Integer[] order) {
-			this.lastSolution = new Solution(AMSCO.decode(this.cipherText, this.plainText, order, this.doubleLetterFirst), this.getLanguage());
-			this.addSolution(this.lastSolution);
-			
-			if(this.lastSolution.score >= this.bestSolution.score) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString(Arrays.toString(order));
-				this.bestSolution.bakeSolution();
-				this.out().println("%s", this.bestSolution);	
-				this.getKeyPanel().updateSolution(this.bestSolution);
-			}
-			
-			this.getKeyPanel().updateIteration(this.iteration++);
-			this.getProgress().increase();
-		}
-	}
+    @Override
+    public void createSettingsUI(JDialog dialog, JPanel panel) {
+        panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
+        panel.add(new SubOptionPanel("Double char first? ", this.doubleLetterChose));
+    }
 
-	@Override
-	public void writeTo(Map<String, Object> map) {
-		map.put("amsco_period_range_min", this.rangeSpinner[0].getValue());
-		map.put("amsco_period_range_max", this.rangeSpinner[1].getValue());
-		map.put("amsco_double_letter_first", this.doubleLetterChose.getSelectedItem());
-	}
+    @Override
+    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+        AMSCOTask task = new AMSCOTask(text, app);
 
-	@Override
-	public void readFrom(Map<String, Object> map) {
-		if(map.containsKey("amsco_period_range_min"))
-			this.rangeSpinner[0].setValue(map.get("amsco_period_range_min"));
-		if(map.containsKey("amsco_period_range_max"))
-			this.rangeSpinner[1].setValue(map.get("amsco_period_range_max"));
-		if(map.containsKey("amsco_double_letter_first"))
-			this.doubleLetterChose.setSelectedItem(map.get("double_letter_first"));
-	}
+        // Settings grab
+        int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
+        task.doubleLetterFirst = SettingParse.getBooleanValue(this.doubleLetterChose);
+
+        if (method == DecryptionMethod.BRUTE_FORCE) {
+            for (int length = periodRange[0]; length <= periodRange[1]; ++length)
+                app.getProgress().addMaxValue(MathUtil.factorialBig(length));
+
+            for (int length = periodRange[0]; length <= periodRange[1]; ++length)
+                KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
+        }
+
+        app.out().println(task.getBestSolution());
+    }
+
+    public class AMSCOTask extends DecryptionTracker {
+
+        public boolean doubleLetterFirst;
+
+        public AMSCOTask(String text, IApplication app) {
+            super(text.toCharArray(), app);
+        }
+
+        public void onIteration(Integer[] order) {
+            this.lastSolution = new Solution(AMSCO.decode(this.cipherText, this.plainText, order, this.doubleLetterFirst), this.getLanguage());
+            this.addSolution(this.lastSolution);
+
+            if (this.lastSolution.score >= this.bestSolution.score) {
+                this.bestSolution = this.lastSolution;
+                this.bestSolution.setKeyString(Arrays.toString(order));
+                this.bestSolution.bakeSolution();
+                this.out().println("%s", this.bestSolution);
+                this.getKeyPanel().updateSolution(this.bestSolution);
+            }
+
+            this.getKeyPanel().updateIteration(this.iteration++);
+            this.getProgress().increase();
+        }
+    }
+
+    @Override
+    public void writeTo(Map<String, Object> map) {
+        map.put("amsco_period_range_min", this.rangeSpinner[0].getValue());
+        map.put("amsco_period_range_max", this.rangeSpinner[1].getValue());
+        map.put("amsco_double_letter_first", this.doubleLetterChose.getSelectedItem());
+    }
+
+    @Override
+    public void readFrom(Map<String, Object> map) {
+        if (map.containsKey("amsco_period_range_min"))
+            this.rangeSpinner[0].setValue(map.get("amsco_period_range_min"));
+        if (map.containsKey("amsco_period_range_max"))
+            this.rangeSpinner[1].setValue(map.get("amsco_period_range_max"));
+        if (map.containsKey("amsco_double_letter_first"))
+            this.doubleLetterChose.setSelectedItem(map.get("double_letter_first"));
+    }
 }

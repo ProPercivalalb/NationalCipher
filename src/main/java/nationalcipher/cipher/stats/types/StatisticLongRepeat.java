@@ -5,13 +5,13 @@ import nationalcipher.cipher.stats.TextStatistic;
 
 public class StatisticLongRepeat extends TextStatistic<Double> {
 
-	public StatisticLongRepeat(String text) {
-		super(text);
-	}
+    public StatisticLongRepeat(String text) {
+        super(text);
+    }
 
-	@Override
-	public TextStatistic<Double> calculateStatistic() {
-		this.value = StatCalculator.calculateLR(this.text);
-		return this;
-	}
+    @Override
+    public TextStatistic<Double> calculateStatistic() {
+        this.value = StatCalculator.calculateLR(this.text);
+        return this;
+    }
 }

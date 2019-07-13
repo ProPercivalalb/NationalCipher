@@ -5,11 +5,11 @@ import javalibrary.util.ArrayUtil;
 public class CharacterArrayWrapper implements CharSequence {
 
     private final Character[] array;
-    
+
     public CharacterArrayWrapper(Character[] array) {
         this.array = array;
     }
-    
+
     @Override
     public int length() {
         return this.array.length;

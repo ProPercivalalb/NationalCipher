@@ -16,7 +16,7 @@ import nationalcipher.ui.IApplication;
 public class PeriodicKeyAttack extends CipherAttack<String> implements IKeySearchAttack<String> {
 
     public JSpinner[] rangeSpinner;
-    
+
     public PeriodicKeyAttack(ICipher<String> cipher, String displayName) {
         super(cipher, displayName);
         this.setAttackMethods(DecryptionMethod.PERIODIC_KEY);
@@ -27,22 +27,22 @@ public class PeriodicKeyAttack extends CipherAttack<String> implements IKeySearc
     public void createSettingsUI(JDialog dialog, JPanel panel) {
         panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
     }
-    
+
     @Override
     public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-        switch(method) {
+        switch (method) {
         case PERIODIC_KEY:
             int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
             this.tryKeySearch(new DecryptionTracker(text, app), app.getProgress(), periodRange[0], periodRange[1]);
             break;
-        default: 
+        default:
             super.attemptAttack(text, method, app);
             break;
         }
     }
 
-	@Override
-	public String getKey(String periodicPart) {
-		return periodicPart;
-	}
+    @Override
+    public String getKey(String periodicPart) {
+        return periodicPart;
+    }
 }

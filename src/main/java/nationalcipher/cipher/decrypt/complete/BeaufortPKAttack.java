@@ -6,12 +6,12 @@ import nationalcipher.cipher.decrypt.ProgressiveKeyAttack;
 
 public class BeaufortPKAttack extends ProgressiveKeyAttack {
 
-	public BeaufortPKAttack() {
-		super("Beaufort Progressive Key");
-	}
+    public BeaufortPKAttack() {
+        super("Beaufort Progressive Key");
+    }
 
-	@Override
-	public byte[] decode(char[] cipherText, byte[] plainText, String key, int progPeriod, int progKey) {
-		return ProgressiveKey.decode(cipherText, plainText, key, progPeriod, progKey, VigenereType.BEAUFORT);
-	}
+    @Override
+    public byte[] decode(char[] cipherText, byte[] plainText, String key, int progPeriod, int progKey) {
+        return ProgressiveKey.decode(cipherText, plainText, key, progPeriod, progKey, VigenereType.BEAUFORT);
+    }
 }

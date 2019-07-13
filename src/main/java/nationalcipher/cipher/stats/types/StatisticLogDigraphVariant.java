@@ -5,13 +5,13 @@ import nationalcipher.cipher.stats.TextStatistic;
 
 public class StatisticLogDigraphVariant extends TextStatistic<Double> {
 
-	public StatisticLogDigraphVariant(String text) {
-		super(text);
-	}
+    public StatisticLogDigraphVariant(String text) {
+        super(text);
+    }
 
-	@Override
-	public TextStatistic<Double> calculateStatistic() {
-		this.value = PolyalphabeticIdentifier.calculateVariantLDI(this.text);
-		return this;
-	}
+    @Override
+    public TextStatistic<Double> calculateStatistic() {
+        this.value = PolyalphabeticIdentifier.calculateVariantLDI(this.text);
+        return this;
+    }
 }

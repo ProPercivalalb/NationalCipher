@@ -6,12 +6,12 @@ import nationalcipher.cipher.decrypt.SlidefairAttack;
 
 public class BeaufortSFAttack extends SlidefairAttack {
 
-	public BeaufortSFAttack() {
-		super("Beaufort Slidefair");
-	}
+    public BeaufortSFAttack() {
+        super("Beaufort Slidefair");
+    }
 
-	@Override
-	public byte[] decode(char[] cipherText, byte[] plainText, String key) {
-		return Slidefair.decode(cipherText, plainText, key, VigenereType.BEAUFORT);
-	}
+    @Override
+    public byte[] decode(char[] cipherText, byte[] plainText, String key) {
+        return Slidefair.decode(cipherText, plainText, key, VigenereType.BEAUFORT);
+    }
 }

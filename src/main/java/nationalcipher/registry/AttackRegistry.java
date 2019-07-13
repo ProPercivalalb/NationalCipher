@@ -31,7 +31,6 @@ public class AttackRegistry {
         registerCipher("CIPHER_" + CIPHERS.size(), cipherAttack, settings);
     }
 
-
     public static void registerCipher(String id, CipherAttack cipherAttack, Settings settings) {
         CIPHERS.register(id, cipherAttack);
         settings.addLoadElement(cipherAttack);
@@ -43,7 +42,7 @@ public class AttackRegistry {
         registerCipher(CipherLib.CAESAR, new CipherAttack<>(new CaesarCipher(), "Caesar").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.POLLUX, new CipherAttack<>(new PolluxCipher(), "Pollux").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.RAILFENCE, new CipherAttack<>(new RailFenceCipher(), "Railfence").setAttackMethods(BRUTE_FORCE), settings);
-        registerCipher(CipherLib.BIFID, new BifidAttack(), settings);   
+        registerCipher(CipherLib.BIFID, new BifidAttack(), settings);
         registerCipher(CipherLib.PLAYFAIR, new SACipherAttack<>(new PlayfairCipher(), "Playfair"), settings);
         registerCipher(CipherLib.PLAYFAIR_SERIATED, new SeriatedPlayfairAttack(), settings);
         registerCipher(CipherLib.VIGENERE, new PeriodicKeyAttack(new VigenereCipher(VigenereType.VIGENERE), "Vigenere"), settings);
@@ -56,7 +55,10 @@ public class AttackRegistry {
         registerCipher(CipherLib.VARIANT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.VARIANT), "Variant Progressive Key"), settings);
         registerCipher(CipherLib.BEAUFORT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.BEAUFORT), "Beaufort Progressive Key"), settings);
 
-        registerCipher(CipherLib.VIGENERE + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.VIGENERE), "Vigenere Slidefair"), settings); //TODO Add dictionary attack
+        registerCipher(CipherLib.VIGENERE + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.VIGENERE), "Vigenere Slidefair"), settings); // TODO
+                                                                                                                                                              // Add
+                                                                                                                                                              // dictionary
+                                                                                                                                                              // attack
         registerCipher(CipherLib.VARIANT + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.VARIANT), "Variant Slidefair"), settings);
         registerCipher(CipherLib.BEAUFORT + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.BEAUFORT), "Beaufort Slidefair"), settings);
 
@@ -69,7 +71,7 @@ public class AttackRegistry {
         registerCipher(CipherLib.PORTA + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.PORTA), "Porta Nicodemus"), settings);
         registerCipher(CipherLib.VARIANT + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.VARIANT), "Variant Nicodemus"), settings);
         registerCipher(CipherLib.BEAUFORT + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.BEAUFORT), "Beaufort Nicodemus"), settings);
-        
+
 //		Substitution
 //		registerCipher(new HuttonAttack(), settings);
 //
@@ -153,16 +155,16 @@ public class AttackRegistry {
 //		registerCipher(new RagbabyAttack(), settings);
         CIPHERS.freeze();
 
-        //registerCipher(new Challenge7Attack(), settings);
+        // registerCipher(new Challenge7Attack(), settings);
 
         //
-        //registerCipher(new RagbabyAttack(), settings);
-        //registerCipher(new EnigmaThinRotor(), settings);
-        //registerCipher(new (), settings);
-        //registerCipher(new (), settings);
-        //registerCipher(new (), settings);
-        //registerCipher(new (), settings);
-        //registerCipher(new (), settings);
-        //registerCipher(new (), settings);
+        // registerCipher(new RagbabyAttack(), settings);
+        // registerCipher(new EnigmaThinRotor(), settings);
+        // registerCipher(new (), settings);
+        // registerCipher(new (), settings);
+        // registerCipher(new (), settings);
+        // registerCipher(new (), settings);
+        // registerCipher(new (), settings);
+        // registerCipher(new (), settings);
     }
 }

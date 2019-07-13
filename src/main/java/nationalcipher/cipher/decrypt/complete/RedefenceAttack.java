@@ -21,73 +21,73 @@ import nationalcipher.ui.IApplication;
 
 public class RedefenceAttack extends CipherAttack {
 
-	public JSpinner[] rangeSpinner;
-	
-	public RedefenceAttack() {
-		super("Redefence");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
-		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
-	}
-	
-	@Override
-	public void createSettingsUI(JDialog dialog, JPanel panel) {
-		panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
-	}
-	
-	@Override
-	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		RedefenceTask task = new RedefenceTask(text, app);
-		
-		//Settings grab
-		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
-		
-		if(method == DecryptionMethod.BRUTE_FORCE) {
-			
-			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				app.getProgress().addMaxValue(MathUtil.factorialBig(length));
-			
-			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
-			
-		}
-		
-		app.out().println(task.getBestSolution());
-	}
-	
-	public class RedefenceTask extends DecryptionTracker {
+    public JSpinner[] rangeSpinner;
 
-		public RedefenceTask(String text, IApplication app) {
-			super(text.toCharArray(), app);
-		}
+    public RedefenceAttack() {
+        super("Redefence");
+        this.setAttackMethods(DecryptionMethod.BRUTE_FORCE);
+        this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 100, 1);
+    }
 
-		public void onIteration(Integer[] order) {
-			for(int i = 0; i < (order.length - 1) * 2; i++) {
-				this.lastSolution = new Solution(Redefence.decode(this.cipherText, order, i), this.getLanguage());
-				
-				if(this.lastSolution.score >= this.bestSolution.score) {
-					this.bestSolution = this.lastSolution;
-					this.bestSolution.setKeyString("%s, Offset:%d", Arrays.toString(order), i);
-					this.out().println("%s", this.bestSolution);	
-					this.getKeyPanel().updateSolution(this.bestSolution);
-				}
-				
-				this.getKeyPanel().updateIteration(this.iteration++);
-				this.getProgress().increase();
-			}
-		}
-	}
-	
-	@Override
-	public void writeTo(Map<String, Object> map) {
-		map.put("redefence_period_range_min", this.rangeSpinner[0].getValue());
-		map.put("redefence_period_range_max", this.rangeSpinner[1].getValue());
-	}
+    @Override
+    public void createSettingsUI(JDialog dialog, JPanel panel) {
+        panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
+    }
 
-	@Override
-	public void readFrom(Map<String, Object> map) {
-		if(map.containsKey("redefence_period_range_max"))
-			this.rangeSpinner[1].setValue(map.get("redefence_period_range_max"));
-		if(map.containsKey("redefence_period_range_min"))
-			this.rangeSpinner[0].setValue(map.get("redefence_period_range_min"));
-	}
+    @Override
+    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+        RedefenceTask task = new RedefenceTask(text, app);
+
+        // Settings grab
+        int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
+
+        if (method == DecryptionMethod.BRUTE_FORCE) {
+
+            for (int length = periodRange[0]; length <= periodRange[1]; ++length)
+                app.getProgress().addMaxValue(MathUtil.factorialBig(length));
+
+            for (int length = periodRange[0]; length <= periodRange[1]; ++length)
+                KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
+
+        }
+
+        app.out().println(task.getBestSolution());
+    }
+
+    public class RedefenceTask extends DecryptionTracker {
+
+        public RedefenceTask(String text, IApplication app) {
+            super(text.toCharArray(), app);
+        }
+
+        public void onIteration(Integer[] order) {
+            for (int i = 0; i < (order.length - 1) * 2; i++) {
+                this.lastSolution = new Solution(Redefence.decode(this.cipherText, order, i), this.getLanguage());
+
+                if (this.lastSolution.score >= this.bestSolution.score) {
+                    this.bestSolution = this.lastSolution;
+                    this.bestSolution.setKeyString("%s, Offset:%d", Arrays.toString(order), i);
+                    this.out().println("%s", this.bestSolution);
+                    this.getKeyPanel().updateSolution(this.bestSolution);
+                }
+
+                this.getKeyPanel().updateIteration(this.iteration++);
+                this.getProgress().increase();
+            }
+        }
+    }
+
+    @Override
+    public void writeTo(Map<String, Object> map) {
+        map.put("redefence_period_range_min", this.rangeSpinner[0].getValue());
+        map.put("redefence_period_range_max", this.rangeSpinner[1].getValue());
+    }
+
+    @Override
+    public void readFrom(Map<String, Object> map) {
+        if (map.containsKey("redefence_period_range_max"))
+            this.rangeSpinner[1].setValue(map.get("redefence_period_range_max"));
+        if (map.containsKey("redefence_period_range_min"))
+            this.rangeSpinner[0].setValue(map.get("redefence_period_range_min"));
+    }
 }
