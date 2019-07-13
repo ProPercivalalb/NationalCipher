@@ -1,8 +1,6 @@
 package nationalcipher.registry;
 
-import static org.junit.Assert.*;
-
-import java.util.function.Function;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
