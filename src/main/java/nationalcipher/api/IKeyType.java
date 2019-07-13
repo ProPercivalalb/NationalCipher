@@ -3,17 +3,35 @@ package nationalcipher.api;
 import java.math.BigInteger;
 import java.util.function.Consumer;
 
-public interface IKeyType<K> {
+import javax.annotation.Nullable;
 
-	K randomise();
+public interface IKeyType<K> {
 	
-	void iterateKeys(Consumer<K> consumer);
+    /**
+     * 
+     * @param fullKey
+     * @return
+     */
+    K randomise(@Nullable Object partialKey);
+	
+    void iterateKeys(@Nullable Object partialKey, Consumer<K> consumer);
+	
+    K alterKey(Object fullKey, K key);
+    
+	boolean isValid(@Nullable Object fullKey, K key);
 	
 	BigInteger getNumOfKeys();
 	
-	boolean isValid(K key);
-	
 	default K inverseKey(K key) {
 		return key;
+	}
+	
+	default String prettifyKey(K key) {
+        return key.toString();
+    }
+	
+	public interface IKeyBuilder<K, T extends IKeyType<K>> {
+	    
+	    public T create();
 	}
 }

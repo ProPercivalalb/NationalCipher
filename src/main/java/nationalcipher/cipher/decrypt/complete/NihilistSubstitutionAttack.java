@@ -13,7 +13,7 @@ import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
@@ -165,7 +165,7 @@ public class NihilistSubstitutionAttack extends CipherAttack {
 			return Arrays.asList(rowMin,rowMax, colMin, colMax);
 	}
 	
-	public class NihilistSubstitutionTask extends InternalDecryption {
+	public class NihilistSubstitutionTask extends DecryptionTracker {
 
 		public int period;
 		

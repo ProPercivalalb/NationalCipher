@@ -21,12 +21,12 @@ public class SwagmanKeyType implements IKeyType<int[]> {
     }
     
     @Override
-    public int[] randomise() {
+    public int[] randomise(Object partialKey) {
         return KeyGeneration.createSwagmanKey(RandomUtil.pickRandomInt(this.min, this.max));
     }
 
     @Override
-    public boolean isValid(int[] key) {
+    public boolean isValid(Object partialKey, int[] key) {
         double sizeD = Math.sqrt(key.length);
         // Is square
         if(sizeD != Math.floor(sizeD)) {
@@ -57,10 +57,15 @@ public class SwagmanKeyType implements IKeyType<int[]> {
     }
     
     @Override
-    public void iterateKeys(Consumer<int[]> consumer) {
+    public void iterateKeys(Object partialKey, Consumer<int[]> consumer) {
         for(int length = this.min; length <= this.max; length++) {
             //TODO
         }
+    }
+    
+    @Override
+    public int[] alterKey(Object partialKey, int[] key) {
+        return key;
     }
     
     @Override
@@ -72,7 +77,7 @@ public class SwagmanKeyType implements IKeyType<int[]> {
         return new Builder();
     }
     
-    public static class Builder {
+    public static class Builder implements IKeyBuilder<int[], SwagmanKeyType> {
         
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
@@ -95,6 +100,7 @@ public class SwagmanKeyType implements IKeyType<int[]> {
             return this;
         }
         
+        @Override
         public SwagmanKeyType create() {
             SwagmanKeyType handler = new SwagmanKeyType(this.min.orElse(3), this.max.orElse(5));
             return handler;

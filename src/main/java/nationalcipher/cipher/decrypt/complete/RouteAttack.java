@@ -5,7 +5,7 @@ import java.util.List;
 import javalibrary.math.MathUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.transposition.RouteCipherType;
 import nationalcipher.cipher.transposition.RouteTransposition;
@@ -44,7 +44,7 @@ public class RouteAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class RouteTask extends InternalDecryption {
+	public class RouteTask extends DecryptionTracker {
 
 		public RouteTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

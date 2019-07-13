@@ -1,12 +1,8 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -18,7 +14,6 @@ import javalibrary.math.MathUtil;
 import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.swing.ProgressValue;
-import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.substitution.Caesar;
 import nationalcipher.cipher.base.substitution.VigenereFamily;
@@ -38,7 +33,7 @@ public class VigenereAttack extends CipherAttack {
 	
 	public VigenereAttack() {
 		super("Vigenere");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.PERIODIC_KEY);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 	}
 	
@@ -90,7 +85,7 @@ public class VigenereAttack extends CipherAttack {
 	            keyword += (char)('A' + shift);
 	        }
 			task.onIteration(keyword);
-		} else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		} else if(method == DecryptionMethod.PERIODIC_KEY) {
 			app.getProgress().setIndeterminate(true);
 			task.run(periodRange[0], periodRange[1]);
 		}

@@ -16,7 +16,7 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -28,7 +28,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 	
 	public GeneralPeriodAttack() {
 		super("General Period Subsitution");
-		this.setAttackMethods(DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.CALCULATED, DecryptionMethod.PERIODIC_KEY);
 		this.spinner = JSpinnerUtil.createSpinner(5, 2, 100, 1);
 	}
 	
@@ -61,7 +61,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 				//task.run();
 			}
 		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		else if(method == DecryptionMethod.PERIODIC_KEY) {
 			app.getProgress().setIndeterminate(true);
 			task.run(task.period);
 		}
@@ -69,7 +69,7 @@ public class GeneralPeriodAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class GeneralPeriodTask extends InternalDecryption { ///KeySearch
+	public class GeneralPeriodTask extends DecryptionTracker { ///KeySearch
 		
 		public int period;
 		public String bestKey, bestMaximaKey, lastKey;

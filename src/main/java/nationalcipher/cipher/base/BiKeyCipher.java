@@ -5,36 +5,48 @@ import java.util.function.Consumer;
 
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
+import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.keys.BiKey;
 
 public abstract class BiKeyCipher<F, S> implements ICipher<BiKey<F, S>> {
 
-    private final IKeyType<F> firstType;
-    private final IKeyType<S> secondType;
+    protected final IKeyType<F> firstType;
+    protected final IKeyType<S> secondType;
     
-    public BiKeyCipher(IKeyType<F> firstKey, IKeyType<S> secondKey) {
-        this.firstType = firstKey;
-        this.secondType = secondKey;
+    public BiKeyCipher(IKeyBuilder<F, ?> firstKey, IKeyBuilder<S, ?> secondKey) {
+        this.firstType = firstKey.create();
+        this.secondType = secondKey.create();
     }
     
     @Override
     public boolean isValid(BiKey<F, S> key) {
-        return this.firstType.isValid(key.getFirstKey()) && this.secondType.isValid(key.getSecondKey());
+        return this.firstType.isValid(key, key.getFirstKey()) && this.secondType.isValid(key, key.getSecondKey());
     }
 
     @Override
-    public BiKey<F, S> randomise() {
-        return new BiKey<>(this.firstType.randomise(), this.secondType.randomise());
+    public BiKey<F, S> randomiseKey() {
+        BiKey<F, S> key = BiKey.empty();
+        return key.setFirst(this.firstType.randomise(key))
+                  .setSecond(this.secondType.randomise(key));
     }
     
     @Override
     public void iterateKeys(Consumer<BiKey<F, S>> consumer) {
-        this.firstType.iterateKeys(f -> 
-            this.secondType.iterateKeys(s -> consumer.accept(new BiKey<>(f, s))));
+        BiKey<F, S> key = BiKey.empty();
+        this.firstType.iterateKeys(null, f -> {
+            key.setFirst(f);
+            this.secondType.iterateKeys(key, s -> consumer.accept(key.setSecond(s)));
+        });
+    }
+    
+    @Override
+    public BiKey<F, S> alterKey(BiKey<F, S> key) {
+        return BiKey.of(this.firstType.alterKey(key, key.getFirstKey()),
+                    this.secondType.alterKey(key, key.getSecondKey()));
     }
     
     @Override
     public BigInteger getNumOfKeys() {
-        return this.firstType.getNumOfKeys().add(this.secondType.getNumOfKeys());
+        return this.firstType.getNumOfKeys().multiply(this.secondType.getNumOfKeys());
     }
 }

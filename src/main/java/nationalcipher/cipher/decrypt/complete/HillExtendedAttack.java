@@ -14,7 +14,7 @@ import javalibrary.math.matrics.Matrix;
 import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -27,7 +27,7 @@ public class HillExtendedAttack extends CipherAttack {
 	
 	public HillExtendedAttack() {
 		super("Hill Extended");
-		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.PERIODIC_KEY);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 3, 2, 5, 1);
 	}
 	
@@ -42,7 +42,7 @@ public class HillExtendedAttack extends CipherAttack {
 		
 		//Settings grab
 		int[] sizeRange = SettingParse.getIntegerRange(this.rangeSpinner);
-		if(method == DecryptionMethod.KEY_MANIPULATION) {
+		if(method == DecryptionMethod.PERIODIC_KEY) {
 			for(int size = sizeRange[0]; size <= sizeRange[1]; size++) {
 				if(task.cipherText.length % size != 0) {
 					app.out().println("Matrix size of %d is not possible, length of text is not a multiple.", size);
@@ -63,7 +63,7 @@ public class HillExtendedAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class HillExtendedTask extends InternalDecryption {
+	public class HillExtendedTask extends DecryptionTracker {
 
 		private int size;
 		private int lengthSub;

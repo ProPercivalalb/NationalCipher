@@ -18,13 +18,13 @@ import javalibrary.math.MathUtil;
 import javalibrary.swing.DocumentUtil;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ListUtil;
-import nationalcipher.cipher.base.other.Solitaire;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.decrypt.solitaire.DeckParse;
+import nationalcipher.cipher.decrypt.solitaire.Solitaire;
 import nationalcipher.cipher.decrypt.solitaire.SolitaireSolver;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
@@ -42,7 +42,7 @@ public class SolitaireAttack extends CipherAttack {
 	
 	public SolitaireAttack() {
 		super("Solitaire");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION, DecryptionMethod.DICTIONARY, DecryptionMethod.CALCULATED);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.PERIODIC_KEY, DecryptionMethod.DICTIONARY, DecryptionMethod.CALCULATED);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 6, 1, 25, 1);
 		this.passKeyStartingOrder = new JTextField("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53");
 		this.charactersToDecode = new JTextField("100");
@@ -90,7 +90,7 @@ public class SolitaireAttack extends CipherAttack {
 			else
 				app.out().print("Decrypting...\n%s", Solitaire.decode(text.toCharArray(), deck.order));
 		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		else if(method == DecryptionMethod.PERIODIC_KEY) {
 			int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 			
 			BigInteger TWENTY_SIX = BigInteger.valueOf(26);
@@ -120,7 +120,7 @@ public class SolitaireAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SolitaireTask extends InternalDecryption {
+	public class SolitaireTask extends DecryptionTracker {
 
 		public Integer[] incompleteOrder;
 		public Integer[] emptyIndex;

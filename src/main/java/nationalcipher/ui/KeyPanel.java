@@ -45,7 +45,7 @@ public class KeyPanel extends JPanel {
 		this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 	}
 	
-	public void updateIteration(int n) {
+	public void updateIteration(long n) {
 		if(this.settings.updateProgress())
 			this.iterations.setText(String.valueOf(n));
 	}

@@ -9,6 +9,7 @@ import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 
 public class FullStringKeyType implements IKeyType<String> {
 
@@ -20,12 +21,12 @@ public class FullStringKeyType implements IKeyType<String> {
     }
     
     @Override
-    public String randomise() {
+    public String randomise(Object partialKey) {
         return KeyGeneration.createLongKeyUniversal(this.alphabet);
     }
 
     @Override
-    public boolean isValid(String key) {
+    public boolean isValid(Object partialKey, String key) {
         if(key.length() != this.alphabet.length) {
             return false;
         }
@@ -40,8 +41,14 @@ public class FullStringKeyType implements IKeyType<String> {
     }
     
     @Override
-    public void iterateKeys(Consumer<String> consumer) {
+    public void iterateKeys(Object partialKey, Consumer<String> consumer) {
         KeyIterator.permuteString(consumer, this.alphabet);
+    }
+    
+
+    @Override
+    public String alterKey(Object fullKey, String key) {
+        return KeyManipulation.swapTwoCharacters(key);
     }
     
     @Override
@@ -53,7 +60,7 @@ public class FullStringKeyType implements IKeyType<String> {
         return new Builder();
     }
     
-    public static class Builder {
+    public static class Builder implements IKeyBuilder<String, FullStringKeyType> {
         
         private Optional<Character[]> alphabet = Optional.empty();
         
@@ -68,6 +75,7 @@ public class FullStringKeyType implements IKeyType<String> {
             return this;
         }
         
+        @Override
         public FullStringKeyType create() {
             FullStringKeyType handler = new FullStringKeyType(
                     this.alphabet.orElse(KeyGeneration.ALL_26_CHARS));

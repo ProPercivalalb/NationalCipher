@@ -1,6 +1,5 @@
 package nationalcipher.cipher.decrypt.complete;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import javax.swing.JComboBox;
@@ -12,21 +11,14 @@ import javalibrary.dict.Dictionary;
 import javalibrary.lib.BooleanLib;
 import javalibrary.math.MathUtil;
 import javalibrary.swing.JSpinnerUtil;
-import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
-import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
-import nationalcipher.cipher.decrypt.methods.Solution;
-import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.KeyManipulation;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 import nationalcipher.ui.IApplication;
-import nationalcipher.ui.NationalCipherUI;
 
-public class ColumnarTranspositionAttack extends CipherAttack {
+public class ColumnarTranspositionAttack extends CipherAttack<Integer[]> {
 
 	private JSpinner[] rangeSpinner;
 	private JComboBox<Boolean> readOffDefaultChose;
@@ -61,7 +53,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 				app.getProgress().addMaxValue(MathUtil.factorialBig(length));
 			
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
-				KeyIterator.permuteIntegerOrderedKey(task::onIteration, length);
+				KeyIterator.permuteIntegerOrderedKey(task::onPostIteration, length);
 		}
 		else if(method == DecryptionMethod.DICTIONARY) {
 			app.getProgress().addMaxValue(Dictionary.wordCount());
@@ -73,7 +65,7 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 					for(int i = 0; i < order.length; i++)
 						if(ch == word.charAt(i))
 							order[i] = p++;
-				task.onIteration(order);
+				task.onPostIteration(order);
 			}
 		}
 		else if(method == DecryptionMethod.SIMULATED_ANNEALING) {
@@ -85,86 +77,6 @@ public class ColumnarTranspositionAttack extends CipherAttack {
 		}
 		
 		app.out().println(task.getBestSolution());
-	}
-	
-	public class ColumnarTranspositionTask extends SimulatedAnnealing {
-
-		public int period1;
-		public boolean readOffDefault;
-		public Integer[] bestKey1, bestMaximaKey1, lastKey1;
-		
-		public ColumnarTranspositionTask(String text, IApplication app) {
-			super(text.toCharArray(), app);
-		}
-
-		public void onList(Integer[] data) {
-			Integer[] order = new Integer[this.period1];
-			int index = 0;
-			for(; index < data.length; index++)
-				order[data[index]] = index;
-			
-			for(int i = 0; i < this.period1; i++)
-				if(!ArrayUtil.contains(data, i))
-					order[i] = index++;
-			//this.app.out().println(Arrays.toString(order));
-			this.onIteration(order);
-		}
-		
-		public void onIteration(Integer[] order) {
-			this.lastSolution = new Solution(ColumnarTransposition.decode(this.cipherText, this.plainText, order, this.readOffDefault), this.getLanguage());
-			
-			if(this.lastSolution.isResultBetter(this.bestSolution)) {
-				this.bestSolution = this.lastSolution;
-				this.bestSolution.setKeyString("%s d:%b", Arrays.toString(order), this.readOffDefault);
-				this.bestSolution.bakeSolution();
-				this.out().println("%s", this.bestSolution);	
-				this.getKeyPanel().updateSolution(this.bestSolution);
-			}
-			
-			this.getKeyPanel().updateIteration(this.iteration++);
-			this.getProgress().increase();
-		}
-
-		@Override
-		public Solution generateKey() {
-			this.bestMaximaKey1 = KeyGeneration.createOrder(this.period1);
-			this.lastKey1 = this.bestMaximaKey1;
-			return new Solution(ColumnarTransposition.decode(this.cipherText, this.plainText, this.bestMaximaKey1, this.readOffDefault), this.getLanguage());
-		}
-
-		@Override
-		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey1 = KeyManipulation.modifyOrder(this.bestMaximaKey1);
-			
-			return new Solution(ColumnarTransposition.decode(this.cipherText, this.plainText, this.lastKey1, this.readOffDefault), this.getLanguage());
-		}
-
-		@Override
-		public void storeKey() {
-			this.bestMaximaKey1 = this.lastKey1;
-		}
-
-		@Override
-		public void solutionFound() {
-			this.bestKey1 = this.bestMaximaKey1;
-			this.bestSolution.setKeyString("%s d:%b", Arrays.toString(this.bestKey1), this.readOffDefault);
-			this.bestSolution.bakeSolution();
-			this.getKeyPanel().updateSolution(this.bestSolution);
-		}
-		
-		@Override
-		public void onIteration() {
-			this.getProgress().increase();
-			this.getKeyPanel().updateIteration(this.iteration++);
-		}
-
-		@Override
-		public boolean endIteration() {
-			this.out().println("%s", this.bestSolution);
-			NationalCipherUI.BEST_SOULTION = this.bestSolution.getText();
-			this.getProgress().setValue(0);
-			return false;
-		}
 	}
 
 	@Override

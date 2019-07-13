@@ -45,7 +45,7 @@ public class Playfair6x6Attack extends CipherAttack {
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 6, 6);
+			this.lastKey = KeyManipulation.modifyKeySquare(this.bestMaximaKey, 6, 6);
 			return new Solution(Playfair6x6.decode(this.cipherText, this.plainText, this.lastKey), this.getLanguage());
 		}
 

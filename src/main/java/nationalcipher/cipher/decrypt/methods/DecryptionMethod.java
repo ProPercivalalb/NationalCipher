@@ -6,7 +6,7 @@ public enum DecryptionMethod {
 	SIMULATED_ANNEALING("Simulated Annealing"),
 	CALCULATED("Calculated"),
 	DICTIONARY("Dictionary"),
-	KEY_MANIPULATION("Key Manipulation"),
+	PERIODIC_KEY("Periodic Key"),
 	EXAMINE("Examine");
 	
 	private String name;

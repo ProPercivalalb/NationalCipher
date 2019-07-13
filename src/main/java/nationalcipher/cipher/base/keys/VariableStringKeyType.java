@@ -11,6 +11,7 @@ import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 
 public class VariableStringKeyType implements IKeyType<String> {
 
@@ -27,7 +28,7 @@ public class VariableStringKeyType implements IKeyType<String> {
     }
     
     @Override
-    public String randomise() {
+    public String randomise(Object partialKey) {
         BiFunction<Character[], Integer, String> func = this.repeats ? 
                 KeyGeneration::createRepeatingShortKeyUniversal : KeyGeneration::createShortKeyUniversal;
         
@@ -35,7 +36,7 @@ public class VariableStringKeyType implements IKeyType<String> {
     }
 
     @Override
-    public boolean isValid(String key) {
+    public boolean isValid(Object partialKey, String key) {
         for(int i = 0; i < key.length(); i++) {
             if(!ArrayUtil.contains(this.alphabet, key.charAt(i))) {
                 return false;
@@ -50,10 +51,15 @@ public class VariableStringKeyType implements IKeyType<String> {
     }
     
     @Override
-    public void iterateKeys(Consumer<String> consumer) {
+    public void iterateKeys(Object partialKey, Consumer<String> consumer) {
         for(int length = this.min; length <= this.max; length++) {
             KeyIterator.iterateShortKey(consumer, this.alphabet, length, this.repeats);
         }
+    }
+    
+    @Override
+    public String alterKey(Object fullKey, String key) {
+        return new String(KeyManipulation.changeCharacters(key.toCharArray(), alphabet, this.repeats)); //TODO decrease copying into new arrays so much
     }
     
     @Override
@@ -65,7 +71,7 @@ public class VariableStringKeyType implements IKeyType<String> {
         return new Builder();
     }
     
-    public static class Builder {
+    public static class Builder implements IKeyBuilder<String, VariableStringKeyType> {
         
         private Optional<Character[]> alphabet = Optional.empty();
         private Optional<Integer> min = Optional.empty();
@@ -104,6 +110,7 @@ public class VariableStringKeyType implements IKeyType<String> {
             return this;
         }
         
+        @Override
         public VariableStringKeyType create() {
             VariableStringKeyType handler = new VariableStringKeyType(
                     this.alphabet.orElse(KeyGeneration.ALL_26_CHARS), 

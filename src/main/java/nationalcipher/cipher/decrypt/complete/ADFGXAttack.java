@@ -17,7 +17,7 @@ import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.SettingParse;
@@ -34,7 +34,7 @@ public class ADFGXAttack extends CipherAttack {
 	
 	public ADFGXAttack(String displayName, String alphaChar, Character[] alphabet) {
 		super(displayName);
-		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.PERIODIC_KEY);
 		this.alphaChar = alphaChar.toCharArray();
 		this.alphaCount = this.alphaChar.length;
 		this.alphabet = alphabet;
@@ -56,7 +56,7 @@ public class ADFGXAttack extends CipherAttack {
 		int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
 		task.readDefault = SettingParse.getBooleanValue(this.directionOption);
 		
-		if(method == DecryptionMethod.KEY_MANIPULATION) {
+		if(method == DecryptionMethod.PERIODIC_KEY) {
 			for(int length = periodRange[0]; length <= periodRange[1]; length++)
 				KeyIterator.permuteIntegerOrderedKey(task::onPermute, length);
 			
@@ -103,7 +103,7 @@ public class ADFGXAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class ADFGXTask extends InternalDecryption {
+	public class ADFGXTask extends DecryptionTracker {
 
 		public boolean readDefault;
 		private DynamicResultList<ADFGXResult> best;

@@ -74,7 +74,7 @@ public class TrifidAttack extends CipherAttack {
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 3, 9);
+			this.lastKey = KeyManipulation.modifyKeySquare(this.bestMaximaKey, 3, 9);
 			return new Solution(Trifid.decode(this.cipherText, this.plainText, this.numberText, this.lastKey, this.period), this.getLanguage());
 		}
 

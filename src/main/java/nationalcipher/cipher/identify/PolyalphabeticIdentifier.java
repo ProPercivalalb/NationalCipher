@@ -144,10 +144,10 @@ public class PolyalphabeticIdentifier {
 	public static double getBestVigenereDigramScore(char[] text, int column, VigenereType type, int rows, int period, boolean autokey) {
 		double bestScore = 0.0D;
 		
-	    for(byte keyL = 'A'; keyL <= 'Z'; keyL++) {
-	    	for(byte keyR = 'A'; keyR <= 'Z'; keyR++) {
-	    		byte keyLN = keyL;
-	    		byte keyRN = keyR;
+	    for(char keyL = 'A'; keyL <= 'Z'; keyL++) {
+	    	for(char keyR = 'A'; keyR <= 'Z'; keyR++) {
+	    	    char keyLN = keyL;
+	    	    char keyRN = keyR;
 	    		
 	    		double score = 0.0D;
 	            int diCount = 0;
@@ -156,8 +156,8 @@ public class PolyalphabeticIdentifier {
 			    	int pos = r * period + column;
 			    	if(pos + 1 >= text.length) break;
 			    	
-	                byte pl = type.decode((byte)text[pos], keyLN);
-	                byte pr = type.decode((byte)text[pos + 1], keyRN);
+	                char pl = type.decode(text[pos], keyLN);
+	                char pr = type.decode(text[pos + 1], keyRN);
 	                score += logdi[pl - 'A'][pr - 'A'];
 	                if(autokey) {
 	                	keyLN = pl;

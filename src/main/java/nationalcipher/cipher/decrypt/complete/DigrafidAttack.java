@@ -76,9 +76,9 @@ public class DigrafidAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
-				this.lastKey1 = KeyManipulation.modifyKey(this.bestMaximaKey1, 9, 3);
+				this.lastKey1 = KeyManipulation.modifyKeySquare(this.bestMaximaKey1, 9, 3);
 			else
-				this.lastKey2 = KeyManipulation.modifyKey(this.bestMaximaKey2, 3, 9);
+				this.lastKey2 = KeyManipulation.modifyKeySquare(this.bestMaximaKey2, 3, 9);
 			
 			return new Solution(Digrafid.decode(this.cipherText, this.plainText, this.numberText, this.lastKey1, this.lastKey2, this.period), this.getLanguage());
 		}

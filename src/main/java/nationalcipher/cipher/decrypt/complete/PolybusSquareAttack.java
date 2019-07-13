@@ -8,7 +8,7 @@ import javalibrary.streams.PrimTypeUtil;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.ui.IApplication;
 
 public class PolybusSquareAttack extends CipherAttack {
@@ -65,7 +65,7 @@ public class PolybusSquareAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class PolybusSquareTask extends InternalDecryption {
+	public class PolybusSquareTask extends DecryptionTracker {
 		
 		public PolybusSquareTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

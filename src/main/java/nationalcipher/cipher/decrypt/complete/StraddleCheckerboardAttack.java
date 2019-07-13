@@ -7,7 +7,7 @@ import java.util.List;
 import javalibrary.string.StringAnalyzer;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.ui.IApplication;
 
 public class StraddleCheckerboardAttack extends CipherAttack {
@@ -59,7 +59,7 @@ public class StraddleCheckerboardAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class StraddleCheckerboardTask extends InternalDecryption {
+	public class StraddleCheckerboardTask extends DecryptionTracker {
 
 		public StraddleCheckerboardTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

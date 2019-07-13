@@ -27,7 +27,7 @@ public class PeriodicGromarkAttack extends CipherAttack {
 	
 	public PeriodicGromarkAttack() {
 		super("Periodic Gromark");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.PERIODIC_KEY);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 	}
 	
@@ -56,7 +56,7 @@ public class PeriodicGromarkAttack extends CipherAttack {
 				//KeyIterator.permutateArray(task, length, length, false);
 			}
 		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		else if(method == DecryptionMethod.PERIODIC_KEY) {
 			app.getProgress().setIndeterminate(true);
 			task.run(periodRange[0], periodRange[1]);
 		}

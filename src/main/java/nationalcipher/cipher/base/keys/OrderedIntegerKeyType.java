@@ -1,6 +1,7 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -10,6 +11,7 @@ import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
+import nationalcipher.cipher.tools.KeyManipulation;
 
 public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
 
@@ -22,12 +24,12 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
     }
     
     @Override
-    public Integer[] randomise() {
+    public Integer[] randomise(Object partialKey) {
         return KeyGeneration.createOrder(RandomUtil.pickRandomInt(this.min, this.max));
     }
 
     @Override
-    public boolean isValid(Integer[] key) {
+    public boolean isValid(Object fullKey, Integer[] key) {
         for(int i = 0; i < key.length; i++) {
             if(!ArrayUtil.contains(key, i)) {
                 return false;
@@ -38,10 +40,20 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
     }
     
     @Override
-    public void iterateKeys(Consumer<Integer[]> consumer) {
+    public void iterateKeys(Object partialKey, Consumer<Integer[]> consumer) {
         for(int length = this.min; length <= this.max; length++) {
             KeyIterator.iterateIntegerArray(consumer, length, length, false);
         }
+    }
+    
+    @Override
+    public Integer[] alterKey(Object partialKey, Integer[] key) {
+        return KeyManipulation.modifyOrder(key);
+    }
+    
+    @Override
+    public String prettifyKey(Integer[] key) {
+        return Arrays.toString(key);
     }
     
     @Override
@@ -56,7 +68,7 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
         return new Builder();
     }
     
-    public static class Builder {
+    public static class Builder implements IKeyBuilder<Integer[], OrderedIntegerKeyType>  {
         
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
@@ -85,6 +97,7 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
             return this;
         }
         
+        @Override
         public OrderedIntegerKeyType create() {
             OrderedIntegerKeyType handler = new OrderedIntegerKeyType(
                     this.min.orElse(2), 

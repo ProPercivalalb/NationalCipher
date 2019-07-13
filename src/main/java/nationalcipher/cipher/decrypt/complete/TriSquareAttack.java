@@ -79,11 +79,11 @@ public class TriSquareAttack extends CipherAttack {
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
 			if(count % 2 == 0)
-				this.lastKey1 = KeyManipulation.modifyKey(this.bestMaximaKey1, 5, 5);
+				this.lastKey1 = KeyManipulation.modifyKeySquare(this.bestMaximaKey1, 5, 5);
 			if(count % 2 == 1)
-				this.lastKey2 = KeyManipulation.modifyKey(this.bestMaximaKey2, 5, 5);
+				this.lastKey2 = KeyManipulation.modifyKeySquare(this.bestMaximaKey2, 5, 5);
 			else
-				this.lastKey3 = KeyManipulation.modifyKey(this.bestMaximaKey3, 5, 5);
+				this.lastKey3 = KeyManipulation.modifyKeySquare(this.bestMaximaKey3, 5, 5);
 			
 			return new Solution(TriSquare.decode(this.cipherText, this.plainText, this.lastKey1, this.lastKey2, this.lastKey3), this.getLanguage());
 		}

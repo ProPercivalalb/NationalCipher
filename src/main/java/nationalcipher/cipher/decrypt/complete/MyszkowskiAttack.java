@@ -13,7 +13,7 @@ import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.base.transposition.Myszkowski;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -58,7 +58,7 @@ public class MyszkowskiAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class SlidefairTask extends InternalDecryption {
+	public class SlidefairTask extends DecryptionTracker {
 		
 		public SlidefairTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

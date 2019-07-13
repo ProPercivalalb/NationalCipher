@@ -44,8 +44,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.FutureTask;
-import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -113,23 +111,23 @@ import javalibrary.swing.chart.JBarChart;
 import javalibrary.thread.ThreadCancelable;
 import javalibrary.thread.Threads;
 import javalibrary.util.ArrayUtil;
-import javalibrary.util.RandomUtil;
 import nationalcipher.Settings;
+import nationalcipher.api.ICipher;
 import nationalcipher.auto.AutoSolver;
 import nationalcipher.cipher.base.VigenereType;
-import nationalcipher.cipher.base.substitution.ProgressiveKey;
+import nationalcipher.cipher.base.anew.ProgressiveCipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.identify.PolyalphabeticIdentifier;
 import nationalcipher.cipher.interfaces.ILoadElement;
-import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.stats.IdentifyOutput;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.stats.TextStatistic;
 import nationalcipher.registry.AttackRegistry;
 import nationalcipher.registry.EncrypterRegistry;
 import nationalcipher.registry.StatisticRegistry;
+import nationalcipher.util.Pair;
 
 /**
  *
@@ -137,7 +135,7 @@ import nationalcipher.registry.StatisticRegistry;
  */
 public class NationalCipherUI extends JFrame implements IApplication {
 
-	public static byte[] BEST_SOULTION;
+	public static char[] BEST_SOULTION;
 	public static ShowTopSolutionsAction topSolutions;
 	public KeyPanel keyPanel;
 	
@@ -304,7 +302,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
 	
     private void initComponents() {
     	this.cipherSearch = new JTextField();
-    	this.cipherSelect = new JComboBox<String>(cipherAttackTypes = AttackRegistry.CIPHERS.mapValues(CipherAttack::getDisplayName).toArray(String[]::new));
+    	this.cipherSelect = new JComboBox<String>(cipherAttackTypes = AttackRegistry.CIPHERS.getKeys().stream().sorted().toArray(String[]::new));
     	this.decryptionType = new JComboBox<DecryptionMethod>();
     	this.inputPanel = new JPanel();
         this.inputTextScroll = new JScrollPane();
@@ -726,19 +724,20 @@ public class NationalCipherUI extends JFrame implements IApplication {
         
         this.menuItemEncodeChose.setText("Specific");
         MenuScroller.setScrollerFor(this.menuItemEncodeChose, 15, 125, 0, 0);
-        for(Entry<String, IRandEncrypter> key : EncrypterRegistry.RAND_ENCRYPTERS.getEntries()) {
-        	JMenuItem jmi = new JMenuItem(key.getKey());
+        EncrypterRegistry.RAND_ENCRYPTERS.getEntries().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
+        	JMenuItem jmi = new JMenuItem(entry.getKey());
         	jmi.addActionListener(event -> {
 				String text = getInputTextOnlyAlpha();
-	    		String cipherText = key.getValue().randomlyEncrypt(text);
+	    		Pair<String, String> encryptedPair = entry.getValue().randomEncodeKeyStr(text);
 	 
-	    		StringSelection selection = new StringSelection(cipherText);
+	    		StringSelection selection = new StringSelection(encryptedPair.getLeft());
 		    	Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-	    			
-	    		output.println(cipherText);
+	    		
+		    	output.println(encryptedPair.getRight());
+	    		output.println(encryptedPair.getLeft());
         	});
         	this.menuItemEncodeChose.add(jmi);
-        }
+        });
         
         this.menuItemEncrypter.add(this.menuItemEncodeChose);
         
@@ -1208,7 +1207,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
                 
                 NationalCipherUI.this.progressValue.setIndeterminate(false);
                 NationalCipherUI.this.progressBar.setValue(0);
-                NationalCipherUI.this.thread.interrupt();
+                NationalCipherUI.this.thread.stop();
      
 			}
 		}
@@ -2112,7 +2111,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
 			String text = getInputTextOnlyAlpha();
 			if(!text.isEmpty()) {
 				char[] arrayText = text.toCharArray();
-				byte[] plainText = new byte[arrayText.length];
+				char[] plainText = new char[arrayText.length];
 				int bestPeriod = -1;
 				int bestEverProgressivePeriod = -1;
 				int bestEverProgressiveIndex = -1;
@@ -2129,7 +2128,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
 						for(int progressiveIndex = 1; progressiveIndex <= 25; progressiveIndex++) {
 							//TODO
 						
-							char[] decoded = ArrayUtil.convertCharType(ProgressiveKey.decodeBase(arrayText, plainText, period, progressiveIndex, type));
+							char[] decoded = ProgressiveCipher.decodeBase(arrayText, plainText, period, progressiveIndex, type);
 							
 							
 							double total = 0.0D;
@@ -2724,12 +2723,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
 	        	JCheckBox checkBox = new JCheckBox(StatisticRegistry.DISPLAY_NAME_MAP.get(key));
 	        	statCheckBoxes.put(key, checkBox);
 	        	checkBox.setFont(checkBox.getFont().deriveFont(Font.BOLD));
-	        	checkBox.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent event) {
-						updateDialog();
-					}
-	        	});
+	        	checkBox.addActionListener(event -> updateDialog()); 
 	            checkBox.setSelected(true);
 	        	optionPanel.add(checkBox);
 	        }
@@ -3139,14 +3133,16 @@ public class NationalCipherUI extends JFrame implements IApplication {
     		}
     		
     		if(!text.isEmpty()) {
-    			IRandEncrypter randomEncrypt = EncrypterRegistry.getEncrypterWith(NationalCipherUI.this.encodingDiffSlider.getValue());
-    			String cipherText = randomEncrypt.randomlyEncrypt(text);
+    			ICipher<?> randomEncrypt = EncrypterRegistry.getEncrypterWith(NationalCipherUI.this.encodingDiffSlider.getValue());
+    			Pair<String, String> cipherText = randomEncrypt.randomEncodeKeyStr(text);
     			NationalCipherUI.this.output.println(randomEncrypt.getClass().getSimpleName());
+    			NationalCipherUI.this.output.println(cipherText.getRight());
     			NationalCipherUI.this.output.println(StringTransformer.repeat("\n", 25));
-    			StringSelection selection = new StringSelection(cipherText);
+    			StringSelection selection = new StringSelection(cipherText.getLeft());
 	    		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
     			
-	    		NationalCipherUI.this.output.println(cipherText);
+	    		
+	    		NationalCipherUI.this.output.println(cipherText.getLeft());
     		}
 		}
     }
@@ -3404,7 +3400,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
     }
     
     public CipherAttack getCipherAttack() {
-    	return AttackRegistry.CIPHERS.getMap(CipherAttack::getDisplayName).get(this.cipherSelect.getSelectedItem());
+    	return AttackRegistry.CIPHERS.get((String)this.cipherSelect.getSelectedItem());
     }
      
     //IApplication methods

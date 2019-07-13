@@ -10,6 +10,10 @@ public class KeyManipulation {
 		return new String(swapTwoCharacters(keySquare.toCharArray()));
 	}
 	
+	/**
+	 * Swaps the position of two characters in the array 
+	 * Note has a 1/keySquare.length chance of doing nothing
+	 */
 	public static char[] swapTwoCharacters(char[] keySquare) {
 	    int i1 = RandomUtil.pickRandomInt(keySquare.length);
 	    int i2 = RandomUtil.pickRandomInt(keySquare.length);
@@ -19,17 +23,16 @@ public class KeyManipulation {
 	    return keySquare;
 	}
 	
-	public static String changeCharacters(String key, String characters, boolean canHaveRepeats) {
-		return new String(changeCharacters(key.toCharArray(), characters.toCharArray(), canHaveRepeats));
-	}
-	
-	public static char[] changeCharacters(char[] keySquare, char[] characters, boolean canHaveRepeats) {
-	    int i1 = RandomUtil.pickRandomInt(keySquare.length);
+	/**
+	 * Random changes one of the characters in the array to a random
+	 * characters in characters
+	 */
+	public static char[] changeCharacters(char[] keySquare, Character[] characters, boolean canHaveRepeats) {
+	    int pos = RandomUtil.pickRandomInt(keySquare.length);
 	    do {
-		    int i2 = RandomUtil.pickRandomInt(characters.length);
-		    char tempChar = characters[i2];
+		    char tempChar = RandomUtil.pickRandomElement(characters);
 	    	if(canHaveRepeats || !ArrayUtil.contains(keySquare, tempChar)) {
-			    keySquare[i1] = tempChar;
+			    keySquare[pos] = tempChar;
 			    return keySquare;
 	    	}
 	    } 
@@ -147,13 +150,13 @@ public class KeyManipulation {
 		return keySquare;
 	}
 
-	public static String modifyKey(String keySquare, int columns, int rows) {
+	public static String modifyKeySquare(String keySquare, int columns, int rows) {
 		double d = RandomUtil.pickDouble();
 		if(d < 0.1) {
-			if(d < 0.02) return swapTwoRows(keySquare, columns, rows);
+			if(d < 0.02)      return swapTwoRows(keySquare, columns, rows);
 			else if(d < 0.04) return swapTwoColumns(keySquare, columns, rows);
-			else if(d < 0.06)  return reverseKey(keySquare);
-			else if(d < 0.08)  return flipRows(keySquare, columns, rows);
+			else if(d < 0.06) return reverseKey(keySquare);
+			else if(d < 0.08) return flipRows(keySquare, columns, rows);
 			else return flipColumns(keySquare, columns, rows);
 		}
 		else 

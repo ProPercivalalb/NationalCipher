@@ -93,7 +93,7 @@ public class PhillipsAttack extends CipherAttack {
 
 		@Override
 		public Solution modifyKey(double temp, int count, double lastDF) {
-			this.lastKey = KeyManipulation.modifyKey(this.bestMaximaKey, 5, 5);
+			this.lastKey = KeyManipulation.modifyKeySquare(this.bestMaximaKey, 5, 5);
 			return new Solution(Phillips.decode(this.cipherText, this.plainText, this.lastKey, this.orderRows, this.orderColumns), this.getLanguage());
 		}
 

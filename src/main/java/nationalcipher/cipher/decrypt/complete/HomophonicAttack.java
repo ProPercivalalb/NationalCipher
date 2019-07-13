@@ -12,14 +12,14 @@ public class HomophonicAttack extends CipherAttack {
 	
 	public HomophonicAttack() {
 		super("Homophonic");
-		this.setAttackMethods(DecryptionMethod.KEY_MANIPULATION, DecryptionMethod.BRUTE_FORCE);
+		this.setAttackMethods(DecryptionMethod.PERIODIC_KEY, DecryptionMethod.BRUTE_FORCE);
 	}
 	
 	@Override
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
 		HomophonicTask task = new HomophonicTask(text, app);
 		
-		if(method == DecryptionMethod.KEY_MANIPULATION) {
+		if(method == DecryptionMethod.PERIODIC_KEY) {
 			app.getProgress().setIndeterminate(true);
 			task.run(4, 4);
 		}

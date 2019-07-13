@@ -1,6 +1,6 @@
 package nationalcipher.cipher.decrypt;
 
-import nationalcipher.cipher.base.substitution.Keyword;
+import nationalcipher.cipher.base.anew.KeywordCipher;
 import nationalcipher.cipher.decrypt.methods.SimulatedAnnealing;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -13,10 +13,12 @@ import nationalcipher.ui.IApplication;
  */
 public class SubstitutionHack extends SimulatedAnnealing {
 
+    private KeywordCipher keywordCipher;
 	public String bestKey, bestMaximaKey, lastKey;
 	
 	public SubstitutionHack(char[] text, IApplication app) {
 		super(text, app);
+		this.keywordCipher = new KeywordCipher();
 	}
 	
 	@Override

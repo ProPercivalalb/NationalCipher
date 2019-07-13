@@ -1,10 +1,8 @@
 package nationalcipher.cipher.decrypt.methods;
 
 import java.lang.reflect.Array;
-import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
 
 import javalibrary.math.matrics.Matrix;
 import javalibrary.streams.PrimTypeUtil;
@@ -12,22 +10,6 @@ import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class KeyIterator {
-	
-	public static void iterateIntegerKey(IntConsumer consumer, int min, int range, int step) {
-		for(int i = min; i < min + range; i += step)
-			consumer.accept(i);
-	}
-	
-	public static void iterateAffineKey(BiConsumer<Integer, Integer> consumer) {
-		for(int a : new int[] {1,3,5,7,9,11,15,17,19,21,23,25})
-  			for(int b = 0; b < 26; b++)
-  				consumer.accept(a, b);
-	}
-
-	public static void permuteDoubleIntegerOrderedKey(BiConsumer<Integer[], Integer[]> consumer, int length1, int length2) {
-		permuteObject(o1 -> permuteObject(o2 -> consumer.accept(o1, o2), ArrayUtil.createRangeInteger(length2)), ArrayUtil.createRangeInteger(length1));
-	}
-	
 	
 	public static void permuteIntegerOrderedKey(Consumer<Integer[]> consumer, int length) {
 		permuteObject(consumer, ArrayUtil.createRangeInteger(length));
@@ -62,11 +44,6 @@ public class KeyIterator {
 	        }
 	    }
 	}
-	
-	public static void iterateHutton(BiConsumer<String, String> consumer, int length1, int length2) {
-		iterateShortCustomKey(o1 -> iterateShortCustomKey(o2 -> consumer.accept(o1, o2), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", length2, true), "ABCDEFGHIJKLMNOPQRSTUVWXY", length1, true);
-	}
-	
 	public static void iterateIntegerArray(Consumer<Integer[]> consumer, int length, int range, boolean repeats) {
 		iterateObject(consumer, new Integer[length], ArrayUtil.createRangeInteger(range), repeats ? null : (a, b) -> a == b);
 	}

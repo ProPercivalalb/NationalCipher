@@ -1,20 +1,19 @@
 package nationalcipher.registry;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import nationalcipher.registry.IRegistry.INamingScheme;
 import nationalcipher.util.ClassDiscoverer;
 
 public class Registry<K, T> implements IRegistry<K, T> {
@@ -199,6 +198,7 @@ public class Registry<K, T> implements IRegistry<K, T> {
 		private Optional<AddCallback<K, T>> addCallback;
 		private Optional<RemoveCallback<K, T>> removeCallback;
 		private boolean autoDiscover;
+		private Optional<Class<? extends Annotation>> annotationAutoDisco;
 	    
 		public Builder(Class<K> keyType, Class<T> typeIn) {
 		    this.keyType = keyType;
@@ -213,6 +213,7 @@ public class Registry<K, T> implements IRegistry<K, T> {
 			this.addCallback = Optional.empty();
 			this.removeCallback = Optional.empty(); 
 			this.autoDiscover = false;
+			this.annotationAutoDisco = Optional.empty();
 		}
 		
 		public final Builder<K, T> setMapType(Supplier<Map<K, T>> mapSupplier) {
@@ -269,6 +270,11 @@ public class Registry<K, T> implements IRegistry<K, T> {
 		    return this;
 		}
 		
+		public final Builder<K, T> setDiscoverAnnotation(Class<? extends Annotation> annotationClass) {
+            this.annotationAutoDisco = Optional.of(annotationClass);
+            return this;
+        }
+		
 		public final Registry<K, T> build() {
 			Registry<K, T> target = new Registry<K, T>(this.keyType, this.type, this.mapSupplier);
 			target.registryName = this.registryName.orElse(this.type != null ? this.type.getSimpleName() : "Unknown");
@@ -282,7 +288,7 @@ public class Registry<K, T> implements IRegistry<K, T> {
 			
 			if(this.autoDiscover) {
 			    if(this.type != null) {
-			        ClassDiscoverer.getInstances("nationalcipher", this.type).stream().forEach(target::register);
+			        ClassDiscoverer.getInstances("nationalcipher", this.annotationAutoDisco.orElse(null), this.type).stream().forEach(target::register);
 			    } else {
 			        System.err.println("Cannot auto discover as target class is null.");
 			    }

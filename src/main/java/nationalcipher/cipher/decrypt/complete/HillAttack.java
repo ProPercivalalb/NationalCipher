@@ -49,7 +49,7 @@ public class HillAttack extends CipherAttack {
 	
 	public HillAttack() {
 		super("Hill");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.KEY_MANIPULATION, DecryptionMethod.SIMULATED_ANNEALING);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.PERIODIC_KEY, DecryptionMethod.SIMULATED_ANNEALING);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 3, 2, 5, 1);
 		this.gramSearchRange = JSpinnerUtil.createSpinner(20, 3, 100, 1);
 		this.trigramSets = new JComboBox<String>(this.TRI_GRAM_DISPLAY);
@@ -125,7 +125,7 @@ public class HillAttack extends CipherAttack {
 				}
 			}
 		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		else if(method == DecryptionMethod.PERIODIC_KEY) {
 			for(int size = sizeRange[0]; size <= sizeRange[1]; size++) {
 				if(task.cipherText.length % size != 0) {
 					app.out().println("Matrix size of %d is not possible, length of text is not a multiple.", size);

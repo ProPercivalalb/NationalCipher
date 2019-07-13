@@ -12,7 +12,7 @@ import javalibrary.swing.JSpinnerUtil;
 import nationalcipher.cipher.base.transposition.Redefence;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.tools.SettingParse;
@@ -54,7 +54,7 @@ public class RedefenceAttack extends CipherAttack {
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class RedefenceTask extends InternalDecryption {
+	public class RedefenceTask extends DecryptionTracker {
 
 		public RedefenceTask(String text, IApplication app) {
 			super(text.toCharArray(), app);

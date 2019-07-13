@@ -10,10 +10,9 @@ import javalibrary.math.Units.Time;
 import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.ListUtil;
-import nationalcipher.cipher.base.other.Solitaire;
-import nationalcipher.cipher.base.other.Solitaire.SolitaireAttack;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.Solution;
+import nationalcipher.cipher.decrypt.solitaire.Solitaire.SolitaireAttack;
 
 public class SolitaireSolver {
 

@@ -15,33 +15,33 @@ public abstract class VigenereType {
 	
 	private static class None extends VigenereType {
 		@Override
-		public byte encode(byte textCharId, byte keyCharId) {
+		public char encode(char textCharId, char keyCharId) {
             return textCharId;
 		}
 		
 		@Override
-		public byte decode(byte textCharId, byte keyCharId) {
+		public char decode(char textCharId, char keyCharId) {
             return textCharId;
 		}
 	}
 	
 	private static class Beaufort extends VigenereType {
 		@Override
-		public byte encode(byte textCharId, byte keyCharId) {
-			return (byte)((keyCharId - textCharId + 26) % 26 + 'A');
+		public char encode(char textCharId, char keyCharId) {
+			return (char)((keyCharId - textCharId + 26) % 26 + 'A');
 		}
 		
 		@Override
-		public byte decode(byte textCharId, byte keyCharId) {
+		public char decode(char textCharId, char keyCharId) {
 			return encode(textCharId, keyCharId);
 		}
 	}
 	
 	private static class Porta extends VigenereType {
 		@Override
-		public byte encode(byte textCharId, byte keyCharId) {
-			byte key = (byte)((keyCharId - 'A') / 2);
-            byte newCharId = textCharId;
+		public char encode(char textCharId, char keyCharId) {
+			char key = (char)((keyCharId - 'A') / 2);
+            char newCharId = textCharId;
             if(newCharId < 13 + 'A') {
             	newCharId += key;
                 if(newCharId < 13 + 'A')
@@ -56,16 +56,16 @@ public abstract class VigenereType {
 		}
 		
 		@Override
-		public byte decode(byte textCharId, byte keyCharId) {
+		public char decode(char textCharId, char keyCharId) {
             return encode(textCharId, keyCharId);
 		}
 	}
 	
 	private static class PortaVariant extends VigenereType {
 		@Override
-		public byte encode(byte textCharId, byte keyCharId) {
-			byte key = (byte)((keyCharId - 'A') / 2);
-            byte newCharId = textCharId;
+		public char encode(char textCharId, char keyCharId) {
+			char key = (char)((keyCharId - 'A') / 2);
+            char newCharId = textCharId;
             if(newCharId < 13 + 'A') {
             	newCharId += 13;
             	newCharId -= key;
@@ -81,36 +81,36 @@ public abstract class VigenereType {
 		}
 		
 		@Override
-		public byte decode(byte textCharId, byte keyCharId) {
+		public char decode(char textCharId, char keyCharId) {
             return encode(textCharId, keyCharId);
 		}
 	}
 	
 	private static class Variant extends VigenereType {
 		@Override
-		public byte encode(byte textCharId, byte keyCharId) { //'A' - 'A' = 0   mod 26 = 0
-			return (byte)((-keyCharId + textCharId + 26) % 26 + 'A');
+		public char encode(char textCharId, char keyCharId) { //'A' - 'A' = 0   mod 26 = 0
+			return (char)((-keyCharId + textCharId + 26) % 26 + 'A');
 		}
 		
 		@Override
-		public byte decode(byte textCharId, byte keyCharId) { //'A' + 'A' = 130 mod 26 = 0
-			return (byte)((keyCharId + textCharId) % 26 + 'A');
+		public char decode(char textCharId, char keyCharId) { //'A' + 'A' = 130 mod 26 = 0
+			return (char)((keyCharId + textCharId) % 26 + 'A');
 		}
 	}
 	
 	private static class Vigenere extends VigenereType {
 		@Override
-		public byte encode(byte textCharId, byte keyCharId) { //'A' + 'A' = 130 mod 26 = 0
-			return (byte)((keyCharId + textCharId) % 26 + 'A');
+		public char encode(char textCharId, char keyCharId) { //'A' + 'A' = 130 mod 26 = 0
+			return (char)((keyCharId + textCharId) % 26 + 'A');
 		}
 		
 		@Override
-		public byte decode(byte textCharId, byte keyCharId) { //'A' - 'A' = 0   mod 26 = 0
-			return (byte)((-keyCharId + textCharId + 26) % 26 + 'A');
+		public char decode(char textCharId, char keyCharId) { //'A' - 'A' = 0   mod 26 = 0
+			return (char)((-keyCharId + textCharId + 26) % 26 + 'A');
 		}
 	}
 	
-	public abstract byte encode(byte textCharId, byte keyCharId);
+	public abstract char encode(char textCharId, char keyCharId);
 	
-	public abstract byte decode(byte textCharId, byte keyCharId);
+	public abstract char decode(char textCharId, char keyCharId);
 }

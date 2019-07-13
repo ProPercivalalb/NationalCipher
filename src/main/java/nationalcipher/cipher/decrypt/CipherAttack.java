@@ -9,17 +9,22 @@ import java.util.Map;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import nationalcipher.api.IBruteForceAttack;
+import nationalcipher.api.ICipher;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.ui.IApplication;
 
-public class CipherAttack implements ILoadElement {
+public class CipherAttack<K> implements IBruteForceAttack<K>, ILoadElement {
 	
+    private ICipher<K> cipher;
 	private String displayName;
 	private String saveId;
 	private List<DecryptionMethod> methods;
 	
-	public CipherAttack(String displayName) {
+	public CipherAttack(ICipher<K> cipher, String displayName) {
+	    this.cipher = cipher;
 		this.displayName = displayName;
 		this.saveId = "attack_" + displayName;
 	}
@@ -28,8 +33,14 @@ public class CipherAttack implements ILoadElement {
 		return this.displayName;
 	}
 	
-	public void setAttackMethods(DecryptionMethod... methods) {
+    @Override
+    public ICipher<K> getCipher() {
+        return this.cipher;
+    }
+	
+	public CipherAttack<K> setAttackMethods(DecryptionMethod... methods) {
 		this.methods = Arrays.asList(methods);
+		return this;
 	}
 
 	//When the attack ends naturally or the thread is stopped forcefully
@@ -38,7 +49,11 @@ public class CipherAttack implements ILoadElement {
 	}
 	
 	public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
-		
+	    switch(method) {
+	    case BRUTE_FORCE: 
+	        this.tryBruteForce(new DecryptionTracker(text, app), app.getProgress());
+	        break;
+	    }
 	}
 	
 	public void createSettingsUI(JDialog dialog, JPanel panel) {

@@ -1,11 +1,13 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
@@ -20,12 +22,12 @@ public class PolluxKeyType implements IKeyType<Character[]> {
     }
     
     @Override
-    public Character[] randomise() {
+    public Character[] randomise(Object partialKey) {
         return KeyGeneration.createPolluxKey();
     }
 
     @Override
-    public boolean isValid(Character[] key) {
+    public boolean isValid(Object partialKey, Character[] key) {
         // Contains at least one of each character
         for(int i = 0; i < this.alphabet.length; i++) {
             if(!ArrayUtil.contains(key, this.alphabet[i])) {
@@ -44,8 +46,20 @@ public class PolluxKeyType implements IKeyType<Character[]> {
     }
     
     @Override
-    public void iterateKeys(Consumer<Character[]> consumer) {
+    public void iterateKeys(Object partialKey, Consumer<Character[]> consumer) {
         KeyIterator.iterateObject(consumer, Character.class, 10, alphabet);
+    }
+    
+    @Override
+    public Character[] alterKey(Object partialKey, Character[] key) {
+        int pos = RandomUtil.pickRandomInt(key.length);
+        key[pos] = RandomUtil.pickRandomElement(this.alphabet);
+        return key;
+    }
+    
+    @Override
+    public String prettifyKey(Character[] key) {
+        return Arrays.toString(key);
     }
     
     @Override
@@ -57,7 +71,7 @@ public class PolluxKeyType implements IKeyType<Character[]> {
         return new Builder();
     }
     
-    public static class Builder {
+    public static class Builder implements IKeyBuilder<Character[], PolluxKeyType> {
         
         private Optional<Character[]> alphabet = Optional.empty();
         
@@ -72,6 +86,7 @@ public class PolluxKeyType implements IKeyType<Character[]> {
             return this;
         }
         
+        @Override
         public PolluxKeyType create() {
             PolluxKeyType handler = new PolluxKeyType(this.alphabet.orElse(KeyGeneration.ALL_POLLUX_CHARS));
             return handler;

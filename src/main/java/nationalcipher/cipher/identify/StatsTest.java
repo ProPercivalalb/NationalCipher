@@ -28,18 +28,18 @@ public class StatsTest {
 		double bestScore = 0.0D;
 		
 		int rows = (int)Math.ceil(text.length() / period);
-	    for(byte keyLeft = 'A'; keyLeft <= 'Z'; keyLeft++) {
-	    	for(byte keyRight = 'A'; keyRight <= 'Z'; keyRight++) {
+	    for(char keyLeft = 'A'; keyLeft <= 'Z'; keyLeft++) {
+	    	for(char keyRight = 'A'; keyRight <= 'Z'; keyRight++) {
 	    		double score = 0.0D;
 	            int ct = 0;
-	            byte kl1 = keyLeft;
-	            byte kr1 = keyRight;
+	            char kl1 = keyLeft;
+	            char kr1 = keyRight;
 			    for(int r = 0; r < rows; r++) {
 			    	if(col + r * period + 1 >= text.length()) break;
 
-	                byte pl = type.decode((byte)text.charAt(col + r * period), kl1);
-	                byte pr = type.decode((byte)text.charAt(col + r * period + 1), kr1);
-	                score += language.getDiagramData().maxValue - language.getDiagramData().getValue(new byte[] {pl, pr}, 0);
+			    	char pl = type.decode(text.charAt(col + r * period), kl1);
+	                char pr = type.decode(text.charAt(col + r * period + 1), kr1);
+	                score += language.getDiagramData().maxValue - language.getDiagramData().getValue(new char[] {pl, pr}, 0);
 	                ct++;
 	            }
 			    if(ct == 0)

@@ -2,7 +2,6 @@ package nationalcipher.registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,7 +10,6 @@ import javax.swing.JProgressBar;
 
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.interfaces.IRandEncrypter;
 import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.DataHolder;

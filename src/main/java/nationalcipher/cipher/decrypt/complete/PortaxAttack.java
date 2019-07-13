@@ -24,7 +24,7 @@ public class PortaxAttack extends CipherAttack {
 	
 	public PortaxAttack() {
 		super("Portax");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.PERIODIC_KEY);
 		this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 15, 2, 100, 1);
 	}
 	
@@ -48,7 +48,7 @@ public class PortaxAttack extends CipherAttack {
 			for(int length = periodRange[0]; length <= periodRange[1]; ++length)
 				KeyIterator.iterateShortCustomKey(task::onIteration, "ACEGIKMOQSUWY", length, true);
 		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		else if(method == DecryptionMethod.PERIODIC_KEY) {
 			app.getProgress().setIndeterminate(true);
 			task.run(periodRange[0], periodRange[1]);
 		}

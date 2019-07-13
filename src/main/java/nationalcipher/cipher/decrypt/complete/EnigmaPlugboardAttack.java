@@ -21,7 +21,7 @@ import nationalcipher.cipher.base.substitution.Enigma;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
-import nationalcipher.cipher.decrypt.methods.InternalDecryption;
+import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.cipher.stats.StatCalculator;
@@ -36,7 +36,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 	
 	public EnigmaPlugboardAttack() {
 		super("Enigma - Plugboard");
-		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.KEY_MANIPULATION);
+		this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.PERIODIC_KEY);
 		this.machineSelection = new JComboBox<EnigmaMachine>();
 		this.reflectorSelection = new JComboBox<String>();
 		this.plugboardDefinition = new JTextField();
@@ -298,14 +298,14 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 				
 			}
 		}
-		else if(method == DecryptionMethod.KEY_MANIPULATION) {
+		else if(method == DecryptionMethod.PERIODIC_KEY) {
 			KeyIterator.iterateIntegerArray(task::onList3, 3, 3, false);
 		}
 		
 		app.out().println(task.getBestSolution());
 	}
 	
-	public class EnigmaTask extends InternalDecryption {
+	public class EnigmaTask extends DecryptionTracker {
 
 		private EnigmaMachine machine;
 		private int reflectorTest; //-1 if test all, otherwise is the index of the reflector to test
