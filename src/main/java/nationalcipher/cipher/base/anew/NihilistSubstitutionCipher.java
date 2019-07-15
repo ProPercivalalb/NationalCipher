@@ -9,12 +9,17 @@ import nationalcipher.cipher.base.keys.FullStringKeyType;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class NihilistSubstitutionCipher extends BiKeyCipher<String, String> {
+public class NihilistSubstitutionCipher extends BiKeyCipher<String, String, FullStringKeyType.Builder, VariableStringKeyType.Builder> {
 
     public NihilistSubstitutionCipher() {
-        super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS), VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setRange(2, 15));
+        super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS), VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setRange(2, Integer.MAX_VALUE));
     }
 
+    @Override
+    public VariableStringKeyType.Builder limitDomainForSecondKey(VariableStringKeyType.Builder secondKey) {
+        return secondKey.setRange(2, 15);
+    }
+    
     @Override
     public CharSequence padPlainText(CharSequence plainText, BiKey<String, String> key) {
         StringBuilder builder = new StringBuilder(plainText.length());

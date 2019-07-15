@@ -43,7 +43,7 @@ public class GrilleAttack extends CipherAttack {
             this.lastSolution = new Solution(Grille.decode(this.cipherText, this.plainText, this.size, key), this.getLanguage());
             this.addSolution(this.lastSolution);
 
-            if (this.lastSolution.isResultBetter(this.bestSolution)) {
+            if (this.lastSolution.isBetterThan(this.bestSolution)) {
                 this.bestSolution = this.lastSolution;
                 this.bestSolution.setKeyString(Arrays.toString(key));
                 this.bestSolution.bakeSolution();

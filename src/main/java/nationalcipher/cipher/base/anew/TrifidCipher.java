@@ -6,15 +6,20 @@ import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.FullStringKeyType;
-import nationalcipher.cipher.base.keys.IntegerKeyType;
+import nationalcipher.cipher.base.keys.IntegerGenKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class TrifidCipher extends BiKeyCipher<String, Integer> {
+public class TrifidCipher extends BiKeyCipher<String, Integer, FullStringKeyType.Builder, IntegerGenKeyType.Builder> {
 
     public TrifidCipher() {
-        super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_27_CHARS), IntegerKeyType.builder().setRange(2, 15)); // period
-                                                                                                                              // 0
+        super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_27_CHARS),
+                IntegerGenKeyType.builder().setRange(0, 5000).addFilter(i -> i != 1));
+    }
+    
+    @Override
+    public IntegerGenKeyType.Builder limitDomainForSecondKey(IntegerGenKeyType.Builder secondKey) {
+        return secondKey.setRange(0, 15);
     }
 
     @Override

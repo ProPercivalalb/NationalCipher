@@ -7,11 +7,15 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class CadenusCipher extends UniKeyCipher<String> {
+public class CadenusCipher extends UniKeyCipher<String, VariableStringKeyType.Builder> {
 
     public CadenusCipher() {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 5));
-        ;
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, Integer.MAX_VALUE));
+    }
+    
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder secondKey) {
+        return secondKey.setRange(2, 5);
     }
 
     @Override

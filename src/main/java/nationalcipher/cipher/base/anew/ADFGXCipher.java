@@ -3,6 +3,7 @@ package nationalcipher.cipher.base.anew;
 import javax.annotation.Nullable;
 
 import nationalcipher.api.IFormat;
+import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.QuadKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.ConstantKeyType;
@@ -12,12 +13,17 @@ import nationalcipher.cipher.base.keys.QuadKey;
 import nationalcipher.cipher.base.keys.SquareStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class ADFGXCipher extends QuadKeyCipher<String, Integer[], String, ReadMode> {
+public class ADFGXCipher extends QuadKeyCipher<String, Integer[], String, ReadMode, SquareStringKeyType.Builder, OrderedIntegerKeyType.Builder, ConstantKeyType.Builder<String>, EnumKeyType.Builder<ReadMode>> {
 
     private static ColumnarTranspositionCipher transpostion = new ColumnarTranspositionCipher();
 
     public ADFGXCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), OrderedIntegerKeyType.builder().setRange(2, 7), ConstantKeyType.builder("ADFGX"), EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.DOWN));
+        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), OrderedIntegerKeyType.builder().setMin(1).setMax(Integer.MAX_VALUE), ConstantKeyType.builder("ADFGX"), EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.DOWN));
+    }
+    
+    @Override
+    public IKeyBuilder<Integer[]> limitDomainForSecondKey(OrderedIntegerKeyType.Builder secondKey) {
+        return secondKey.setRange(2, 9);
     }
 
     @Override

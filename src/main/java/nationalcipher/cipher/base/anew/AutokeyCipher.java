@@ -9,15 +9,20 @@ import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class AutokeyCipher extends UniKeyCipher<String> {
+public class AutokeyCipher extends UniKeyCipher<String, VariableStringKeyType.Builder> {
 
     private VigenereType type;
 
     public AutokeyCipher(VigenereType type) {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 15));
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(1, Integer.MAX_VALUE));
         this.type = type;
     }
 
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 15);
+    }
+    
     @Override
     public CharSequence encode(CharSequence plainText, String key, IFormat format) {
         Character[] cipherText = new Character[plainText.length()];

@@ -1,6 +1,8 @@
 package nationalcipher.cipher.base.keys;
 
-public class BiKey<F, S> implements Cloneable {
+import nationalcipher.api.IKey;
+
+public class BiKey<F, S> implements Cloneable, IKey<BiKey<F, S>> {
 
     private F firstKey;
     private S secondKey;
@@ -28,11 +30,6 @@ public class BiKey<F, S> implements Cloneable {
         return this.secondKey;
     }
 
-    @Override
-    public String toString() {
-        return String.join(" ", this.getFirstKey().toString(), this.getSecondKey().toString());
-    }
-
     public static <F, S> BiKey<F, S> empty() {
         return new BiKey<>(null, null);
     }
@@ -44,5 +41,10 @@ public class BiKey<F, S> implements Cloneable {
     @Override
     public BiKey<F, S> clone() {
         return new BiKey<>(this.firstKey, this.secondKey);
+    }
+    
+    @Override
+    public BiKey<F, S> copy() {
+        return this.clone();
     }
 }

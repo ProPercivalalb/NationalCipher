@@ -9,6 +9,7 @@ import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.api.IRangedKeyBuilder;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
@@ -60,7 +61,7 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
     public BigInteger getNumOfKeys() {
         BigInteger total = BigInteger.ZERO;
         for (int length = this.min; length <= this.max; ++length)
-            total.add(MathUtil.factorialBig(length));
+            total = total.add(MathUtil.factorialBig(length));
         return total;
     }
 
@@ -68,7 +69,7 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<Integer[], OrderedIntegerKeyType> {
+    public static class Builder implements IRangedKeyBuilder<Integer[]> {
 
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
@@ -77,20 +78,26 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
         private Builder() {
         }
 
+        @Override
         public Builder setMin(int min) {
             this.min = Optional.of(min);
             return this;
         }
 
+        @Override
         public Builder setMax(int max) {
             this.max = Optional.of(max);
             return this;
         }
-
+        
+        @Override
         public Builder setRange(int min, int max) {
-            this.setMin(min);
-            this.setMax(max);
-            return this;
+            return this.setMin(min).setMax(max);
+        }
+
+        @Override
+        public Builder setSize(int size) {
+            return this.setRange(size, size);
         }
 
         public Builder setRepeats() {
@@ -103,6 +110,5 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
             OrderedIntegerKeyType handler = new OrderedIntegerKeyType(this.min.orElse(2), this.max.orElse(6), this.repeats);
             return handler;
         }
-
     }
 }

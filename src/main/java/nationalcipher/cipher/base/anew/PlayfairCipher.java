@@ -11,7 +11,7 @@ import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.util.CipherUtils;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class PlayfairCipher extends UniKeyCipher<String> {
+public class PlayfairCipher extends UniKeyCipher<String, SquareStringKeyType.Builder> {
 
     public PlayfairCipher() {
         super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5));

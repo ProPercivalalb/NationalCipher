@@ -12,7 +12,7 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.FullStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class FractionatedMorseCipher extends UniKeyCipher<String> {
+public class FractionatedMorseCipher extends UniKeyCipher<String, FullStringKeyType.Builder> {
 
     private static List<Character> list = Arrays.asList('.', '-', 'X');
 

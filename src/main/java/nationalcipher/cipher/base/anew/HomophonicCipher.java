@@ -12,7 +12,7 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class HomophonicCipher extends UniKeyCipher<String> {
+public class HomophonicCipher extends UniKeyCipher<String, VariableStringKeyType.Builder> {
 
     public HomophonicCipher() {
         super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setRange(4, 4));

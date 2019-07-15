@@ -12,13 +12,14 @@ import nationalcipher.cipher.base.keys.TriKey;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.util.CipherUtils;
 
-public class PhillipsCipher extends TriKeyCipher<String, Boolean, Boolean> {
+public class PhillipsCipher extends TriKeyCipher<String, Boolean, Boolean, SquareStringKeyType.Builder, BooleanKeyType.Builder, BooleanKeyType.Builder> {
 
     public static int[][] rows = new int[][] { { 0, 1, 2, 3, 4 }, { 1, 0, 2, 3, 4 }, { 1, 2, 0, 3, 4 }, { 1, 2, 3, 0, 4 }, { 1, 2, 3, 4, 0 }, { 2, 1, 3, 4, 0 }, { 2, 3, 1, 4, 0 }, { 2, 3, 4, 1, 0 } };
     public static int[][] rowsIndex = new int[][] { { 0, 1, 2, 3, 4 }, { 1, 0, 2, 3, 4 }, { 2, 0, 1, 3, 4 }, { 3, 0, 1, 2, 4 }, { 4, 0, 1, 2, 3 }, { 4, 1, 0, 2, 3 }, { 4, 2, 0, 1, 3 }, { 4, 3, 0, 1, 2 } };
 
     public PhillipsCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), BooleanKeyType.builder(), BooleanKeyType.builder()); // TODO
+        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
+                BooleanKeyType.builder(), BooleanKeyType.builder()); // TODO
                                                                                                                                                        // one
                                                                                                                                                        // of
                                                                                                                                                        // the

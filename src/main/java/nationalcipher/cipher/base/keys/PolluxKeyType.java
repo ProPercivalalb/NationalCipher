@@ -71,7 +71,7 @@ public class PolluxKeyType implements IKeyType<Character[]> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<Character[], PolluxKeyType> {
+    public static class Builder implements IKeyBuilder<Character[]> {
 
         private Optional<Character[]> alphabet = Optional.empty();
 

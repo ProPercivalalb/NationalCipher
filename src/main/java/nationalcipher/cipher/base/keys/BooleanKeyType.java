@@ -44,7 +44,7 @@ public class BooleanKeyType implements IKeyType<Boolean> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<Boolean, BooleanKeyType> {
+    public static class Builder implements IKeyBuilder<Boolean> {
 
         private boolean alterable = false;
 

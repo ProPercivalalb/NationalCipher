@@ -1,8 +1,9 @@
-package nationalcipher.api;
+package nationalcipher.cipher.decrypt;
 
 import java.util.Arrays;
 
 import javalibrary.swing.ProgressValue;
+import nationalcipher.api.IAttackMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
 
@@ -31,7 +32,7 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
                         char previous = parent[i];
                         parent[i] = j;
 
-                        tracker.lastSolution = this.toSolution(tracker, this.getKey(new String(parent)));
+                        tracker.lastSolution = this.toSolution(tracker, this.useStringGetKey(tracker, new String(parent)));
                         tracker.addSolution(tracker.lastSolution);
 
                         if (tracker.lastSolution.score >= currentBestSolution.score) {
@@ -45,19 +46,18 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
                     }
                 }
 
-                // No change to the key resulted in a better solution so we must have found the
-                // solution
+                // No change to the key resulted in a better solution so we must have found the solution
                 if (!change)
                     break;
             }
 
             if (this.isBetterThanBest(tracker, currentBestSolution)) {
-                this.updateBestSolution(tracker, currentBestSolution, this.getKey(new String(parent)));
+                this.updateBestSolution(tracker, currentBestSolution, this.useStringGetKey(tracker, new String(parent)));
             }
         }
     }
 
-    K getKey(String periodicKeyPart);
+    K useStringGetKey(DecryptionTracker tracker, String periodicKeyPart);
 
     // TODO
     default boolean hasDuplicateLetters() {
@@ -69,6 +69,6 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
     }
 
     default void onPostIteration(DecryptionTracker tracker, long iteration) {
-        tracker.getKeyPanel().updateIteration(iteration++);
+        tracker.increaseIteration();
     }
 }

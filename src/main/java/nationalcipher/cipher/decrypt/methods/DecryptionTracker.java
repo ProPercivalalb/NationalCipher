@@ -48,7 +48,11 @@ public class DecryptionTracker {
     }
 
     public char[] getPlainTextHolder() {
-        return this.plainText;
+        if (this.getSettings().useParallel()) {
+            return new char[this.getOutputTextLength(this.cipherText.length())];
+        } else {
+            return this.plainText;
+        }
     }
 
     public void addSolution(Solution solution) {
@@ -64,6 +68,14 @@ public class DecryptionTracker {
     public void resetSolution() {
         this.bestSolution = Solution.WORST_SOLUTION;
         NationalCipherUI.topSolutions.reset();
+    }
+    
+    public void increaseIteration() {
+        if (this.getSettings().updateProgress()) {
+            if(this.getProgress().increase()) {
+                this.getKeyPanel().setIteration(this.getProgress().getValue());
+            }
+        }
     }
 
     public void resetIteration() {
@@ -93,5 +105,14 @@ public class DecryptionTracker {
 
     public KeyPanel getKeyPanel() {
         return this.app.getKeyPanel();
+    }
+    
+    public boolean shouldStop() {
+        return this.app.shouldStop();
+    }
+
+    public void finish() {
+        this.getProgress().finish();
+        this.getKeyPanel().setIteration(this.getProgress().getValue());
     }
 }

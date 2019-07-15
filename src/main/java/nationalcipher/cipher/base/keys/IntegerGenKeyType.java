@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.api.IRangedKeyBuilder;
 
 public class IntegerGenKeyType implements IKeyType<Integer> {
 
@@ -50,34 +51,40 @@ public class IntegerGenKeyType implements IKeyType<Integer> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<Integer, IntegerGenKeyType> {
+    public static class Builder implements IRangedKeyBuilder<Integer> {
 
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
-        private Predicate<Integer> filter = n -> true;
+        private Predicate<Integer> filter = null;
         private boolean alterable = false;
 
         private Builder() {
         }
 
+        @Override
         public Builder setMin(int min) {
             this.min = Optional.of(min);
             return this;
         }
 
+        @Override
         public Builder setMax(int max) {
             this.max = Optional.of(max);
             return this;
         }
-
+        
+        @Override
         public Builder setRange(int min, int max) {
-            this.setMin(min);
-            this.setMax(max);
-            return this;
+            return this.setMin(min).setMax(max);
         }
 
-        public Builder setFilter(Predicate<Integer> filterIn) {
-            this.filter = filterIn;
+        @Override
+        public Builder setSize(int size) {
+            return this.setRange(size, size);
+        }
+
+        public Builder addFilter(Predicate<Integer> filterIn) {
+            this.filter = this.filter == null ? filterIn : this.filter.and(filterIn);
             return this;
         }
 
@@ -92,7 +99,7 @@ public class IntegerGenKeyType implements IKeyType<Integer> {
             int min = this.min.orElse(Integer.MIN_VALUE);
             int max = this.max.orElse(Integer.MAX_VALUE);
             for (int i = min; i <= max; i++) {
-                if (this.filter.test(i)) {
+                if (this.filter == null || this.filter.test(i)) {
                     universe.add(i);
                 }
             }

@@ -4,19 +4,25 @@ import javax.annotation.Nullable;
 
 import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IFormat;
+import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
-import nationalcipher.cipher.base.keys.BooleanKeyType;
+import nationalcipher.cipher.base.keys.EnumKeyType;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
-public class AMSCOCipher extends BiKeyCipher<Integer[], Boolean> {
+public class AMSCOCipher extends BiKeyCipher<Integer[], AMSCOType, OrderedIntegerKeyType.Builder, EnumKeyType.Builder<AMSCOType>> {
 
     public AMSCOCipher() {
-        super(OrderedIntegerKeyType.builder().setRange(2, 9), BooleanKeyType.builder());
+        super(OrderedIntegerKeyType.builder().setRange(1, Integer.MAX_VALUE), EnumKeyType.builder(AMSCOType.class).setUniverse(AMSCOType.values()));
+    }
+    
+    @Override
+    public IKeyBuilder<Integer[]> limitDomainForFirstKey(OrderedIntegerKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 9);
     }
 
     @Override
-    public CharSequence encode(CharSequence plainText, BiKey<Integer[], Boolean> key, IFormat format) {
+    public CharSequence encode(CharSequence plainText, BiKey<Integer[], AMSCOType> key, IFormat format) {
         StringBuilder[] columns = ArrayUtil.fill(new StringBuilder[key.getFirstKey().length], () -> new StringBuilder(plainText.length() / key.getFirstKey().length));
 
         int index = 0;
@@ -28,7 +34,7 @@ public class AMSCOCipher extends BiKeyCipher<Integer[], Boolean> {
 
                 int fromIndex = index;
                 // How many characters are in block
-                index += ((col + row) % 2 == (key.getSecondKey() ? 0 : 1)) ? 2 : 1;
+                index += ((col + row) % 2 == key.getSecondKey().getMod()) ? 2 : 1;
 
                 for (int i = fromIndex; i < Math.min(index, plainText.length()); i++) {
                     columns[key.getFirstKey()[col]].append(plainText.charAt(i));
@@ -45,7 +51,7 @@ public class AMSCOCipher extends BiKeyCipher<Integer[], Boolean> {
     }
 
     @Override
-    public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, BiKey<Integer[], Boolean> key) {
+    public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, BiKey<Integer[], AMSCOType> key) {
         Integer[] order = key.getFirstKey();
         int period = order.length;
 
@@ -59,7 +65,7 @@ public class AMSCOCipher extends BiKeyCipher<Integer[], Boolean> {
         int rows = 0;
         int charactersLastRow = 0;
 
-        boolean choose = key.getSecondKey();
+        boolean choose = key.getSecondKey() == AMSCOType.DOUBLE_FIRST;
         int chars = 0;
 
         do {
@@ -80,7 +86,7 @@ public class AMSCOCipher extends BiKeyCipher<Integer[], Boolean> {
 
         for (int column = 0; column < period; column++) {
             int realColumn = reversedOrder[column];
-            boolean isDoubleLetter = ((realColumn + rows) % 2 == (key.getSecondKey() ? 0 : 1)); // Double letter first
+            boolean isDoubleLetter = ((realColumn + rows) % 2 == key.getSecondKey().getMod()); // Double letter first
 
             int length = isDoubleLetter ? noCharColumn1st : noCharColumn2nd;
             int noCharN1st = (int) ((realColumn + 1) / 2) * 2 + (int) (realColumn / 2);
@@ -99,7 +105,7 @@ public class AMSCOCipher extends BiKeyCipher<Integer[], Boolean> {
         int textIndex = 0;
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < period; column++) {
-                int number = (column + row) % 2 == (key.getSecondKey() ? 0 : 1) ? 2 : 1;
+                int number = ((column + row) % 2 == key.getSecondKey().getMod()) ? 2 : 1;
 
                 for (int i = 0; i < number; i++) {
                     if (indexTracker[column] + i >= grid[column].length())

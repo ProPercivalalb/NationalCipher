@@ -14,6 +14,7 @@ import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.anew.ADFGVXCipher;
 import nationalcipher.cipher.base.anew.ADFGXCipher;
 import nationalcipher.cipher.base.anew.AMSCOCipher;
+import nationalcipher.cipher.base.anew.AMSCOType;
 import nationalcipher.cipher.base.anew.AffineCipher;
 import nationalcipher.cipher.base.anew.AutokeyCipher;
 import nationalcipher.cipher.base.anew.BazeriesCipher;
@@ -286,7 +287,7 @@ public class DecodeTest {
         
         String plainText = "INCOMPLETECOLUMNARWITHALTERNATINGSINGLELETTERSANDDIGRAPHS";
         String cipherText = "CECRTEGLENPHPLUTNANTEIOMOWIRSITDDSINTNALINESAALEMHATGLRGR";
-        BiKey<Integer[], Boolean> key = new BiKey<>(new Integer[] {3, 0, 2, 1, 4}, true);
+        BiKey<Integer[], AMSCOType> key = new BiKey<>(new Integer[] {3, 0, 2, 1, 4}, AMSCOType.DOUBLE_FIRST);
         
         assertEncodeDecode(amscoCipher, key, plainText, cipherText);
         

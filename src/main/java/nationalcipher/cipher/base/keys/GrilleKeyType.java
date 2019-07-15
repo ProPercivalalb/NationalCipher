@@ -51,7 +51,7 @@ public class GrilleKeyType implements IKeyType<Integer[]> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<Integer[], GrilleKeyType> {
+    public static class Builder implements IKeyBuilder<Integer[]> {
 
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();

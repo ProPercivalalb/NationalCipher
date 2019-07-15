@@ -10,13 +10,17 @@ import nationalcipher.cipher.base.keys.TriKey;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class DigrafidCipher extends TriKeyCipher<String, String, Integer> {
+public class DigrafidCipher extends TriKeyCipher<String, String, Integer, SquareStringKeyType.Builder, SquareStringKeyType.Builder, IntegerKeyType.Builder> {
 
     public DigrafidCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_27_CHARS).setDim(3, 9), SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_27_CHARS).setDim(9, 3), IntegerKeyType.builder().setRange(2, 15)); // period
-                                                                                                                                                                                                                                 // 0
+        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_27_CHARS).setDim(3, 9), SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_27_CHARS).setDim(9, 3), IntegerKeyType.builder().setRange(2, Integer.MAX_VALUE)); // period                                                                                                                                                                                                                      // 0
     }
 
+    @Override
+    public IntegerKeyType.Builder limitDomainForThirdKey(IntegerKeyType.Builder thirdKey) {
+        return thirdKey.setRange(2, 15);
+    }
+    
     @Override
     public CharSequence padPlainText(CharSequence plainText, TriKey<String, String, Integer> key) {
         if (plainText.length() % 2 == 1) {

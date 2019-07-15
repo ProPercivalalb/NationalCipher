@@ -4,7 +4,9 @@ import static nationalcipher.cipher.decrypt.methods.DecryptionMethod.BRUTE_FORCE
 
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.VigenereType;
+import nationalcipher.cipher.base.anew.AMSCOCipher;
 import nationalcipher.cipher.base.anew.AffineCipher;
+import nationalcipher.cipher.base.anew.AutokeyCipher;
 import nationalcipher.cipher.base.anew.BazeriesCipher;
 import nationalcipher.cipher.base.anew.CaesarCipher;
 import nationalcipher.cipher.base.anew.NicodemusCipher;
@@ -13,14 +15,19 @@ import nationalcipher.cipher.base.anew.PolluxCipher;
 import nationalcipher.cipher.base.anew.ProgressiveCipher;
 import nationalcipher.cipher.base.anew.RailFenceCipher;
 import nationalcipher.cipher.base.anew.SlidefairCipher;
+import nationalcipher.cipher.base.anew.TriSquareCipher;
 import nationalcipher.cipher.base.anew.VigenereCipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.NicodemusAttack;
-import nationalcipher.cipher.decrypt.PeriodicKeyAttack;
-import nationalcipher.cipher.decrypt.ProgressiveKeyAttack;
 import nationalcipher.cipher.decrypt.SACipherAttack;
-import nationalcipher.cipher.decrypt.complete.BifidAttack;
-import nationalcipher.cipher.decrypt.complete.SeriatedPlayfairAttack;
+import nationalcipher.cipher.decrypt.anew.AutokeyAttack;
+import nationalcipher.cipher.decrypt.anew.BifidAttack;
+import nationalcipher.cipher.decrypt.anew.BifidCMAttack;
+import nationalcipher.cipher.decrypt.anew.DigrafidAttack;
+import nationalcipher.cipher.decrypt.anew.NicodemusAttack;
+import nationalcipher.cipher.decrypt.anew.PeriodicKeyAttack;
+import nationalcipher.cipher.decrypt.anew.ProgressiveKeyAttack;
+import nationalcipher.cipher.decrypt.anew.SeriatedPlayfairAttack;
+import nationalcipher.cipher.decrypt.anew.SlidefairAttack;
 import nationalcipher.lib.CipherLib;
 
 public class AttackRegistry {
@@ -37,6 +44,7 @@ public class AttackRegistry {
     }
 
     public static void loadCiphers(Settings settings) {
+        registerCipher(CipherLib.AMSCO, new CipherAttack<>(new AMSCOCipher(), "AMSCO").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.AFFINE, new CipherAttack<>(new AffineCipher(), "Affine").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.BAZERIES, new CipherAttack<>(new BazeriesCipher(), "Bazeries").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.CAESAR, new CipherAttack<>(new CaesarCipher(), "Caesar").setAttackMethods(BRUTE_FORCE), settings);
@@ -45,6 +53,7 @@ public class AttackRegistry {
         registerCipher(CipherLib.BIFID, new BifidAttack(), settings);
         registerCipher(CipherLib.PLAYFAIR, new SACipherAttack<>(new PlayfairCipher(), "Playfair"), settings);
         registerCipher(CipherLib.PLAYFAIR_SERIATED, new SeriatedPlayfairAttack(), settings);
+        
         registerCipher(CipherLib.VIGENERE, new PeriodicKeyAttack(new VigenereCipher(VigenereType.VIGENERE), "Vigenere"), settings);
         registerCipher(CipherLib.PORTA, new PeriodicKeyAttack(new VigenereCipher(VigenereType.PORTA), "Porta"), settings);
         registerCipher(CipherLib.VARIANT, new PeriodicKeyAttack(new VigenereCipher(VigenereType.VARIANT), "Variant"), settings);
@@ -52,26 +61,30 @@ public class AttackRegistry {
 
         registerCipher(CipherLib.VIGENERE + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.VIGENERE), "Vigenere Progressive Key"), settings);
         registerCipher(CipherLib.PORTA + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.PORTA), "Porta Progressive Key"), settings);
+        registerCipher(CipherLib.PORTA_VARIANT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.PORTA_VARIANT), "Porta Variant Progressive Key"), settings);
         registerCipher(CipherLib.VARIANT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.VARIANT), "Variant Progressive Key"), settings);
         registerCipher(CipherLib.BEAUFORT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.BEAUFORT), "Beaufort Progressive Key"), settings);
 
-        registerCipher(CipherLib.VIGENERE + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.VIGENERE), "Vigenere Slidefair"), settings); // TODO
-                                                                                                                                                              // Add
-                                                                                                                                                              // dictionary
-                                                                                                                                                              // attack
-        registerCipher(CipherLib.VARIANT + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.VARIANT), "Variant Slidefair"), settings);
-        registerCipher(CipherLib.BEAUFORT + ".slidefair", new PeriodicKeyAttack(new SlidefairCipher(VigenereType.BEAUFORT), "Beaufort Slidefair"), settings);
-
-        registerCipher(CipherLib.VIGENERE + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.VIGENERE), "Vigenere Progressive Key"), settings);
-        registerCipher(CipherLib.PORTA + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.PORTA), "Porta Progressive Key"), settings);
-        registerCipher(CipherLib.VARIANT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.VARIANT), "Variant Progressive Key"), settings);
-        registerCipher(CipherLib.BEAUFORT + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.BEAUFORT), "Beaufort Progressive Key"), settings);
+        registerCipher(CipherLib.VIGENERE + ".autokey", new AutokeyAttack(new AutokeyCipher(VigenereType.VIGENERE), "Vigenere Autokey"), settings);
+        registerCipher(CipherLib.PORTA + ".autokey", new AutokeyAttack(new AutokeyCipher(VigenereType.PORTA), "Porta Autokey"), settings);
+        registerCipher(CipherLib.PORTA_VARIANT + ".autokey", new AutokeyAttack(new AutokeyCipher(VigenereType.PORTA_VARIANT), "Porta Variant Autokey"), settings);
+        registerCipher(CipherLib.VARIANT + ".autokey", new AutokeyAttack(new AutokeyCipher(VigenereType.VARIANT), "Variant Autokey"), settings);
+        registerCipher(CipherLib.BEAUFORT + ".autokey", new AutokeyAttack(new AutokeyCipher(VigenereType.BEAUFORT), "Beaufort Autokey"), settings);
 
         registerCipher(CipherLib.VIGENERE + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.VIGENERE), "Vigenere Nicodemus"), settings);
         registerCipher(CipherLib.PORTA + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.PORTA), "Porta Nicodemus"), settings);
+        registerCipher(CipherLib.PORTA_VARIANT + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.PORTA_VARIANT), "Porta Variant Nicodemus"), settings);
         registerCipher(CipherLib.VARIANT + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.VARIANT), "Variant Nicodemus"), settings);
         registerCipher(CipherLib.BEAUFORT + ".nicodemus", new NicodemusAttack(new NicodemusCipher(VigenereType.BEAUFORT), "Beaufort Nicodemus"), settings);
+        
+        registerCipher(CipherLib.VIGENERE + ".slidefair", new SlidefairAttack(new SlidefairCipher(VigenereType.VIGENERE), "Vigenere Slidefair"), settings); // TODO                                                                                                        // attack
+        registerCipher(CipherLib.VARIANT + ".slidefair", new SlidefairAttack(new SlidefairCipher(VigenereType.VARIANT), "Variant Slidefair"), settings);
+        registerCipher(CipherLib.BEAUFORT + ".slidefair", new SlidefairAttack(new SlidefairCipher(VigenereType.BEAUFORT), "Beaufort Slidefair"), settings);
 
+        registerCipher(CipherLib.DIGRAFID, new DigrafidAttack(), settings); 
+        registerCipher(CipherLib.BIFID_CM, new BifidCMAttack(), settings); 
+        registerCipher(CipherLib.TRI_SQUARE, new SACipherAttack<>(new TriSquareCipher(), "Tri Square"), settings);
+        
 //		Substitution
 //		registerCipher(new HuttonAttack(), settings);
 //

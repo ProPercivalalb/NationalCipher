@@ -7,10 +7,15 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class MyszkowskiCipher extends UniKeyCipher<String> {
+public class MyszkowskiCipher extends UniKeyCipher<String, VariableStringKeyType.Builder> {
 
     public MyszkowskiCipher() {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 15).setRepeats());
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, Integer.MAX_VALUE).setRepeats());
+    }
+    
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 15);
     }
 
     @Override

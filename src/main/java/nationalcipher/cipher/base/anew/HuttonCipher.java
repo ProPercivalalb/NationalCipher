@@ -10,12 +10,22 @@ import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class HuttonCipher extends BiKeyCipher<String, String> {
+public class HuttonCipher extends BiKeyCipher<String, String, VariableStringKeyType.Builder, VariableStringKeyType.Builder> {
 
     public HuttonCipher() {
-        super(VariableStringKeyType.builder().setAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXY").setRange(2, 7), VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 7));
+        super(VariableStringKeyType.builder().setAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXY").setRange(1, Integer.MAX_VALUE), VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(1, Integer.MAX_VALUE));
+    }
+    
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder firstKey) {
+        return firstKey.setRange(1, 7);
     }
 
+    @Override
+    public VariableStringKeyType.Builder limitDomainForSecondKey(VariableStringKeyType.Builder secondKey) {
+        return secondKey.setRange(1, 7);
+    }
+    
     @Override
     public CharSequence encode(CharSequence plainText, BiKey<String, String> key, IFormat format) {
 

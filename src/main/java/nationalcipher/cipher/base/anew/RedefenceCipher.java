@@ -6,17 +6,23 @@ import javax.annotation.Nullable;
 
 import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IFormat;
+import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.IntegerKeyType;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
-public class RedefenceCipher extends BiKeyCipher<Integer[], Integer> {
+public class RedefenceCipher extends BiKeyCipher<Integer[], Integer, OrderedIntegerKeyType.Builder, IntegerKeyType.Builder> {
 
     // TODO Add read off diagonals mode
 
     public RedefenceCipher() {
-        super(OrderedIntegerKeyType.builder().setRange(2, 9), IntegerKeyType.builder().setMin(0).setVariableMax(obj -> ((BiKey<Integer[], Integer>) obj).getFirstKey().length * 2 - 2));
+        super(OrderedIntegerKeyType.builder().setRange(2, Integer.MAX_VALUE), IntegerKeyType.builder().setMin(0).setVariableMax(obj -> ((BiKey<Integer[], Integer>) obj).getFirstKey().length * 2 - 2));
+    }
+    
+    @Override
+    public IKeyBuilder<Integer[]> limitDomainForFirstKey(OrderedIntegerKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 9);
     }
 
     @Override

@@ -59,7 +59,7 @@ public class FullStringKeyType implements IKeyType<String> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<String, FullStringKeyType> {
+    public static class Builder implements IKeyBuilder<String> {
 
         private Optional<Character[]> alphabet = Optional.empty();
 

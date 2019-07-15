@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.api.IRangedKeyBuilder;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SwagmanKeyType implements IKeyType<int[]> {
@@ -77,7 +78,7 @@ public class SwagmanKeyType implements IKeyType<int[]> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<int[], SwagmanKeyType> {
+    public static class Builder implements IRangedKeyBuilder<int[]> {
 
         private Optional<Integer> min = Optional.empty();
         private Optional<Integer> max = Optional.empty();
@@ -85,20 +86,26 @@ public class SwagmanKeyType implements IKeyType<int[]> {
         private Builder() {
         }
 
+        @Override
         public Builder setMin(int min) {
             this.min = Optional.of(min);
             return this;
         }
 
+        @Override
         public Builder setMax(int max) {
             this.max = Optional.of(max);
             return this;
         }
-
+        
+        @Override
         public Builder setRange(int min, int max) {
-            this.setMin(min);
-            this.setMax(max);
-            return this;
+            return this.setMin(min).setMax(max);
+        }
+
+        @Override
+        public Builder setSize(int size) {
+            return this.setRange(size, size);
         }
 
         @Override

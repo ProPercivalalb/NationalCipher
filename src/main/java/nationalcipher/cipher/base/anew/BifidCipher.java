@@ -7,18 +7,21 @@ import javax.annotation.Nullable;
 import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
-import nationalcipher.cipher.base.keys.IntegerKeyType;
+import nationalcipher.cipher.base.keys.IntegerGenKeyType;
 import nationalcipher.cipher.base.keys.SquareStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.util.CipherUtils;
 
-public class BifidCipher extends BiKeyCipher<String, Integer> {
+public class BifidCipher extends BiKeyCipher<String, Integer, SquareStringKeyType.Builder, IntegerGenKeyType.Builder> {
 
     public BifidCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), IntegerKeyType.builder().setRange(1, 15)); // TODO
-                                                                                                                                             // Add
-                                                                                                                                             // 0
-                                                                                                                                             // period
+        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
+                IntegerGenKeyType.builder().setRange(0, 5000).addFilter(i -> i != 1));
+    }
+    
+    @Override
+    public IntegerGenKeyType.Builder limitDomainForSecondKey(IntegerGenKeyType.Builder secondKey) {
+        return secondKey.setRange(0, 15);
     }
 
     @Override

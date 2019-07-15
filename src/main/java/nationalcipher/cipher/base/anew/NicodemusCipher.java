@@ -10,17 +10,26 @@ import nationalcipher.cipher.base.keys.IntegerKeyType;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class NicodemusCipher extends BiKeyCipher<String, Integer> {
+public class NicodemusCipher extends BiKeyCipher<String, Integer, VariableStringKeyType.Builder, IntegerKeyType.Builder> {
 
     private VigenereType type;
 
     public NicodemusCipher(VigenereType type) {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(3, 10), IntegerKeyType.builder().setRange(1, 10)); // Default
-                                                                                                                                                  // is
-                                                                                                                                                  // 5
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(3, 10),
+                IntegerKeyType.builder().setRange(1, Integer.MAX_VALUE)); // Default is 5
         this.type = type;
     }
 
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder firstKey) {
+        return firstKey.setRange(3, 10);
+    }
+    
+    @Override
+    public IntegerKeyType.Builder limitDomainForSecondKey(IntegerKeyType.Builder secondKey) {
+        return secondKey.setRange(1, 10);
+    }
+    
     @Override
     public CharSequence encode(CharSequence plainText, BiKey<String, Integer> key, IFormat format) {
         StringBuilder cipherText = new StringBuilder(plainText.length());
@@ -57,35 +66,36 @@ public class NicodemusCipher extends BiKeyCipher<String, Integer> {
     @Override
     public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, BiKey<String, Integer> key) {
         // Possible settings
+        String keyword = key.getFirstKey();
         int READ_OFF = key.getSecondKey();
 
-        byte[] order = new byte[key.getFirstKey().length()];
+        byte[] order = new byte[keyword.length()];
 
         int q = 0;
         for (char ch = 'A'; ch <= 'Z'; ++ch)
             for (byte i = 0; i < order.length; i++)
-                if (ch == key.getFirstKey().charAt(i))
+                if (ch == keyword.charAt(i))
                     order[q++] = i;
 
-        int blocks = (int) Math.ceil((double) cipherText.length() / (key.getFirstKey().length() * READ_OFF));
-        int blockSize = key.getFirstKey().length() * READ_OFF;
+        int blocks = (int) Math.ceil((double) cipherText.length() / (keyword.length() * READ_OFF));
+        int blockSize = keyword.length() * READ_OFF;
         boolean complete = blocks * blockSize == cipherText.length();
 
         int index = 0;
         for (int b = 0; b < blocks; b++) {
 
             for (int r = 0; r < READ_OFF; r++) {
-                for (int p = 0; p < key.getFirstKey().length(); p++) {
+                for (int p = 0; p < keyword.length(); p++) {
 
                     if (complete || blocks - 1 != b) {
-                        int row = index % key.getFirstKey().length();
-                        plainText[order[p] - row + index++] = this.type.decode(cipherText.charAt(b * blockSize + p * READ_OFF + r), key.getFirstKey().charAt(order[p] % key.getFirstKey().length()));
+                        int row = index % keyword.length();
+                        plainText[order[p] - row + index++] = this.type.decode(cipherText.charAt(b * blockSize + p * READ_OFF + r), keyword.charAt(order[p] % keyword.length()));
                     } else {
                         int charactersLeft = cipherText.length() - b * blockSize;
-                        int lastRow = charactersLeft % key.getFirstKey().length();
-                        int esitmate = (int) Math.floor(charactersLeft / key.getFirstKey().length());
+                        int lastRow = charactersLeft % keyword.length();
+                        int esitmate = (int) Math.floor(charactersLeft / keyword.length());
                         index = 0;
-                        for (int i = 0; i < key.getFirstKey().length(); i++) {
+                        for (int i = 0; i < keyword.length(); i++) {
                             int total = esitmate;
 
                             if (lastRow > order[i])
@@ -93,7 +103,7 @@ public class NicodemusCipher extends BiKeyCipher<String, Integer> {
 
                             for (int j = 0; j < total; j++) {
                                 byte place = order[i];
-                                plainText[b * blockSize + j * key.getFirstKey().length() + place] = this.type.decode(cipherText.charAt(b * blockSize + index + j), key.getFirstKey().charAt(place % key.getFirstKey().length()));
+                                plainText[b * blockSize + j * keyword.length() + place] = this.type.decode(cipherText.charAt(b * blockSize + index + j), keyword.charAt(place % keyword.length()));
                             }
 
                             index += total;

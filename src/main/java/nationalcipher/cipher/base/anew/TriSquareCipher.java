@@ -9,7 +9,7 @@ import nationalcipher.cipher.base.keys.SquareStringKeyType;
 import nationalcipher.cipher.base.keys.TriKey;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class TriSquareCipher extends TriKeyCipher<String, String, String> {
+public class TriSquareCipher extends TriKeyCipher<String, String, String, SquareStringKeyType.Builder, SquareStringKeyType.Builder, SquareStringKeyType.Builder> {
 
     public TriSquareCipher() {
         super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5));

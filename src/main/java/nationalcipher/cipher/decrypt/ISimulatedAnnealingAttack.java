@@ -1,8 +1,11 @@
-package nationalcipher.api;
+package nationalcipher.cipher.decrypt;
+
+import java.math.BigInteger;
 
 import javalibrary.lib.Timer;
 import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
+import nationalcipher.api.IAttackMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
 import nationalcipher.ui.NationalCipherUI;
@@ -14,9 +17,13 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
         double lastDF = 0;
 
         K bestKey, lastKey;
-
+        
+        progBar.addMaxValue(BigInteger.valueOf((long) Math.floor((double) tracker.getSettings().getSATempStart() / tracker.getSettings().getSATempStep()) + 1).multiply(BigInteger.valueOf(tracker.getSettings().getSACount())));
+        
+        
         while (true) {
             timer.restart();
+            this.startIteration(tracker);
             lastKey = this.generateIntialKey(tracker);
             tracker.lastSolution = this.toSolution(tracker, lastKey);
 
@@ -27,8 +34,12 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
                 this.updateBestSolution(tracker, bestMaximaSolution, bestMaximaKey);
                 bestKey = bestMaximaKey;
             }
-
-            for (double TEMP = tracker.getSettings().getSATempStart(); TEMP >= 0; TEMP -= tracker.getSettings().getSATempStep()) {
+            double TEMP = tracker.getSettings().getSATempStart();
+            do {
+                TEMP = Math.max(0.0D, TEMP - tracker.getSettings().getSATempStep());
+                
+                
+                //tracker.out().println("TEMP: " + TEMP);
                 for (int count = 0; count < tracker.getSettings().getSACount(); count++) {
                     this.onPreIteration(tracker);
                     lastKey = this.modifyKey(tracker, bestMaximaKey, TEMP, count, lastDF);
@@ -41,8 +52,7 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
                         bestMaximaSolution = tracker.lastSolution;
                         bestMaximaKey = lastKey;
                     } else if (TEMP > 0) {
-                        double prob = Math.exp(lastDF / TEMP);
-                        if (prob > RandomUtil.pickDouble()) {
+                        if (TEMP == 0.0D || Math.exp(lastDF / TEMP) > RandomUtil.pickDouble()) {
                             bestMaximaSolution = tracker.lastSolution;
                             bestMaximaKey = lastKey;
                         }
@@ -55,13 +65,17 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
 
                     this.onPostIteration(tracker);
                 }
-            }
+            } while (TEMP > 0);
+            
+            progBar.finish();
             // TODO if(this.iterationTimer)
             // tracker.out().println("Iteration Time: %f",
             // timer.getTimeRunning(Units.Time.MILLISECOND));
-
-            if (this.endIteration(tracker, tracker.bestSolution))
+            if (this.endIteration(tracker, tracker.bestSolution)) {
                 break;
+            }
+            
+            tracker.out().println("============================");
         }
     }
 
@@ -74,18 +88,20 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
     }
 
     default void onPreIteration(DecryptionTracker tracker) {
-
+ 
     }
 
     default void onPostIteration(DecryptionTracker tracker) {
-        tracker.getProgress().increase();
-        tracker.getKeyPanel().updateIteration(tracker.iteration++);
+        tracker.increaseIteration();
     }
 
+    default void startIteration(DecryptionTracker tracker) {
+        tracker.getProgress().setValue(0);
+    }
+    
     default boolean endIteration(DecryptionTracker tracker, Solution bestSolution) {
         tracker.out().println(bestSolution.toString());
         NationalCipherUI.BEST_SOULTION = bestSolution.getText();
-        tracker.getProgress().setValue(0);
         return false;
     }
 }

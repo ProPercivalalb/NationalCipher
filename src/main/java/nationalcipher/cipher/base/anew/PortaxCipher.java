@@ -9,10 +9,15 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class PortaxCipher extends UniKeyCipher<String> {
+public class PortaxCipher extends UniKeyCipher<String, VariableStringKeyType.Builder> {
 
     public PortaxCipher() {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 15));
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, Integer.MAX_VALUE));
+    }
+    
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 15);
     }
 
     @Override

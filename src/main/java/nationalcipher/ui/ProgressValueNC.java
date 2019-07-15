@@ -15,8 +15,8 @@ public class ProgressValueNC extends ProgressValue {
     }
 
     @Override
-    public void updateProgress() {
+    public void recalculatePercentage() {
         if (this.settings.updateProgress())
-            super.updateProgress();
+            super.recalculatePercentage();
     }
 }

@@ -5,10 +5,12 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import javalibrary.math.MathUtil;
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.api.IRangedKeyBuilder;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
@@ -36,6 +38,11 @@ public class VariableStringKeyType implements IKeyType<String> {
 
     @Override
     public boolean isValid(Object partialKey, String key) {
+        // Quick check if length bigger than number
+        if (!this.repeats && key.length() > this.alphabet.length) {
+            return false;
+        }
+        
         for (int i = 0; i < key.length(); i++) {
             if (!ArrayUtil.contains(this.alphabet, key.charAt(i))) {
                 return false;
@@ -58,7 +65,7 @@ public class VariableStringKeyType implements IKeyType<String> {
 
     @Override
     public String alterKey(Object fullKey, String key) {
-        return new String(KeyManipulation.changeCharacters(key.toCharArray(), alphabet, this.repeats)); // TODO decrease
+        return new String(KeyManipulation.changeCharacters(key.toCharArray(), this.alphabet, this.repeats)); // TODO decrease
                                                                                                         // copying into
                                                                                                         // new arrays so
                                                                                                         // much
@@ -66,14 +73,32 @@ public class VariableStringKeyType implements IKeyType<String> {
 
     @Override
     public BigInteger getNumOfKeys() {
-        return BigInteger.ZERO;
+        BigInteger total = BigInteger.ZERO;
+        
+        if(this.repeats) {
+            BigInteger alphaSize = BigInteger.valueOf(this.alphabet.length);
+            
+            for (int length = this.min; length <= this.max; length++) {
+                total = total.add(alphaSize.pow(length));
+            }
+        } else {
+            for (int length = this.min; length <= this.max; length++) {
+                BigInteger subTotal = BigInteger.ONE;
+                for (int i = 0; i < length; i++) {
+                    subTotal = subTotal.multiply(BigInteger.valueOf(this.alphabet.length - i));
+                }
+                total = total.add(subTotal);
+            }
+        }
+        
+        return total;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<String, VariableStringKeyType> {
+    public static class Builder implements IRangedKeyBuilder<String> {
 
         private Optional<Character[]> alphabet = Optional.empty();
         private Optional<Integer> min = Optional.empty();
@@ -92,20 +117,26 @@ public class VariableStringKeyType implements IKeyType<String> {
             return this;
         }
 
+        @Override
         public Builder setMin(int min) {
             this.min = Optional.of(min);
             return this;
         }
 
+        @Override
         public Builder setMax(int max) {
             this.max = Optional.of(max);
             return this;
         }
-
+        
+        @Override
         public Builder setRange(int min, int max) {
-            this.setMin(min);
-            this.setMax(max);
-            return this;
+            return this.setMin(min).setMax(max);
+        }
+
+        @Override
+        public Builder setSize(int size) {
+            return this.setRange(size, size);
         }
 
         public Builder setRepeats() {

@@ -8,7 +8,7 @@ import nationalcipher.cipher.base.keys.FullStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class KeywordCipher extends UniKeyCipher<String> {
+public class KeywordCipher extends UniKeyCipher<String, FullStringKeyType.Builder> {
 
     public KeywordCipher() {
         super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS));

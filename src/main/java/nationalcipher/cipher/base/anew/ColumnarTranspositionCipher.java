@@ -4,21 +4,22 @@ import javax.annotation.Nullable;
 
 import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IFormat;
+import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.EnumKeyType;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
-public class ColumnarTranspositionCipher extends BiKeyCipher<Integer[], ReadMode> {
+public class ColumnarTranspositionCipher extends BiKeyCipher<Integer[], ReadMode, OrderedIntegerKeyType.Builder, EnumKeyType.Builder<ReadMode>> {
 
     public ColumnarTranspositionCipher() {
-        super(OrderedIntegerKeyType.builder().setRange(2, 9), EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.values())); // Boolean
-                                                                                                                                   // true:
-                                                                                                                                   // read
-                                                                                                                                   // across,
-                                                                                                                                   // false:
-                                                                                                                                   // read
-                                                                                                                                   // down
+        super(OrderedIntegerKeyType.builder().setRange(2, Integer.MAX_VALUE),
+                EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.values()));
+    }
+
+    @Override
+    public IKeyBuilder<Integer[]> limitDomainForFirstKey(OrderedIntegerKeyType.Builder secondKey) {
+        return secondKey.setRange(2, 9);
     }
 
     @Override

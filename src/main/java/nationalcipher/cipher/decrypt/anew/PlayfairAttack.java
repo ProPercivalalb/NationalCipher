@@ -1,13 +1,13 @@
-package nationalcipher.cipher.decrypt.complete;
+package nationalcipher.cipher.decrypt.anew;
 
-import nationalcipher.api.ISimulatedAnnealingAttack;
 import nationalcipher.cipher.base.anew.PlayfairCipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.ISimulatedAnnealingAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.ui.IApplication;
 
-public class PlayfairAttack extends CipherAttack<String> implements ISimulatedAnnealingAttack<String> {
+public class PlayfairAttack extends CipherAttack<String, PlayfairCipher> implements ISimulatedAnnealingAttack<String> {
 
     public PlayfairAttack() {
         super(new PlayfairCipher(), "Playfair");

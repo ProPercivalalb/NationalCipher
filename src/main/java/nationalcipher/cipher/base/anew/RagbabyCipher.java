@@ -8,7 +8,7 @@ import nationalcipher.cipher.base.keys.FullStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class RagbabyCipher extends UniKeyCipher<String> {
+public class RagbabyCipher extends UniKeyCipher<String, FullStringKeyType.Builder> {
 
     public RagbabyCipher() {
         super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_24_CHARS));

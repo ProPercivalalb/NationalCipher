@@ -12,10 +12,10 @@ import nationalcipher.cipher.base.keys.IntegerGenKeyType;
 import nationalcipher.cipher.base.keys.IntegerKeyType;
 import nationalcipher.cipher.util.CipherUtils;
 
-public class AffineCipher extends BiKeyCipher<Integer, Integer> {
+public class AffineCipher extends BiKeyCipher<Integer, Integer, IntegerGenKeyType.Builder, IntegerKeyType.Builder> {
 
     public AffineCipher() {
-        super(IntegerGenKeyType.builder().setRange(0, 25).setFilter(MathUtil::hasMultiplicativeInverseMod26), IntegerKeyType.builder().setRange(0, 25));
+        super(IntegerGenKeyType.builder().setRange(0, 25).addFilter(MathUtil::hasMultiplicativeInverseMod26), IntegerKeyType.builder().setRange(0, 25));
     }
 
     @Override

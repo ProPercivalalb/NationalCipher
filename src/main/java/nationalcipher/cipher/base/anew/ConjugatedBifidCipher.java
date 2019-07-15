@@ -4,18 +4,22 @@ import javax.annotation.Nullable;
 
 import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.TriKeyCipher;
-import nationalcipher.cipher.base.keys.IntegerKeyType;
+import nationalcipher.cipher.base.keys.IntegerGenKeyType;
 import nationalcipher.cipher.base.keys.SquareStringKeyType;
 import nationalcipher.cipher.base.keys.TriKey;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class ConjugatedBifidCipher extends TriKeyCipher<String, String, Integer> {
+public class ConjugatedBifidCipher extends TriKeyCipher<String, String, Integer, SquareStringKeyType.Builder, SquareStringKeyType.Builder, IntegerGenKeyType.Builder> {
 
     public ConjugatedBifidCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), IntegerKeyType.builder().setRange(1, 15)); // TODO
-                                                                                                                                                                                                                                 // Add
-                                                                                                                                                                                                                                 // 0
-                                                                                                                                                                                                                                 // period
+        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
+                SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
+                IntegerGenKeyType.builder().setRange(0, 5000).addFilter(i -> i != 1));
+    }
+    
+    @Override
+    public IntegerGenKeyType.Builder limitDomainForThirdKey(IntegerGenKeyType.Builder thirdKey) {
+        return thirdKey.setRange(0, 15);
     }
 
     @Override

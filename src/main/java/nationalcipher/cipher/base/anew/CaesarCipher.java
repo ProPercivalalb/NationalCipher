@@ -7,7 +7,7 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.IntegerKeyType;
 import nationalcipher.cipher.util.CipherUtils;
 
-public class CaesarCipher extends UniKeyCipher<Integer> {
+public class CaesarCipher extends UniKeyCipher<Integer, IntegerKeyType.Builder> {
 
     public CaesarCipher() {
         super(IntegerKeyType.builder().setRange(1, 25));

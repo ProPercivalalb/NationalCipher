@@ -7,10 +7,15 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.SwagmanKeyType;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class SwagmanCipher extends UniKeyCipher<int[]> {
+public class SwagmanCipher extends UniKeyCipher<int[], SwagmanKeyType.Builder> {
 
     public SwagmanCipher() {
-        super(SwagmanKeyType.builder().setRange(2, 5));
+        super(SwagmanKeyType.builder().setRange(2, Integer.MAX_VALUE));
+    }
+    
+    @Override
+    public SwagmanKeyType.Builder limitDomainForFirstKey(SwagmanKeyType.Builder secondKey) {
+        return secondKey.setRange(2, 5);
     }
 
     @Override

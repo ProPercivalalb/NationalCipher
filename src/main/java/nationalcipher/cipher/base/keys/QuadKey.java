@@ -1,6 +1,8 @@
 package nationalcipher.cipher.base.keys;
 
-public class QuadKey<F, S, T, N> {
+import nationalcipher.api.IKey;
+
+public class QuadKey<F, S, T, N> implements Cloneable, IKey<QuadKey<F, S, T, N>> {
 
     private F firstKey;
     private S secondKey;
@@ -50,11 +52,6 @@ public class QuadKey<F, S, T, N> {
         return this.fourthKey;
     }
 
-    @Override
-    public String toString() {
-        return String.join(" ", this.firstKey.toString(), this.secondKey.toString(), this.thirdKey.toString(), this.fourthKey.toString());
-    }
-
     public static <F, S, T, N> QuadKey<F, S, T, N> empty() {
         return new QuadKey<>(null, null, null, null);
     }
@@ -66,5 +63,10 @@ public class QuadKey<F, S, T, N> {
     @Override
     public QuadKey<F, S, T, N> clone() {
         return new QuadKey<>(this.firstKey, this.secondKey, this.thirdKey, this.fourthKey);
+    }
+    
+    @Override
+    public QuadKey<F, S, T, N> copy() {
+        return this.clone();
     }
 }

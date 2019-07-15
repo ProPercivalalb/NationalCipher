@@ -7,12 +7,17 @@ import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.IntegerKeyType;
 
-public class BazeriesCipher extends UniKeyCipher<Integer> {
+public class BazeriesCipher extends UniKeyCipher<Integer, IntegerKeyType.Builder> {
 
     public BazeriesCipher() {
-        super(IntegerKeyType.builder().setRange(0, 1000000));
+        super(IntegerKeyType.builder().setRange(0, Integer.MAX_VALUE));
     }
 
+    @Override
+    public IntegerKeyType.Builder limitDomainForFirstKey(IntegerKeyType.Builder firstKey) {
+        return firstKey.setRange(0, 1000000);
+    }
+    
     @Override
     public CharSequence padPlainText(CharSequence plainText, Integer key) {
         StringBuilder builder = new StringBuilder(plainText.length());
@@ -81,7 +86,6 @@ public class BazeriesCipher extends UniKeyCipher<Integer> {
         int count = 0;
         int split = s.charAt(0) - '0';
         while (true) {
-            System.out.println("DECODE " + key);
             for (int j = textPos + split - 1; j >= textPos; --j) {
                 if (j < cipherText.length()) {
                     char c = cipherText.charAt(j);

@@ -21,4 +21,9 @@ public interface IApplication {
     public ProgressValue getProgress();
 
     public JDialog openGraph(JBarChart barChart);
+    
+    /**
+     * @return Whether the decryption process should be stopped
+     */
+    public boolean shouldStop();
 }

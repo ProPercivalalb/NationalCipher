@@ -8,7 +8,7 @@ import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.SquareStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class FourSquareCipher extends BiKeyCipher<String, String> {
+public class FourSquareCipher extends BiKeyCipher<String, String, SquareStringKeyType.Builder, SquareStringKeyType.Builder> {
 
     public FourSquareCipher() {
         super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5));

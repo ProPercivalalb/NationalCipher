@@ -39,7 +39,7 @@ public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
 
     @Override
     public BigInteger getNumOfKeys() {
-        return BigInteger.ZERO;
+        return BigInteger.valueOf(this.universe.length);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
         return new Builder<>(enumType);
     }
 
-    public static class Builder<T extends Enum<?>> implements IKeyBuilder<T, EnumKeyType<T>> {
+    public static class Builder<T extends Enum<?>> implements IKeyBuilder<T> {
 
         private Class<T> enumType;
         private Optional<T[]> universe = Optional.empty();
@@ -66,7 +66,7 @@ public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
             return this;
         }
 
-        public Builder setAlterable() {
+        public Builder<T> setAlterable() {
             this.alterable = true;
             return this;
         }

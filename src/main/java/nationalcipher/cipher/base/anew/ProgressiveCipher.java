@@ -11,13 +11,30 @@ import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class ProgressiveCipher extends TriKeyCipher<String, Integer, Integer> {
+public class ProgressiveCipher extends TriKeyCipher<String, Integer, Integer, VariableStringKeyType.Builder, IntegerKeyType.Builder, IntegerKeyType.Builder> {
 
     private VigenereType type;
 
     public ProgressiveCipher(VigenereType typeIn) {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 15), IntegerKeyType.builder().setRange(2, 15), IntegerKeyType.builder().setRange(2, 25));
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, Integer.MAX_VALUE),
+                IntegerKeyType.builder().setRange(2, Integer.MAX_VALUE),
+                IntegerKeyType.builder().setRange(1, Integer.MAX_VALUE));
         this.type = typeIn;
+    }
+    
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 15);
+    }
+    
+    @Override
+    public IntegerKeyType.Builder limitDomainForSecondKey(IntegerKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 15);
+    }
+    
+    @Override
+    public IntegerKeyType.Builder limitDomainForThirdKey(IntegerKeyType.Builder firstKey) {
+        return firstKey.setRange(1, 15);
     }
 
     @Override

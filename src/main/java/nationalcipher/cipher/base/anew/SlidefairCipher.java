@@ -10,13 +10,18 @@ import nationalcipher.cipher.base.VigenereType;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
-public class SlidefairCipher extends UniKeyCipher<String> {
+public class SlidefairCipher extends UniKeyCipher<String, VariableStringKeyType.Builder> {
 
     private VigenereType type;
 
     public SlidefairCipher(VigenereType type) {
-        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, 15));
+        super(VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(2, Integer.MAX_VALUE));
         this.type = type;
+    }
+    
+    @Override
+    public VariableStringKeyType.Builder limitDomainForFirstKey(VariableStringKeyType.Builder secondKey) {
+        return secondKey.setRange(2, 15);
     }
 
     @Override

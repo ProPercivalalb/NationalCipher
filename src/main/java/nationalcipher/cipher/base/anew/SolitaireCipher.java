@@ -7,7 +7,7 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 import nationalcipher.cipher.decrypt.solitaire.Solitaire;
 
-public class SolitaireCipher extends UniKeyCipher<Integer[]> {
+public class SolitaireCipher extends UniKeyCipher<Integer[], OrderedIntegerKeyType.Builder> {
 
     public SolitaireCipher() {
         super(OrderedIntegerKeyType.builder().setRange(54, 54)); // TODO add joker checks

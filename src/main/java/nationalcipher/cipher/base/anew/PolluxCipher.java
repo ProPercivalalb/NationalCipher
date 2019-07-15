@@ -9,7 +9,7 @@ import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.PolluxKeyType;
 import nationalcipher.util.CharacterArrayWrapper;
 
-public class PolluxCipher extends UniKeyCipher<Character[]> {
+public class PolluxCipher extends UniKeyCipher<Character[], PolluxKeyType.Builder> {
 
     public PolluxCipher() {
         super(PolluxKeyType.builder());

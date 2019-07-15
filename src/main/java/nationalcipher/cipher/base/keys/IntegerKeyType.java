@@ -7,6 +7,7 @@ import java.util.function.Function;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.api.IRangedKeyBuilder;
 
 public class IntegerKeyType implements IKeyType<Integer> {
 
@@ -53,7 +54,7 @@ public class IntegerKeyType implements IKeyType<Integer> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<Integer, IntegerKeyType> {
+    public static class Builder implements IRangedKeyBuilder<Integer> {
 
         private Optional<Function<Object, Integer>> min = Optional.empty();
         private Optional<Function<Object, Integer>> max = Optional.empty();
@@ -69,11 +70,15 @@ public class IntegerKeyType implements IKeyType<Integer> {
         public Builder setMax(int max) {
             return this.setVariableMax((obj) -> max);
         }
-
+        
+        @Override
         public Builder setRange(int min, int max) {
-            this.setMin(min);
-            this.setMax(max);
-            return this;
+            return this.setMin(min).setMax(max);
+        }
+
+        @Override
+        public Builder setSize(int size) {
+            return this.setRange(size, size);
         }
 
         public Builder setVariableMin(Function<Object, Integer> supp) {

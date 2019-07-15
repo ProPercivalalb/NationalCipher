@@ -30,8 +30,8 @@ public interface IKeyType<K> {
         return key.toString();
     }
 
-    public interface IKeyBuilder<K, T extends IKeyType<K>> {
+    public interface IKeyBuilder<K> {
 
-        public T create();
+        public IKeyType<K> create();
     }
 }

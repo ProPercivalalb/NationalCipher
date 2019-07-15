@@ -6,7 +6,7 @@ import nationalcipher.cipher.base.keys.FullStringKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 //TODO
-public class RunningKeyCipher extends UniKeyCipher<String> {
+public class RunningKeyCipher extends UniKeyCipher<String, FullStringKeyType.Builder> {
 
     public RunningKeyCipher() {
         super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS));

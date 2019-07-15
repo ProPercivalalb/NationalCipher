@@ -42,7 +42,7 @@ public class ConstantKeyType<T> implements IKeyType<T> {
         return new Builder<>(constant);
     }
 
-    public static class Builder<T> implements IKeyBuilder<T, ConstantKeyType<T>> {
+    public static class Builder<T> implements IKeyBuilder<T> {
 
         private final T constant;
 

@@ -67,6 +67,13 @@ public interface ICipher<K> {
         return key;
     }
 
+    /**
+     * Converts the key into something readable, often with some labelling.
+     * E.g The Caesar Cipher for a key of 12 returns "Shift: 12"
+     * 
+     * @param key The key to prettify
+     * @return A readable version of the key
+     */
     default String prettifyKey(K key) {
         return key.toString();
     }
@@ -74,7 +81,22 @@ public interface ICipher<K> {
     boolean isValid(K key);
 
     BigInteger getNumOfKeys();
+    
+    /**
+     * Returns total number of keys for the whole domain
+     * null indicates infinite keys.
+     */
+    default BigInteger getTotalNumOfKeys() {
+        return null;
+    }
 
+    /**
+     * Encrypts using a random key which is not returned.
+     * @see #randomEncode(String) if you would like the key
+     *
+     * @param plainText The plaintext
+     * @return The ciphertext
+     */
     default String randomEncode(String plainText) {
         return this.encode(plainText, this.randomiseKey());
     }

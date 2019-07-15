@@ -63,7 +63,7 @@ public class SquareStringKeyType implements IKeyType<String> {
         return new Builder();
     }
 
-    public static class Builder implements IKeyBuilder<String, SquareStringKeyType> {
+    public static class Builder implements IKeyBuilder<String> {
 
         private Optional<Character[]> alphabet = Optional.empty();
         private Optional<Integer> rows = Optional.empty();

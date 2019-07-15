@@ -8,7 +8,7 @@ import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
-public class MorbitCipher extends UniKeyCipher<Integer[]> {
+public class MorbitCipher extends UniKeyCipher<Integer[], OrderedIntegerKeyType.Builder> {
 
     public MorbitCipher() {
         super(OrderedIntegerKeyType.builder().setRange(9, 9));

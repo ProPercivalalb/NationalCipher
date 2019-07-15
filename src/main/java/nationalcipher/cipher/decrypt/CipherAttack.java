@@ -9,21 +9,20 @@ import java.util.Map;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import nationalcipher.api.IBruteForceAttack;
 import nationalcipher.api.ICipher;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.ui.IApplication;
 
-public class CipherAttack<K> implements IBruteForceAttack<K>, ILoadElement {
+public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<K>, ILoadElement {
 
-    private ICipher<K> cipher;
+    private C cipher;
     private String displayName;
     private String saveId;
     private List<DecryptionMethod> methods;
 
-    public CipherAttack(ICipher<K> cipher, String displayName) {
+    public CipherAttack(C cipher, String displayName) {
         this.cipher = cipher;
         this.displayName = displayName;
         this.saveId = "attack_" + displayName;
@@ -34,12 +33,12 @@ public class CipherAttack<K> implements IBruteForceAttack<K>, ILoadElement {
     }
 
     @Override
-    public ICipher<K> getCipher() {
+    public C getCipher() {
         return this.cipher;
     }
 
-    public CipherAttack<K> setAttackMethods(DecryptionMethod... methods) {
-        this.methods = Arrays.asList(methods);
+    public CipherAttack<K, C> setAttackMethods(DecryptionMethod... methods) {
+        this.methods = Collections.unmodifiableList(Arrays.asList(methods));
         return this;
     }
 
@@ -47,11 +46,17 @@ public class CipherAttack<K> implements IBruteForceAttack<K>, ILoadElement {
     public void onTermination(boolean forced) {
 
     }
+    
+    public boolean canBeStopped() {
+        return true;
+    }
 
     public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
         switch (method) {
         case BRUTE_FORCE:
             this.tryBruteForce(new DecryptionTracker(text, app), app.getProgress());
+            break;
+        default:
             break;
         }
     }

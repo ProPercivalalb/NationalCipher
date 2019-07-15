@@ -3,21 +3,22 @@ package nationalcipher.cipher.base.anew;
 import javax.annotation.Nullable;
 
 import nationalcipher.api.IFormat;
+import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.EnumKeyType;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
-public class NihilistTranspositionCipher extends BiKeyCipher<Integer[], ReadMode> {
+public class NihilistTranspositionCipher extends BiKeyCipher<Integer[], ReadMode, OrderedIntegerKeyType.Builder, EnumKeyType.Builder<ReadMode>> {
 
     public NihilistTranspositionCipher() {
-        super(OrderedIntegerKeyType.builder().setRange(2, 7), EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.values())); // Boolean
-                                                                                                                                   // true:
-                                                                                                                                   // read
-                                                                                                                                   // across,
-                                                                                                                                   // false:
-                                                                                                                                   // read
-                                                                                                                                   // down
+        super(OrderedIntegerKeyType.builder().setRange(2, Integer.MAX_VALUE),
+                EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.values()));
+    }
+
+    @Override
+    public IKeyBuilder<Integer[]> limitDomainForFirstKey(OrderedIntegerKeyType.Builder firstKey) {
+        return firstKey.setRange(2, 7);
     }
 
     @Override

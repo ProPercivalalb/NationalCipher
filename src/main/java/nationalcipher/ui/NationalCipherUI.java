@@ -42,7 +42,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -1135,12 +1134,16 @@ public class NationalCipherUI extends JFrame implements IApplication {
 
             NationalCipherUI.this.thread = new Thread(() -> {
                 NationalCipherUI.this.threadTimer.restart();
-                NationalCipherUI.BEST_SOULTION = null;
+                NationalCipherUI.this.BEST_SOULTION = null;
+                NationalCipherUI.this.stopDecryptionThread = false;
                 NationalCipherUI.topSolutions.reset();
 
                 CipherAttack force = NationalCipherUI.this.getCipherAttack();
                 DecryptionMethod method = (DecryptionMethod) NationalCipherUI.this.decryptionType.getSelectedItem();
                 NationalCipherUI.this.output.println("Cipher: %s, Method: %s", force.getDisplayName(), method);
+                if (!NationalCipherUI.this.getSettings().useParallel()) {
+                    NationalCipherUI.this.output.println("Consider running with parallelisation enabled for up to a x%d increase in performance", Runtime.getRuntime().availableProcessors(), method);
+                }
                 NationalCipherUI.this.output.println("Optimizations . Progress Update: %b (" + (char) 916 + "s = x3) | Collect Solutions: %b (" + (char) 916 + "s = x1.5)", settings.updateProgress(), settings.collectSolutions());
                 NationalCipherUI.this.progressValue = new ProgressValueNC(1000, NationalCipherUI.this.progressBar, NationalCipherUI.this.getSettings());
                 if (!settings.updateProgress())
@@ -1178,16 +1181,20 @@ public class NationalCipherUI extends JFrame implements IApplication {
         public void actionPerformed(ActionEvent event) {
             if (NationalCipherUI.this.thread != null) {
                 CipherAttack force = NationalCipherUI.this.getCipherAttack();
-                force.onTermination(true);
-                DecimalFormat df = new DecimalFormat("#.#");
-                NationalCipherUI.this.output.println("Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
-                NationalCipherUI.this.toolBarStart.setEnabled(true);
-                NationalCipherUI.this.toolBarStop.setEnabled(false);
-                NationalCipherUI.this.menuItemSettings.setEnabled(true);
-
-                NationalCipherUI.this.progressValue.setIndeterminate(false);
-                NationalCipherUI.this.progressBar.setValue(0);
-                NationalCipherUI.this.thread.stop();
+                if (force.canBeStopped()) {
+                    NationalCipherUI.this.stopDecryptionThread = true;
+                }
+                
+//                force.onTermination(true);
+//                DecimalFormat df = new DecimalFormat("#.#");
+//                NationalCipherUI.this.output.println("Interupted Time Running: %sms - %ss - %sm\n", df.format(threadTimer.getTimeRunning(Time.MILLISECOND)), df.format(threadTimer.getTimeRunning(Time.SECOND)), df.format(threadTimer.getTimeRunning(Time.MINUTE)));
+//                NationalCipherUI.this.toolBarStart.setEnabled(true);
+//                NationalCipherUI.this.toolBarStop.setEnabled(false);
+//                NationalCipherUI.this.menuItemSettings.setEnabled(true);
+//
+//                NationalCipherUI.this.progressValue.setIndeterminate(false);
+//                NationalCipherUI.this.progressBar.setValue(0);
+//                NationalCipherUI.this.thread.stop();
 
             }
         }
@@ -3472,4 +3479,11 @@ public class NationalCipherUI extends JFrame implements IApplication {
     private JMenuItem menuItemCurrentAttack;
     private JMenu menuDataFiles;
     private JMenuItem addWordAddDictonary;
+
+    private boolean stopDecryptionThread;
+    
+    @Override
+    public boolean shouldStop() {
+        return this.stopDecryptionThread;
+    }
 }

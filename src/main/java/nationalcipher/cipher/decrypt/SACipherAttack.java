@@ -1,7 +1,6 @@
 package nationalcipher.cipher.decrypt;
 
 import nationalcipher.api.ICipher;
-import nationalcipher.api.ISimulatedAnnealingAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.ui.IApplication;
@@ -13,9 +12,9 @@ import nationalcipher.ui.IApplication;
  *
  * @param <K> The key type
  */
-public class SACipherAttack<K> extends CipherAttack<K> implements ISimulatedAnnealingAttack<K> {
+public class SACipherAttack<K, C extends ICipher<K>> extends CipherAttack<K, C> implements ISimulatedAnnealingAttack<K> {
 
-    public SACipherAttack(ICipher<K> cipher, String displayName) {
+    public SACipherAttack(C cipher, String displayName) {
         super(cipher, displayName);
         this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
     }

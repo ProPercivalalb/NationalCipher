@@ -49,7 +49,7 @@ public class Registry<K, T> implements IRegistry<K, T> {
             System.err.println(this.validation.get().getErrorMessage(value));
             return false;
         } else if (this.contains(key)) {
-            System.err.println("Already contains key.");
+            System.err.println("Already contains key: " + key);
             return false;
         } else if (this.size() >= this.maxSize) {
             System.err.println("Exceeded max size.");

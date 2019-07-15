@@ -166,7 +166,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
                             testText = Enigma.decode(task.cipherText, testText, trial.machine, trial.copyIndicator(), trial.ring, trial.rotors, -1, trial.reflector, plugboard);
                             Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000);
 
-                            if (lastSolution.isResultBetter(bestSolution)) {
+                            if (lastSolution.isBetterThan(bestSolution)) {
                                 bestSolution = lastSolution;
                                 bestPlug1 = plug1;
                                 bestPlug2 = plug2;
@@ -270,7 +270,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
                  **/
 
                 app.out().println("%s", bestSolution);
-                if (bestSolution.isResultBetter(task.bestSolution))
+                if (bestSolution.isBetterThan(task.bestSolution))
                     task.bestSolution = bestSolution;
 
             }
@@ -341,7 +341,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
                             testText = Enigma.decode(this.cipherText, testText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, -1, reflector, plugboard);
                             Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000);
 
-                            if (lastSolution.isResultBetter(bestSolution)) {
+                            if (lastSolution.isBetterThan(bestSolution)) {
                                 bestSolution = lastSolution;
                                 bestPlug1 = plug1;
                                 bestPlug2 = plug2;

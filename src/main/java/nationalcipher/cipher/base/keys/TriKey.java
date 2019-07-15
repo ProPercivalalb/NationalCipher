@@ -1,6 +1,8 @@
 package nationalcipher.cipher.base.keys;
 
-public class TriKey<F, S, T> implements Cloneable {
+import nationalcipher.api.IKey;
+
+public class TriKey<F, S, T> implements Cloneable, IKey<TriKey<F, S, T>> {
 
     private F firstKey;
     private S secondKey;
@@ -39,11 +41,6 @@ public class TriKey<F, S, T> implements Cloneable {
         return this.thirdKey;
     }
 
-    @Override
-    public String toString() {
-        return String.join(" ", this.firstKey.toString(), this.secondKey.toString(), this.thirdKey.toString());
-    }
-
     public static <F, S, T> TriKey<F, S, T> empty() {
         return new TriKey<>(null, null, null);
     }
@@ -55,5 +52,10 @@ public class TriKey<F, S, T> implements Cloneable {
     @Override
     public TriKey<F, S, T> clone() {
         return new TriKey<>(this.firstKey, this.secondKey, this.thirdKey);
+    }
+    
+    @Override
+    public TriKey<F, S, T> copy() {
+        return this.clone();
     }
 }
