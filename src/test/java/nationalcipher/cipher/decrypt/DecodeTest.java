@@ -39,6 +39,10 @@ import nationalcipher.cipher.base.anew.PlayfairCipher;
 import nationalcipher.cipher.base.anew.PolluxCipher;
 import nationalcipher.cipher.base.anew.PortaxCipher;
 import nationalcipher.cipher.base.anew.ProgressiveCipher;
+import nationalcipher.cipher.base.anew.QuagmireICipher;
+import nationalcipher.cipher.base.anew.QuagmireIICipher;
+import nationalcipher.cipher.base.anew.QuagmireIIICipher;
+import nationalcipher.cipher.base.anew.QuagmireIVCipher;
 import nationalcipher.cipher.base.anew.RagbabyCipher;
 import nationalcipher.cipher.base.anew.RailFenceCipher;
 import nationalcipher.cipher.base.anew.ReadMode;
@@ -468,6 +472,70 @@ public class DecodeTest {
         
         for(int i = 0; i < 1000; i++) {
             assertCipherLogic(phillipsCipher);
+        }
+    }
+    
+    @Test
+    public void testQuagmireI() {
+        // http://www.cryptogram.org/downloads/aca.info/ciphers/QuagmireI.pdf
+        QuagmireICipher quagmireICipher = new QuagmireICipher();
+        
+        String plainText = "THEQUAGONEISAPERIODICCIPHERWITHAKEYEDPLAINALPHABETRUNAGAINSTASTRAIGHTCIPHERALPHABET";
+        String cipherText = "QPMGQRBUJUYIFDMPYAIFQYYJJJHJYCJLUUTPIDVWYMFSGAESDWHIZRBLIRVCFCZPELBPZYYJJJHWLJJLPUP";
+        TriKey<String, String, Character> key = TriKey.of("SPRINGFEVABCDHJKLMOQTUWXYZ", "FLOWER", 'A');
+        
+        assertEncodeDecode(quagmireICipher, key, plainText, cipherText);
+        
+        for(int i = 0; i < 1000; i++) {
+            assertCipherLogic(quagmireICipher);
+        }
+    }
+    
+    @Test
+    public void testQuagmireII() {
+        // http://www.cryptogram.org/downloads/aca.info/ciphers/QuagmireII.pdf
+        QuagmireIICipher quagmireIICipher = new QuagmireIICipher();
+        
+        String plainText = "INTHEQUAGTWOASTRAIGHTPLAINALPHABETISRUNAGAINSTAKEYEDCIPHERALPHABET";
+        String cipherText = "JICICOSLYKILFVCHEBDXCCORJIOEWAFMWKKTXBGWHRJIBKEDBJWZABUXWHEHUXOXCU";
+        TriKey<String, String, Character> key = TriKey.of("SPRINGFEVABCDHJKLMOQTUWXYZ", "FLOWER", 'A');
+        
+        assertEncodeDecode(quagmireIICipher, key, plainText, cipherText);
+        
+        for(int i = 0; i < 1000; i++) {
+            assertCipherLogic(quagmireIICipher);
+        }
+    }
+    
+    @Test
+    public void testQuagmireIII() {
+        // http://www.cryptogram.org/downloads/aca.info/ciphers/QuagmireIII.pdf
+        QuagmireIIICipher quagmireIIICipher = new QuagmireIIICipher();
+        
+        String plainText = "THESAMEKEYEDALPHABETISUSEDFORPLAINANDCIPHERALPHABETS";
+        String cipherText = "KRSLWMITJDVIABMRGQMTMLLIVIFUIXRHTNYONVRHHIIIRMCAOVEI";
+        TriKey<String, String, Character> key = TriKey.of("AUTOMBILECDFGHJKNPQRSVWXYZ", "HIGHWAY", 'A');
+        
+        assertEncodeDecode(quagmireIIICipher, key, plainText, cipherText);
+        
+        for(int i = 0; i < 1000; i++) {
+            assertCipherLogic(quagmireIIICipher);
+        }
+    }
+    
+    @Test
+    public void testQuagmireIV() {
+        // http://www.cryptogram.org/downloads/aca.info/ciphers/QuagmireIV.pdf
+        QuagmireIVCipher quagmireIVCipher = new QuagmireIVCipher();
+        
+        String plainText = "THISONEEMPLOYSTHREEKEYWORDS";
+        String cipherText = "VBMRFCYISPMPBRRHEICXRREIGDX";
+        QuadKey<String, String, String, Character> key = QuadKey.of("SENORYABCDFGHIJKLMPQTUVWXZ", "PERCTIONABDFGHJKLMQSUVWXYZ", "EXTRA", 'S');
+        
+        assertEncodeDecode(quagmireIVCipher, key, plainText, cipherText);
+        
+        for(int i = 0; i < 1000; i++) {
+            assertCipherLogic(quagmireIVCipher);
         }
     }
     

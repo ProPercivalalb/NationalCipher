@@ -2,8 +2,6 @@ package nationalcipher.ui;
 
 import java.awt.Dimension;
 import java.math.BigInteger;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;

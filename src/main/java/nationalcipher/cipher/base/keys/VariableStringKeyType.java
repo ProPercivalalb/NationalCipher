@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import javalibrary.math.MathUtil;
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;

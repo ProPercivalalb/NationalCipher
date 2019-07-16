@@ -379,48 +379,35 @@ public class Solitaire implements IRandEncrypter {
     }
 
     public static char[] decodeWithKeyStream(char[] cipherText, int[] keyStream) {
-        char[] plainText = new char[keyStream.length];
-        int index = 0;
-
-        for (int keyStreamNumber : keyStream) {
-
-            plainText[index] = (char) ((51 + (cipherText[index] - 'A') - keyStreamNumber) % 26 + 'A');
-            index += 1;
-        }
-
-        return plainText;
-    }
-
-    public static byte[] decodeWithKeyStream(byte[] cipherText, int[] keyStream) {
         return decodeWithKeyStream(cipherText, 0, keyStream);
     }
 
-    public static byte[] decodeWithKeyStream(byte[] cipherText, int startingIndex, int[] keyStream) {
-        byte[] plainText = new byte[cipherText.length];
+    public static char[] decodeWithKeyStream(char[] cipherText, int startingIndex, int[] keyStream) {
+        char[] plainText = new char[cipherText.length];
         int index = startingIndex;
 
         for (int i = 0; i < index; i++)
-            plainText[i] = (byte) (cipherText[i] + 'A');
+            plainText[i] = (char) (cipherText[i] + 'A');
 
         for (int keyStreamNumber : keyStream) {
 
-            plainText[index] = (byte) ((51 + cipherText[index] - keyStreamNumber) % 26 + 'A');
+            plainText[index] = (char) ((51 + cipherText[index] - keyStreamNumber) % 26 + 'A');
             index += 1;
         }
 
         return plainText;
     }
 
-    public static byte[] decode(char[] cipherText, Integer[] cardOrder) {
+    public static char[] decode(char[] cipherText, Integer[] cardOrder) {
         return decode(cipherText, 0, cardOrder);
     }
 
-    public static byte[] decode(char[] cipherText, int startingIndex, Integer[] cardOrder) {
-        byte[] plainText = new byte[cipherText.length];
+    public static char[] decode(char[] cipherText, int startingIndex, Integer[] cardOrder) {
+        char[] plainText = new char[cipherText.length];
         int index = startingIndex;
 
         for (int i = 0; i < index; i++)
-            plainText[i] = (byte) cipherText[i];
+            plainText[i] = cipherText[i];
 
         while (index < cipherText.length) {
 
@@ -438,7 +425,7 @@ public class Solitaire implements IRandEncrypter {
             if (isJoker(keyStreamNumber))
                 continue;
 
-            plainText[index] = (byte) ((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
+            plainText[index] = (char) ((52 + (cipherText[index] - 'A') - (keyStreamNumber + 1)) % 26 + 'A');
             index += 1;
         }
 

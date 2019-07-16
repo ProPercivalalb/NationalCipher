@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javalibrary.util.ArrayUtil;
-import nationalcipher.cipher.base.substitution.Enigma;
 
 public class EnigmaUtil {
 

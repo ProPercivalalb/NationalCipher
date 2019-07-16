@@ -3,7 +3,6 @@ package nationalcipher.cipher.decrypt;
 import javalibrary.dict.Dictionary;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.api.IAttackMethod;
-import nationalcipher.api.IKey;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.util.CipherUtils;
 

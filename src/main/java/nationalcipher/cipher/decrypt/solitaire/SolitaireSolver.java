@@ -20,7 +20,7 @@ public class SolitaireSolver {
 
     // No known text all ready
     public static DynamicResultList<SolutionWithDeck> swiftAttack(String cipherText, int n, int offset, DeckParse deck, int noSol, Output out) {
-        return swiftAttack(cipherText, new byte[0], n, offset, deck, noSol, out, 0);
+        return swiftAttack(cipherText, new char[0], n, offset, deck, noSol, out, 0);
     }
 
     /**
@@ -28,7 +28,7 @@ public class SolitaireSolver {
      * seconds of processing time However as n increases processing time increases
      * n^2
      */
-    public static DynamicResultList<SolutionWithDeck> swiftAttack(String cipherText, byte[] prefix, int n, int offset, DeckParse deck, int solutionsCarryFoward, Output out, int time) {
+    public static DynamicResultList<SolutionWithDeck> swiftAttack(String cipherText, char[] prefix, int n, int offset, DeckParse deck, int solutionsCarryFoward, Output out, int time) {
         SoiltaireSwiftAttack attack = new SoiltaireSwiftAttack(cipherText.substring(offset + 0, offset + n), prefix, solutionsCarryFoward, out, time);
         Timer timer = new Timer();
         Solitaire.specialAttack(attack, deck.order, deck.unknownCards);
@@ -48,14 +48,14 @@ public class SolitaireSolver {
         // else if(n > 7)
         // n = 7;
 
-        completeAttack(BEST_SOLUTION, cipherText, new byte[0], n, solutionsCarryFoward, 0, startingDeck, out, time);
+        completeAttack(BEST_SOLUTION, cipherText, new char[0], n, solutionsCarryFoward, 0, startingDeck, out, time);
     }
 
-    public static void completeAttack(SolitaireSolutionEver bestSolutionEver, String cipherText, byte[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
+    public static void completeAttack(SolitaireSolutionEver bestSolutionEver, String cipherText, char[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
         out.print("%sUnknowns: %d: ", StringTransformer.repeat("   ", time), startingDeck.countUnknowns());
         DynamicResultList<SolutionWithDeck> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, solutionsCarryFoward, out, time);
 
-        SolitaireSolution task = new SolitaireSolution(bestSolutionEver, ArrayUtil.convertCharType(cipherText.substring(offset + n, cipherText.length()).toCharArray()), offset + n, out, time);
+        SolitaireSolution task = new SolitaireSolution(bestSolutionEver, cipherText.substring(offset + n, cipherText.length()).toCharArray(), offset + n, out, time);
         // out.println("Solutions: " + solutions.size());
         for (int i = 0; i < solutions.size(); i++) {
             SolutionWithDeck solution = solutions.get(i);
@@ -96,7 +96,7 @@ public class SolitaireSolver {
 
         public Integer[] deck;
 
-        public SolutionWithDeck(byte[] text, NGramData nGramData, Integer[] deck) {
+        public SolutionWithDeck(char[] text, NGramData nGramData, Integer[] deck) {
             super(text, nGramData);
             this.deck = deck;
         }
@@ -109,7 +109,7 @@ public class SolitaireSolver {
     public static class SolitaireSolution {
 
         public SolitaireSolutionEver bestSolutionEver;
-        public byte[] text;
+        public char[] text;
         public int startingLength;
         public Integer[] incompleteOrder;
         public Integer[] emptyIndex;
@@ -117,9 +117,9 @@ public class SolitaireSolver {
         public Output out;
         public int time;
 
-        public SolitaireSolution(SolitaireSolutionEver bestSolutionEver, byte[] text, int startingLength, Output out, int time) {
+        public SolitaireSolution(SolitaireSolutionEver bestSolutionEver, char[] text, int startingLength, Output out, int time) {
             this.bestSolutionEver = bestSolutionEver;
-            this.text = ArrayUtil.concat(new byte[startingLength], text);
+            this.text = ArrayUtil.concat(new char[startingLength], text);
             this.startingLength = startingLength;
             this.out = out;
             this.time = time;
@@ -144,23 +144,23 @@ public class SolitaireSolver {
         public Solution bestSolution;
         public DynamicResultList<SolutionWithDeck> solutions;
         public int total;
-        public byte[] intText;
-        public byte[] prefix;
+        public char[] intText;
+        public char[] prefix;
         public double minFitness;
         public Output out;
         public int time;
 
-        private SoiltaireSwiftAttack(String cipherText, byte[] prefix, int solutionsCarryFoward, Output out, int time) {
+        private SoiltaireSwiftAttack(String cipherText, char[] prefix, int solutionsCarryFoward, Output out, int time) {
             this.bestSolution = Solution.WORST_SOLUTION;
             this.solutions = new DynamicResultList<SolutionWithDeck>(time == 0 ? solutionsCarryFoward : 512);
-            this.intText = new byte[cipherText.length() + prefix.length];
+            this.intText = new char[cipherText.length() + prefix.length];
             this.prefix = prefix;
             int i = 0;
             for (; i < prefix.length; i++)
-                this.intText[i] = (byte) (prefix[i] - 'A');
+                this.intText[i] = (char) (prefix[i] - 'A');
 
             for (; i < this.intText.length; i++)
-                this.intText[i] = (byte) (cipherText.charAt(i - prefix.length) - 'A');
+                this.intText[i] = (char) (cipherText.charAt(i - prefix.length) - 'A');
             this.minFitness = TextFitness.getEstimatedFitness(this.intText.length, Languages.ENGLISH.getTrigramData()) * 1.5D;
             // System.out.println("Min fitness: " + this.minFitness);
             this.out = out;
@@ -170,7 +170,7 @@ public class SolitaireSolver {
         @Override
         public void tryKeyStream(int[] keyStream, Integer[] lastOrder) {
 
-            byte[] chars = Solitaire.decodeWithKeyStream(this.intText, this.prefix.length, keyStream);
+            char[] chars = Solitaire.decodeWithKeyStream(this.intText, this.prefix.length, keyStream);
 
             SolutionWithDeck last = new SolutionWithDeck(chars, Languages.ENGLISH.getTrigramData(), lastOrder);
 
