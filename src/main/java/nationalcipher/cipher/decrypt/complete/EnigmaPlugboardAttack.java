@@ -129,7 +129,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
                         EnigmaSection nextTrialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(task.plainText) * 1000, trial.machine, indicator, trial.rotors, trial.reflector);
                         nextTrialSolution.ring = ring;
 
-                        if (task.squeezeSecond.addResult(nextTrialSolution))
+                        if (task.squeezeSecond.add(nextTrialSolution))
                             nextTrialSolution.makeCopy();
                     }
                 }
@@ -305,7 +305,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
                 this.plainText = Enigma.decode(this.cipherText, this.plainText, this.machine, Arrays.copyOf(data, data.length), EnigmaLib.DEFAULT_SETTING, rotor, reflector);
                 EnigmaSection trialSolution = new EnigmaSection(StatCalculator.calculateMonoIC(this.plainText) * 1000, this.machine, data, rotor, reflector);
 
-                if (this.squeezeFirst.addResult(trialSolution))
+                if (this.squeezeFirst.add(trialSolution))
                     trialSolution.makeCopy();
             }
         }
@@ -355,7 +355,7 @@ public class EnigmaPlugboardAttack extends CipherAttack {
 
                     if (foundFinalPlug) {
                         EnigmaSection trialSolution = new EnigmaSection(bestSolution.score, this.machine.createWithPresetPlugboard(plugboard), data, rotor, reflector);
-                        if (this.squeezeFirst.addResult(trialSolution)) {
+                        if (this.squeezeFirst.add(trialSolution)) {
                             this.app.out().println("%s", trialSolution);
                             trialSolution.makeCopy();
                         }

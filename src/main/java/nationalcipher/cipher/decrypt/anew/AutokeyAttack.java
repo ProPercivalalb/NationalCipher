@@ -15,7 +15,7 @@ public class AutokeyAttack extends PeriodicKeyAttack<AutokeyCipher> implements I
     }
 
     @Override
-    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
         this.getCipher().setDomain(builder -> builder.setRange(periodRange));
         
@@ -23,15 +23,12 @@ public class AutokeyAttack extends PeriodicKeyAttack<AutokeyCipher> implements I
         switch (method) {
         case PERIODIC_KEY:
             app.getProgress().setIndeterminate(true);
-            this.tryKeySearch(new DecryptionTracker(text, app), app.getProgress(), periodRange[0], periodRange[1]);
-            break;
+            return this.tryKeySearch(new DecryptionTracker(text, app), periodRange[0], periodRange[1]);
         case DICTIONARY:
             DecryptionTracker tracker = new DecryptionTracker(text, app);
-            this.tryDictionaryAttack(tracker, app.getProgress());
-            break;
+            return this.tryDictionaryAttack(tracker);
         default:
-            super.attemptAttack(text, method, app);
-            break;
+            return super.attemptAttack(text, method, app);
         }
     }
     

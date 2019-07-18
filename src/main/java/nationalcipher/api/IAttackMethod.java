@@ -1,5 +1,6 @@
 package nationalcipher.api;
 
+import javalibrary.Output;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
 
@@ -45,10 +46,28 @@ public interface IAttackMethod<K> {
      */
     default void updateBestSolution(DecryptionTracker tracker, Solution solution, K key) {
         tracker.bestSolution = solution;
-        tracker.bestSolution.setKeyString(this.getCipher().prettifyKey(key));
+        
+        if (key != null) {
+            tracker.bestSolution.setKeyString(this.getCipher().prettifyKey(key));
+        }
+        
         tracker.bestSolution.bakeSolution();
         tracker.addSolution(tracker.bestSolution);
-        tracker.out().println(tracker.bestSolution.toString());
+        this.output(tracker.out(), tracker.bestSolution.toString());
         tracker.getKeyPanel().updateSolution(tracker.bestSolution);
+    }
+    
+    
+    default boolean isMuted() {
+        return false;
+    }
+    
+    default boolean output(Output out, String text, Object... format) {
+        if(!this.isMuted()) {
+            out.println(text, format);
+            return true;
+        }
+        
+        return false;
     }
 }

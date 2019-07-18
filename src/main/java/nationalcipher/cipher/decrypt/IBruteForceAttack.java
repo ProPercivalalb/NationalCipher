@@ -12,20 +12,20 @@ import nationalcipher.cipher.util.CipherUtils;
 
 public interface IBruteForceAttack<K> extends IAttackMethod<K> {
 
-    default void tryBruteForce(DecryptionTracker tracker, ProgressValue progBar) {
+    default DecryptionTracker tryBruteForce(DecryptionTracker tracker) {
         BigInteger totalKeys = this.getCipher().getNumOfKeys();
-        tracker.out().println(CipherUtils.formatBigInteger(totalKeys) + " Keys to search");
-        progBar.addMaxValue(totalKeys);
+        this.output(tracker.out(), CipherUtils.formatBigInteger(totalKeys) + " Keys to search");
+        tracker.getProgress().addMaxValue(totalKeys);
 
         // Run in parallel if option is enabled and there are more than 1000 keys to test, overhead is not worth it otherwise
         Consumer<Consumer<K>> handler = CipherUtils.optionalParallel(b -> b && totalKeys.compareTo(BigInteger.valueOf(1000)) > 0, ()-> {
             if (totalKeys.compareTo(BigInteger.valueOf(Integer.MAX_VALUE - 5)) > 0) {
-                tracker.out().println("Too many keys to search in parallel - too many in general brute force is not a recommmened attack method");
+                throw new UnsupportedOperationException("Too many keys to search in parallel - too many in general brute force is not a recommmened attack method");
             }
             
-            tracker.out().println("Running in parallel");
+            this.output(tracker.out(), "Running in parallel");
 
-            List<K> keys = new ArrayList<K>(totalKeys.intValue());
+            List<K> keys = new ArrayList<>(totalKeys.intValue());
             this.getCipher().iterateKeys(keys::add);
             return keys.parallelStream()::forEach;
         }, ()-> {
@@ -37,7 +37,8 @@ public interface IBruteForceAttack<K> extends IAttackMethod<K> {
                 this.decryptAndUpdate(tracker, key);  
             }
         });
-        progBar.finish();
+        tracker.getProgress().finish();
+        return tracker;
     }
 
     @Override

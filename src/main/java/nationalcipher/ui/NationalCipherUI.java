@@ -1353,7 +1353,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
         }
 
         public boolean addSolution(Solution solution) {
-            boolean successful = this.solutions.addResult(solution);
+            boolean successful = this.solutions.add(solution);
             this.updateNeed = true;
             return successful;
         }

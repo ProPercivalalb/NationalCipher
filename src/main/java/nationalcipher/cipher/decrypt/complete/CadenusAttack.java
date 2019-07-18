@@ -27,7 +27,8 @@ public class CadenusAttack extends CipherAttack {
         List<Integer> factors = MathUtil.getFactors(text.length() / 25);
         app.out().println("" + factors);
 
-        if (method == DecryptionMethod.DICTIONARY) {
+        switch (method) {
+        case DICTIONARY:
             app.getProgress().addMaxValue(Dictionary.wordCount()); // TODO Calculate real amount
             for (int factor : factors) {
                 app.out().println("Factor: %d", factor);
@@ -38,15 +39,15 @@ public class CadenusAttack extends CipherAttack {
 
                 }
             }
-        } else if (method == DecryptionMethod.BRUTE_FORCE) {
+            return task;
+        case BRUTE_FORCE:
             for (int factor : factors)
                 app.getProgress().addMaxValue(MathUtil.pow(26, factor));
 
             for (int factor : factors)
                 KeyIterator.iterateShort26Key(task::onIteration, factor, true);
+            return task;
         }
-
-        app.out().println(task.getBestSolution());
     }
 
     public class CadenusTask extends DecryptionTracker {
@@ -59,7 +60,7 @@ public class CadenusAttack extends CipherAttack {
             int blockSize = key.length() * 25;
             byte[] plainText = new byte[0];
             for (int i = 0; i < this.cipherText.length / blockSize; i++)
-                plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyRange(this.cipherText, i * blockSize, (i + 1) * blockSize), key));
+                plainText = ArrayUtil.concat(plainText, Cadenus.decode(ArrayUtil.copyRange(this.getCipherText(), i * blockSize, (i + 1) * blockSize), key));
 
             this.lastSolution = new Solution(plainText, this.getLanguage());
 

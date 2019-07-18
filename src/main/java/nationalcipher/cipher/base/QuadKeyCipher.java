@@ -77,7 +77,7 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
     }
 
     @Override
-    public QuadKey<F, S, T, N> alterKey(QuadKey<F, S, T, N> key) {
+    public QuadKey<F, S, T, N> alterKey(QuadKey<F, S, T, N> key, double temp, int count, double lastDF) {
         return QuadKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()), this.fourthType.alterKey(key, key.getFourthKey()));
     }
 
@@ -107,19 +107,22 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
         return fourthKey;
     }
     
-    public void setFirstKeyLimit(Function<A, IKeyBuilder<F>> firstKeyFunc) {
+    public A setFirstKeyLimit(Function<A, IKeyBuilder<F>> firstKeyFunc) {
         this.firstTypeLimit = firstKeyFunc.apply(this.firstKeyBuilder).create();
+        return this.firstKeyBuilder;
     }
     
-    public void setSecondKeyLimit(Function<B, IKeyBuilder<S>> secondKeyFunc) {
-        this.secondTypeLimit = secondKeyFunc.apply(this.secondKeyBuilder).create();
+    public IKeyType<S> setSecondKeyLimit(Function<B, IKeyBuilder<S>> secondKeyFunc) {
+        return this.secondTypeLimit = secondKeyFunc.apply(this.secondKeyBuilder).create();
     }
     
-    public void setThirdKeyLimit(Function<C, IKeyBuilder<T>> thirdKeyFunc) {
+    public C setThirdKeyLimit(Function<C, IKeyBuilder<T>> thirdKeyFunc) {
         this.thirdTypeLimit = thirdKeyFunc.apply(this.thirdKeyBuilder).create();
+        return this.thirdKeyBuilder;
     }
     
-    public void setFourthKeyLimit(Function<D, IKeyBuilder<N>> fourthKeyFunc) {
+    public D setFourthKeyLimit(Function<D, IKeyBuilder<N>> fourthKeyFunc) {
         this.fourthTypeLimit = fourthKeyFunc.apply(this.fourthKeyBuilder).create();
+        return this.fourthKeyBuilder;
     }
 }

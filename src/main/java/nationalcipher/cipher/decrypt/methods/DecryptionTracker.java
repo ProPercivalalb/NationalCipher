@@ -82,8 +82,12 @@ public class DecryptionTracker {
         this.iteration = 1;
     }
 
-    public String getBestSolution() {
+    public String getBestText() {
         return new String(this.bestSolution.getText());
+    }
+    
+    public Solution getBestSolution() {
+        return this.bestSolution;
     }
 
     // IApplication methods

@@ -5,22 +5,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import javalibrary.Output;
 import nationalcipher.api.ICipher;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.ui.IApplication;
 
-public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<K>, ILoadElement {
+public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<K>, ISimulatedAnnealingAttack<K>, ILoadElement {
 
     private C cipher;
     private String displayName;
     private String saveId;
     private List<DecryptionMethod> methods;
+    private boolean mute;
+    private int iterations = 1000;
 
     public CipherAttack(C cipher, String displayName) {
         this.cipher = cipher;
@@ -41,6 +45,11 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         this.methods = Collections.unmodifiableList(Arrays.asList(methods));
         return this;
     }
+    
+    public CipherAttack<K, C> setIterations(int iterations) {
+        this.iterations = iterations;
+        return this;
+    }
 
     // When the attack ends naturally or the thread is stopped forcefully
     public void onTermination(boolean forced) {
@@ -51,13 +60,18 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         return true;
     }
 
-    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
+        if (!this.methods.contains(method)) {
+            throw new UnsupportedOperationException("Decryption method not supported: " + method);
+        }
+        
         switch (method) {
         case BRUTE_FORCE:
-            this.tryBruteForce(new DecryptionTracker(text, app), app.getProgress());
-            break;
+            return this.tryBruteForce(new DecryptionTracker(text, app));
+        case SIMULATED_ANNEALING:
+            return this.trySimulatedAnnealing(new DecryptionTracker(text, app), this.iterations);
         default:
-            break;
+            return null;
         }
     }
 
@@ -91,5 +105,20 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
             this.readFrom((Map<String, Object>) map.get(this.saveId));
         else
             this.readFrom(new HashMap<String, Object>());
+    }
+    
+    @Override
+    public boolean isMuted() {
+        return this.mute;
+    }
+    
+    public CipherAttack<K, C> mute() {
+        this.mute = true;
+        return this;
+    }
+    
+    public CipherAttack<K, C> unmute() {
+        this.mute = false;
+        return this;
     }
 }

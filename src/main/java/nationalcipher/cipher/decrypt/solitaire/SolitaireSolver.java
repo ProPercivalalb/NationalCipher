@@ -174,7 +174,7 @@ public class SolitaireSolver {
 
             SolutionWithDeck last = new SolutionWithDeck(chars, Languages.ENGLISH.getTrigramData(), lastOrder);
 
-            if (this.solutions.addResult(last))
+            if (this.solutions.add(last))
                 last.bakeDeck();
             // last.setKeyString(ListUtil.toCardString(lastOrder, 0));
             // Will mirror previous if statement

@@ -161,7 +161,7 @@ public class EnigmaPlainAttack extends CipherAttack {
 
                 EnigmaSection trialSolution = new EnigmaSection(TextFitness.scoreFitnessQuadgrams(this.plainText, this.getLanguage()), this.machine, data, rotor, reflector);
 
-                if (this.squeezeFirst.addResult(trialSolution))
+                if (this.squeezeFirst.add(trialSolution))
                     trialSolution.makeCopy();
             }
         }

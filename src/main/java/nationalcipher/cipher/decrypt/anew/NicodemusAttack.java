@@ -36,7 +36,7 @@ public class NicodemusAttack extends CipherAttack<BiKey<String, Integer>, Nicode
     }
 
     @Override
-    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
         int blockSize = SettingParse.getInteger(this.blockSpinner);
         this.getCipher().setFirstKeyLimit(builder -> builder.setRange(periodRange));
@@ -47,16 +47,13 @@ public class NicodemusAttack extends CipherAttack<BiKey<String, Integer>, Nicode
         case PERIODIC_KEY:
             app.getProgress().setIndeterminate(true);
             this.periodicKey.setSecond(blockSize);
-            this.tryKeySearch(new DecryptionTracker(text, app), app.getProgress(), periodRange[0], periodRange[1]);
-            break;
+            return this.tryKeySearch(new DecryptionTracker(text, app), periodRange[0], periodRange[1]);
         case DICTIONARY:
             DecryptionTracker tracker = new DecryptionTracker(text, app);
             this.periodicKey.setSecond(blockSize);
-            this.tryDictionaryAttack(tracker, app.getProgress());
-            break;
+            return this.tryDictionaryAttack(tracker);
         default:
-            super.attemptAttack(text, method, app);
-            break;
+            return super.attemptAttack(text, method, app);
         }
     }
 

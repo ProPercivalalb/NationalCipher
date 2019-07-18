@@ -2,6 +2,7 @@ package nationalcipher.lib;
 
 public class CipherLib {
 
+    public static final String ADFGX = "adfgx";
     public static final String AMSCO = "amsco";
     public static final String AFFINE = "affine";
     public static final String BEAUFORT = "beaufort";
@@ -9,6 +10,7 @@ public class CipherLib {
     public static final String BIFID_CM = "bifid.conjugated";
     public static final String BAZERIES = "bazeries";
     public static final String CAESAR = "caesar";
+    public static final String CADENUS = "cadenus";
     public static final String DIGRAFID = "diagrafid";
     public static final String PLAYFAIR = "playfair";
     public static final String PLAYFAIR_SERIATED = "playfair.seriated";

@@ -8,17 +8,19 @@ import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.anew.ConjugatedBifidCipher;
 import nationalcipher.cipher.base.keys.TriKey;
-import nationalcipher.cipher.decrypt.SACipherAttack;
+import nationalcipher.cipher.decrypt.CipherAttack;
+import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.cipher.tools.SubOptionPanel;
 
-public class BifidCMAttack extends SACipherAttack<TriKey<String, String, Integer>, ConjugatedBifidCipher> {
+public class BifidCMAttack extends CipherAttack<TriKey<String, String, Integer>, ConjugatedBifidCipher> {
 
     public JSpinner spinner;
 
     public BifidCMAttack() {
         super(new ConjugatedBifidCipher(), "Conjugated Bifid");
+        this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
         this.spinner = JSpinnerUtil.createSpinner(ArrayUtil.concat(new Integer[] { 0 }, ArrayUtil.createRangeInteger(2, 101)));
     }
 

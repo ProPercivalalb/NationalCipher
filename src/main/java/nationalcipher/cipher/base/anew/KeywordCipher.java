@@ -11,7 +11,11 @@ import nationalcipher.util.CharacterArrayWrapper;
 public class KeywordCipher extends UniKeyCipher<String, FullStringKeyType.Builder> {
 
     public KeywordCipher() {
-        super(FullStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS));
+        this(KeyGeneration.ALL_26_CHARS);
+    }
+    
+    public KeywordCipher(Character[] alphabet) {
+        super(FullStringKeyType.builder().setAlphabet(alphabet));
     }
 
     @Override

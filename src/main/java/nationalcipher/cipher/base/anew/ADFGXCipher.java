@@ -18,7 +18,10 @@ public class ADFGXCipher extends QuadKeyCipher<String, Integer[], String, ReadMo
     private static ColumnarTranspositionCipher transpostion = new ColumnarTranspositionCipher();
 
     public ADFGXCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5), OrderedIntegerKeyType.builder().setMin(1).setMax(Integer.MAX_VALUE), ConstantKeyType.builder("ADFGX"), EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.DOWN));
+        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
+                OrderedIntegerKeyType.builder().setMin(1).setMax(Integer.MAX_VALUE),
+                ConstantKeyType.builder("ADFGX"),
+                EnumKeyType.builder(ReadMode.class).setUniverse(ReadMode.DOWN));
     }
     
     @Override

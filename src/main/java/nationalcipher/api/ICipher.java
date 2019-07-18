@@ -62,8 +62,11 @@ public interface ICipher<K> {
 
     /**
      * Used for simulated annealing, returns a key that is similar to the given key
+     * @param lastDF 
+     * @param count 
+     * @param temp 
      */
-    default K alterKey(K key) {
+    default K alterKey(K key, double temp, int count, double lastDF) {
         return key;
     }
 

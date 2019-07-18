@@ -15,14 +15,12 @@ public class PlayfairAttack extends CipherAttack<String, PlayfairCipher> impleme
     }
 
     @Override
-    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         switch (method) {
         case SIMULATED_ANNEALING:
-            this.trySimulatedAnnealing(new DecryptionTracker(text, app), app.getProgress());
-            break;
+            return this.trySimulatedAnnealing(new DecryptionTracker(text, app), 1000);
         default:
-            super.attemptAttack(text, method, app);
-            break;
+            return super.attemptAttack(text, method, app);
         }
     }
 }

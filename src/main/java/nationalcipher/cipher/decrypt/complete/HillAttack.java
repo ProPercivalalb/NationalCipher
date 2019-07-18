@@ -290,7 +290,7 @@ public class HillAttack extends CipherAttack {
 
             double score = ChiSquared.calculate(decrypted, this.app.getLanguage());
 
-            this.resultList.addResult(new HillSection(score, decrypted, Arrays.copyOf(data, data.length)));
+            this.resultList.add(new HillSection(score, decrypted, Arrays.copyOf(data, data.length)));
 
             if (score < 128D)
                 this.app.out().println("%s, %f, %s", Arrays.toString(data), score, Arrays.toString(decrypted));

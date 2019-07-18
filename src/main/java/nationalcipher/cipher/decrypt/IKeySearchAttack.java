@@ -17,7 +17,9 @@ import nationalcipher.cipher.decrypt.methods.Solution;
  */
 public interface IKeySearchAttack<K> extends IAttackMethod<K> {
 
-    default void tryKeySearch(DecryptionTracker tracker, ProgressValue progBar, int minLength, int maxLength) {
+    default DecryptionTracker tryKeySearch(DecryptionTracker tracker,  int minLength, int maxLength) {
+        tracker.getProgress().setIndeterminate(true);
+        
         for (int length = minLength; length <= maxLength; length++) {
 
             char[] parent = new char[length];
@@ -55,6 +57,8 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
                 this.updateBestSolution(tracker, currentBestSolution, this.useStringGetKey(tracker, new String(parent)));
             }
         }
+        
+        return tracker;
     }
 
     K useStringGetKey(DecryptionTracker tracker, String periodicKeyPart);

@@ -65,7 +65,7 @@ public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends 
     }
 
     @Override
-    public TriKey<F, S, T> alterKey(TriKey<F, S, T> key) {
+    public TriKey<F, S, T> alterKey(TriKey<F, S, T> key, double temp, int count, double lastDF) {
         return TriKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()));
     }
 

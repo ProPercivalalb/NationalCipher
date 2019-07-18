@@ -53,7 +53,7 @@ public abstract class BiKeyCipher<F, S, A extends IKeyBuilder<F>, B extends IKey
     }
 
     @Override
-    public BiKey<F, S> alterKey(BiKey<F, S> key) {
+    public BiKey<F, S> alterKey(BiKey<F, S> key, double temp, int count, double lastDF) {
         return BiKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()));
     }
 

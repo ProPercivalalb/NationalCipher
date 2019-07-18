@@ -84,13 +84,17 @@ public class KeyIterator {
         if (holder.length - pos == 0)
             consumer.accept(holder);
         else {
-            skipPath: for (T i : items) {
+            skipPath:
+            for (T i : items) {
 
                 // If can't have duplicates
-                if (equalsPred != null)
-                    for (int j = 0; j < pos; j++)
-                        if (equalsPred.test(holder[j], i))
+                if (equalsPred != null) {
+                    for (int j = 0; j < pos; j++) {
+                        if (equalsPred.test(holder[j], i)) {
                             continue skipPath;
+                        }
+                    }
+                }
 
                 holder[pos] = i;
                 iterateObject(consumer, holder, items, equalsPred, pos + 1);

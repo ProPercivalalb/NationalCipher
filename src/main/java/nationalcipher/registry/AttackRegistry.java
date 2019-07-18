@@ -1,6 +1,7 @@
 package nationalcipher.registry;
 
 import static nationalcipher.cipher.decrypt.methods.DecryptionMethod.BRUTE_FORCE;
+import static nationalcipher.cipher.decrypt.methods.DecryptionMethod.SIMULATED_ANNEALING;
 
 import nationalcipher.Settings;
 import nationalcipher.cipher.base.VigenereType;
@@ -18,10 +19,11 @@ import nationalcipher.cipher.base.anew.SlidefairCipher;
 import nationalcipher.cipher.base.anew.TriSquareCipher;
 import nationalcipher.cipher.base.anew.VigenereCipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.SACipherAttack;
+import nationalcipher.cipher.decrypt.anew.ADFGXAttack;
 import nationalcipher.cipher.decrypt.anew.AutokeyAttack;
 import nationalcipher.cipher.decrypt.anew.BifidAttack;
 import nationalcipher.cipher.decrypt.anew.BifidCMAttack;
+import nationalcipher.cipher.decrypt.anew.CadenusAttack;
 import nationalcipher.cipher.decrypt.anew.DigrafidAttack;
 import nationalcipher.cipher.decrypt.anew.NicodemusAttack;
 import nationalcipher.cipher.decrypt.anew.PeriodicKeyAttack;
@@ -51,13 +53,13 @@ public class AttackRegistry {
         registerCipher(CipherLib.POLLUX, new CipherAttack<>(new PolluxCipher(), "Pollux").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.RAILFENCE, new CipherAttack<>(new RailFenceCipher(), "Railfence").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.BIFID, new BifidAttack(), settings);
-        registerCipher(CipherLib.PLAYFAIR, new SACipherAttack<>(new PlayfairCipher(), "Playfair"), settings);
+        registerCipher(CipherLib.PLAYFAIR, new CipherAttack<>(new PlayfairCipher(), "Playfair").setAttackMethods(SIMULATED_ANNEALING), settings);
         registerCipher(CipherLib.PLAYFAIR_SERIATED, new SeriatedPlayfairAttack(), settings);
         
-        registerCipher(CipherLib.VIGENERE, new PeriodicKeyAttack(new VigenereCipher(VigenereType.VIGENERE), "Vigenere"), settings);
-        registerCipher(CipherLib.PORTA, new PeriodicKeyAttack(new VigenereCipher(VigenereType.PORTA), "Porta"), settings);
-        registerCipher(CipherLib.VARIANT, new PeriodicKeyAttack(new VigenereCipher(VigenereType.VARIANT), "Variant"), settings);
-        registerCipher(CipherLib.BEAUFORT, new PeriodicKeyAttack(new VigenereCipher(VigenereType.BEAUFORT), "Beaufort"), settings);
+        registerCipher(CipherLib.VIGENERE, new PeriodicKeyAttack<>(new VigenereCipher(VigenereType.VIGENERE), "Vigenere"), settings);
+        registerCipher(CipherLib.PORTA, new PeriodicKeyAttack<>(new VigenereCipher(VigenereType.PORTA), "Porta"), settings);
+        registerCipher(CipherLib.VARIANT, new PeriodicKeyAttack<>(new VigenereCipher(VigenereType.VARIANT), "Variant"), settings);
+        registerCipher(CipherLib.BEAUFORT, new PeriodicKeyAttack<>(new VigenereCipher(VigenereType.BEAUFORT), "Beaufort"), settings);
 
         registerCipher(CipherLib.VIGENERE + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.VIGENERE), "Vigenere Progressive Key"), settings);
         registerCipher(CipherLib.PORTA + ".progressive_key", new ProgressiveKeyAttack(new ProgressiveCipher(VigenereType.PORTA), "Porta Progressive Key"), settings);
@@ -83,8 +85,9 @@ public class AttackRegistry {
 
         registerCipher(CipherLib.DIGRAFID, new DigrafidAttack(), settings); 
         registerCipher(CipherLib.BIFID_CM, new BifidCMAttack(), settings); 
-        registerCipher(CipherLib.TRI_SQUARE, new SACipherAttack<>(new TriSquareCipher(), "Tri Square"), settings);
-        
+        registerCipher(CipherLib.TRI_SQUARE, new CipherAttack<>(new TriSquareCipher(), "Tri Square").setAttackMethods(SIMULATED_ANNEALING), settings);
+        registerCipher(CipherLib.ADFGX, new ADFGXAttack(), settings); 
+        registerCipher(CipherLib.CADENUS, new CadenusAttack(), settings); 
 //		Substitution
 //		registerCipher(new HuttonAttack(), settings);
 //

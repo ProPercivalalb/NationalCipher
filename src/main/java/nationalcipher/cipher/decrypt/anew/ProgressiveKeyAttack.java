@@ -38,7 +38,7 @@ public class ProgressiveKeyAttack extends CipherAttack<TriKey<String, Integer, I
     }
 
     @Override
-    public void attemptAttack(String text, DecryptionMethod method, IApplication app) {
+    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner1);
         int[] progPeriodRange = SettingParse.getIntegerRange(this.rangeSpinner2);
         int[] progKeyRange = SettingParse.getIntegerRange(this.rangeSpinner3);
@@ -56,13 +56,12 @@ public class ProgressiveKeyAttack extends CipherAttack<TriKey<String, Integer, I
                     this.periodicKey.setSecond(i);
                     this.periodicKey.setThird(j);
 
-                    this.tryKeySearch(tracker, app.getProgress(), periodRange[0], periodRange[1]);
+                    this.tryKeySearch(tracker, periodRange[0], periodRange[1]);
                 }
             }
-            break;
+            return tracker;
         default:
-            super.attemptAttack(text, method, app);
-            break;
+            return super.attemptAttack(text, method, app);
         }
     }
 
