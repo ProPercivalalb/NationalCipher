@@ -47,12 +47,20 @@ public class DecryptionTracker {
         return this.cipherText;
     }
 
-    public char[] getPlainTextHolder() {
-        if (this.getSettings().useParallel()) {
+    public char[] getPlainTextHolder(boolean parallel) {
+        if (this.getSettings().useParallel() && parallel) {
             return new char[this.getOutputTextLength(this.cipherText.length())];
         } else {
             return this.plainText;
         }
+    }
+    
+    public char[] getPlainTextHolder() {
+        return this.getPlainTextHolder(true);
+    }
+    
+    public char[] getNewPlanTextHolder() {
+        return this.getPlainTextHolder(false);
     }
 
     public void addSolution(Solution solution) {

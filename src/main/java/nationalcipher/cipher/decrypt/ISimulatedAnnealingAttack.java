@@ -3,7 +3,6 @@ package nationalcipher.cipher.decrypt;
 import java.math.BigInteger;
 
 import javalibrary.lib.Timer;
-import javalibrary.swing.ProgressValue;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IAttackMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
@@ -21,6 +20,7 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
         tracker.getProgress().addMaxValue(BigInteger.valueOf((long) Math.floor((double) tracker.getSettings().getSATempStart() / tracker.getSettings().getSATempStep()) + 1).multiply(BigInteger.valueOf(tracker.getSettings().getSACount())));
         int ite = 0;
         
+        stop:
         while (iterations < 0 || ite++ < iterations) {
             timer.restart();
             this.startIteration(tracker);
@@ -39,6 +39,10 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
                 TEMP = Math.max(0.0D, TEMP - tracker.getSettings().getSATempStep());
 
                 for (int count = 0; count < tracker.getSettings().getSACount(); count++) {
+                    if (tracker.shouldStop()) {
+                        break stop;
+                    }
+                    
                     this.onPreIteration(tracker);
                     lastKey = this.modifyKey(tracker, bestMaximaKey, TEMP, count, lastDF);
                     tracker.lastSolution = this.toSolution(tracker, lastKey);
@@ -67,13 +71,13 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
             
             tracker.getProgress().finish();
             // TODO if(this.iterationTimer)
-            // this.output(tracker.out(), "Iteration Time: %f",
+            // this.output(tracker, "Iteration Time: %f",
             // timer.getTimeRunning(Units.Time.MILLISECOND));
             if (this.endIteration(tracker, tracker.bestSolution)) {
                 break;
             }
             
-            this.output(tracker.out(), "============================");
+            this.output(tracker, "============================");
         }
         
         return tracker;
@@ -100,7 +104,7 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
     }
     
     default boolean endIteration(DecryptionTracker tracker, Solution bestSolution) {
-        this.output(tracker.out(), bestSolution.toString());
+        this.output(tracker, bestSolution.toString());
         NationalCipherUI.BEST_SOULTION = bestSolution.getText();
         return false;
     }

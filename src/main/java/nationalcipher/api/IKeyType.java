@@ -2,6 +2,7 @@ package nationalcipher.api;
 
 import java.math.BigInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -33,5 +34,9 @@ public interface IKeyType<K> {
     public interface IKeyBuilder<K> {
 
         public IKeyType<K> create();
+        
+        default IKeyBuilder<K> setDisplay(Function<K, String> displayFunc) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

@@ -19,7 +19,7 @@ public class VariableStringKeyType implements IKeyType<String> {
     // Both inclusive
     private final int min, max;
     private final Character[] alphabet;
-    private boolean repeats;
+    private final boolean repeats;
 
     private VariableStringKeyType(Character[] alphabet, int min, int max, boolean repeats) {
         this.alphabet = alphabet;

@@ -1,6 +1,8 @@
 package nationalcipher.cipher.decrypt;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 import javalibrary.dict.Dictionary;
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.ICipher;
 import nationalcipher.cipher.base.VigenereType;
@@ -23,8 +26,13 @@ import nationalcipher.cipher.base.anew.CaesarCipher;
 import nationalcipher.cipher.base.anew.ColumnarTranspositionCipher;
 import nationalcipher.cipher.base.anew.ConjugatedBifidCipher;
 import nationalcipher.cipher.base.anew.DigrafidCipher;
+import nationalcipher.cipher.base.anew.EnigmaCipher;
+import nationalcipher.cipher.base.anew.EnigmaPlugboardCipher;
 import nationalcipher.cipher.base.anew.FourSquareCipher;
 import nationalcipher.cipher.base.anew.FractionatedMorseCipher;
+import nationalcipher.cipher.base.anew.HillCipher;
+import nationalcipher.cipher.base.anew.HillExtendedCipher;
+import nationalcipher.cipher.base.anew.HillSubstitutionCipher;
 import nationalcipher.cipher.base.anew.HomophonicCipher;
 import nationalcipher.cipher.base.anew.HuttonCipher;
 import nationalcipher.cipher.base.anew.KeywordCipher;
@@ -47,6 +55,7 @@ import nationalcipher.cipher.base.anew.RagbabyCipher;
 import nationalcipher.cipher.base.anew.RailFenceCipher;
 import nationalcipher.cipher.base.anew.ReadMode;
 import nationalcipher.cipher.base.anew.RedefenceCipher;
+import nationalcipher.cipher.base.anew.RouteTranspositionCipher;
 import nationalcipher.cipher.base.anew.SeriatedPlayfairCipher;
 import nationalcipher.cipher.base.anew.SlidefairCipher;
 import nationalcipher.cipher.base.anew.SolitaireCipher;
@@ -55,9 +64,13 @@ import nationalcipher.cipher.base.anew.TriSquareCipher;
 import nationalcipher.cipher.base.anew.TrifidCipher;
 import nationalcipher.cipher.base.anew.TwoSquareCipher;
 import nationalcipher.cipher.base.anew.VigenereCipher;
+import nationalcipher.cipher.base.enigma.EnigmaLib;
+import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.QuadKey;
 import nationalcipher.cipher.base.keys.TriKey;
+import nationalcipher.cipher.transposition.RouteCipherType;
+import nationalcipher.cipher.transposition.Routes;
 
 public class DecodeTest {
 	
@@ -474,6 +487,131 @@ public class DecodeTest {
             assertCipherLogic(phillipsCipher);
         }
     }
+
+    @Test
+    public void testRouteTransposition() {
+        RouteTranspositionCipher routeTransCipher = new RouteTranspositionCipher();
+
+        String plainText = "THEREAREMANYROUTES";
+        String cipherText = "THARYRESTUAMREEENO";
+        QuadKey<Integer, Integer, RouteCipherType, RouteCipherType> key = QuadKey.of(3, 6, Routes.DIAG_ALTER_TOPLEFT, Routes.SPIRAL_CLOCKWISE_TOPLEFT);
+
+        assertEncodeDecode(routeTransCipher, key, plainText, cipherText);
+
+        for (int i = 0; i < 10; i++) {
+            int width = RandomUtil.pickRandomInt(1, 100);
+            int height = RandomUtil.pickRandomInt(1, 100);
+            int size = width * height;
+            
+            for (RouteCipherType type : Routes.getRoutes()) {
+                int[] pattern = type.createPattern(width, height, size);
+                List<Integer> test = ListUtil.randomRange(0, size);
+                for (int col = 0; col < size; col++) {
+                    Assert.assertTrue(type.getDescription() + " pattern doesn't contain all indices", test.remove((Integer) pattern[col]));
+                }
+            }
+        }
+
+//        for(int i = 0; i < 1000; i++) {
+//            assertCipherLogic(routeTransCipher);
+//        }
+    }
+    
+    public Integer[] toArray(String ringStr) {
+        Integer[] ring = new Integer[ringStr.length()];
+        for(int i = 0; i < ring.length; i++)
+            ring[i] = ringStr.charAt(i) - 'A';
+        return ring;
+    }
+    
+    
+    @Test
+    public void testEnigma() {
+        // http://practicalcryptography.com/ciphers/enigma-cipher/
+        EnigmaCipher enigmaCipher = new EnigmaCipher(EnigmaLib.ENIGMA_M3);
+
+        String plainText = "NEEDEDFEEBLYDININGOHTALKEDWISDOMOPPOSEATAPPLAUDEDUSEATTEMPTEDSTRANGERSNOWAREMIDDLETONCONCLUDEDHADITISTRIEDNOADDEDPURSESHALLNOONTRUTHPLEASEDANXIOUSORASINBYVIEWINGFORBADEMINUTESPREVENTTOOLEAVEHADTHOSEGETBEINGLEDWEEKSBLIND";
+        String cipherText = "TAJKSKVWIKGBZVXLPTZMBKZSZBNDHMWDRXZRYVRWEUKWUJGOFEVUKLKYOSVQWVCPQTVNMQCRSPQAEHRUIINCLWULPHFTZBKEALZLPHGNOKYWPPVCKYRAGGMOFHFFUDUMQWEVRPNCRLMYOTGPWDVWKVOTQBKFXLOEVPVCGYZHETLNXGROLXJSOUQXZRSPZZGCRCZKJFOHBYQRYLRQCJAWNWECWJZ";
+        QuadKey<Integer[], Integer[], Integer[], Integer> key = QuadKey.of(toArray("CAR"), toArray("FER"), new Integer[] {2, 1, 0}, 0);
+
+        assertEncodeDecode(enigmaCipher, key, plainText, cipherText);
+
+        for(EnigmaMachine machine : EnigmaLib.MACHINES) {
+            EnigmaCipher cipher = new EnigmaCipher(machine);
+
+            for(int i = 0; i < 1000; i++) {
+                assertCipherLogic(cipher);
+            }
+        }
+    }
+    
+    @Test
+    public void testEnigmaPlugboard() {
+        // http://practicalcryptography.com/ciphers/enigma-cipher/
+        EnigmaPlugboardCipher enigmaCipher = new EnigmaPlugboardCipher(EnigmaLib.ENIGMA_M3);
+
+//        String plainText = "NEEDEDFEEBLYDININGOHTALKEDWISDOMOPPOSEATAPPLAUDEDUSEATTEMPTEDSTRANGERSNOWAREMIDDLETONCONCLUDEDHADITISTRIEDNOADDEDPURSESHALLNOONTRUTHPLEASEDANXIOUSORASINBYVIEWINGFORBADEMINUTESPREVENTTOOLEAVEHADTHOSEGETBEINGLEDWEEKSBLIND";
+//        String cipherText = "TAJKSKVWIKGBZVXLPTZMBKZSZBNDHMWDRXZRYVRWEUKWUJGOFEVUKLKYOSVQWVCPQTVNMQCRSPQAEHRUIINCLWULPHFTZBKEALZLPHGNOKYWPPVCKYRAGGMOFHFFUDUMQWEVRPNCRLMYOTGPWDVWKVOTQBKFXLOEVPVCGYZHETLNXGROLXJSOUQXZRSPZZGCRCZKJFOHBYQRYLRQCJAWNWECWJZ";
+//        QuadKey<Integer[], Integer[], Integer[], Integer> key = QuadKey.of(toArray("CAR"), toArray("FER"), new Integer[] {2, 1, 0}, 0);
+//
+//        assertEncodeDecode(enigmaCipher, key, plainText, cipherText);
+
+        for(EnigmaMachine machine : EnigmaLib.MACHINES) {
+            EnigmaCipher cipher = new EnigmaCipher(machine);
+
+            for(int i = 0; i < 1000; i++) {
+                assertCipherLogic(cipher);
+            }
+        }
+    }
+    
+    @Test
+    public void testHill() {
+        // 
+        HillCipher hillCipher = new HillCipher();
+
+//        String plainText = "NEEDEDFEEBLYDININGOHTALKEDWISDOMOPPOSEATAPPLAUDEDUSEATTEMPTEDSTRANGERSNOWAREMIDDLETONCONCLUDEDHADITISTRIEDNOADDEDPURSESHALLNOONTRUTHPLEASEDANXIOUSORASINBYVIEWINGFORBADEMINUTESPREVENTTOOLEAVEHADTHOSEGETBEINGLEDWEEKSBLIND";
+//        String cipherText = "TAJKSKVWIKGBZVXLPTZMBKZSZBNDHMWDRXZRYVRWEUKWUJGOFEVUKLKYOSVQWVCPQTVNMQCRSPQAEHRUIINCLWULPHFTZBKEALZLPHGNOKYWPPVCKYRAGGMOFHFFUDUMQWEVRPNCRLMYOTGPWDVWKVOTQBKFXLOEVPVCGYZHETLNXGROLXJSOUQXZRSPZZGCRCZKJFOHBYQRYLRQCJAWNWECWJZ";
+//        QuadKey<Integer[], Integer[], Integer[], Integer> key = QuadKey.of(toArray("CAR"), toArray("FER"), new Integer[] {2, 1, 0}, 0);
+//
+//        assertEncodeDecode(hillCipher, key, plainText, cipherText);
+
+        for(int i = 0; i < 1000; i++) {
+            assertCipherLogic(hillCipher);
+        }
+    }
+    
+    @Test
+    public void testHillExtended() {
+        // 
+        HillExtendedCipher hillCipher = new HillExtendedCipher();
+
+//        String plainText = "NEEDEDFEEBLYDININGOHTALKEDWISDOMOPPOSEATAPPLAUDEDUSEATTEMPTEDSTRANGERSNOWAREMIDDLETONCONCLUDEDHADITISTRIEDNOADDEDPURSESHALLNOONTRUTHPLEASEDANXIOUSORASINBYVIEWINGFORBADEMINUTESPREVENTTOOLEAVEHADTHOSEGETBEINGLEDWEEKSBLIND";
+//        String cipherText = "TAJKSKVWIKGBZVXLPTZMBKZSZBNDHMWDRXZRYVRWEUKWUJGOFEVUKLKYOSVQWVCPQTVNMQCRSPQAEHRUIINCLWULPHFTZBKEALZLPHGNOKYWPPVCKYRAGGMOFHFFUDUMQWEVRPNCRLMYOTGPWDVWKVOTQBKFXLOEVPVCGYZHETLNXGROLXJSOUQXZRSPZZGCRCZKJFOHBYQRYLRQCJAWNWECWJZ";
+//        QuadKey<Integer[], Integer[], Integer[], Integer> key = QuadKey.of(toArray("CAR"), toArray("FER"), new Integer[] {2, 1, 0}, 0);
+//
+//        assertEncodeDecode(hillCipher, key, plainText, cipherText);
+
+        for(int i = 0; i < 1000; i++) {
+           assertCipherLogic(hillCipher);
+        }
+    }
+    
+    @Test
+    public void testHillSubstitution() {
+        // 
+        HillSubstitutionCipher hillCipher = new HillSubstitutionCipher();
+
+//        String plainText = "NEEDEDFEEBLYDININGOHTALKEDWISDOMOPPOSEATAPPLAUDEDUSEATTEMPTEDSTRANGERSNOWAREMIDDLETONCONCLUDEDHADITISTRIEDNOADDEDPURSESHALLNOONTRUTHPLEASEDANXIOUSORASINBYVIEWINGFORBADEMINUTESPREVENTTOOLEAVEHADTHOSEGETBEINGLEDWEEKSBLIND";
+//        String cipherText = "TAJKSKVWIKGBZVXLPTZMBKZSZBNDHMWDRXZRYVRWEUKWUJGOFEVUKLKYOSVQWVCPQTVNMQCRSPQAEHRUIINCLWULPHFTZBKEALZLPHGNOKYWPPVCKYRAGGMOFHFFUDUMQWEVRPNCRLMYOTGPWDVWKVOTQBKFXLOEVPVCGYZHETLNXGROLXJSOUQXZRSPZZGCRCZKJFOHBYQRYLRQCJAWNWECWJZ";
+//        QuadKey<Integer[], Integer[], Integer[], Integer> key = QuadKey.of(toArray("CAR"), toArray("FER"), new Integer[] {2, 1, 0}, 0);
+//
+//        assertEncodeDecode(hillCipher, key, plainText, cipherText);
+
+        for(int i = 0; i < 1000; i++) {
+           assertCipherLogic(hillCipher);
+        }
+    }
     
     @Test
     public void testQuagmireI() {
@@ -800,11 +938,11 @@ public class DecodeTest {
         this.assertCipherLogic(cipher, Dictionary.generateRandomText(RandomUtil.pickRandomInt(10, 40)));
     }
     
-    public void assertCharSequenceEquals(CharSequence charSeq1, CharSequence charSeq2) {
+    public static void assertCharSequenceEquals(CharSequence charSeq1, CharSequence charSeq2) {
         Assert.assertTrue(getErrorMessage(charSeq1, charSeq2), charSeqEqual(charSeq1, charSeq2));
     }
     
-    public String getErrorMessage(CharSequence charSeq1, CharSequence charSeq2) {
+    public static String getErrorMessage(CharSequence charSeq1, CharSequence charSeq2) {
         StringBuilder builder = new StringBuilder(19 + charSeq1.length() + charSeq2.length());
         builder.append("Expected: ");
         builder.append(charSeq1);
@@ -814,7 +952,7 @@ public class DecodeTest {
         return builder.toString();
     }
     
-    public boolean charSeqEqual(CharSequence charSeq1, CharSequence charSeq2) {
+    public static boolean charSeqEqual(CharSequence charSeq1, CharSequence charSeq2) {
         if(charSeq1.length() != charSeq2.length()) return false;
         
         for(int i = 0; i < charSeq1.length(); i++) {

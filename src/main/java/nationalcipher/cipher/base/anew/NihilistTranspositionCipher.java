@@ -26,7 +26,7 @@ public class NihilistTranspositionCipher extends BiKeyCipher<Integer[], ReadMode
         int blockSize = key.getFirstKey().length * key.getFirstKey().length;
 
         if (plainText.length() % blockSize != 0) {
-            StringBuilder builder = new StringBuilder(plainText.length() + blockSize - plainText.length() % blockSize);
+            StringBuilder builder = new StringBuilder(plainText.length() + blockSize - (plainText.length() % blockSize));
             builder.append(plainText);
             while (builder.length() % blockSize != 0) {
                 builder.append('X');

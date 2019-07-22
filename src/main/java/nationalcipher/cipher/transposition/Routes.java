@@ -235,7 +235,7 @@ public class Routes {
         }
 
         @Override
-        public int[] getDirVector() {
+        public int[] getDirVector(int pos) {
             return new int[] { 1, -1 };
         }
     };
@@ -248,7 +248,7 @@ public class Routes {
         }
 
         @Override
-        public int[] getDirVector() {
+        public int[] getDirVector(int pos) {
             return new int[] { -1, -1 };
         }
     };
@@ -261,7 +261,7 @@ public class Routes {
         }
 
         @Override
-        public int[] getDirVector() {
+        public int[] getDirVector(int pos) {
             return new int[] { 1, 1 };
         }
     };
@@ -274,8 +274,29 @@ public class Routes {
         }
 
         @Override
-        public int[] getDirVector() {
+        public int[] getDirVector(int pos) {
             return new int[] { -1, 1 };
+        }
+    };
+    
+    public static RouteCipherDiagonal DIAG_ALTER_TOPLEFT = new RouteCipherDiagonal("Alter Diagonal top to bottom start, starting from the right.") {
+
+        @Override
+        public int[] calculateNewPos(int pos, int height, int width, int totalSize) {
+            if (pos % 2 == 0) {
+                return new int[] { Math.max(0, pos - height + 1), Math.min(pos, height - 1) };
+            } else {
+                return new int[] { Math.min(pos, width - 1), Math.max(0, pos - width + 1) };
+            }
+        }
+
+        @Override
+        public int[] getDirVector(int pos) {
+            if (pos % 2 == 0) {
+                return new int[] { 1, -1 };
+            } else {
+                return new int[] { -1, 1 };
+            }
         }
     };
 
@@ -409,19 +430,18 @@ public class Routes {
 
         public abstract int[] calculateNewPos(int pos, int height, int width, int totalSize);
 
-        public abstract int[] getDirVector();
+        public abstract int[] getDirVector(int pos);
 
         @Override
         public int[] createPattern(int width, int height, int totalSize) {
             int[] grid = new int[totalSize];
 
-            int[] dirVec = this.getDirVector();
             int index = 0;
-
             for (int pos = 0; pos < height + width - 1; pos++) {
                 int[] npos = this.calculateNewPos(pos, height, width, totalSize);
                 int nx = npos[0], ny = npos[1];
 
+                int[] dirVec = this.getDirVector(pos);
                 while (nx >= 0 && nx < width && ny >= 0 && ny < height) {
                     grid[index++] = ny * width + nx;
                     nx += dirVec[0];

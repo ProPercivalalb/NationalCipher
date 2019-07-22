@@ -57,4 +57,8 @@ public abstract class UniKeyCipher<T, A extends IKeyBuilder<T>> implements ICiph
     public void setDomain(Function<A, IKeyBuilder<T>> firstKeyFunc) {
         this.firstTypeLimit = firstKeyFunc.apply(this.firstKeyBuilder).create();
     }
+    
+    public IKeyType<T> getDomain() {
+        return this.firstTypeLimit;
+    }
 }

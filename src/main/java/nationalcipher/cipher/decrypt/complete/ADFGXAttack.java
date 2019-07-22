@@ -1,7 +1,6 @@
 package nationalcipher.cipher.decrypt.complete;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -12,14 +11,11 @@ import javalibrary.lib.BooleanLib;
 import javalibrary.list.DynamicResultList;
 import javalibrary.list.ResultPositive;
 import javalibrary.swing.JSpinnerUtil;
-import nationalcipher.SettingsUtil;
 import nationalcipher.cipher.base.anew.ColumnarTranspositionCipher;
 import nationalcipher.cipher.base.anew.KeywordCipher;
 import nationalcipher.cipher.base.keys.BiKey;
-import nationalcipher.cipher.base.transposition.ColumnarTransposition;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.SACipherAttack;
-import nationalcipher.cipher.decrypt.SubstitutionHack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;

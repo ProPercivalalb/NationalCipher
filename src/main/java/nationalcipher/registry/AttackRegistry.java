@@ -14,6 +14,10 @@ import nationalcipher.cipher.base.anew.NicodemusCipher;
 import nationalcipher.cipher.base.anew.PlayfairCipher;
 import nationalcipher.cipher.base.anew.PolluxCipher;
 import nationalcipher.cipher.base.anew.ProgressiveCipher;
+import nationalcipher.cipher.base.anew.QuagmireICipher;
+import nationalcipher.cipher.base.anew.QuagmireIICipher;
+import nationalcipher.cipher.base.anew.QuagmireIIICipher;
+import nationalcipher.cipher.base.anew.QuagmireIVCipher;
 import nationalcipher.cipher.base.anew.RailFenceCipher;
 import nationalcipher.cipher.base.anew.SlidefairCipher;
 import nationalcipher.cipher.base.anew.TriSquareCipher;
@@ -25,11 +29,19 @@ import nationalcipher.cipher.decrypt.anew.BifidAttack;
 import nationalcipher.cipher.decrypt.anew.BifidCMAttack;
 import nationalcipher.cipher.decrypt.anew.CadenusAttack;
 import nationalcipher.cipher.decrypt.anew.DigrafidAttack;
+import nationalcipher.cipher.decrypt.anew.EnigmaAttack;
+import nationalcipher.cipher.decrypt.anew.EnigmaPlugboardAttack;
+import nationalcipher.cipher.decrypt.anew.EnigmaUhrAttack;
+import nationalcipher.cipher.decrypt.anew.HillAttack;
+import nationalcipher.cipher.decrypt.anew.HillExtendedAttack;
+import nationalcipher.cipher.decrypt.anew.HillSubsitutionAttack;
 import nationalcipher.cipher.decrypt.anew.NicodemusAttack;
 import nationalcipher.cipher.decrypt.anew.PeriodicKeyAttack;
 import nationalcipher.cipher.decrypt.anew.ProgressiveKeyAttack;
 import nationalcipher.cipher.decrypt.anew.SeriatedPlayfairAttack;
 import nationalcipher.cipher.decrypt.anew.SlidefairAttack;
+import nationalcipher.cipher.setting.SettingTypes;
+import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.lib.CipherLib;
 
 public class AttackRegistry {
@@ -86,8 +98,21 @@ public class AttackRegistry {
         registerCipher(CipherLib.DIGRAFID, new DigrafidAttack(), settings); 
         registerCipher(CipherLib.BIFID_CM, new BifidCMAttack(), settings); 
         registerCipher(CipherLib.TRI_SQUARE, new CipherAttack<>(new TriSquareCipher(), "Tri Square").setAttackMethods(SIMULATED_ANNEALING), settings);
-        registerCipher(CipherLib.ADFGX, new ADFGXAttack(), settings); 
-        registerCipher(CipherLib.CADENUS, new CadenusAttack(), settings); 
+        registerCipher(CipherLib.ADFGX, new ADFGXAttack(), settings);
+        registerCipher(CipherLib.CADENUS, new CadenusAttack(), settings);
+        
+        registerCipher(CipherLib.QUAGMIREI, new CipherAttack<>(new QuagmireICipher(), "QuagmireI").addSetting(SettingTypes.createIntRange(2, 8, 2, 100, 1, (values, cipher) -> {cipher.setSecondKeyDomain(builder -> builder.setRange(values));}),
+                SettingTypes.createCombo(KeyGeneration.ALL_26_CHARS, (value, cipher) -> {cipher.setThirdKeyDomain(builder -> builder.setUniverse(value));})).setAttackMethods(SIMULATED_ANNEALING), settings);
+        registerCipher(CipherLib.QUAGMIREII, new CipherAttack<>(new QuagmireIICipher(), "QuagmireIII").setAttackMethods(SIMULATED_ANNEALING), settings);
+        registerCipher(CipherLib.QUAGMIREIII, new CipherAttack<>(new QuagmireIIICipher(), "QuagmireIII").setAttackMethods(SIMULATED_ANNEALING), settings);
+        registerCipher(CipherLib.QUAGMIREIV, new CipherAttack<>(new QuagmireIVCipher(), "QuagmireIV").setAttackMethods(SIMULATED_ANNEALING), settings);
+        registerCipher(CipherLib.ENIGMA, new EnigmaAttack(), settings);
+        registerCipher(CipherLib.ENIGMA + ".uhr", new EnigmaUhrAttack(), settings);
+        registerCipher(CipherLib.ENIGMA + ".plugboard", new EnigmaPlugboardAttack(), settings);
+        
+        registerCipher(CipherLib.HILL, new HillAttack(), settings);
+        registerCipher(CipherLib.HILL + ".extended", new HillExtendedAttack(), settings);
+        registerCipher(CipherLib.HILL + ".subsitution", new HillSubsitutionAttack(), settings);
 //		Substitution
 //		registerCipher(new HuttonAttack(), settings);
 //

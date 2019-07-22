@@ -3,6 +3,7 @@ package nationalcipher.cipher.base.enigma;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 import javalibrary.util.ArrayUtil;
 
@@ -58,33 +59,21 @@ public class EnigmaUtil {
         return positions;
     }
 
-    public static String convertMappingToReadablePlugboard(Integer[] mapping) {
-        int[] plugboardTracker = new int[26];
-        for (int i = 0; i < 26; i++)
-            plugboardTracker[i] = i;
-        String str = "";
-        next: do {
-            for (int i : plugboardTracker) {
-                int index = ArrayUtil.indexOf(mapping, i);
-                if (index == i)
-                    continue;
-                int other = index;
-
-                str += String.format("%c%c ", (char) (i + 'A'), (char) (other + 'A'));
-
-                int[] possiblePlugBoardNext = new int[plugboardTracker.length - 2];
-                int currentIndex = 0;
-                for (int p = 0; p < plugboardTracker.length; p++)
-                    if (plugboardTracker[p] != i && plugboardTracker[p] != other)
-                        possiblePlugBoardNext[currentIndex++] = plugboardTracker[p];
-
-                plugboardTracker = possiblePlugBoardNext;
-                continue next;
+    public static String displayPlugboard(Integer[] mapping) {
+        StringJoiner joiner = new StringJoiner(" ", "[", "]");
+        List<Integer> plugsUsed = new ArrayList<>(mapping.length / 2);
+        
+        for (int i = 0; i < mapping.length; i++) {
+            if (!plugsUsed.contains(i)) {
+                int other = ArrayUtil.indexOf(mapping, i);
+                if (other == i) continue;
+                
+                joiner.add(String.format("%c%c", (char) (i + 'A'), (char) (other + 'A')));
+                plugsUsed.add(i);
+                plugsUsed.add(other);
             }
-
-            break;
-        } while (true);
-
-        return str;
+        }
+        
+        return joiner.toString();
     }
 }

@@ -2,7 +2,6 @@ package nationalcipher.cipher.decrypt;
 
 import java.util.Arrays;
 
-import javalibrary.swing.ProgressValue;
 import nationalcipher.api.IAttackMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -20,6 +19,7 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
     default DecryptionTracker tryKeySearch(DecryptionTracker tracker,  int minLength, int maxLength) {
         tracker.getProgress().setIndeterminate(true);
         
+        stop:
         for (int length = minLength; length <= maxLength; length++) {
 
             char[] parent = new char[length];
@@ -31,6 +31,10 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
                 boolean change = false;
                 for (int i = 0; i < length; i++) {
                     for (char j = 'A'; j <= 'Z'; j += this.alphaIncrease()) {
+                        if (tracker.shouldStop()) {
+                            break stop;
+                        }
+                        
                         char previous = parent[i];
                         parent[i] = j;
 
@@ -58,6 +62,7 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
             }
         }
         
+        tracker.finish();
         return tracker;
     }
 

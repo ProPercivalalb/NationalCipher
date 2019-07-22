@@ -11,7 +11,6 @@ public class EnigmaM4 extends EnigmaMachine {
         this.setReflectors("ENKQAUYWJICOPBLMDXZVFTHRGS", "RDOBJNTKVEHMLFCWZAXGYIPSUQ");
         this.setReflectorNames("B-THIN", "C-THIN");
         this.canPlugboard = true;
-        this.hasThinRotor = true;
         this.canUhr = true;
     }
 }

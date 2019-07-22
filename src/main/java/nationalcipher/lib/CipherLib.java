@@ -12,6 +12,7 @@ public class CipherLib {
     public static final String CAESAR = "caesar";
     public static final String CADENUS = "cadenus";
     public static final String DIGRAFID = "diagrafid";
+    public static final String ENIGMA = "enigma";
     public static final String PLAYFAIR = "playfair";
     public static final String PLAYFAIR_SERIATED = "playfair.seriated";
     public static final String POLLUX = "pollux";
@@ -19,6 +20,11 @@ public class CipherLib {
     public static final String VIGENERE = "vigenere";
     public static final String PORTA = "porta";
     public static final String PORTA_VARIANT = "porta.variant";
+    public static final String QUAGMIREI = "quagmirei";
+    public static final String QUAGMIREII = "quagmireii";
+    public static final String QUAGMIREIII = "quagmireiii";
+    public static final String QUAGMIREIV = "quagmireiv";
     public static final String TRI_SQUARE = "tri_square";
     public static final String VARIANT = "variant";
+    public static final String HILL = "hill";
 }

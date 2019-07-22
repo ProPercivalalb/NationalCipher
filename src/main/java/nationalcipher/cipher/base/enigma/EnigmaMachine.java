@@ -10,23 +10,19 @@ public class EnigmaMachine {
     public Integer[][] rotors;
     public Integer[][] rotorsInverse;
     public Integer[][] notches;
-    public int rotorCount;
 
     public Integer[][] reflector;
     public String[] reflectorNames;
-    public int reflectorCount;
 
-    public Integer[] etw;
-    public Integer[] etwInverse;
+    protected Integer[] etw;
+    protected Integer[] etwInverse;
 
     public Integer[][] thinRotor;
     public Integer[][] thinRotorInverse;
     public String[] thinRotorNames;
-    public int thinRotorCount;
 
     public boolean canPlugboard;
     public boolean canUhr;
-    public boolean hasThinRotor;
     public boolean stepping;
 
     public EnigmaMachine(String name) {
@@ -34,7 +30,6 @@ public class EnigmaMachine {
         this.canPlugboard = false;
         this.canUhr = false;
         this.stepping = true;
-        this.hasThinRotor = false;
     }
 
     public final void setRotors(String... input) {
@@ -50,7 +45,6 @@ public class EnigmaMachine {
 
         this.rotors = normal;
         this.rotorsInverse = inverse;
-        this.rotorCount = input.length;
     }
 
     public final void setNotches(Integer[][] input) {
@@ -77,12 +71,10 @@ public class EnigmaMachine {
                 normal[r][i] = input[r].charAt(i) - 'A';
 
         this.reflector = normal;
-        this.reflectorCount = input.length;
     }
 
     public final void setReflectorNames(String... input) {
         this.reflectorNames = input;
-        this.reflectorCount = input.length;
     }
 
     public void setETW(String input) {
@@ -110,24 +102,22 @@ public class EnigmaMachine {
 
         this.thinRotor = normal;
         this.thinRotorInverse = inverse;
-        this.thinRotorCount = input.length;
     }
 
     public final void setThinRotorNames(String... input) {
         this.thinRotorNames = input;
-        this.thinRotorCount = input.length;
     }
 
-    public final int getNumberOfRotors() {
-        return this.rotorCount;
+    public final int getRotorCount() {
+        return this.rotors.length;
     }
 
-    public final int getNumberOfReflectors() {
-        return this.reflectorCount;
+    public final int getReflectorCount() {
+        return this.reflector.length;
     }
 
-    public final int getNumberOfThinRotors() {
-        return this.thinRotorCount;
+    public final int getThinRotorCount() {
+        return this.thinRotor.length;
     }
 
     public final boolean canPlugboard() {
@@ -138,8 +128,21 @@ public class EnigmaMachine {
         return this.canUhr;
     }
 
-    public final boolean hasThinRotor() {
-        return this.hasThinRotor;
+    public boolean hasETW() {
+        return this.etw != null;
+    }
+    
+    public boolean hasThinRotor() {
+        return this.thinRotor != null;
+    }
+    
+
+    public Integer[] getETW() {
+        return this.etw;
+    }
+    
+    public Integer[] getETWInverse() {
+        return this.etwInverse;
     }
 
     /**
@@ -231,19 +234,15 @@ public class EnigmaMachine {
     public static void copy(EnigmaMachine orignal, EnigmaMachine copy) {
         copy.rotors = orignal.rotors;
         copy.rotorsInverse = orignal.rotorsInverse;
-        copy.rotorCount = orignal.rotorCount;
         copy.notches = orignal.notches;
         copy.reflector = orignal.reflector;
         copy.reflectorNames = orignal.reflectorNames;
-        copy.reflectorCount = orignal.reflectorCount;
         copy.etw = orignal.etw;
         copy.etwInverse = orignal.etwInverse;
         copy.thinRotor = orignal.thinRotor;
         copy.thinRotorInverse = orignal.thinRotorInverse;
-        copy.thinRotorCount = orignal.thinRotorCount;
         copy.canPlugboard = orignal.canPlugboard;
         copy.canUhr = orignal.canUhr;
-        copy.hasThinRotor = orignal.hasThinRotor;
         copy.stepping = orignal.stepping;
     }
 
@@ -257,7 +256,7 @@ public class EnigmaMachine {
 
         @Override
         public String toString() {
-            return String.format("%s, %s", this.name, EnigmaUtil.convertMappingToReadablePlugboard(this.etw));
+            return String.format("%s, %s", this.name, EnigmaUtil.displayPlugboard(this.etw));
         }
     }
 

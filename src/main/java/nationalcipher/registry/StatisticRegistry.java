@@ -10,7 +10,7 @@ import javax.swing.JProgressBar;
 
 import javalibrary.math.Statistics;
 import javalibrary.streams.FileReader;
-import nationalcipher.cipher.interfaces.IRandEncrypter;
+import nationalcipher.api.ICipher;
 import nationalcipher.cipher.stats.CipherStatistics;
 import nationalcipher.cipher.stats.DataHolder;
 import nationalcipher.cipher.stats.IdentifyOutput;
@@ -193,7 +193,7 @@ public class StatisticRegistry {
         return stats;
     }
 
-    public static void calculateStatPrint(IRandEncrypter randEncrypt, Class<? extends TextStatistic<?>> textStatistic, int times) {
+    public static void calculateStatPrint(ICipher<?> cipher, Class<? extends TextStatistic<?>> textStatistic, int times) {
         List<String> list = FileReader.compileTextFromResource("/plainText.txt", true);
 
         List<Double> values = new ArrayList<Double>();
@@ -208,7 +208,7 @@ public class StatisticRegistry {
             String plainText = line;
 
             for (int i = 0; i < times; i++) {
-                test.text = randEncrypt.randomlyEncrypt(plainText);
+                test.text = cipher.randomEncode(plainText);
                 // System.out.println(test.text);
                 test.calculateStatistic();
                 try {
@@ -222,7 +222,7 @@ public class StatisticRegistry {
 
         Statistics stats = new Statistics(values);
 
-        String name = randEncrypt.getClass().getSimpleName();
+        String name = cipher.getClass().getSimpleName();
         String variableName = "";
         if (!Character.isJavaIdentifierStart(name.charAt(0)))
             variableName += "_";

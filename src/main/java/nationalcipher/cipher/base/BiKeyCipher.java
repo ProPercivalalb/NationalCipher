@@ -82,4 +82,12 @@ public abstract class BiKeyCipher<F, S, A extends IKeyBuilder<F>, B extends IKey
     public void setSecondKeyLimit(Function<B, IKeyBuilder<S>> secondKeyFunc) {
         this.secondTypeLimit = secondKeyFunc.apply(this.secondKeyBuilder).create();
     }
+    
+    public IKeyType<F> getFirstKeyType() {
+        return this.firstTypeLimit;
+    }
+    
+    public IKeyType<S> getSecondKeyType() {
+        return this.secondTypeLimit;
+    }
 }

@@ -1,5 +1,7 @@
 package nationalcipher.api;
 
+import javax.annotation.Nullable;
+
 import javalibrary.Output;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.Solution;
@@ -42,9 +44,10 @@ public interface IAttackMethod<K> {
      *                 {@link nationalcipher.cipher.decrypt.methods.DecryptionTracker}
      *                 instances that tracks best solutions
      * @param solution The solution to become the best solution
-     * @param key      The key to generate this solution
+     * @param key      The key to generate this solution, can be null which indicates
+     *                 the keystring was already set at some point
      */
-    default void updateBestSolution(DecryptionTracker tracker, Solution solution, K key) {
+    default void updateBestSolution(DecryptionTracker tracker, Solution solution, @Nullable K key) {
         tracker.bestSolution = solution;
         
         if (key != null) {
@@ -53,18 +56,21 @@ public interface IAttackMethod<K> {
         
         tracker.bestSolution.bakeSolution();
         tracker.addSolution(tracker.bestSolution);
-        this.output(tracker.out(), tracker.bestSolution.toString());
+        this.output(tracker, tracker.bestSolution.toString());
         tracker.getKeyPanel().updateSolution(tracker.bestSolution);
     }
     
     
+    /**
+     * @return If the cipher attack is muted
+     */
     default boolean isMuted() {
         return false;
     }
     
-    default boolean output(Output out, String text, Object... format) {
-        if(!this.isMuted()) {
-            out.println(text, format);
+    default boolean output(DecryptionTracker tracker, String text, Object... format) {
+        if(!this.isMuted() && !tracker.shouldStop()) {
+            tracker.out().println(text, format);
             return true;
         }
         

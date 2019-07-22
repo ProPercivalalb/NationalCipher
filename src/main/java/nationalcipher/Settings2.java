@@ -39,7 +39,7 @@ public class Settings2 {
             settings.checkReverse = jsonObject.has("checkReverse") ? jsonObject.get("checkReverse").getAsBoolean() : true;
             settings.checkRoutes = jsonObject.has("checkRoutes") ? jsonObject.get("checkRoutes").getAsBoolean() : true;
             settings.useParallel = jsonObject.has("useParallel") ? jsonObject.get("useParallel").getAsBoolean() : false;
-
+            
             return settings;
         }
 

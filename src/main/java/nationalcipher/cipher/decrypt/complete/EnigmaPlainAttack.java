@@ -84,12 +84,12 @@ public class EnigmaPlainAttack extends CipherAttack {
 
         if (method == DecryptionMethod.BRUTE_FORCE) {
 
-            int rotorCombos = MathUtil.factorial(task.machine.getNumberOfRotors(), 3);
-            app.out().println("Going throught all combinations of the %d rotors (%d) and indicator settings (%d), totalling %d test subjects.", task.machine.getNumberOfRotors(), rotorCombos, (int) Math.pow(26, 3), rotorCombos * (int) Math.pow(26, 3));
+            int rotorCombos = MathUtil.factorial(task.machine.getRotorCount(), 3);
+            app.out().println("Going throught all combinations of the %d rotors (%d) and indicator settings (%d), totalling %d test subjects.", task.machine.getRotorCount(), rotorCombos, (int) Math.pow(26, 3), rotorCombos * (int) Math.pow(26, 3));
             double constant = 120 / 60000D; // Time taken per letter per rotor setting
-            app.out().println("Estimated time %c %ds, This may take a while...", (char) 8776, (int) (constant * rotorCombos * task.cipherText.length * (task.reflectorTest == -1 ? task.machine.getNumberOfReflectors() : 1)));
+            app.out().println("Estimated time %c %ds, This may take a while...", (char) 8776, (int) (constant * rotorCombos * task.cipherText.length * (task.reflectorTest == -1 ? task.machine.getReflectorCount() : 1)));
             Timer timer = new Timer();
-            KeyIterator.iterateIntegerArray(task::onList, 3, task.machine.getNumberOfRotors(), false);
+            KeyIterator.iterateIntegerArray(task::onList, 3, task.machine.getRotorCount(), false);
             app.out().println("Time taken %fs", timer.getTimeRunning(Time.SECOND));
 
             task.squeezeFirst.sort();
@@ -186,8 +186,9 @@ public class EnigmaPlainAttack extends CipherAttack {
         public void makeCopy() {
             this.indicator = Arrays.copyOf(this.indicator, this.indicator.length);
             this.rotors = Arrays.copyOf(this.rotors, this.rotors.length);
-            if (this.ring != null)
+            if (this.ring != null) {
                 this.ring = Arrays.copyOf(this.ring, this.ring.length);
+            }
         }
 
         public Integer[] copyIndicator() {

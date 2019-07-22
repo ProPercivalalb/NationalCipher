@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -421,7 +422,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
         this.toolBar.add(this.cipherSelect);
 
         this.decryptionType.setMaximumSize(new Dimension(150, Integer.MAX_VALUE));
-        List<DecryptionMethod> methods = getCipherAttack().getAttackMethods();
+        Collection<DecryptionMethod> methods = getCipherAttack().getAttackMethods();
 
         for (DecryptionMethod method : methods)
             decryptionType.addItem(method);
@@ -1074,8 +1075,8 @@ public class NationalCipherUI extends JFrame implements IApplication {
             DecryptionMethod lastMethod = (DecryptionMethod) NationalCipherUI.this.decryptionType.getSelectedItem();
             NationalCipherUI.this.decryptionType.removeAllItems();
             if (NationalCipherUI.this.hasCipherAttack()) {
-                CipherAttack decrypt = NationalCipherUI.this.getCipherAttack();
-                List<DecryptionMethod> methods = decrypt.getAttackMethods();
+                CipherAttack<?, ?> decrypt = NationalCipherUI.this.getCipherAttack();
+                Collection<DecryptionMethod> methods = decrypt.getAttackMethods();
 
                 for (DecryptionMethod method : methods)
                     NationalCipherUI.this.decryptionType.addItem(method);
@@ -3351,7 +3352,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
         return this.getCipherAttack() != null;
     }
 
-    public CipherAttack getCipherAttack() {
+    public CipherAttack<?, ?> getCipherAttack() {
         return AttackRegistry.CIPHERS.get((String) this.cipherSelect.getSelectedItem());
     }
 

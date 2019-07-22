@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import javalibrary.dict.Dictionary;
-import javalibrary.swing.ProgressValue;
 import nationalcipher.api.IAttackMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.util.CipherUtils;
@@ -25,9 +24,11 @@ public interface IDictionaryAttack<K> extends IAttackMethod<K> {
         }
         
         words.forEach(word -> {
-            this.decryptAndUpdate(tracker, this.useWordToGetKey(tracker, word));
-            
-            tracker.increaseIteration();
+            if (!tracker.shouldStop()) {
+                this.decryptAndUpdate(tracker, this.useWordToGetKey(tracker, word));
+                
+                tracker.increaseIteration();
+            }
         });
         
         tracker.finish();

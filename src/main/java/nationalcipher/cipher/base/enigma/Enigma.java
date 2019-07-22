@@ -189,7 +189,7 @@ public class Enigma implements IRandEncrypter {
 	@Override
 	public String randomlyEncrypt(String plainText) {
 		EnigmaMachine machine = EnigmaLib.NORENIGMA;//RandomUtil.pickRandomElement(EnigmaLib.MACHINES);
-		return encode(plainText, machine, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3), RandomUtil.pickRandomInt(machine.getNumberOfReflectors()));
+		return encode(plainText, machine, KeyGeneration.createShortKey26(3), KeyGeneration.createShortKey26(3), KeyGeneration.createOrder(3), RandomUtil.pickRandomInt(machine.getReflectorCount()));
 	}
 	
 	@Override

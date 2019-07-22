@@ -1,13 +1,13 @@
 package nationalcipher.cipher.transposition;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+
+import nationalcipher.util.Pair;
 
 public abstract class RouteCipherType {
 
     private String description;
-    public HashMap<List<Integer>, int[]> cache = new HashMap<List<Integer>, int[]>();
+    public HashMap<Pair<Integer, Integer>, int[]> cache = new HashMap<>();
 
     public RouteCipherType() {
         this("No description");
@@ -39,7 +39,7 @@ public abstract class RouteCipherType {
         if (!this.canCache())
             return this.createPattern(width, height, totalSize);
 
-        List<Integer> key = Arrays.asList(width, height);
+        Pair<Integer, Integer> key = new Pair<>(width, height);
         if (this.cache.containsKey(key))
             return this.cache.get(key);
 

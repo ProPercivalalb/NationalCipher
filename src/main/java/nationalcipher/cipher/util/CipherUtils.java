@@ -3,10 +3,14 @@ package nationalcipher.cipher.util;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -67,5 +71,27 @@ public class CipherUtils {
     
     public static String formatBigInteger(BigInteger value) {
         return numFormatter.format(value);
+    }
+    
+    public static String displayAsLetters(Integer[] array) {
+        StringBuilder builder = new StringBuilder(array.length);
+        for (int i = 0; i < array.length; i++) {
+            builder.append((char)(array[i] + 'A'));
+        }
+        return builder.toString();
+    }
+    
+    //TODO
+    public static <K> void recussivelyIterate(Object key, Consumer<List<Object>> accept, BiConsumer<Object, Consumer>... lists) {
+        if (lists.length == 0) return;
+        List<Object> list =  new ArrayList<>();
+        Consumer<Consumer<K>> consumer = (func) -> {};
+        BiConsumer<Object, Consumer> consumer3 = (o, c) -> {list.add(c); accept.accept(list);list.clear();};
+        for (int i = lists.length - 2; i >=0; i--) {
+            final BiConsumer<Object, Consumer> consumer2 = consumer3;
+            int j = i;
+            consumer3 = (o, c) -> lists[j].accept(key, n -> {list.add(n); consumer2.accept(key, null);});
+        }
+        consumer3.accept(null, null);
     }
 }

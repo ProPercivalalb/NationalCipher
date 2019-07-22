@@ -85,6 +85,29 @@ public class KeyGeneration {
 
         return new String(key);
     }
+    
+    
+    public static Integer[] createRepeatingShortOrderKey(int entryRange, int length) {
+        Integer[] key = new Integer[length];
+
+        for (int i = 0; i < length; i++)
+            key[i] = RandomUtil.pickRandomInt(0, entryRange - 1);
+
+        return key;
+    }
+
+    public static Integer[] createShortOrderKey(int entryRange, int length) {
+        List<Integer> integers = ListUtil.range(0, entryRange - 1);
+
+        Integer[] key = new Integer[length];
+
+        for (int i = 0; i < length; i++) {
+            key[i] = RandomUtil.pickRandomElement(integers);
+            integers.remove((Integer) key[i]);
+        }
+
+        return key;
+    }
 
     public static Integer[] createOrder(int length) {
         return ArrayUtil.shuffle(ArrayUtil.createRangeInteger(length));

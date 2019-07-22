@@ -102,4 +102,16 @@ public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends 
     public void setThirdKeyDomain(Function<C, IKeyBuilder<T>> thirdKeyFunc) {
         this.thirdTypeLimit = thirdKeyFunc.apply(this.thirdKeyBuilder).create();
     }
+    
+    public IKeyType<F> getFirstKeyType() {
+        return this.firstTypeLimit;
+    }
+    
+    public IKeyType<S> getSecondKeyType() {
+        return this.secondTypeLimit;
+    }
+    
+    public IKeyType<T> getThirdKeyType() {
+        return this.thirdTypeLimit;
+    }
 }

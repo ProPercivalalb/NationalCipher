@@ -13,7 +13,8 @@ import nationalcipher.util.CharacterArrayWrapper;
 public class HuttonCipher extends BiKeyCipher<String, String, VariableStringKeyType.Builder, VariableStringKeyType.Builder> {
 
     public HuttonCipher() {
-        super(VariableStringKeyType.builder().setAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXY").setRange(1, Integer.MAX_VALUE), VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(1, Integer.MAX_VALUE));
+        super(VariableStringKeyType.builder().setAlphabet("ABCDEFGHIJKLMNOPQRSTUVWXY").setRange(1, Integer.MAX_VALUE),
+                VariableStringKeyType.builder().setAlphabet(KeyGeneration.ALL_26_CHARS).setRange(1, Integer.MAX_VALUE));
     }
     
     @Override
@@ -28,7 +29,6 @@ public class HuttonCipher extends BiKeyCipher<String, String, VariableStringKeyT
     
     @Override
     public CharSequence encode(CharSequence plainText, BiKey<String, String> key, IFormat format) {
-
         char[] secondKey = new char[26];
         int d = 0;
         for (d = 0; d < key.getSecondKey().length(); d++) {

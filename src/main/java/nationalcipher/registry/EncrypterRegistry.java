@@ -18,8 +18,12 @@ import nationalcipher.cipher.base.anew.CaesarCipher;
 import nationalcipher.cipher.base.anew.ColumnarTranspositionCipher;
 import nationalcipher.cipher.base.anew.ConjugatedBifidCipher;
 import nationalcipher.cipher.base.anew.DigrafidCipher;
+import nationalcipher.cipher.base.anew.EnigmaPlugboardCipher;
 import nationalcipher.cipher.base.anew.FourSquareCipher;
 import nationalcipher.cipher.base.anew.FractionatedMorseCipher;
+import nationalcipher.cipher.base.anew.HillCipher;
+import nationalcipher.cipher.base.anew.HillExtendedCipher;
+import nationalcipher.cipher.base.anew.HillSubstitutionCipher;
 import nationalcipher.cipher.base.anew.HomophonicCipher;
 import nationalcipher.cipher.base.anew.KeywordCipher;
 import nationalcipher.cipher.base.anew.MorbitCipher;
@@ -33,6 +37,10 @@ import nationalcipher.cipher.base.anew.PlayfairCipher;
 import nationalcipher.cipher.base.anew.PolluxCipher;
 import nationalcipher.cipher.base.anew.PortaxCipher;
 import nationalcipher.cipher.base.anew.ProgressiveCipher;
+import nationalcipher.cipher.base.anew.QuagmireICipher;
+import nationalcipher.cipher.base.anew.QuagmireIICipher;
+import nationalcipher.cipher.base.anew.QuagmireIIICipher;
+import nationalcipher.cipher.base.anew.QuagmireIVCipher;
 import nationalcipher.cipher.base.anew.RailFenceCipher;
 import nationalcipher.cipher.base.anew.RedefenceCipher;
 import nationalcipher.cipher.base.anew.RunningKeyCipher;
@@ -44,6 +52,7 @@ import nationalcipher.cipher.base.anew.TriSquareCipher;
 import nationalcipher.cipher.base.anew.TrifidCipher;
 import nationalcipher.cipher.base.anew.TwoSquareCipher;
 import nationalcipher.cipher.base.anew.VigenereCipher;
+import nationalcipher.cipher.base.enigma.EnigmaLib;
 
 public class EncrypterRegistry {
 
@@ -102,8 +111,7 @@ public class EncrypterRegistry {
         RAND_ENCRYPTERS.register(new PlayfairCipher());
         RAND_ENCRYPTERS.register(new PolluxCipher());
         RAND_ENCRYPTERS.register(new PortaxCipher());
-        // TODO RAND_ENCRYPTERS.registerAll(new QuagmireICipher(), new
-        // QuagmireIICipher(), new QuagmireIIICipher(), new QuagmireIVCipher());
+        RAND_ENCRYPTERS.registerAll(new QuagmireICipher(), new QuagmireIICipher(), new QuagmireIIICipher(), new QuagmireIVCipher());
         RAND_ENCRYPTERS.registerAll(new RailFenceCipher(), new RedefenceCipher());
         // TODO RAND_ENCRYPTERS.register(new RouteTranspositionCipher());
         RAND_ENCRYPTERS.register(new RunningKeyCipher());
@@ -113,6 +121,12 @@ public class EncrypterRegistry {
         RAND_ENCRYPTERS.register(new TrifidCipher());
         RAND_ENCRYPTERS.register(new TwoSquareCipher());
         RAND_ENCRYPTERS.register(new TriSquareCipher());
+        RAND_ENCRYPTERS.register(new EnigmaPlugboardCipher(EnigmaLib.ENIGMA_M3));
+        RAND_ENCRYPTERS.register("enigmaicipher", new EnigmaPlugboardCipher(EnigmaLib.ENIGMA_I));
+        RAND_ENCRYPTERS.register("enigmadcipher", new EnigmaPlugboardCipher(EnigmaLib.ENIGMA_D));
+        RAND_ENCRYPTERS.register(new HillCipher());
+        RAND_ENCRYPTERS.register(new HillExtendedCipher());
+        RAND_ENCRYPTERS.register(new HillSubstitutionCipher());
     }
 
     static {

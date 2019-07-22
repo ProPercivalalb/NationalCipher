@@ -1,20 +1,22 @@
 package nationalcipher.cipher.decrypt;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import javalibrary.Output;
 import nationalcipher.api.ICipher;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.interfaces.ILoadElement;
+import nationalcipher.cipher.setting.ICipherSetting;
 import nationalcipher.ui.IApplication;
 
 public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<K>, ISimulatedAnnealingAttack<K>, ILoadElement {
@@ -22,27 +24,27 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
     private C cipher;
     private String displayName;
     private String saveId;
-    private List<DecryptionMethod> methods;
+    private final Set<DecryptionMethod> methods;
     private boolean mute;
     private int iterations = 1000;
-
+    private final List<ICipherSetting<K, C>> settings;
+    
     public CipherAttack(C cipher, String displayName) {
         this.cipher = cipher;
         this.displayName = displayName;
         this.saveId = "attack_" + displayName;
+        this.methods = EnumSet.noneOf(DecryptionMethod.class);
+        this.settings = new ArrayList<>();
     }
 
     public String getDisplayName() {
         return this.displayName;
     }
-
-    @Override
-    public C getCipher() {
-        return this.cipher;
-    }
-
+    
     public CipherAttack<K, C> setAttackMethods(DecryptionMethod... methods) {
-        this.methods = Collections.unmodifiableList(Arrays.asList(methods));
+        for (DecryptionMethod s : methods) {
+            this.methods.add(s);
+        }
         return this;
     }
     
@@ -51,9 +53,22 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         return this;
     }
 
-    // When the attack ends naturally or the thread is stopped forcefully
-    public void onTermination(boolean forced) {
+    @SafeVarargs
+    public final CipherAttack<K, C> addSetting(ICipherSetting<K, C>... settings) {
+        for (ICipherSetting<K, C> s : settings) {
+            this.settings.add(s);
+        }
+        return this;
+    }
 
+    @Override
+    public C getCipher() {
+        return this.cipher;
+    }
+
+    // When the attack ends naturally or is forcefully stopped
+    public void onTermination(boolean forced) {
+        
     }
     
     public boolean canBeStopped() {
@@ -64,27 +79,33 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         if (!this.methods.contains(method)) {
             throw new UnsupportedOperationException("Decryption method not supported: " + method);
         }
-        
+
         switch (method) {
         case BRUTE_FORCE:
+            this.readLatestSettings();
             return this.tryBruteForce(new DecryptionTracker(text, app));
         case SIMULATED_ANNEALING:
+            this.readLatestSettings();
             return this.trySimulatedAnnealing(new DecryptionTracker(text, app), this.iterations);
         default:
             return null;
         }
     }
-
-    public void createSettingsUI(JDialog dialog, JPanel panel) {
-
+    
+    public void readLatestSettings() {
+        this.settings.forEach(setting -> setting.apply(this));
     }
 
-    public final List<DecryptionMethod> getAttackMethods() {
-        return this.methods == null ? Collections.emptyList() : this.methods;
+    public void createSettingsUI(JDialog dialog, JPanel panel) {
+        this.settings.forEach(setting -> setting.addToInterface(panel));
+    }
+
+    public final Collection<DecryptionMethod> getAttackMethods() {
+        return this.methods == null ? Collections.emptySet() : Collections.unmodifiableSet(this.methods);
     }
 
     public void writeTo(Map<String, Object> map) {
-
+        
     }
 
     public void readFrom(Map<String, Object> map) {

@@ -69,7 +69,7 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
         // Settings grab
         switch (method) {
         case PERIODIC_KEY:
-            IKeyType<Integer[]> orderedKey = this.getCipher().setSecondKeyLimit(builder -> builder.setRange(periodRange));
+            IKeyType<Integer[]> orderedKey = this.getCipher().setSecondKeyLimit(builder -> builder.setRange(periodRange)).getSecondKeyType();
             
             app.getProgress().addMaxValue(orderedKey.getNumOfKeys());
             
@@ -85,11 +85,11 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
             tracker.finish();
             
             if (tracker.resultsList.size() < 1) {
-                this.output(app.out(), "No transposition order with good digraph %cIC found.", (char) 916);
+                this.output(tracker, "No transposition order with good digraph %cIC found.", (char) 916);
                 return null;
             }
 
-            this.output(app.out(), "Found %d transposition orders with good digraph %cIC.", tracker.resultsList.size(), (char) 916);
+            this.output(tracker, "Found %d transposition orders with good digraph %cIC.", tracker.resultsList.size(), (char) 916);
             tracker.resultsList.sort();
 
             Iterator<ADFGXResult> iterator = tracker.resultsList.iterator();
@@ -142,7 +142,7 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
 
             if (this.resultsList.add(section)) {
                 if (section.score < 5D) {
-                    ADFGXAttack.this.output(this.out(), section.toString());
+                    ADFGXAttack.this.output(this, section.toString());
                 }
             }
             
