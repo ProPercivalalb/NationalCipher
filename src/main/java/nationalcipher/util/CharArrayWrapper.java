@@ -31,7 +31,7 @@ public class CharArrayWrapper implements CharSequence {
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        if (start < 0 || end < 0 || start > end || end >= this.length) {
+        if (start < 0 || end < 0 || start > end || end > this.length) {
             throw new IndexOutOfBoundsException();
         }
             

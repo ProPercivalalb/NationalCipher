@@ -47,6 +47,7 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
         case PERIODIC_KEY:
             this.readLatestSettings();
             for (int size = this.sizeRange[0]; size <= this.sizeRange[1]; size++) {
+                tracker.resultList.clear();
                 if (tracker.getCipherText().length() % size != 0) {
                     this.output(tracker, "Matrix size of %d is not possible, length of text is not a multiple.", size);
                     continue;
@@ -63,16 +64,14 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
                     app.out().println("Trying all combinations...");
                     app.out().println("Removing trials that have no inverse...");
                     app.out().println("Removing trials with %cIC less than 10...", (char) 916);
-                    KeyIterator.iterateObject(row -> this.iteratePossibleRows(tracker, row), HillSection.class, size, tracker.resultList.toArray(new HillSection[0]));
+                    KeyIterator.iterateObject(row -> this.iteratePossibleRows(tracker, row), size, tracker.resultList.toArray(new HillSection[0]));
                     tracker.bestNext.sort();
                     
                     for (HillSection section : tracker.bestNext) {
                         CipherAttack<String, KeywordCipher> substitutionHack = new CipherAttack<>(new KeywordCipher(KeyGeneration.ALL_26_CHARS), "Hill Sub").setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING).setIterations(5).mute();
                         DecryptionTracker keywordTracker = substitutionHack.attemptAttack(new CharArrayWrapper(section.decrypted), DecryptionMethod.SIMULATED_ANNEALING, app);
                         
-                        if (this.isBetterThanBest(tracker, keywordTracker.getBestSolution())) {
-                            this.updateBestSolution(tracker, keywordTracker.getBestSolution(), null);
-                        }
+                        this.updateIfBetterThanBest(tracker, keywordTracker.getBestSolution());
                     }
                 }
             }
@@ -88,28 +87,6 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
             super.decryptAndUpdate(tracker, key);
         } catch (MatrixNoInverse | MatrixNotSquareException e) {
             return;
-        }
-    }
-
-    public void iteratePossibleRows(HillTracker tracker, HillSection[] data) {
-        char[] combinedDecrypted = new char[tracker.getCipherText().length()];
-        Integer[] inverseMatrix = new Integer[tracker.size * tracker.size];
-
-        for (int s = 0; s < tracker.size; s++) {
-            HillSection hillSection = data[s];
-            for (int n = 0; n < tracker.size; n++)
-                inverseMatrix[s * tracker.size + n] = hillSection.inverseCol[n];
-            for (int i = 0; i < tracker.lengthSub; i++)
-                combinedDecrypted[i * tracker.size + s] = hillSection.decrypted[i];
-        }
-
-        double score = Math.abs(StatCalculator.calculateMonoIC(combinedDecrypted) - tracker.getLanguage().getNormalCoincidence()) * 1000;
-
-        if (score < 10D && new Matrix(inverseMatrix, tracker.size).hasInverseMod(26)) {
-            HillSection section = new HillSection(score, combinedDecrypted, inverseMatrix);
-            if (tracker.bestNext.add(section)) {
-                this.output(tracker, section.toString());
-            }
         }
     }
     
@@ -135,7 +112,41 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
                 this.output(tracker, "%s, %f, %s", Arrays.toString(row), score, new String(decrypted));
             }
         }
+    }
 
+    public void iteratePossibleRows(HillTracker tracker, HillSection[] data) {
+        // Create key matrix from data
+        Integer[] inverseData = new Integer[tracker.size * tracker.size];
+        for (int s = 0; s < tracker.size; s++) {
+            HillSection hillResult = data[s];
+            for (int n = 0; n < tracker.size; n++) {
+                inverseData[s * tracker.size + n] = hillResult.inverseCol[n];
+            }
+        }
+        
+        Matrix inverseMatrix = new Matrix(inverseData, tracker.size);
+        
+        if (!inverseMatrix.hasInverseMod(26)) {
+            return;
+        }
+        
+        char[] combinedDecrypted = new char[tracker.getCipherText().length()];
+
+        for (int s = 0; s < tracker.size; s++) {
+            HillSection hillSection = data[s];
+            for (int i = 0; i < tracker.lengthSub; i++) {
+                combinedDecrypted[i * tracker.size + s] = hillSection.decrypted[i];
+            }
+        }
+
+        double score = Math.abs(StatCalculator.calculateMonoIC(combinedDecrypted) - tracker.getLanguage().getNormalCoincidence()) * 1000;
+
+        if (score < 10D) {
+            HillSection section = new HillSection(score, combinedDecrypted, inverseData);
+            if (tracker.bestNext.add(section)) {
+                this.output(tracker, section.toString());
+            }
+        }
     }
 
     public class HillTracker extends DecryptionTracker {

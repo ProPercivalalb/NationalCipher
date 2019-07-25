@@ -108,13 +108,12 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
                         }
                     }
                 }
-                
-                CipherAttack<String, KeywordCipher> substitutionHack = new CipherAttack<>(new KeywordCipher(KeyGeneration.ALL_25_CHARS), "ADFGX Sub").setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING).setIterations(5).mute();
+
+                CipherAttack<String, KeywordCipher> substitutionHack = new CipherAttack<>(new KeywordCipher(KeyGeneration.ALL_25_CHARS), "ADFGX Sub").setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING).setIterations(3).mute();
                 DecryptionTracker keywordTracker = substitutionHack.attemptAttack(new CharArrayWrapper(tempText), DecryptionMethod.SIMULATED_ANNEALING, app);
-                
-                if (this.isBetterThanBest(tracker, keywordTracker.getBestSolution())) {
-                    this.updateBestSolution(tracker, keywordTracker.getBestSolution(), null);
-                }
+
+                this.updateIfBetterThanBest(tracker, keywordTracker.getBestSolution());
+                keywordTracker.getProgress().reset();
             }
             return tracker;
         default:
@@ -156,7 +155,7 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
         public Integer[] order;
 
         public ADFGXResult(char[] decrypted, ILanguage language, Integer[] inverseCol) {
-            super(Math.abs(StatCalculator.calculateIC(decrypted, 2, false) - language.getNormalCoincidence()) * 1000);
+            super(Math.abs(StatCalculator.calculateIC(new CharArrayWrapper(decrypted), 2, false) - language.getNormalCoincidence()) * 1000);
             this.decrypted = decrypted;
             this.order = inverseCol;
         }

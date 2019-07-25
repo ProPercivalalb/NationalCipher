@@ -16,13 +16,8 @@ public class SlidefairAttack extends PeriodicKeyAttack<SlidefairCipher> implemen
 
     @Override
     public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
-        int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
-        this.getCipher().setDomain(builder -> builder.setRange(periodRange));
-        
         // Settings grab
         switch (method) {
-        case PERIODIC_KEY:
-            return this.tryKeySearch(new DecryptionTracker(text, app), periodRange[0], periodRange[1]);
         case DICTIONARY:
             DecryptionTracker tracker = new DecryptionTracker(text, app);
             return this.tryDictionaryAttack(tracker);

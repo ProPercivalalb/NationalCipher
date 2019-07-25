@@ -10,17 +10,23 @@ import nationalcipher.cipher.base.anew.AffineCipher;
 import nationalcipher.cipher.base.anew.AutokeyCipher;
 import nationalcipher.cipher.base.anew.BazeriesCipher;
 import nationalcipher.cipher.base.anew.CaesarCipher;
+import nationalcipher.cipher.base.anew.KeywordCipher;
+import nationalcipher.cipher.base.anew.MyszkowskiCipher;
 import nationalcipher.cipher.base.anew.NicodemusCipher;
 import nationalcipher.cipher.base.anew.PlayfairCipher;
 import nationalcipher.cipher.base.anew.PolluxCipher;
+import nationalcipher.cipher.base.anew.PortaxCipher;
 import nationalcipher.cipher.base.anew.ProgressiveCipher;
 import nationalcipher.cipher.base.anew.QuagmireICipher;
 import nationalcipher.cipher.base.anew.QuagmireIICipher;
 import nationalcipher.cipher.base.anew.QuagmireIIICipher;
 import nationalcipher.cipher.base.anew.QuagmireIVCipher;
+import nationalcipher.cipher.base.anew.RagbabyCipher;
 import nationalcipher.cipher.base.anew.RailFenceCipher;
 import nationalcipher.cipher.base.anew.SlidefairCipher;
 import nationalcipher.cipher.base.anew.TriSquareCipher;
+import nationalcipher.cipher.base.anew.TrifidCipher;
+import nationalcipher.cipher.base.anew.TwoSquareCipher;
 import nationalcipher.cipher.base.anew.VigenereCipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.anew.ADFGXAttack;
@@ -32,14 +38,17 @@ import nationalcipher.cipher.decrypt.anew.DigrafidAttack;
 import nationalcipher.cipher.decrypt.anew.EnigmaAttack;
 import nationalcipher.cipher.decrypt.anew.EnigmaPlugboardAttack;
 import nationalcipher.cipher.decrypt.anew.EnigmaUhrAttack;
+import nationalcipher.cipher.decrypt.anew.GeneralPeriodAttack;
 import nationalcipher.cipher.decrypt.anew.HillAttack;
 import nationalcipher.cipher.decrypt.anew.HillExtendedAttack;
 import nationalcipher.cipher.decrypt.anew.HillSubsitutionAttack;
 import nationalcipher.cipher.decrypt.anew.NicodemusAttack;
 import nationalcipher.cipher.decrypt.anew.PeriodicKeyAttack;
 import nationalcipher.cipher.decrypt.anew.ProgressiveKeyAttack;
+import nationalcipher.cipher.decrypt.anew.RouteAttack;
 import nationalcipher.cipher.decrypt.anew.SeriatedPlayfairAttack;
 import nationalcipher.cipher.decrypt.anew.SlidefairAttack;
+import nationalcipher.cipher.decrypt.anew.StraddleCheckerboardAttack;
 import nationalcipher.cipher.setting.SettingTypes;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.lib.CipherLib;
@@ -65,8 +74,12 @@ public class AttackRegistry {
         registerCipher(CipherLib.POLLUX, new CipherAttack<>(new PolluxCipher(), "Pollux").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.RAILFENCE, new CipherAttack<>(new RailFenceCipher(), "Railfence").setAttackMethods(BRUTE_FORCE), settings);
         registerCipher(CipherLib.BIFID, new BifidAttack(), settings);
+        registerCipher(CipherLib.TRIFID, new CipherAttack<>(new TrifidCipher(), "Trifid").setAttackMethods(SIMULATED_ANNEALING), settings); //add settings
         registerCipher(CipherLib.PLAYFAIR, new CipherAttack<>(new PlayfairCipher(), "Playfair").setAttackMethods(SIMULATED_ANNEALING), settings);
         registerCipher(CipherLib.PLAYFAIR_SERIATED, new SeriatedPlayfairAttack(), settings);
+        registerCipher(CipherLib.KEYWORD, new CipherAttack<>(new KeywordCipher(), "Simple Subsitution").setAttackMethods(SIMULATED_ANNEALING), settings);
+        
+        registerCipher(CipherLib.PORTAX, new PeriodicKeyAttack<>(new PortaxCipher(), "Portax").setCharStep(2), settings);
         
         registerCipher(CipherLib.VIGENERE, new PeriodicKeyAttack<>(new VigenereCipher(VigenereType.VIGENERE), "Vigenere"), settings);
         registerCipher(CipherLib.PORTA, new PeriodicKeyAttack<>(new VigenereCipher(VigenereType.PORTA), "Porta"), settings);
@@ -95,8 +108,9 @@ public class AttackRegistry {
         registerCipher(CipherLib.VARIANT + ".slidefair", new SlidefairAttack(new SlidefairCipher(VigenereType.VARIANT), "Variant Slidefair"), settings);
         registerCipher(CipherLib.BEAUFORT + ".slidefair", new SlidefairAttack(new SlidefairCipher(VigenereType.BEAUFORT), "Beaufort Slidefair"), settings);
 
-        registerCipher(CipherLib.DIGRAFID, new DigrafidAttack(), settings); 
-        registerCipher(CipherLib.BIFID_CM, new BifidCMAttack(), settings); 
+        registerCipher(CipherLib.DIGRAFID, new DigrafidAttack(), settings);
+        registerCipher(CipherLib.BIFID_CM, new BifidCMAttack(), settings);
+        registerCipher(CipherLib.TWO_SQUARE, new CipherAttack<>(new TwoSquareCipher(), "Two Square").setAttackMethods(SIMULATED_ANNEALING), settings);
         registerCipher(CipherLib.TRI_SQUARE, new CipherAttack<>(new TriSquareCipher(), "Tri Square").setAttackMethods(SIMULATED_ANNEALING), settings);
         registerCipher(CipherLib.ADFGX, new ADFGXAttack(), settings);
         registerCipher(CipherLib.CADENUS, new CadenusAttack(), settings);
@@ -113,7 +127,12 @@ public class AttackRegistry {
         registerCipher(CipherLib.HILL, new HillAttack(), settings);
         registerCipher(CipherLib.HILL + ".extended", new HillExtendedAttack(), settings);
         registerCipher(CipherLib.HILL + ".subsitution", new HillSubsitutionAttack(), settings);
-//		Substitution
+        registerCipher(CipherLib.GENERAL_PERIODIC, new GeneralPeriodAttack(), settings);
+        registerCipher(CipherLib.MYSZKOWSKI, new CipherAttack<>(new MyszkowskiCipher(), "Myszkowski").addSetting(SettingTypes.createIntRange(2, 5, 2, 100, 1, (values, cipher) -> {cipher.setDomain(builder -> builder.setRange(values));})).setAttackMethods(BRUTE_FORCE), settings); //Add dictionary attack
+        registerCipher(CipherLib.STRADDLE_CHECKERBOARD, new StraddleCheckerboardAttack(), settings);
+        registerCipher(CipherLib.ROUTE, new RouteAttack(), settings);
+        registerCipher(CipherLib.RAGBABY, new CipherAttack<>(new RagbabyCipher(), "Ragbaby").setAttackMethods(SIMULATED_ANNEALING), settings);
+        //		Substitution
 //		registerCipher(new HuttonAttack(), settings);
 //
 //		registerCipher(CipherLib.CAESAR, new CaesarAttack(), settings);		

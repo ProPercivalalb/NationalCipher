@@ -31,40 +31,14 @@ public class StatCalculator {
         return maxIC;
     }
 
-    public static double calculateIC(byte[] text, int length, boolean overlap) {
+    public static double calculateIC(CharSequence text, int length, boolean overlap) {
         Map<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, length, length, overlap);
 
         double sum = 0.0D;
         for (int value : letters.values())
             sum += value * (value - 1);
 
-        int n = overlap ? text.length - (length - 1) : text.length / length;
-        return sum / (n * (n - 1));
-    }
-
-    public static double calculateIC(char[] text, int length, boolean overlap) {
-        Map<String, Integer> letters = StringAnalyzer.getEmbeddedStrings(text, length, length, overlap);
-
-        double sum = 0.0D;
-        for (int value : letters.values())
-            sum += value * (value - 1);
-
-        int n = overlap ? text.length - (length - 1) : text.length / length;
-        return sum / (n * (n - 1));
-    }
-
-    public static double calculateIC(String text, int length, boolean overlap) {
-        return calculateIC(text.toCharArray(), length, overlap);
-    }
-
-    public static double calculateMonoIC(byte[] text) {
-        Map<Byte, Integer> letters = StringAnalyzer.getCharacterCount(text);
-
-        double sum = 0.0D;
-        for (int value : letters.values())
-            sum += value * (value - 1);
-
-        int n = text.length;
+        int n = overlap ? text.length() - (length - 1) : text.length() / length;
         return sum / (n * (n - 1));
     }
 
@@ -90,7 +64,7 @@ public class StatCalculator {
         return calculateKappaIC(text, StringTransformer.rotateRight(text, period));
     }
 
-    private static double calculateKappaIC(String text1, String text2) {
+    private static double calculateKappaIC(CharSequence text1, String text2) {
         double coincidence = 0;
         for (int i = 0; i < text1.length(); ++i)
             if (text1.charAt(i) == text2.charAt(i))

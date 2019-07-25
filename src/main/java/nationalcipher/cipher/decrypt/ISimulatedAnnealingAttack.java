@@ -13,27 +13,19 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
 
     default DecryptionTracker trySimulatedAnnealing(DecryptionTracker tracker, int iterations) {
         Timer timer = new Timer();
-        double lastDF = 0;
 
-        K bestKey, lastKey;
-        
         tracker.getProgress().addMaxValue(BigInteger.valueOf((long) Math.floor((double) tracker.getSettings().getSATempStart() / tracker.getSettings().getSATempStep()) + 1).multiply(BigInteger.valueOf(tracker.getSettings().getSACount())));
         int ite = 0;
-        
+
         stop:
         while (iterations < 0 || ite++ < iterations) {
             timer.restart();
             this.startIteration(tracker);
-            lastKey = this.generateIntialKey(tracker);
-            tracker.lastSolution = this.toSolution(tracker, lastKey);
 
             K bestMaximaKey = this.generateIntialKey(tracker);
-            Solution bestMaximaSolution = tracker.lastSolution;
+            Solution bestMaximaSolution = this.toSolution(tracker, bestMaximaKey);
+            this.updateIfBetterThanBest(tracker, bestMaximaSolution, bestMaximaKey);
 
-            if (this.isBetterThanBest(tracker, bestMaximaSolution)) {
-                this.updateBestSolution(tracker, bestMaximaSolution, bestMaximaKey);
-                bestKey = bestMaximaKey;
-            }
             double TEMP = tracker.getSettings().getSATempStart();
             do {
                 TEMP = Math.max(0.0D, TEMP - tracker.getSettings().getSATempStep());
@@ -42,27 +34,16 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
                     if (tracker.shouldStop()) {
                         break stop;
                     }
-                    
+
                     this.onPreIteration(tracker);
-                    lastKey = this.modifyKey(tracker, bestMaximaKey, TEMP, count, lastDF);
+                    K lastKey = this.modifyKey(tracker, bestMaximaKey, TEMP, count);
                     tracker.lastSolution = this.toSolution(tracker, lastKey);
                     tracker.addSolution(tracker.lastSolution);
-
-                    lastDF = tracker.lastSolution.score - bestMaximaSolution.score;
-
-                    if (lastDF >= 0) {
+                    
+                    if (this.shouldAcceptSolution(TEMP, tracker.lastSolution, bestMaximaSolution)) {
                         bestMaximaSolution = tracker.lastSolution;
                         bestMaximaKey = lastKey;
-                    } else if (TEMP > 0) {
-                        if (TEMP == 0.0D || Math.exp(lastDF / TEMP) > RandomUtil.pickDouble()) {
-                            bestMaximaSolution = tracker.lastSolution;
-                            bestMaximaKey = lastKey;
-                        }
-                    }
-
-                    if (this.isBetterThanBest(tracker, bestMaximaSolution)) {
-                        this.updateBestSolution(tracker, bestMaximaSolution, bestMaximaKey);
-                        bestKey = bestMaximaKey;
+                        this.updateIfBetterThanBest(tracker, bestMaximaSolution, bestMaximaKey);
                     }
 
                     this.onPostIteration(tracker);
@@ -87,8 +68,13 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
         return this.getCipher().randomiseKey();
     }
 
-    default K modifyKey(DecryptionTracker tracker, K bestMaximaKey, double temp, int count, double lastDF) {
-        return this.getCipher().alterKey(bestMaximaKey, temp, count, lastDF);
+    default K modifyKey(DecryptionTracker tracker, K bestMaximaKey, double temp, int count) {
+        return this.getCipher().alterKey(bestMaximaKey, temp, count);
+    }
+    
+    default boolean shouldAcceptSolution(double TEMP, Solution lastSolution, Solution bestSolution) {
+        double lastDF = lastSolution.score - bestSolution.score;
+        return lastDF >= 0 || (TEMP > 0 && Math.exp(lastDF / TEMP) > RandomUtil.pickDouble());
     }
 
     default void onPreIteration(DecryptionTracker tracker) {

@@ -1,5 +1,7 @@
 package nationalcipher.api;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import javalibrary.Output;
@@ -20,18 +22,36 @@ public interface IAttackMethod<K> {
         Solution solution = this.toSolution(tracker, key);
 
         synchronized (tracker) {
-            if (this.isBetterThanBest(tracker, solution)) {
-                this.updateBestSolution(tracker, solution, key);
-            }
+            this.updateIfBetterThanBest(tracker, solution, key);
         }
-        
-        tracker.lastSolution = solution;
     }
     
     default Solution toSolution(DecryptionTracker tracker, K key) {
         return new Solution(this.getCipher().decodeEfficently(tracker.getCipherText(), tracker.getPlainTextHolder(), key), tracker.getLanguage());
     }
 
+    default boolean updateIfBetterThanBest(DecryptionTracker tracker, Solution solution) {
+        return this.updateIfBetterThanBest(tracker, solution, (K) null);
+    }
+    
+    default boolean updateIfBetterThanBest(DecryptionTracker tracker, Solution solution, K key) {
+        if (this.isBetterThanBest(tracker, solution)) {
+            this.updateBestSolution(tracker, solution, key);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    default boolean updateIfBetterThanBest(DecryptionTracker tracker, Solution solution, Supplier<K> key) {
+        if (this.isBetterThanBest(tracker, solution)) {
+            this.updateBestSolution(tracker, solution, key.get());
+            return true;
+        }
+        
+        return false;
+    }
+    
     default boolean isBetterThanBest(DecryptionTracker tracker, Solution solution) {
         return solution.isBetterThan(tracker.bestSolution);
     }

@@ -17,6 +17,7 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.cipher.setting.ICipherSetting;
+import nationalcipher.cipher.setting.ICipherSettingBuilder;
 import nationalcipher.ui.IApplication;
 
 public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<K>, ISimulatedAnnealingAttack<K>, ILoadElement {
@@ -26,7 +27,7 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
     private String saveId;
     private final Set<DecryptionMethod> methods;
     private boolean mute;
-    private int iterations = 1000;
+    protected int iterations = 1000;
     private final List<ICipherSetting<K, C>> settings;
     
     public CipherAttack(C cipher, String displayName) {
@@ -54,9 +55,9 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
     }
 
     @SafeVarargs
-    public final CipherAttack<K, C> addSetting(ICipherSetting<K, C>... settings) {
-        for (ICipherSetting<K, C> s : settings) {
-            this.settings.add(s);
+    public final CipherAttack<K, C> addSetting(ICipherSettingBuilder<K, C>... settings) {
+        for (ICipherSettingBuilder<K, C> s : settings) {
+            this.settings.add(s.create());
         }
         return this;
     }
@@ -115,6 +116,7 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
     @Override
     public final void write(HashMap<String, Object> map) {
         HashMap<String, Object> saveData = new HashMap<String, Object>();
+        this.settings.forEach(setting -> setting.save(saveData));
         this.writeTo(saveData);
         map.put(this.saveId, saveData);
     }
@@ -122,10 +124,8 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
     @Override
     @SuppressWarnings("unchecked")
     public final void read(HashMap<String, Object> map) {
-        if (map.containsKey(this.saveId))
-            this.readFrom((Map<String, Object>) map.get(this.saveId));
-        else
-            this.readFrom(new HashMap<String, Object>());
+        Map<String, Object> saveData = (Map<String, Object>) map.getOrDefault(this.saveId, new HashMap<>());
+        this.settings.forEach(setting -> setting.load(saveData));
     }
     
     @Override

@@ -39,7 +39,7 @@ public class IntegerGenKeyType implements IKeyType<Integer> {
 
     @Override
     public Integer alterKey(Object partialKey, Integer key) {
-        return RandomUtil.pickRandomElement(this.universe);
+        return this.alterable ? RandomUtil.pickRandomElement(this.universe) : key;
     }
 
     @Override

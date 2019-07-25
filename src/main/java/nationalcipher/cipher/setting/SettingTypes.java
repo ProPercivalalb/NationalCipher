@@ -1,5 +1,8 @@
 package nationalcipher.cipher.setting;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.swing.JComboBox;
@@ -14,13 +17,63 @@ import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class SettingTypes {
     
-    public static <K, C extends ICipher<K>> ICipherSetting<K, C> createIntRange(int minStart, int maxStart, int min, int max, int step, BiConsumer<int[], C> action) {
-        return new ICipherSettingIntRange<K, C>().set(minStart, maxStart, min, max, step).setAction(action).create();
+    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntSpinner(int start, int min, int max, int step, BiConsumer<Integer, C> action) {
+        return new ICipherSettingIntSpinner<K, C>().set(start, min, max, step).setAction(action);
     }
     
-    public static <K, C extends ICipher<K>, E> ICipherSetting<K, C> createCombo(E[] items, BiConsumer<E, C> action) {
-        return new ICipherSettingComboBox<K, C, E>().set(items).setAction(action).create();
+    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntRange(int minStart, int maxStart, int min, int max, int step, BiConsumer<int[], C> action) {
+        return new ICipherSettingIntRange<K, C>().set(minStart, maxStart, min, max, step).setAction(action);
     }
+    
+    public static <K, C extends ICipher<K>, E> ICipherSettingBuilder<K, C> createCombo(E[] items, BiConsumer<E, C> action) {
+        return new ICipherSettingComboBox<K, C, E>().set(items).setAction(action);
+    }
+    
+    public static class ICipherSettingIntSpinner<K, C extends ICipher<K>> implements ICipherSettingBuilder<K, C> {
+        
+        private int start, min, max, step;
+        private BiConsumer<Integer, C> action;
+        
+        public ICipherSettingIntSpinner<K, C> set(int start, int min, int max, int step) {
+            this.start = start;
+            this.min = min;
+            this.max = max;
+            this.step = step;
+            return this;
+        }
+        
+        public ICipherSettingIntSpinner<K, C> setAction(BiConsumer<Integer, C> action) {
+            this.action = action;
+            return this;
+        }
+        
+        @Override
+        public ICipherSetting<K, C> create() {
+            return new ICipherSetting<K, C>() {
+                public JSpinner intSpinner = JSpinnerUtil.createSpinner(start, min, max, step);
+                @Override
+                public void addToInterface(JPanel panel) {
+                    panel.add(new SubOptionPanel("Period Range:", this.intSpinner));
+                }
+                
+                @Override
+                public void apply(CipherAttack<K, C> attack) {
+                    ICipherSettingIntSpinner.this.action.accept(SettingParse.getInteger(this.intSpinner), attack.getCipher());
+                }
+
+                @Override
+                public void save(Map<String, Object> map) {
+                    map.put("spinner", this.intSpinner.getValue());
+                    
+                }
+
+                @Override
+                public void load(Map<String, Object> map) {
+                    this.intSpinner.setValue(map.getOrDefault("spinner", start));
+                }
+            };
+        }
+    };
 
     public static class ICipherSettingIntRange<K, C extends ICipher<K>> implements ICipherSettingBuilder<K, C> {
         
@@ -54,6 +107,19 @@ public class SettingTypes {
                 public void apply(CipherAttack<K, C> attack) {
                     ICipherSettingIntRange.this.action.accept(SettingParse.getIntegerRange(this.rangeSpinner), attack.getCipher());
                 }
+                
+                @Override
+                public void save(Map<String, Object> map) {
+                    map.put("spinner_range", SettingParse.getIntegerRange(this.rangeSpinner));
+                    
+                }
+
+                @Override
+                public void load(Map<String, Object> map) {
+                    List<Integer> range = (List<Integer>) map.getOrDefault("spinner_range", Arrays.asList(minStart, maxStart));
+                    this.rangeSpinner[0].setValue(range.get(0));
+                    this.rangeSpinner[1].setValue(range.get(1));
+                }
             };
         }
     };
@@ -86,6 +152,17 @@ public class SettingTypes {
                 @Override
                 public void apply(CipherAttack<K, C> attack) {
                     ICipherSettingComboBox.this.action.accept((E)this.comboBox.getSelectedItem(), attack.getCipher());
+                }
+                
+                @Override
+                public void save(Map<String, Object> map) {
+                    map.put("combo", this.comboBox.getSelectedIndex());
+                    
+                }
+
+                @Override
+                public void load(Map<String, Object> map) {
+                    this.comboBox.setSelectedIndex(((Number) map.getOrDefault("combo", 0)).intValue());
                 }
             };
         }

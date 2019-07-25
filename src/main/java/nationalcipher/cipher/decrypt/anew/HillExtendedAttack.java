@@ -45,6 +45,7 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
         case PERIODIC_KEY:
             this.readLatestSettings();
             for (int size = this.sizeRange[0]; size <= this.sizeRange[1]; size++) {
+                tracker.resultList.clear();
                 if (tracker.getCipherText().length() % size != 0) {
                     this.output(tracker, "Matrix size of %d is not possible, length of text is not a multiple.", size);
                     continue;
@@ -58,7 +59,7 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
                 if (tracker.resultList.size() < size) {
                     this.output(tracker, "Did not find enought key columns that produces good characters %d/%d", tracker.resultList.size(), size);
                 } else {
-                    KeyIterator.iterateObject(row -> this.iteratePossibleRows(tracker, row), HillSection.class, size, tracker.resultList.toArray(new HillSection[0]));
+                    KeyIterator.iterateObject(row -> this.iteratePossibleRows(tracker, row), size, tracker.resultList.toArray(new HillSection[0]));
                 }
             }
             return tracker;
@@ -102,35 +103,33 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
     }
     
     public void iteratePossibleRows(HillTracker tracker, HillSection[] data) {
+        // Create key matrices from data
+        int[] inverseData = new int[tracker.size * tracker.size];
+        int[] extendedData = new int[tracker.size];
+        for (int s = 0; s < tracker.size; s++) {
+            HillSection hillResult = data[s];
+            for (int n = 0; n < tracker.size; n++) {
+                inverseData[s * tracker.size + n] = hillResult.inverseCol[n];
+            }
+            extendedData[s] = hillResult.inverseCol[tracker.size];
+        }
+        
+        Matrix inverseMatrix = new Matrix(inverseData, tracker.size);
+        
+        if (!inverseMatrix.hasInverseMod(26)) {
+            return;
+        }
+        
         for (int s = 0; s < tracker.size; s++) {
             HillSection hillResult = data[s];
             for (int i = 0; i < tracker.lengthSub; i++) {
-                tracker.getPlainTextHolder(false)[i * tracker.size + s] = (char) hillResult.decrypted[i];
+                tracker.getPlainTextHolder(false)[i * tracker.size + s] = hillResult.decrypted[i];
             }
         }
 
         tracker.lastSolution = new Solution(tracker.getPlainTextHolder(false), tracker.getLanguage());
 
-        if (this.isBetterThanBest(tracker, tracker.lastSolution)) {
-            tracker.bestSolution = tracker.lastSolution;
-            int[] inverseMatrix = new int[tracker.size * tracker.size];
-            int[] extendedMatrix = new int[tracker.size];
-            for (int s = 0; s < tracker.size; s++) {
-                HillSection hillResult = data[s];
-                for (int n = 0; n < tracker.size; n++) {
-                    inverseMatrix[s * tracker.size + n] = hillResult.inverseCol[n];
-                }
-                extendedMatrix[s] = hillResult.inverseCol[tracker.size];
-            }
-            
-            try {
-                tracker.bestSolution.setKeyString(this.getCipher().prettifyKey(BiKey.of(new Matrix(inverseMatrix, tracker.size).inverseMod(26), new Matrix(extendedMatrix, tracker.size, 1))));
-            } catch (MatrixNoInverse e) {
-                tracker.bestSolution.setKeyString("Invertible: %s", Arrays.toString(inverseMatrix));
-            }
-            
-            this.updateBestSolution(tracker, tracker.bestSolution, null);
-        }
+        this.updateIfBetterThanBest(tracker, tracker.lastSolution, () -> BiKey.of(inverseMatrix.inverseMod(26), new Matrix(extendedData, tracker.size, 1)));
     }
 
     public class HillTracker extends DecryptionTracker {

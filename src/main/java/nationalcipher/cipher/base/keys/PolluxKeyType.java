@@ -47,7 +47,7 @@ public class PolluxKeyType implements IKeyType<Character[]> {
 
     @Override
     public void iterateKeys(Object partialKey, Consumer<Character[]> consumer) {
-        KeyIterator.iterateObject(consumer, Character.class, 10, alphabet);
+        KeyIterator.iterateObject(consumer, 10, this.alphabet);
     }
 
     @Override

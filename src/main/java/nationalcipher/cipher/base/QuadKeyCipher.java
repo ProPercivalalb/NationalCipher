@@ -79,7 +79,7 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
     }
 
     @Override
-    public QuadKey<F, S, T, N> alterKey(QuadKey<F, S, T, N> key, double temp, int count, double lastDF) {
+    public QuadKey<F, S, T, N> alterKey(QuadKey<F, S, T, N> key, double temp, int count) {
         return QuadKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()), this.fourthType.alterKey(key, key.getFourthKey()));
     }
 

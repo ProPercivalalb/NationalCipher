@@ -36,7 +36,7 @@ public abstract class UniKeyCipher<T, A extends IKeyBuilder<T>> implements ICiph
     }
 
     @Override
-    public T alterKey(T key, double temp, int count, double lastDF) {
+    public T alterKey(T key, double temp, int count) {
         return this.firstType.alterKey(null, key);
     }
 

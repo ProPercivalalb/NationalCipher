@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import javalibrary.math.MathUtil;
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IKeyType;
@@ -52,7 +53,7 @@ public class FullStringKeyType implements IKeyType<String> {
 
     @Override
     public BigInteger getNumOfKeys() {
-        return BigInteger.ZERO;
+        return MathUtil.factorialBig(BigInteger.valueOf(this.alphabet.length));
     }
 
     public static Builder builder() {

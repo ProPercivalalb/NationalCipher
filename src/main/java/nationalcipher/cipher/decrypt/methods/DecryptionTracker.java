@@ -7,11 +7,12 @@ import javalibrary.fitness.TextFitness;
 import javalibrary.language.ILanguage;
 import javalibrary.swing.ProgressValue;
 import nationalcipher.Settings;
+import nationalcipher.api.IDecryptionTracker;
 import nationalcipher.ui.IApplication;
 import nationalcipher.ui.KeyPanel;
 import nationalcipher.ui.NationalCipherUI;
 
-public class DecryptionTracker {
+public class DecryptionTracker implements IDecryptionTracker {
 
     private final CharSequence cipherText;
     private final char[] plainText;
@@ -46,10 +47,14 @@ public class DecryptionTracker {
     public CharSequence getCipherText() {
         return this.cipherText;
     }
+    
+    public int getLength() {
+        return this.cipherText.length();
+    }
 
     public char[] getPlainTextHolder(boolean parallel) {
         if (this.getSettings().useParallel() && parallel) {
-            return new char[this.getOutputTextLength(this.cipherText.length())];
+            return this.getNewHolder();
         } else {
             return this.plainText;
         }
@@ -59,8 +64,8 @@ public class DecryptionTracker {
         return this.getPlainTextHolder(true);
     }
     
-    public char[] getNewPlanTextHolder() {
-        return this.getPlainTextHolder(false);
+    public char[] getNewHolder() {
+        return new char[this.getOutputTextLength(this.getLength())];
     }
 
     public void addSolution(Solution solution) {

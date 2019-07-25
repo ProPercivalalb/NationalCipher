@@ -52,6 +52,7 @@ public interface ICipher<K> {
         return true;
     }
 
+    //TODO Add cipher text input
     K randomiseKey();
 
     /**
@@ -66,7 +67,7 @@ public interface ICipher<K> {
      * @param count 
      * @param temp 
      */
-    default K alterKey(K key, double temp, int count, double lastDF) {
+    default K alterKey(K key, double temp, int count) {
         return key;
     }
 

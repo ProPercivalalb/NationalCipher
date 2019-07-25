@@ -88,7 +88,7 @@ public abstract class QuinKeyCipher<F, S, T, N, Q, A extends IKeyBuilder<F>, B e
     }
 
     @Override
-    public QuinKey<F, S, T, N, Q> alterKey(QuinKey<F, S, T, N, Q> key, double temp, int count, double lastDF) {
+    public QuinKey<F, S, T, N, Q> alterKey(QuinKey<F, S, T, N, Q> key, double temp, int count) {
         return QuinKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()), this.fourthType.alterKey(key, key.getFourthKey()), this.fifthType.alterKey(key, key.getFifthKey()));
     }
 

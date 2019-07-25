@@ -30,7 +30,7 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
             while (true) {
                 boolean change = false;
                 for (int i = 0; i < length; i++) {
-                    for (char j = 'A'; j <= 'Z'; j += this.alphaIncrease()) {
+                    for (char j = 'A'; j <= 'Z'; j += this.getCharStep()) {
                         if (tracker.shouldStop()) {
                             break stop;
                         }
@@ -57,9 +57,7 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
                     break;
             }
 
-            if (this.isBetterThanBest(tracker, currentBestSolution)) {
-                this.updateBestSolution(tracker, currentBestSolution, this.useStringGetKey(tracker, new String(parent)));
-            }
+            this.updateIfBetterThanBest(tracker, currentBestSolution, () -> this.useStringGetKey(tracker, new String(parent)));
         }
         
         tracker.finish();
@@ -73,7 +71,7 @@ public interface IKeySearchAttack<K> extends IAttackMethod<K> {
         return true;
     }
 
-    default int alphaIncrease() {
+    default int getCharStep() {
         return 1;
     }
 

@@ -68,8 +68,8 @@ public class KeyIterator {
         iterateObject(o -> consumer.accept(new Matrix(o, noRows, noColumns)), new Integer[noRows * noColumns], ArrayUtil.createRangeInteger(base));
     }
 
-    public static <T> void iterateObject(Consumer<T[]> consumer, Class<T> clazz, int length, T[] items) {
-        iterateObject(consumer, (T[]) Array.newInstance(clazz, length), items);
+    public static <T> void iterateObject(Consumer<T[]> consumer, int length, T[] items) {
+        iterateObject(consumer, (T[]) Array.newInstance(items[0].getClass(), length), items);
     }
 
     public static <T> void iterateObject(Consumer<T[]> consumer, T[] holder, T[] items) {

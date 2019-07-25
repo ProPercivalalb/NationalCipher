@@ -19,7 +19,7 @@ import nationalcipher.cipher.base.enigma.EnigmaLib;
 import nationalcipher.cipher.base.enigma.EnigmaMachine;
 import nationalcipher.cipher.base.keys.QuadKey;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.complete.EnigmaPlainAttack.EnigmaSection;
+import nationalcipher.cipher.decrypt.anew.EnigmaAttack.EnigmaSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -129,7 +129,7 @@ public class EnigmaUhrAttack extends CipherAttack<QuadKey<Integer[], Integer[], 
                         nextTrialSolution.ring = ring;
 
                         if (task.squeezeSecond.add(nextTrialSolution)) {
-                            nextTrialSolution.makeCopy();
+                            nextTrialSolution.bake();
                         }
                     }
                 }
@@ -172,7 +172,7 @@ public class EnigmaUhrAttack extends CipherAttack<QuadKey<Integer[], Integer[], 
                 EnigmaSection trialSolution = new EnigmaSection(TextFitness.scoreFitnessQuadgrams(plainText, this.getLanguage()), this.machine, indicator, rotor, reflector);
                 
                 if (this.squeezeFirst.add(trialSolution)) {
-                    trialSolution.makeCopy();
+                    trialSolution.bake();
                 }
                 
                 this.increaseIteration();

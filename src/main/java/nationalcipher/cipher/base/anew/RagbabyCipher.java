@@ -37,8 +37,9 @@ public class RagbabyCipher extends UniKeyCipher<String, FullStringKeyType.Builde
             if (character == ' ') {
                 cipherText[i] = ' ';
                 number = word++;
-            } else
+            } else {
                 cipherText[i] = key.charAt((key.indexOf(character) + number++) % key.length());
+            }
         }
 
         return new CharacterArrayWrapper(cipherText);
@@ -55,8 +56,9 @@ public class RagbabyCipher extends UniKeyCipher<String, FullStringKeyType.Builde
                 plainText[i] = ' ';
                 word++;
                 number = word;
-            } else
+            } else {
                 plainText[i] = key.charAt(((key.indexOf(character) - number++) % key.length() + key.length()) % key.length());
+            }
         }
 
         return plainText;
