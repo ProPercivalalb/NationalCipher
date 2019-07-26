@@ -4,7 +4,6 @@ import nationalcipher.cipher.base.anew.AutokeyCipher;
 import nationalcipher.cipher.decrypt.IDictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
-import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.ui.IApplication;
 
 public class AutokeyAttack extends PeriodicKeyAttack<AutokeyCipher> implements IDictionaryAttack<String> {

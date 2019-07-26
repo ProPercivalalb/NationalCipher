@@ -68,8 +68,9 @@ public class KeyIterator {
         iterateObject(o -> consumer.accept(new Matrix(o, noRows, noColumns)), new Integer[noRows * noColumns], ArrayUtil.createRangeInteger(base));
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void iterateObject(Consumer<T[]> consumer, int length, T[] items) {
-        iterateObject(consumer, (T[]) Array.newInstance(items[0].getClass(), length), items);
+        iterateObject(consumer, (T[]) Array.newInstance(items.getClass().getComponentType(), length), items);
     }
 
     public static <T> void iterateObject(Consumer<T[]> consumer, T[] holder, T[] items) {

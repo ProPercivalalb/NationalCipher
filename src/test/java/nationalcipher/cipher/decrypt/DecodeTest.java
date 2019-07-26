@@ -30,6 +30,7 @@ import nationalcipher.cipher.base.anew.EnigmaCipher;
 import nationalcipher.cipher.base.anew.EnigmaPlugboardCipher;
 import nationalcipher.cipher.base.anew.FourSquareCipher;
 import nationalcipher.cipher.base.anew.FractionatedMorseCipher;
+import nationalcipher.cipher.base.anew.GrilleCipher;
 import nationalcipher.cipher.base.anew.HillCipher;
 import nationalcipher.cipher.base.anew.HillExtendedCipher;
 import nationalcipher.cipher.base.anew.HillSubstitutionCipher;
@@ -409,6 +410,23 @@ public class DecodeTest {
     }
     
     @Test
+    public void testGrille() {
+        // http://www.cryptogram.org/downloads/aca.info/ciphers/Grille.pdf
+        GrilleCipher grilleCipher = new GrilleCipher();
+        
+        String plainText = "THETURNINGGRILLE";
+        String cipherText = "TILUNRGHGELTENIR";
+        Integer[] key = new Integer[] {0, 7, 9, 11};
+        
+        assertEncodeDecode(grilleCipher, key, plainText, cipherText);
+        
+        for(int i = 0; i < 1000; i++) {
+            System.out.println(i);
+            assertCipherLogic(grilleCipher);
+        }
+    }
+    
+    @Test
     public void testTrifid() {
         // http://www.cryptogram.org/downloads/aca.info/ciphers/Trifid.pdf
         TrifidCipher trifidCipher = new TrifidCipher();
@@ -488,7 +506,7 @@ public class DecodeTest {
         }
     }
 
-    @Test
+    //@Test
     public void testRouteTransposition() {
         RouteTranspositionCipher routeTransCipher = new RouteTranspositionCipher();
 

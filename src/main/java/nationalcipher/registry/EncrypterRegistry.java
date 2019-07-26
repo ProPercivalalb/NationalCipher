@@ -18,14 +18,15 @@ import nationalcipher.cipher.base.anew.CaesarCipher;
 import nationalcipher.cipher.base.anew.ColumnarTranspositionCipher;
 import nationalcipher.cipher.base.anew.ConjugatedBifidCipher;
 import nationalcipher.cipher.base.anew.DigrafidCipher;
-import nationalcipher.cipher.base.anew.EnigmaCipher;
 import nationalcipher.cipher.base.anew.EnigmaPlugboardCipher;
 import nationalcipher.cipher.base.anew.FourSquareCipher;
 import nationalcipher.cipher.base.anew.FractionatedMorseCipher;
+import nationalcipher.cipher.base.anew.GrilleCipher;
 import nationalcipher.cipher.base.anew.HillCipher;
 import nationalcipher.cipher.base.anew.HillExtendedCipher;
 import nationalcipher.cipher.base.anew.HillSubstitutionCipher;
 import nationalcipher.cipher.base.anew.HomophonicCipher;
+import nationalcipher.cipher.base.anew.HuttonCipher;
 import nationalcipher.cipher.base.anew.KeywordCipher;
 import nationalcipher.cipher.base.anew.MorbitCipher;
 import nationalcipher.cipher.base.anew.MyszkowskiCipher;
@@ -56,6 +57,7 @@ import nationalcipher.cipher.base.anew.TrifidCipher;
 import nationalcipher.cipher.base.anew.TwoSquareCipher;
 import nationalcipher.cipher.base.anew.VigenereCipher;
 import nationalcipher.cipher.base.enigma.EnigmaLib;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 public class EncrypterRegistry {
 
@@ -109,6 +111,7 @@ public class EncrypterRegistry {
         RAND_ENCRYPTERS.register(new PeriodicGromarkCipher());
         RAND_ENCRYPTERS.register(new PhillipsCipher());
         RAND_ENCRYPTERS.register(new PlayfairCipher());
+        RAND_ENCRYPTERS.register("playfair6x6cipher",new PlayfairCipher(KeyGeneration.ALL_36_CHARS));
         RAND_ENCRYPTERS.register(new PolluxCipher());
         RAND_ENCRYPTERS.register(new PortaxCipher());
         RAND_ENCRYPTERS.registerAll(new QuagmireICipher(), new QuagmireIICipher(), new QuagmireIIICipher(), new QuagmireIVCipher());
@@ -128,6 +131,8 @@ public class EncrypterRegistry {
         RAND_ENCRYPTERS.register(new HillExtendedCipher());
         RAND_ENCRYPTERS.register(new HillSubstitutionCipher());
         RAND_ENCRYPTERS.register(new RagbabyCipher());
+        RAND_ENCRYPTERS.register(new GrilleCipher());
+        RAND_ENCRYPTERS.register(new HuttonCipher());
     }
 
     static {

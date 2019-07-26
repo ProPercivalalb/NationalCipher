@@ -27,7 +27,6 @@ public class AffineCipher extends BiKeyCipher<Integer, Integer, IntegerGenKeyTyp
             tempAlphabet += (char) ('A' + (key.getFirstKey() * i + key.getSecondKey()) % 26);
         }
 
-        System.out.println("ALPHABET: " + tempAlphabet);
         for (int i = 0; i < plainText.length(); i++) {
             byte ch = CipherUtils.getAlphaIndex(plainText.charAt(i));
 

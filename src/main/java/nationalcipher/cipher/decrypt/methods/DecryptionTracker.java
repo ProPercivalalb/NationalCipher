@@ -1,5 +1,7 @@
 package nationalcipher.cipher.decrypt.methods;
 
+import java.util.function.Function;
+
 import javax.annotation.Nullable;
 
 import javalibrary.Output;
@@ -15,9 +17,9 @@ import nationalcipher.ui.NationalCipherUI;
 public class DecryptionTracker implements IDecryptionTracker {
 
     private final CharSequence cipherText;
-    private final char[] plainText;
+    private char[] plainText;
     private final IApplication app;
-    private final double UPPER_ESTIMATE;
+    private double UPPER_ESTIMATE;
 
     /**
      * Just a place to store the most recent solution
@@ -29,6 +31,7 @@ public class DecryptionTracker implements IDecryptionTracker {
     @Nullable
     public Solution lastSolution;
     public long iteration;
+    private Function<Integer, Integer> outputLength = length -> length;
 
     public DecryptionTracker(CharSequence cipherText, IApplication app) {
         this.app = app;
@@ -36,12 +39,15 @@ public class DecryptionTracker implements IDecryptionTracker {
         this.bestSolution = Solution.WORST_SOLUTION;
 
         this.cipherText = cipherText;
-        this.plainText = new char[this.getOutputTextLength(cipherText.length())];
-        this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage().getQuadgramData()) * 1.1;
     }
 
     public int getOutputTextLength(int inputLength) {
-        return inputLength;
+        return this.outputLength.apply(inputLength);
+    }
+    
+    public DecryptionTracker setOutputLength(Function<Integer, Integer> outputLength) {
+        this.outputLength = outputLength;
+        return this;
     }
 
     public CharSequence getCipherText() {
@@ -56,6 +62,11 @@ public class DecryptionTracker implements IDecryptionTracker {
         if (this.getSettings().useParallel() && parallel) {
             return this.getNewHolder();
         } else {
+            if (this.plainText == null) {
+                this.plainText = new char[this.getOutputTextLength(this.cipherText.length())];
+                this.UPPER_ESTIMATE = TextFitness.getEstimatedFitness(this.plainText.length, this.getLanguage().getQuadgramData()) * 1.1;
+            }
+            
             return this.plainText;
         }
     }
@@ -104,6 +115,10 @@ public class DecryptionTracker implements IDecryptionTracker {
     }
 
     // IApplication methods
+    public IApplication getApp() {
+        return this.app;
+    }
+    
     public ILanguage getLanguage() {
         return this.app.getLanguage();
     }

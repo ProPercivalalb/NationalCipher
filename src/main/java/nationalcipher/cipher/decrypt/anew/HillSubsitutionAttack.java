@@ -31,7 +31,7 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
     public HillSubsitutionAttack() {
         super(new HillExtendedCipher(), "Hill Subsitution");
         this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.PERIODIC_KEY, DecryptionMethod.SIMULATED_ANNEALING);
-        this.addSetting(SettingTypes.createIntRange(2, 4, 2, 100, 1, (values, cipher) -> {HillSubsitutionAttack.this.sizeRange = values;}));
+        this.addSetting(SettingTypes.createIntRange("size_range", 2, 4, 2, 100, 1, (values, cipher) -> {HillSubsitutionAttack.this.sizeRange = values;}));
     }
 
     @Override

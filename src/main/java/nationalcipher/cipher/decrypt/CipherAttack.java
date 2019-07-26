@@ -84,13 +84,17 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         switch (method) {
         case BRUTE_FORCE:
             this.readLatestSettings();
-            return this.tryBruteForce(new DecryptionTracker(text, app));
+            return this.tryBruteForce(this.createTracker(text, app));
         case SIMULATED_ANNEALING:
             this.readLatestSettings();
-            return this.trySimulatedAnnealing(new DecryptionTracker(text, app), this.iterations);
+            return this.trySimulatedAnnealing(this.createTracker(text, app), this.iterations);
         default:
             return null;
         }
+    }
+    
+    public DecryptionTracker createTracker(CharSequence text, IApplication app) {
+        return new DecryptionTracker(text, app);
     }
     
     public void readLatestSettings() {

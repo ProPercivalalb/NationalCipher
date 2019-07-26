@@ -25,9 +25,7 @@ import javalibrary.string.StringTransformer;
 import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.base.anew.HillCipher;
-import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.decrypt.CipherAttack;
-import nationalcipher.cipher.decrypt.anew.HillAttack.HillSection;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
@@ -55,7 +53,7 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
     public HillAttack() {
         super(new HillCipher(), "Hill");
         this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.CALCULATED, DecryptionMethod.PERIODIC_KEY, DecryptionMethod.SIMULATED_ANNEALING);
-        this.addSetting(SettingTypes.createIntRange(2, 4, 2, 100, 1, (values, cipher) -> {HillAttack.this.sizeRange = values;}));
+        this.addSetting(SettingTypes.createIntRange("size_range", 2, 4, 2, 100, 1, (values, cipher) -> {HillAttack.this.sizeRange = values;}));
         this.gramSearchRange = JSpinnerUtil.createSpinner(20, 3, 100, 1);
         this.trigramSets = new JComboBox<String>(this.TRI_GRAM_DISPLAY);
     }

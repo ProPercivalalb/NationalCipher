@@ -4,7 +4,6 @@ import nationalcipher.cipher.base.anew.SlidefairCipher;
 import nationalcipher.cipher.decrypt.IDictionaryAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
-import nationalcipher.cipher.tools.SettingParse;
 import nationalcipher.ui.IApplication;
 
 public class SlidefairAttack extends PeriodicKeyAttack<SlidefairCipher> implements IDictionaryAttack<String> {

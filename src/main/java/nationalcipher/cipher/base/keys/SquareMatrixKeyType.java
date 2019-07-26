@@ -1,21 +1,14 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import javalibrary.exception.MatrixNoInverse;
-import javalibrary.math.MathUtil;
 import javalibrary.math.matrics.Matrix;
-import javalibrary.util.ArrayUtil;
-import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
-import nationalcipher.cipher.base.enigma.EnigmaUtil;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.util.CipherUtils;
 
 public class SquareMatrixKeyType implements IKeyType<Matrix> {
     

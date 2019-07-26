@@ -11,9 +11,10 @@ public class CipherLib {
     public static final String BAZERIES = "bazeries";
     public static final String CAESAR = "caesar";
     public static final String CADENUS = "cadenus";
-    public static final String DIGRAFID = "diagrafid";
+    public static final String DIGRAFID = "digrafid";
     public static final String ENIGMA = "enigma";
     public static final String PLAYFAIR = "playfair";
+    public static final String PLAYFAIR_6X6 = "playfair.6x6";
     public static final String PLAYFAIR_SERIATED = "playfair.seriated";
     public static final String POLLUX = "pollux";
     public static final String RAILFENCE = "railfence";
@@ -36,4 +37,13 @@ public class CipherLib {
     public static final String STRADDLE_CHECKERBOARD = "straddle_checkerboard";
     public static final String ROUTE = "route";
     public static final String RAGBABY = "ragbaby";
+    public static final String COLUMNAR_TRANSPOSITION = "columnar_transposition";
+    public static final String GRILLE = "grille";
+    public static final String FRACTIONATED_MORSE = "fractionated_morse";
+    public static final String DOUBLE_COLUMNAR_TRANSPOSITION = "columnar_transposition.double";
+    public static final String HUTTON = "hutton";
+    public static final String FOUR_SQUARE = "four_square";
+    public static final String HOMOPHONIC = "homophonic";
+    public static final String NIHILIST_SUBSTITUTION = "nihilist_substitution";
+    public static final String NIHILIST_TRANSPOSITION = "nihilist_transposition";
 }

@@ -1,6 +1,5 @@
 package nationalcipher.cipher.base.anew;
 
-import nationalcipher.api.ICipher;
 import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.UniKeyCipher;
 import nationalcipher.cipher.base.keys.VariableStringKeyType;

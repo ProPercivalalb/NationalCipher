@@ -1,18 +1,12 @@
 package nationalcipher.cipher.decrypt.anew;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
 import javalibrary.lib.Timer;
-import javalibrary.string.LetterCount;
-import javalibrary.string.StringAnalyzer;
-import javalibrary.string.StringTransformer;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
-import nationalcipher.api.ICipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
@@ -29,7 +23,7 @@ public class GeneralPeriodAttack extends CipherAttack {
     public GeneralPeriodAttack() {
         super(null, "General Period Subsitution");
         this.setAttackMethods(DecryptionMethod.SIMULATED_ANNEALING);
-        this.addSetting(SettingTypes.createIntSpinner(5, 1, 100, 1, (value, cipher) -> GeneralPeriodAttack.this.period = value));
+        this.addSetting(SettingTypes.createIntSpinner("period", 5, 1, 100, 1, (value, cipher) -> GeneralPeriodAttack.this.period = value));
     }
 
     @Override

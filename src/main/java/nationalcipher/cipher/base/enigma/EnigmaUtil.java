@@ -1,7 +1,6 @@
 package nationalcipher.cipher.base.enigma;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 

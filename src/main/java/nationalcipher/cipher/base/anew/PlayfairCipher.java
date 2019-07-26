@@ -13,8 +13,19 @@ import nationalcipher.util.CharacterArrayWrapper;
 
 public class PlayfairCipher extends UniKeyCipher<String, SquareStringKeyType.Builder> {
 
+    private int size;
+    
     public PlayfairCipher() {
-        super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5));
+        this(KeyGeneration.ALL_25_CHARS);
+    }
+    
+    public PlayfairCipher(Character[] alphabet) {
+        this(alphabet, (int) Math.sqrt(alphabet.length));
+    }
+    
+    private PlayfairCipher(Character[] alphabet, int size) {
+        super(SquareStringKeyType.builder().setAlphabet(alphabet).setDim(size, size));
+        this.size = size;
     }
 
     @Override
@@ -58,7 +69,6 @@ public class PlayfairCipher extends UniKeyCipher<String, SquareStringKeyType.Bui
     public CharSequence encode(CharSequence plainText, String key, IFormat format) {
         Character[] cipherText = new Character[plainText.length()];
 
-        int size = 5;
         for (int i = 0; i < plainText.length(); i += 2) {
             char a = plainText.charAt(i);
             char b = plainText.charAt(i + 1);
@@ -93,7 +103,6 @@ public class PlayfairCipher extends UniKeyCipher<String, SquareStringKeyType.Bui
     public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, String key) {
         Map<Character, Integer> keyIndex = CipherUtils.createCharacterIndexMapping(key);
 
-        int size = 5;
         for (int i = 0; i < cipherText.length(); i += 2) {
             int i1 = keyIndex.get(cipherText.charAt(i));
             int i2 = keyIndex.get(cipherText.charAt(i + 1));

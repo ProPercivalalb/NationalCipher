@@ -6,18 +6,16 @@ import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.IKeySearchAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
-import nationalcipher.cipher.setting.SettingTypes;
 import nationalcipher.ui.IApplication;
 
-public class PeriodicKeyAttack<C extends UniKeyCipher<String, ? extends IRangedKeyBuilder<String>>> extends CipherAttack<String, C> implements IKeySearchAttack<String> {
+public class HomophonicAttack<C extends UniKeyCipher<String, ? extends IRangedKeyBuilder<String>>> extends CipherAttack<String, C> implements IKeySearchAttack<String> {
 
     public int[] periodRange;
     private int charStep = 1;
     
-    public PeriodicKeyAttack(C cipher, String displayName) {
+    public HomophonicAttack(C cipher, String displayName) {
         super(cipher, displayName);
         this.setAttackMethods(DecryptionMethod.PERIODIC_KEY, DecryptionMethod.BRUTE_FORCE);
-        this.addSetting(SettingTypes.createIntRange("period_range", 2, 15, 2, 100, 1, (range, cipher2) -> {periodRange = range; cipher2.setDomain(builder -> builder.setRange(range)); }));
     }
 
     @Override
@@ -25,7 +23,7 @@ public class PeriodicKeyAttack<C extends UniKeyCipher<String, ? extends IRangedK
         switch (method) {
         case PERIODIC_KEY:
             this.readLatestSettings();
-            return this.tryKeySearch(this.createTracker(text, app), periodRange[0], periodRange[1]);
+            return this.tryKeySearch(this.createTracker(text, app), 4, 4);
         default:
             return super.attemptAttack(text, method, app);
         }
@@ -41,8 +39,13 @@ public class PeriodicKeyAttack<C extends UniKeyCipher<String, ? extends IRangedK
         return this.charStep;
     }
     
-    public PeriodicKeyAttack<C> setCharStep(int charStep) {
+    public HomophonicAttack<C> setCharStep(int charStep) {
         this.charStep = charStep;
         return this;
     }
+    
+    @Override
+    public DecryptionTracker createTracker(CharSequence text, IApplication app) {
+        return super.createTracker(text, app).setOutputLength(length -> length / 2);
+    }  
 }

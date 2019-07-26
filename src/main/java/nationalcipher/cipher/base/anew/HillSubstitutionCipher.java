@@ -6,7 +6,6 @@ import javalibrary.math.matrics.Matrix;
 import nationalcipher.api.IFormat;
 import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.keys.BiKey;
-import nationalcipher.cipher.base.keys.ExtendedMatrixKeyType;
 import nationalcipher.cipher.base.keys.FullStringKeyType;
 import nationalcipher.cipher.base.keys.SquareMatrixKeyType;
 import nationalcipher.cipher.tools.KeyGeneration;

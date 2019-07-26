@@ -29,7 +29,7 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
     public HillExtendedAttack() {
         super(new HillExtendedCipher(), "Hill Extended");
         this.setAttackMethods(DecryptionMethod.BRUTE_FORCE, DecryptionMethod.PERIODIC_KEY);
-        this.addSetting(SettingTypes.createIntRange(2, 4, 2, 100, 1, (values, cipher) -> {HillExtendedAttack.this.sizeRange = values;}));
+        this.addSetting(SettingTypes.createIntRange("size_range", 2, 4, 2, 100, 1, (values, cipher) -> {HillExtendedAttack.this.sizeRange = values;}));
     }
 
     @Override

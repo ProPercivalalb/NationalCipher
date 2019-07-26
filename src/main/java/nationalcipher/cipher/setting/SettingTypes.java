@@ -17,22 +17,27 @@ import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class SettingTypes {
     
-    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntSpinner(int start, int min, int max, int step, BiConsumer<Integer, C> action) {
-        return new ICipherSettingIntSpinner<K, C>().set(start, min, max, step).setAction(action);
+    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntSpinner(String id, int start, int min, int max, int step, BiConsumer<Integer, C> action) {
+        return new ICipherSettingIntSpinner<K, C>(id).set(start, min, max, step).setAction(action);
     }
     
-    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntRange(int minStart, int maxStart, int min, int max, int step, BiConsumer<int[], C> action) {
-        return new ICipherSettingIntRange<K, C>().set(minStart, maxStart, min, max, step).setAction(action);
+    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntRange(String id, int minStart, int maxStart, int min, int max, int step, BiConsumer<int[], C> action) {
+        return new ICipherSettingIntRange<K, C>(id).set(minStart, maxStart, min, max, step).setAction(action);
     }
     
-    public static <K, C extends ICipher<K>, E> ICipherSettingBuilder<K, C> createCombo(E[] items, BiConsumer<E, C> action) {
-        return new ICipherSettingComboBox<K, C, E>().set(items).setAction(action);
+    public static <K, C extends ICipher<K>, E> ICipherSettingBuilder<K, C> createCombo(String id, E[] items, BiConsumer<E, C> action) {
+        return new ICipherSettingComboBox<K, C, E>(id).set(items).setAction(action);
     }
     
     public static class ICipherSettingIntSpinner<K, C extends ICipher<K>> implements ICipherSettingBuilder<K, C> {
         
+        private String id;
         private int start, min, max, step;
         private BiConsumer<Integer, C> action;
+        
+        public ICipherSettingIntSpinner(String id) {
+            this.id = id;
+        }
         
         public ICipherSettingIntSpinner<K, C> set(int start, int min, int max, int step) {
             this.start = start;
@@ -63,7 +68,7 @@ public class SettingTypes {
 
                 @Override
                 public void save(Map<String, Object> map) {
-                    map.put("spinner", this.intSpinner.getValue());
+                    map.put(id, this.intSpinner.getValue());
                     
                 }
 
@@ -77,8 +82,13 @@ public class SettingTypes {
 
     public static class ICipherSettingIntRange<K, C extends ICipher<K>> implements ICipherSettingBuilder<K, C> {
         
+        private String id;
         private int minStart, maxStart, min, max, step;
         private BiConsumer<int[], C> action;
+        
+        public ICipherSettingIntRange(String id) {
+            this.id = id;
+        }
         
         public ICipherSettingIntRange<K, C> set(int minStart, int maxStart, int min, int max, int step) {
             this.minStart = minStart;
@@ -110,7 +120,7 @@ public class SettingTypes {
                 
                 @Override
                 public void save(Map<String, Object> map) {
-                    map.put("spinner_range", SettingParse.getIntegerRange(this.rangeSpinner));
+                    map.put(id, SettingParse.getIntegerRange(this.rangeSpinner));
                     
                 }
 
@@ -126,8 +136,13 @@ public class SettingTypes {
     
     public static class ICipherSettingComboBox<K, C extends ICipher<K>, E> implements ICipherSettingBuilder<K, C> {
         
+        private String id;
         private E[] items;
         private BiConsumer<E, C> action;
+        
+        public ICipherSettingComboBox(String id) {
+            this.id = id;
+        }
         
         public ICipherSettingComboBox<K, C, E> set(E... items) {
             this.items = items;
@@ -156,7 +171,7 @@ public class SettingTypes {
                 
                 @Override
                 public void save(Map<String, Object> map) {
-                    map.put("combo", this.comboBox.getSelectedIndex());
+                    map.put(id, this.comboBox.getSelectedIndex());
                     
                 }
 

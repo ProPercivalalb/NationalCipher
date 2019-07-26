@@ -29,11 +29,6 @@ public class HomophonicCipher extends UniKeyCipher<String, VariableStringKeyType
         return builder;
     }
 
-    public static void main(String[] args) {
-        HomophonicCipher cipher = new HomophonicCipher();
-        cipher.encode("WORDDIVISIONMAYBEKEPT", "GOLF", null);
-    }
-
     @Override
     public CharSequence encode(CharSequence plainText, String key, IFormat format) {
         StringBuilder cipherText = new StringBuilder();

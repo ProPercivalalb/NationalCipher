@@ -1,13 +1,10 @@
 package nationalcipher.cipher.decrypt.anew;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javalibrary.math.MathUtil;
-import nationalcipher.cipher.base.anew.PlayfairCipher;
 import nationalcipher.cipher.base.anew.RouteTranspositionCipher;
 import nationalcipher.cipher.base.keys.QuadKey;
 import nationalcipher.cipher.decrypt.CipherAttack;
