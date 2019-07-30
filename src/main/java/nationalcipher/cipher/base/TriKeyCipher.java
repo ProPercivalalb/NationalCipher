@@ -1,12 +1,13 @@
 package nationalcipher.cipher.base;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
+import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.TriKey;
 
 public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends IKeyBuilder<S>, C extends IKeyBuilder<T>> implements ICipher<TriKey<F, S, T>> {
@@ -35,17 +36,17 @@ public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends 
 
     @Override
     public boolean isValid(TriKey<F, S, T> key) {
-        return this.firstType.isValid(key, key.getFirstKey()) && this.secondType.isValid(key, key.getSecondKey()) && this.thirdType.isValid(key, key.getThirdKey());
+        return this.firstType.isValid(key.getFirstKey()) && this.secondType.isValid(key.getSecondKey()) && this.thirdType.isValid(key.getThirdKey());
     }
 
     @Override
     public TriKey<F, S, T> randomiseKey() {
         TriKey<F, S, T> key = TriKey.empty();
-        return key.setFirst(this.firstTypeLimit.randomise(key)).setSecond(this.secondTypeLimit.randomise(key)).setThird(this.thirdTypeLimit.randomise(key));
+        return key.setFirst(this.firstTypeLimit.randomise()).setSecond(this.secondTypeLimit.randomise()).setThird(this.thirdTypeLimit.randomise());
     }
 
     @Override
-    public void iterateKeys(Consumer<TriKey<F, S, T>> consumer) {
+    public void iterateKeys(KeyFunction<TriKey<F, S, T>> consumer) {
 //        TriKey<F, S, T> key = TriKey.empty();
 //        this.firstTypeLimit.iterateKeys(null, f -> {
 //            key.setFirst(f);
@@ -55,18 +56,18 @@ public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends 
 //            });
 //        });
         TriKey<F, S, T> key = TriKey.empty();
-        this.firstTypeLimit.iterateKeys(null, f -> {
+        this.firstTypeLimit.iterateKeys(f -> {
             key.setFirst(f);
-            this.secondTypeLimit.iterateKeys(key, s -> {
+            return this.secondTypeLimit.iterateKeys(s -> {
                 key.setSecond(s);
-                this.thirdTypeLimit.iterateKeys(key, t -> consumer.accept(key.setThird(t).clone()));
+                return this.thirdTypeLimit.iterateKeys(t -> consumer.apply(key.setThird(t).clone()));
             });
         });
     }
 
     @Override
     public TriKey<F, S, T> alterKey(TriKey<F, S, T> key, double temp, int count) {
-        return TriKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()));
+        return TriKey.of(this.firstType.alterKey(key.getFirstKey()), this.secondType.alterKey(key.getSecondKey()), this.thirdType.alterKey(key.getThirdKey()));
     }
 
     @Override
@@ -77,6 +78,16 @@ public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends 
     @Override
     public String prettifyKey(TriKey<F, S, T> key) {
         return String.join(" ",  this.firstType.prettifyKey(key.getFirstKey()), this.secondType.prettifyKey(key.getSecondKey()), this.thirdType.prettifyKey(key.getThirdKey()));
+    }
+    
+    @Override
+    public TriKey<F, S, T> parseKey(String input) throws ParseException {
+        String[] parts = input.split(" ");
+        if (parts.length != 3) {
+            throw new ParseException(input, 0);
+        }
+        
+        return TriKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]), this.thirdType.parse(parts[2]));
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {

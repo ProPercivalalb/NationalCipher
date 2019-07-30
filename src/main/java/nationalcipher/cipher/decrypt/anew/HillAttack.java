@@ -75,7 +75,6 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
 
         switch (method) {
         case CALCULATED:
-            this.readLatestSettings();
             for (int size = this.sizeRange[0]; size <= this.sizeRange[1]; size++) {
                 Map<String, Integer> chars = StringAnalyzer.getEmbeddedStrings(text, size, size, false);
                 List<String> sorted = new ArrayList<String>(chars.keySet());
@@ -120,7 +119,6 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
             }
             return tracker;
         case PERIODIC_KEY:
-            this.readLatestSettings();
             for (int size = this.sizeRange[0]; size <= this.sizeRange[1]; size++) {
                 tracker.resultList.clear();
                 if (tracker.getCipherText().length() % size != 0) {
@@ -185,9 +183,9 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
     }
 
     
-    public void iterateMatrixRows(HillTracker tracker, Integer[] row) {
+    public boolean iterateMatrixRows(HillTracker tracker, Integer[] row) {
         if (MathUtil.allDivisibleBy(row, 0, tracker.size, 2, 13)) {
-            return;
+            return true;
         }
 
         char[] decrypted = new char[tracker.lengthSub];
@@ -207,10 +205,10 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
                 this.output(tracker, "%s, %f, %s", Arrays.toString(row), score, new String(decrypted));
             }
         }
-
+        return true;
     }
     
-    public void iteratePossibleRows(HillTracker tracker, HillSection[] data) {
+    public boolean iteratePossibleRows(HillTracker tracker, HillSection[] data) {
         // Create key matrix from data
         Integer[] inverseData = new Integer[tracker.size * tracker.size];
         for (int s = 0; s < tracker.size; s++) {
@@ -223,7 +221,7 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
         Matrix inverseMatrix = new Matrix(inverseData, tracker.size);
         
         if (!inverseMatrix.hasInverseMod(26)) {
-            return;
+            return true;
         }
         
         for (int s = 0; s < tracker.size; s++) {
@@ -236,6 +234,7 @@ public class HillAttack extends CipherAttack<Matrix, HillCipher> {
         tracker.lastSolution = new Solution(tracker.getPlainTextHolder(false), tracker.getLanguage());
 
         this.updateIfBetterThanBest(tracker, tracker.lastSolution, () -> inverseMatrix.inverseMod(26));
+        return true;
     }
     
     public int[] createEquationFrom(String plainText, String cipherText, int index) {

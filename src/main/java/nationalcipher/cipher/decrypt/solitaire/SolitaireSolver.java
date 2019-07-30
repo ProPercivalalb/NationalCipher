@@ -19,7 +19,7 @@ public class SolitaireSolver {
     public static final int LARGEST_UNKNOWNS_ITERABLE = 7;
 
     // No known text all ready
-    public static DynamicResultList<SolutionWithDeck> swiftAttack(String cipherText, int n, int offset, DeckParse deck, int noSol, Output out) {
+    public static DynamicResultList<SolutionWithDeck> swiftAttack(CharSequence cipherText, int n, int offset, DeckParse deck, int noSol, Output out) {
         return swiftAttack(cipherText, new char[0], n, offset, deck, noSol, out, 0);
     }
 
@@ -28,8 +28,8 @@ public class SolitaireSolver {
      * seconds of processing time However as n increases processing time increases
      * n^2
      */
-    public static DynamicResultList<SolutionWithDeck> swiftAttack(String cipherText, char[] prefix, int n, int offset, DeckParse deck, int solutionsCarryFoward, Output out, int time) {
-        SoiltaireSwiftAttack attack = new SoiltaireSwiftAttack(cipherText.substring(offset + 0, offset + n), prefix, solutionsCarryFoward, out, time);
+    public static DynamicResultList<SolutionWithDeck> swiftAttack(CharSequence cipherText, char[] prefix, int n, int offset, DeckParse deck, int solutionsCarryFoward, Output out, int time) {
+        SoiltaireSwiftAttack attack = new SoiltaireSwiftAttack(cipherText.subSequence(offset + 0, offset + n), prefix, solutionsCarryFoward, out, time);
         Timer timer = new Timer();
         Solitaire.specialAttack(attack, deck.order, deck.unknownCards);
         attack.solutions.sort();
@@ -41,7 +41,7 @@ public class SolitaireSolver {
 
     public static SolitaireSolutionEver BEST_SOLUTION = new SolitaireSolutionEver();
 
-    public static void startCompleteAttack(String cipherText, int n, int solutionsCarryFoward, DeckParse startingDeck, Output out, int time) {
+    public static void startCompleteAttack(CharSequence cipherText, int n, int solutionsCarryFoward, DeckParse startingDeck, Output out, int time) {
         // n = startingDeck.countUnknowns() - LARGEST_UNKNOWNS_ITERABLE;
         // if(n < 5)
         // n = 5;
@@ -51,14 +51,13 @@ public class SolitaireSolver {
         completeAttack(BEST_SOLUTION, cipherText, new char[0], n, solutionsCarryFoward, 0, startingDeck, out, time);
     }
 
-    public static void completeAttack(SolitaireSolutionEver bestSolutionEver, String cipherText, char[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
+    public static void completeAttack(SolitaireSolutionEver bestSolutionEver, CharSequence cipherText, char[] prefix, int n, int solutionsCarryFoward, int offset, DeckParse startingDeck, Output out, int time) {
         out.print("%sUnknowns: %d: ", StringTransformer.repeat("   ", time), startingDeck.countUnknowns());
         DynamicResultList<SolutionWithDeck> solutions = SolitaireSolver.swiftAttack(cipherText, prefix, n, offset, startingDeck, solutionsCarryFoward, out, time);
 
-        SolitaireSolution task = new SolitaireSolution(bestSolutionEver, cipherText.substring(offset + n, cipherText.length()).toCharArray(), offset + n, out, time);
+        SolitaireSolution task = new SolitaireSolution(bestSolutionEver, cipherText.subSequence(offset + n, cipherText.length()).toString().toCharArray(), offset + n, out, time);
         // out.println("Solutions: " + solutions.size());
-        for (int i = 0; i < solutions.size(); i++) {
-            SolutionWithDeck solution = solutions.get(i);
+        for (SolutionWithDeck solution : solutions) {
             // out.println(StringTransformer.repeat(" ", time) + "%d/%d %s", i + 1,
             // solutions.size(), new String(solution.getText()));
 
@@ -125,7 +124,7 @@ public class SolitaireSolver {
             this.time = time;
         }
 
-        public void onIteration(Integer[] order) {
+        public boolean  onIteration(Integer[] order) {
             for (int i = 0; i < this.emptyIndex.length; i++)
                 this.incompleteOrder[this.emptyIndex[i]] = order[i];
 
@@ -136,6 +135,8 @@ public class SolitaireSolver {
                 this.bestSolutionEver.bestSolution.setKeyString(ListUtil.toString(this.incompleteOrder, 1));
                 this.out.println(StringTransformer.repeat("   ", time) + "%s", this.bestSolutionEver);
             }
+            
+            return true;
         }
     }
 
@@ -150,7 +151,7 @@ public class SolitaireSolver {
         public Output out;
         public int time;
 
-        private SoiltaireSwiftAttack(String cipherText, char[] prefix, int solutionsCarryFoward, Output out, int time) {
+        private SoiltaireSwiftAttack(CharSequence cipherText, char[] prefix, int solutionsCarryFoward, Output out, int time) {
             this.bestSolution = Solution.WORST_SOLUTION;
             this.solutions = new DynamicResultList<SolutionWithDeck>(time == 0 ? solutionsCarryFoward : 512);
             this.intText = new char[cipherText.length() + prefix.length];

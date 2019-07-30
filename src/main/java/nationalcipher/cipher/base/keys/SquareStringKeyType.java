@@ -2,11 +2,12 @@ package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
 import java.util.Optional;
-import java.util.function.Consumer;
 
+import javalibrary.math.MathUtil;
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
@@ -25,12 +26,12 @@ public class SquareStringKeyType implements IKeyType<String> {
     }
 
     @Override
-    public String randomise(Object partialKey) {
+    public String randomise() {
         return KeyGeneration.createLongKeyUniversal(this.alphabet);
     }
 
     @Override
-    public boolean isValid(Object partialKey, String key) {
+    public boolean isValid(String key) {
         if (key.length() != this.alphabet.length) {
             return false;
         }
@@ -45,18 +46,18 @@ public class SquareStringKeyType implements IKeyType<String> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<String> consumer) {
-        KeyIterator.permuteString(consumer, this.alphabet);
+    public boolean iterateKeys(KeyFunction<String> consumer) {
+        return KeyIterator.permuteString(consumer, this.alphabet);
     }
 
     @Override
-    public String alterKey(Object fullKey, String key) {
+    public String alterKey(String key) {
         return KeyManipulation.modifyKeySquare(key, this.columns, this.rows);
     }
 
     @Override
     public BigInteger getNumOfKeys() {
-        return BigInteger.ZERO;
+        return MathUtil.factorialBig(BigInteger.valueOf(this.alphabet.length));
     }
 
     public static Builder builder() {

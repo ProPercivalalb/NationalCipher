@@ -1,28 +1,90 @@
 package nationalcipher.cipher.base.anew;
 
+import java.math.BigInteger;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import javax.annotation.Nullable;
 
+import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
+import javalibrary.util.RandomUtil;
+import nationalcipher.api.ICipher;
 import nationalcipher.api.IFormat;
+import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.BiKeyCipher;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.IntegerKeyType;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
-public class RedefenceCipher extends BiKeyCipher<Integer[], Integer, OrderedIntegerKeyType.Builder, IntegerKeyType.Builder> {
+public class RedefenceCipher implements ICipher<BiKey<Integer[], Integer>> {
 
     // TODO Add read off diagonals mode
 
+
+    protected final OrderedIntegerKeyType firstType;
+    private OrderedIntegerKeyType firstTypeLimit;
+    private final OrderedIntegerKeyType.Builder firstKeyBuilder;
+    
     public RedefenceCipher() {
-        super(OrderedIntegerKeyType.builder().setRange(2, Integer.MAX_VALUE), IntegerKeyType.builder().setMin(0).setVariableMax(obj -> ((BiKey<Integer[], Integer>) obj).getFirstKey().length * 2 - 2));
+        OrderedIntegerKeyType.Builder firstKey = OrderedIntegerKeyType.builder().setRange(2, Integer.MAX_VALUE / 2 - 2);
+        this.firstType = firstKey.create();
+        this.firstTypeLimit = firstKey.setRange(2, 9).create();
+        this.firstKeyBuilder = firstKey;
     }
     
     @Override
-    public IKeyBuilder<Integer[]> limitDomainForFirstKey(OrderedIntegerKeyType.Builder firstKey) {
-        return firstKey.setRange(2, 9);
+    public boolean isValid(BiKey<Integer[], Integer> key) {
+        return this.firstType.isValid(key.getFirstKey()) && 0 <= key.getSecondKey() && key.getSecondKey() <= (key.getSecondKey() - 1) * 2 ;
+    }
+
+    @Override
+    public BiKey<Integer[], Integer> randomiseKey() {
+        Integer[] rails = this.firstTypeLimit.randomise();
+        return BiKey.of(rails, RandomUtil.pickRandomInt(0, (rails.length - 1) * 2));
+    }
+
+    @Override
+    public void iterateKeys(KeyFunction<BiKey<Integer[], Integer>> consumer) {
+        this.firstTypeLimit.iterateKeys(f -> {
+            Integer[] fCopy = ArrayUtil.copy(f);
+            for (int s = 0; s < (f.length - 1) * 2; s++) {
+                if (!consumer.apply(BiKey.of(fCopy, s))) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }
+
+    @Override
+    public BiKey<Integer[], Integer> alterKey(BiKey<Integer[], Integer> key, double temp, int count) {
+        return key;
+    }
+
+    @Override
+    public BigInteger getNumOfKeys() {
+        BigInteger total = BigInteger.ZERO;
+        for (int i = this.firstTypeLimit.getMin(); i <= this.firstTypeLimit.getMax(); i++) {
+            total = total.add(MathUtil.factorialBig(i).multiply(BigInteger.valueOf((i - 1) * 2)));
+        }
+        
+        return total;
+    }
+    
+    @Override
+    public String prettifyKey(BiKey<Integer[], Integer> key) {
+        return String.join(" ",  this.firstType.prettifyKey(key.getFirstKey()), String.valueOf(key.getSecondKey()));
+    }
+    
+    public void setFirstKeyLimit(Function<OrderedIntegerKeyType.Builder, OrderedIntegerKeyType.Builder> firstKeyFunc) {
+        this.firstTypeLimit = firstKeyFunc.apply(this.firstKeyBuilder).create();
+    }
+    
+    public OrderedIntegerKeyType getFirstKeyType() {
+        return this.firstTypeLimit;
     }
 
     @Override

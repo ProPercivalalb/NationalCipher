@@ -1,11 +1,12 @@
 package nationalcipher.api;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 
 import javax.annotation.Nullable;
 
 import javalibrary.streams.PrimTypeUtil;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.util.CharArrayWrapper;
 import nationalcipher.util.Pair;
 
@@ -27,7 +28,7 @@ public interface ICipher<K> {
     }
 
     default CharSequence decode(CharSequence cipherText, K key) {
-        return new CharArrayWrapper(decodeEfficently(cipherText, key));
+        return new CharArrayWrapper(this.decodeEfficently(cipherText, key));
     }
 
     /**
@@ -42,7 +43,7 @@ public interface ICipher<K> {
     }
 
     default String encode(String plainText, K key) {
-        return PrimTypeUtil.toString(encode(padPlainText(plainText, key), key, null));
+        return PrimTypeUtil.toString(this.encode(this.padPlainText(plainText, key), key, null));
     }
 
     /**
@@ -52,14 +53,17 @@ public interface ICipher<K> {
         return true;
     }
 
-    //TODO Add cipher text input
-    K randomiseKey();
+    default K randomiseKey(int length) {
+        return this.randomiseKey();
+    }
 
+    K randomiseKey();
+    
     /**
      * Iterates thought all the ciphers keys, the key object K is not necessarily
      * immutable so if access is required after a copy is needed
      */
-    void iterateKeys(Consumer<K> consumer);
+    void iterateKeys(KeyFunction<K> consumer);
 
     /**
      * Used for simulated annealing, returns a key that is similar to the given key
@@ -80,6 +84,15 @@ public interface ICipher<K> {
      */
     default String prettifyKey(K key) {
         return key.toString();
+    }
+    
+    default K parseKey(String input) throws ParseException {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Nullable
+    default String getHelp(String prefix) {
+        return null;
     }
 
     boolean isValid(K key);
@@ -102,16 +115,16 @@ public interface ICipher<K> {
      * @return The ciphertext
      */
     default String randomEncode(String plainText) {
-        return this.encode(plainText, this.randomiseKey());
+        return this.encode(plainText, this.randomiseKey(plainText.length()));
     }
 
     default Pair<String, K> randomEncodePair(String plainText) {
-        K key = this.randomiseKey();
+        K key = this.randomiseKey(plainText.length());
         return new Pair<>(this.encode(plainText, key), key);
     }
 
     default Pair<String, String> randomEncodeKeyStr(String plainText) {
-        K key = this.randomiseKey();
+        K key = this.randomiseKey(plainText.length());
         return new Pair<>(this.encode(plainText, key), this.prettifyKey(key));
     }
 

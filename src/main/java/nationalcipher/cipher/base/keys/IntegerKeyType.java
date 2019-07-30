@@ -1,53 +1,72 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 
 public class IntegerKeyType implements IKeyType<Integer> {
 
     // Both inclusive
-    private final Function<Object, Integer> min, max;
+    private final int min, max;
     private final boolean alterable;
 
-    private IntegerKeyType(Function<Object, Integer> min, Function<Object, Integer> max, boolean alterable) {
+    private IntegerKeyType(int min, int max, boolean alterable) {
         this.min = min;
         this.max = max;
         this.alterable = alterable;
     }
 
     @Override
-    public Integer randomise(Object partialKey) {
-        return RandomUtil.pickRandomInt(this.min.apply(partialKey), this.max.apply(partialKey));
+    public Integer randomise() {
+        return RandomUtil.pickRandomInt(this.min, this.max);
     }
 
     @Override
-    public boolean isValid(Object partialKey, Integer key) {
-        return this.min.apply(partialKey) <= key && key <= this.max.apply(partialKey);
+    public boolean isValid(Integer key) {
+        return this.min <= key && key <= this.max;
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Integer> consumer) {
-        int min = this.min.apply(partialKey);
-        int max = this.max.apply(partialKey);
-        for (int i = min; i <= max; i++) {
-            consumer.accept(i);
+    public boolean iterateKeys(KeyFunction<Integer> consumer) {
+        for (int i = this.min; i <= this.max; i++) {
+            if (!consumer.apply(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Integer alterKey(Integer key) {
+        return this.alterable ? RandomUtil.pickRandomInt(this.min, this.max) : key;
+    }
+
+    @Override
+    public BigInteger getNumOfKeys() {
+        return BigInteger.valueOf(this.max).subtract(BigInteger.valueOf(this.min)).add(BigInteger.ONE);
+    }
+
+    @Override
+    public Integer parse(String input) throws ParseException {
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            throw new ParseException(input, 0);
         }
     }
-
-    @Override
-    public Integer alterKey(Object partialKey, Integer key) {
-        return this.alterable ? RandomUtil.pickRandomInt(this.min.apply(partialKey), this.max.apply(partialKey)) : key;
+    
+    public int getMin() {
+        return this.min;
     }
-
-    @Override
-    public BigInteger getNumOfKeys() { // TODO
-        return BigInteger.ONE;
+    
+    public int getMax() {
+        return this.max;
     }
 
     public static Builder builder() {
@@ -56,21 +75,13 @@ public class IntegerKeyType implements IKeyType<Integer> {
 
     public static class Builder implements IRangedKeyBuilder<Integer> {
 
-        private Optional<Function<Object, Integer>> min = Optional.empty();
-        private Optional<Function<Object, Integer>> max = Optional.empty();
+        private Optional<Integer> min = Optional.empty();
+        private Optional<Integer> max = Optional.empty();
         private boolean alterable = false;
 
         private Builder() {
         }
 
-        public Builder setMin(int min) {
-            return this.setVariableMin((obj) -> min);
-        }
-
-        public Builder setMax(int max) {
-            return this.setVariableMax((obj) -> max);
-        }
-        
         @Override
         public Builder setRange(int min, int max) {
             return this.setMin(min).setMax(max);
@@ -81,12 +92,14 @@ public class IntegerKeyType implements IKeyType<Integer> {
             return this.setRange(size, size);
         }
 
-        public Builder setVariableMin(Function<Object, Integer> supp) {
+        @Override
+        public Builder setMin(int supp) {
             this.min = Optional.of(supp);
             return this;
         }
 
-        public Builder setVariableMax(Function<Object, Integer> supp) {
+        @Override
+        public Builder setMax(int supp) {
             this.max = Optional.of(supp);
             return this;
         }
@@ -98,7 +111,7 @@ public class IntegerKeyType implements IKeyType<Integer> {
 
         @Override
         public IntegerKeyType create() {
-            IntegerKeyType handler = new IntegerKeyType(this.min.orElse((obj) -> Integer.MIN_VALUE), this.max.orElse((obj) -> Integer.MAX_VALUE), this.alterable);
+            IntegerKeyType handler = new IntegerKeyType(this.min.orElse(Integer.MIN_VALUE), this.max.orElse(Integer.MAX_VALUE), this.alterable);
             return handler;
         }
 

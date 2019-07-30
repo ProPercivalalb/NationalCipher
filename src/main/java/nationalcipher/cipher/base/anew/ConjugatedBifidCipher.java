@@ -14,7 +14,7 @@ public class ConjugatedBifidCipher extends TriKeyCipher<String, String, Integer,
     public ConjugatedBifidCipher() {
         super(SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
                 SquareStringKeyType.builder().setAlphabet(KeyGeneration.ALL_25_CHARS).setDim(5, 5),
-                IntegerGenKeyType.builder().setRange(0, 5000).addFilter(i -> i != 1));
+                IntegerGenKeyType.builder().setRange(0, 5000).addFilter(i -> i != 1));  
     }
     
     @Override

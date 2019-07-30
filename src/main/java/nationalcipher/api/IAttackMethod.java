@@ -73,7 +73,7 @@ public interface IAttackMethod<K> {
             tracker.bestSolution.setKeyString(this.getCipher().prettifyKey(key));
         }
         
-        tracker.bestSolution.bakeSolution();
+        tracker.bestSolution.bake();
         tracker.addSolution(tracker.bestSolution);
         this.output(tracker, tracker.bestSolution.toString());
         tracker.getKeyPanel().updateSolution(tracker.bestSolution);

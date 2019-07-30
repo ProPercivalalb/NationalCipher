@@ -17,19 +17,23 @@ import nationalcipher.cipher.tools.SubOptionPanel;
 
 public class SettingTypes {
     
-    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntSpinner(String id, int start, int min, int max, int step, BiConsumer<Integer, C> action) {
+    
+    public static <K, C extends ICipher<K>, E> ICipherSettingProvider<K, C> createSpinner(String id, E[] items, BiConsumer<E, C> action) {
+        return new ICipherSettingSpinner<K, C, E>(id).set(items).setAction(action);
+    }
+    
+    public static <K, C extends ICipher<K>> ICipherSettingProvider<K, C> createIntSpinner(String id, int start, int min, int max, int step, BiConsumer<Integer, C> action) {
         return new ICipherSettingIntSpinner<K, C>(id).set(start, min, max, step).setAction(action);
     }
     
-    public static <K, C extends ICipher<K>> ICipherSettingBuilder<K, C> createIntRange(String id, int minStart, int maxStart, int min, int max, int step, BiConsumer<int[], C> action) {
+    public static <K, C extends ICipher<K>> ICipherSettingProvider<K, C> createIntRange(String id, int minStart, int maxStart, int min, int max, int step, BiConsumer<int[], C> action) {
         return new ICipherSettingIntRange<K, C>(id).set(minStart, maxStart, min, max, step).setAction(action);
     }
     
-    public static <K, C extends ICipher<K>, E> ICipherSettingBuilder<K, C> createCombo(String id, E[] items, BiConsumer<E, C> action) {
+    public static <K, C extends ICipher<K>, E> ICipherSettingProvider<K, C> createCombo(String id, E[] items, BiConsumer<E, C> action) {
         return new ICipherSettingComboBox<K, C, E>(id).set(items).setAction(action);
     }
-    
-    public static class ICipherSettingIntSpinner<K, C extends ICipher<K>> implements ICipherSettingBuilder<K, C> {
+    public static class ICipherSettingIntSpinner<K, C extends ICipher<K>> implements ICipherSettingProvider<K, C> {
         
         private String id;
         private int start, min, max, step;
@@ -80,7 +84,7 @@ public class SettingTypes {
         }
     };
 
-    public static class ICipherSettingIntRange<K, C extends ICipher<K>> implements ICipherSettingBuilder<K, C> {
+    public static class ICipherSettingIntRange<K, C extends ICipher<K>> implements ICipherSettingProvider<K, C> {
         
         private String id;
         private int minStart, maxStart, min, max, step;
@@ -134,7 +138,7 @@ public class SettingTypes {
         }
     };
     
-    public static class ICipherSettingComboBox<K, C extends ICipher<K>, E> implements ICipherSettingBuilder<K, C> {
+    public static class ICipherSettingComboBox<K, C extends ICipher<K>, E> implements ICipherSettingProvider<K, C> {
         
         private String id;
         private E[] items;
@@ -166,7 +170,7 @@ public class SettingTypes {
                 @SuppressWarnings("unchecked")
                 @Override
                 public void apply(CipherAttack<K, C> attack) {
-                    ICipherSettingComboBox.this.action.accept((E)this.comboBox.getSelectedItem(), attack.getCipher());
+                    ICipherSettingComboBox.this.action.accept((E) this.comboBox.getSelectedItem(), attack.getCipher());
                 }
                 
                 @Override
@@ -178,6 +182,55 @@ public class SettingTypes {
                 @Override
                 public void load(Map<String, Object> map) {
                     this.comboBox.setSelectedIndex(((Number) map.getOrDefault("combo", 0)).intValue());
+                }
+            };
+        }
+    };
+    
+    public static class ICipherSettingSpinner<K, C extends ICipher<K>, E> implements ICipherSettingProvider<K, C> {
+        
+        private String id;
+        private E[] items;
+        private BiConsumer<E, C> action;
+        
+        public ICipherSettingSpinner(String id) {
+            this.id = id;
+        }
+        
+        public ICipherSettingSpinner<K, C, E> set(E... items) {
+            this.items = items;
+            return this;
+        }
+        
+        public ICipherSettingSpinner<K, C, E> setAction(BiConsumer<E, C> action) {
+            this.action = action;
+            return this;
+        }
+        
+        @Override
+        public ICipherSetting<K, C> create() {
+            return new ICipherSetting<K, C>() {
+                public JSpinner comboBox = JSpinnerUtil.createSpinner(ICipherSettingSpinner.this.items);
+                @Override
+                public void addToInterface(JPanel panel) {
+                    panel.add(new SubOptionPanel("Options", this.comboBox));
+                }
+                
+                @SuppressWarnings("unchecked")
+                @Override
+                public void apply(CipherAttack<K, C> attack) {
+                    ICipherSettingSpinner.this.action.accept((E) this.comboBox.getValue(), attack.getCipher());
+                }
+                
+                @Override
+                public void save(Map<String, Object> map) {
+                    map.put(id, this.comboBox.getValue());
+                    
+                }
+
+                @Override
+                public void load(Map<String, Object> map) {
+                    this.comboBox.setValue(map.getOrDefault("combo", 0));
                 }
             };
         }

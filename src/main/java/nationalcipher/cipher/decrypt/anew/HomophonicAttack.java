@@ -22,8 +22,7 @@ public class HomophonicAttack<C extends UniKeyCipher<String, ? extends IRangedKe
     public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         switch (method) {
         case PERIODIC_KEY:
-            this.readLatestSettings();
-            return this.tryKeySearch(this.createTracker(text, app), 4, 4);
+            return this.tryKeySearch(this.createTracker(text, app), 4);
         default:
             return super.attemptAttack(text, method, app);
         }

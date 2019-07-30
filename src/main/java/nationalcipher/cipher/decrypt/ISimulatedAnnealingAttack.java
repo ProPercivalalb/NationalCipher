@@ -65,7 +65,7 @@ public interface ISimulatedAnnealingAttack<K> extends IAttackMethod<K> {
     }
 
     default K generateIntialKey(DecryptionTracker tracker) {
-        return this.getCipher().randomiseKey();
+        return this.getCipher().randomiseKey(tracker.getLength());
     }
 
     default K modifyKey(DecryptionTracker tracker, K bestMaximaKey, double temp, int count) {

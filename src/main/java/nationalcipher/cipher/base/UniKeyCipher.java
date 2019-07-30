@@ -1,7 +1,7 @@
 package nationalcipher.cipher.base;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import nationalcipher.api.ICipher;
@@ -22,22 +22,22 @@ public abstract class UniKeyCipher<T, A extends IKeyBuilder<T>> implements ICiph
     
     @Override
     public boolean isValid(T key) {
-        return this.firstType.isValid(null, key);
+        return this.firstType.isValid(key);
     }
 
     @Override
     public T randomiseKey() {
-        return this.firstTypeLimit.randomise(null);
+        return this.firstTypeLimit.randomise();
     }
 
     @Override
-    public void iterateKeys(Consumer<T> consumer) {
-        this.firstTypeLimit.iterateKeys(null, consumer::accept);
+    public void iterateKeys(KeyFunction<T> consumer) {
+        this.firstTypeLimit.iterateKeys(consumer);
     }
 
     @Override
     public T alterKey(T key, double temp, int count) {
-        return this.firstType.alterKey(null, key);
+        return this.firstType.alterKey(key);
     }
 
     @Override
@@ -48,6 +48,11 @@ public abstract class UniKeyCipher<T, A extends IKeyBuilder<T>> implements ICiph
     @Override
     public String prettifyKey(T key) {
         return this.firstType.prettifyKey(key);
+    }
+    
+    @Override
+    public T parseKey(String input) throws ParseException {
+        return this.firstType.parse(input);
     }
     
     public IKeyBuilder<T> limitDomainForFirstKey(A firstKey) {

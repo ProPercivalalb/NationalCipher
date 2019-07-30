@@ -1,14 +1,15 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -22,12 +23,12 @@ public class PolluxKeyType implements IKeyType<Character[]> {
     }
 
     @Override
-    public Character[] randomise(Object partialKey) {
+    public Character[] randomise() {
         return KeyGeneration.createPolluxKey();
     }
 
     @Override
-    public boolean isValid(Object partialKey, Character[] key) {
+    public boolean isValid(Character[] key) {
         // Contains at least one of each character
         for (int i = 0; i < this.alphabet.length; i++) {
             if (!ArrayUtil.contains(key, this.alphabet[i])) {
@@ -46,12 +47,12 @@ public class PolluxKeyType implements IKeyType<Character[]> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Character[]> consumer) {
-        KeyIterator.iterateObject(consumer, 10, this.alphabet);
+    public boolean iterateKeys(KeyFunction<Character[]> consumer) {
+        return KeyIterator.iterateObject(consumer, 10, this.alphabet);
     }
 
     @Override
-    public Character[] alterKey(Object partialKey, Character[] key) {
+    public Character[] alterKey(Character[] key) {
         int pos = RandomUtil.pickRandomInt(key.length);
         key[pos] = RandomUtil.pickRandomElement(this.alphabet);
         return key;
@@ -59,12 +60,26 @@ public class PolluxKeyType implements IKeyType<Character[]> {
 
     @Override
     public String prettifyKey(Character[] key) {
-        return Arrays.toString(key);
+        return PrimTypeUtil.toString(key);
     }
 
     @Override
     public BigInteger getNumOfKeys() {
         return BigInteger.valueOf(59049); // Calculate number
+    }
+    
+    @Override
+    public Character[] parse(String input) throws ParseException {
+        if (input.length() != 10) {
+            throw new ParseException(input, 0);
+        }
+        
+        Character[] key = new Character[10];
+        for (int i = 0; i < 10; i++) {
+            key[i] = input.charAt(i);
+        }
+        
+        return key;
     }
 
     public static Builder builder() {

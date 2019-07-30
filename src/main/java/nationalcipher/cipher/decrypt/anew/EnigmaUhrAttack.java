@@ -160,11 +160,11 @@ public class EnigmaUhrAttack extends CipherAttack<QuadKey<Integer[], Integer[], 
             this.squeezeSecond = new DynamicResultList<EnigmaSection>(64);
         }
 
-        public void onList(Integer[] rotor) {
-            KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
+        public boolean onList(Integer[] rotor) {
+            return KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
         }
 
-        public void onList2(Integer[] rotor, Integer[] indicator) {
+        public boolean onList2(Integer[] rotor, Integer[] indicator) {
             for (int reflector = this.start; reflector < this.end; reflector++) {
 
                 char[] plainText = EnigmaUhrAttack.this.getCipher().decodeEfficently(this.getCipherText(), this.getPlainTextHolder(false), QuadKey.of(indicator, EnigmaLib.DEFAULT_SETTING, rotor, reflector));
@@ -177,6 +177,7 @@ public class EnigmaUhrAttack extends CipherAttack<QuadKey<Integer[], Integer[], 
                 
                 this.increaseIteration();
             }
+            return true;
         }
     }
 }

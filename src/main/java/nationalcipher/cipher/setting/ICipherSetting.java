@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import nationalcipher.api.ICipher;
 import nationalcipher.cipher.decrypt.CipherAttack;
 
-public interface ICipherSetting<K, C extends ICipher<K>> extends ICipherSettingBuilder<K, C> {
+public interface ICipherSetting<K, C extends ICipher<K>> extends ICipherSettingProvider<K, C> {
 
     public void addToInterface(JPanel panel);
     

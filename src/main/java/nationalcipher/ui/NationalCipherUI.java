@@ -1078,11 +1078,12 @@ public class NationalCipherUI extends JFrame implements IApplication {
                 CipherAttack<?, ?> decrypt = NationalCipherUI.this.getCipherAttack();
                 Collection<DecryptionMethod> methods = decrypt.getAttackMethods();
 
-                for (DecryptionMethod method : methods)
-                    NationalCipherUI.this.decryptionType.addItem(method);
+                methods.forEach(NationalCipherUI.this.decryptionType::addItem);
 
                 if (methods.contains(lastMethod))
                     NationalCipherUI.this.decryptionType.setSelectedItem(lastMethod);
+                
+                NationalCipherUI.this.toolBarSettings.setEnabled(decrypt.hasSettings());
             }
         }
     }
@@ -1150,7 +1151,7 @@ public class NationalCipherUI extends JFrame implements IApplication {
                 if (!settings.updateProgress())
                     NationalCipherUI.this.progressValue.setIndeterminate(true);
                 try {
-                    force.attemptAttack(text, method, NationalCipherUI.this);
+                    force.startAttack(text, method, NationalCipherUI.this);
                 } catch (Exception e) {
                     output.println(e.toString());
                     e.printStackTrace();

@@ -1,10 +1,12 @@
 package nationalcipher.api;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
+
+import nationalcipher.cipher.base.KeyFunction;
 
 public interface IKeyType<K> {
 
@@ -13,13 +15,13 @@ public interface IKeyType<K> {
      * @param fullKey
      * @return
      */
-    K randomise(@Nullable Object partialKey);
+    K randomise();
 
-    void iterateKeys(@Nullable Object partialKey, Consumer<K> consumer);
+    public boolean iterateKeys(KeyFunction<K> consumer);
 
-    K alterKey(Object fullKey, K key);
+    K alterKey(K key);
 
-    boolean isValid(@Nullable Object fullKey, K key);
+    boolean isValid(K key);
 
     BigInteger getNumOfKeys();
 
@@ -30,7 +32,12 @@ public interface IKeyType<K> {
     default String prettifyKey(K key) {
         return key.toString();
     }
-
+    
+    //K parse(String input) throws ParseException;
+    default K parse(String input) throws ParseException {
+        return this.randomise();
+    }
+    
     public interface IKeyBuilder<K> {
 
         public IKeyType<K> create();

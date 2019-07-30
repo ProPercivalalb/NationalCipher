@@ -27,8 +27,9 @@ public class VigenereCipher extends UniKeyCipher<String, VariableStringKeyType.B
         char[] cipherText = new char[plainText.length()];
         int period = key.length();
 
-        for (int index = 0; index < plainText.length(); index++)
+        for (int index = 0; index < plainText.length(); index++) {
             cipherText[index] = this.type.encode(plainText.charAt(index), key.charAt(index % period));
+        }
 
         return new String(cipherText);
     }
@@ -37,8 +38,9 @@ public class VigenereCipher extends UniKeyCipher<String, VariableStringKeyType.B
     public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, String key) {
         int period = key.length();
 
-        for (int index = 0; index < cipherText.length(); index++)
+        for (int index = 0; index < cipherText.length(); index++) {
             plainText[index] = this.type.decode(cipherText.charAt(index), key.charAt(index % period));
+        }
 
         return plainText;
     }

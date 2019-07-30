@@ -1,7 +1,11 @@
 package nationalcipher.lib;
 
+import java.util.logging.Logger;
+
 public class CipherLib {
 
+    public static final Logger LOGGER = Logger.getLogger("cipher");
+    
     public static final String ADFGX = "adfgx";
     public static final String AMSCO = "amsco";
     public static final String AFFINE = "affine";
@@ -46,4 +50,9 @@ public class CipherLib {
     public static final String HOMOPHONIC = "homophonic";
     public static final String NIHILIST_SUBSTITUTION = "nihilist_substitution";
     public static final String NIHILIST_TRANSPOSITION = "nihilist_transposition";
+    public static final String PERIODIC_GROMARK = "peridoic_gromark";
+    public static final String PHILLIPS = "phillips";
+    public static final String GENERAL_POLYBUS_SQUARE = "general_polybus";
+    public static final String SOLITAIRE = "solitaire";
+    public static final String REDEFENCE = "redefence";
 }

@@ -1,15 +1,16 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
@@ -29,14 +30,14 @@ public class VariableStringKeyType implements IKeyType<String> {
     }
 
     @Override
-    public String randomise(Object partialKey) {
+    public String randomise() {
         BiFunction<Character[], Integer, String> func = this.repeats ? KeyGeneration::createRepeatingShortKeyUniversal : KeyGeneration::createShortKeyUniversal;
 
         return func.apply(this.alphabet, RandomUtil.pickRandomInt(this.min, this.max));
     }
 
     @Override
-    public boolean isValid(Object partialKey, String key) {
+    public boolean isValid(String key) {
         // Quick check if length bigger than number
         if (!this.repeats && key.length() > this.alphabet.length) {
             return false;
@@ -56,14 +57,17 @@ public class VariableStringKeyType implements IKeyType<String> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<String> consumer) {
+    public boolean iterateKeys(KeyFunction<String> consumer) {
         for (int length = this.min; length <= this.max; length++) {
-            KeyIterator.iterateShortKey(consumer, this.alphabet, length, this.repeats);
+            if (!KeyIterator.iterateShortKey(consumer, this.alphabet, length, this.repeats)) {
+                return false;
+            }
         }
+        return true;
     }
 
     @Override
-    public String alterKey(Object fullKey, String key) {
+    public String alterKey(String key) {
         return new String(KeyManipulation.changeCharacters(key.toCharArray(), this.alphabet, this.repeats)); // TODO decrease
                                                                                                         // copying into
                                                                                                         // new arrays so
@@ -91,6 +95,11 @@ public class VariableStringKeyType implements IKeyType<String> {
         }
         
         return total;
+    }
+    
+    @Override
+    public String parse(String input) throws ParseException {
+        return input;
     }
 
     public static Builder builder() {

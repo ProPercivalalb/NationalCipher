@@ -1,10 +1,10 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
 
 import javalibrary.math.matrics.Matrix;
 import nationalcipher.api.IKeyType;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.tools.KeyGeneration;
           
 public class ExtendedMatrixKeyType implements IKeyType<Matrix> {
@@ -16,22 +16,23 @@ public class ExtendedMatrixKeyType implements IKeyType<Matrix> {
     }
 
     @Override
-    public Matrix randomise(Object partialKey) {
-        return KeyGeneration.createMatrix(((BiKey<Matrix, Matrix>)partialKey).getFirstKey().squareSize(), 1, this.mod);
+    public Matrix randomise() {
+       // int i = ((BiKey<Matrix, Matrix>)partialKey).getFirstKey().squareSize();
+        return KeyGeneration.createMatrix(2, 1, this.mod);
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Matrix> consumer) {
+    public boolean iterateKeys(KeyFunction<Matrix> consumer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public Matrix alterKey(Object fullKey, Matrix key) {
+    public Matrix alterKey(Matrix key) {
         return key;
     }
 
     @Override
-    public boolean isValid(Object fullKey, Matrix key) {
+    public boolean isValid(Matrix key) {
         return true; //TODO
     }
 

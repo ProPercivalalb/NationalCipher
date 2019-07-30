@@ -76,7 +76,7 @@ public class PeriodicGromarkCipher extends UniKeyCipher<String, VariableStringKe
         int index = 0;
         for (; index < key.length(); index++)
             keyFull[index] = key.charAt(index);
-
+        
         int p = 0;
         for (char ch = 'A'; ch <= 'Z'; ++ch) {
             int keyindex = key.indexOf(ch);

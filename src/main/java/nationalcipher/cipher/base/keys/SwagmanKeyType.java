@@ -3,12 +3,12 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SwagmanKeyType implements IKeyType<int[]> {
@@ -22,12 +22,12 @@ public class SwagmanKeyType implements IKeyType<int[]> {
     }
 
     @Override
-    public int[] randomise(Object partialKey) {
+    public int[] randomise() {
         return KeyGeneration.createSwagmanKey(RandomUtil.pickRandomInt(this.min, this.max));
     }
 
     @Override
-    public boolean isValid(Object partialKey, int[] key) {
+    public boolean isValid(int[] key) {
         double sizeD = Math.sqrt(key.length);
         // Is square
         if (sizeD != Math.floor(sizeD)) {
@@ -58,14 +58,16 @@ public class SwagmanKeyType implements IKeyType<int[]> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<int[]> consumer) {
+    public boolean iterateKeys(KeyFunction<int[]> consumer) {
         for (int length = this.min; length <= this.max; length++) {
             // TODO
         }
+        
+        return true;
     }
 
     @Override
-    public int[] alterKey(Object partialKey, int[] key) {
+    public int[] alterKey(int[] key) {
         return key;
     }
 

@@ -2,12 +2,12 @@ package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javalibrary.math.matrics.Matrix;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class SquareMatrixKeyType implements IKeyType<Matrix> {
@@ -23,7 +23,7 @@ public class SquareMatrixKeyType implements IKeyType<Matrix> {
     }
 
     @Override
-    public Matrix randomise(Object partialKey) {
+    public Matrix randomise() {
         Matrix matrix;
         do {
             matrix = KeyGeneration.createMatrix(RandomUtil.pickRandomInt(this.min, this.max), this.mod);
@@ -34,17 +34,17 @@ public class SquareMatrixKeyType implements IKeyType<Matrix> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Matrix> consumer) {
+    public boolean iterateKeys(KeyFunction<Matrix> consumer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public Matrix alterKey(Object fullKey, Matrix key) {
+    public Matrix alterKey(Matrix key) {
         return key;
     }
 
     @Override
-    public boolean isValid(Object fullKey, Matrix key) {
+    public boolean isValid(Matrix key) {
         return true;
     }
 

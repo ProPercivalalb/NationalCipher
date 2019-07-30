@@ -22,10 +22,13 @@ public class PeriodicKeyAttack<C extends UniKeyCipher<String, ? extends IRangedK
 
     @Override
     public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
+        DecryptionTracker tracker = this.createTracker(text, app);
         switch (method) {
         case PERIODIC_KEY:
-            this.readLatestSettings();
-            return this.tryKeySearch(this.createTracker(text, app), periodRange[0], periodRange[1]);
+            for (int period = this.periodRange[0]; period < this.periodRange[1]; period++) {
+                this.tryKeySearch(tracker, period);
+            }
+            return tracker;
         default:
             return super.attemptAttack(text, method, app);
         }

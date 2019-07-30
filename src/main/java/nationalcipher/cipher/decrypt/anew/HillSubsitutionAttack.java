@@ -45,7 +45,6 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
 
         switch (method) {
         case PERIODIC_KEY:
-            this.readLatestSettings();
             for (int size = this.sizeRange[0]; size <= this.sizeRange[1]; size++) {
                 tracker.resultList.clear();
                 if (tracker.getCipherText().length() % size != 0) {
@@ -90,9 +89,9 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
         }
     }
     
-    public void iterateMatrixRows(HillTracker tracker, Integer[] row) {
+    public boolean iterateMatrixRows(HillTracker tracker, Integer[] row) {
         if (MathUtil.allDivisibleBy(row, 0, tracker.size, 2, 13)) {
-            return;
+            return true;
         }
 
         char[] decrypted = new char[tracker.lengthSub];
@@ -112,9 +111,10 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
                 this.output(tracker, "%s, %f, %s", Arrays.toString(row), score, new String(decrypted));
             }
         }
+        return true;
     }
 
-    public void iteratePossibleRows(HillTracker tracker, HillSection[] data) {
+    public boolean iteratePossibleRows(HillTracker tracker, HillSection[] data) {
         // Create key matrix from data
         Integer[] inverseData = new Integer[tracker.size * tracker.size];
         for (int s = 0; s < tracker.size; s++) {
@@ -127,7 +127,7 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
         Matrix inverseMatrix = new Matrix(inverseData, tracker.size);
         
         if (!inverseMatrix.hasInverseMod(26)) {
-            return;
+            return true;
         }
         
         char[] combinedDecrypted = new char[tracker.getCipherText().length()];
@@ -147,6 +147,7 @@ public class HillSubsitutionAttack extends CipherAttack<BiKey<Matrix, Matrix>, H
                 this.output(tracker, section.toString());
             }
         }
+        return true;
     }
 
     public class HillTracker extends DecryptionTracker {

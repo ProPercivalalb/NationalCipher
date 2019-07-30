@@ -1,12 +1,13 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
+import nationalcipher.cipher.base.KeyFunction;
 
 public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
 
@@ -21,20 +22,23 @@ public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
     }
 
     @Override
-    public T randomise(Object partialKey) {
+    public T randomise() {
         return RandomUtil.pickRandomElement(this.universe);
     }
 
     @Override
-    public boolean isValid(Object partialKey, T key) {
+    public boolean isValid(T key) {
         return ArrayUtil.contains(this.universe, key);
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<T> consumer) {
+    public boolean iterateKeys(KeyFunction<T> consumer) {
         for (T atom : this.universe) {
-            consumer.accept(atom);
+            if (!consumer.apply(atom)) {
+                return false;
+            }
         }
+        return true;
     }
 
     @Override
@@ -43,8 +47,18 @@ public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
     }
 
     @Override
-    public T alterKey(Object fullKey, T key) {
+    public T alterKey(T key) {
         return this.alterable ? RandomUtil.pickRandomElement(this.universe) : key;
+    }
+    
+    @Override
+    public T parse(String input) throws ParseException {
+        for (T atom : this.universe) {
+            if (atom.name().equalsIgnoreCase(input)) {
+                return atom;
+            }
+        }
+        throw new ParseException(input, 0);
     }
 
     public static <T extends Enum<?>> Builder<T> builder(Class<T> enumType) {

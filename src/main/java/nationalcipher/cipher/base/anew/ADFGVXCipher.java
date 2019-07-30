@@ -2,6 +2,7 @@ package nationalcipher.cipher.base.anew;
 
 import javax.annotation.Nullable;
 
+import javalibrary.math.MathUtil;
 import nationalcipher.api.IFormat;
 import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.QuadKeyCipher;

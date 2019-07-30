@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -17,7 +18,7 @@ import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
 import nationalcipher.cipher.interfaces.ILoadElement;
 import nationalcipher.cipher.setting.ICipherSetting;
-import nationalcipher.cipher.setting.ICipherSettingBuilder;
+import nationalcipher.cipher.setting.ICipherSettingProvider;
 import nationalcipher.ui.IApplication;
 
 public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<K>, ISimulatedAnnealingAttack<K>, ILoadElement {
@@ -27,8 +28,9 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
     private String saveId;
     private final Set<DecryptionMethod> methods;
     private boolean mute;
-    protected int iterations = 1000;
     private final List<ICipherSetting<K, C>> settings;
+    protected int iterations = 1000;
+    private Function<Integer, Integer> outputLength = null;
     
     public CipherAttack(C cipher, String displayName) {
         this.cipher = cipher;
@@ -53,13 +55,22 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         this.iterations = iterations;
         return this;
     }
+    
+    public CipherAttack<K, C> setOutputLength(Function<Integer, Integer> outputLength) {
+        this.outputLength = outputLength;
+        return this;
+    }
 
     @SafeVarargs
-    public final CipherAttack<K, C> addSetting(ICipherSettingBuilder<K, C>... settings) {
-        for (ICipherSettingBuilder<K, C> s : settings) {
+    public final CipherAttack<K, C> addSetting(ICipherSettingProvider<K, C>... settings) {
+        for (ICipherSettingProvider<K, C> s : settings) {
             this.settings.add(s.create());
         }
         return this;
+    }
+    
+    public boolean hasSettings() {
+        return !this.settings.isEmpty();
     }
 
     @Override
@@ -76,25 +87,35 @@ public class CipherAttack<K, C extends ICipher<K>> implements IBruteForceAttack<
         return true;
     }
 
-    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
+    public final DecryptionTracker startAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         if (!this.methods.contains(method)) {
             throw new UnsupportedOperationException("Decryption method not supported: " + method);
         }
 
+        this.readLatestSettings();
+        
+        app.getProgress().start();
+        return this.attemptAttack(text, method, app);
+    }
+    
+    public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
+        DecryptionTracker tracker = this.createTracker(text, app);
         switch (method) {
         case BRUTE_FORCE:
-            this.readLatestSettings();
-            return this.tryBruteForce(this.createTracker(text, app));
+            return this.tryBruteForce(tracker);
         case SIMULATED_ANNEALING:
-            this.readLatestSettings();
-            return this.trySimulatedAnnealing(this.createTracker(text, app), this.iterations);
+            return this.trySimulatedAnnealing(tracker, this.iterations);
         default:
-            return null;
+            return tracker;
         }
     }
     
     public DecryptionTracker createTracker(CharSequence text, IApplication app) {
-        return new DecryptionTracker(text, app);
+        DecryptionTracker tracker = new DecryptionTracker(text, app);
+        if (this.outputLength != null) {
+            tracker.setOutputLength(this.outputLength);
+        }
+        return tracker;
     }
     
     public void readLatestSettings() {

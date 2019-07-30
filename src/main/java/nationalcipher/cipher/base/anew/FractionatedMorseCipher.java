@@ -26,9 +26,8 @@ public class FractionatedMorseCipher extends UniKeyCipher<String, FullStringKeyT
     public CharSequence encode(CharSequence plainText, String key, IFormat format) {
 
         StringBuilder cipherText = new StringBuilder(plainText.length());
-        String morseText = "";
 
-        morseText = MorseCode.getMorseEquivalent(plainText);
+        String morseText = MorseCode.getMorseEquivalent(plainText);
         while (morseText.length() % 3 != 0)
             morseText += "X";
 
@@ -43,9 +42,9 @@ public class FractionatedMorseCipher extends UniKeyCipher<String, FullStringKeyT
     }
 
     @Override
-    public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, String key) {
+    public char[] decodeEfficently(CharSequence cipherText, @Nullable char[] plainText, String key) { 
         char[] morseText = new char[cipherText.length() * 3];
-
+        plainText = new char[cipherText.length() * 3];
         for (int i = 0; i < cipherText.length(); i++) {
             int index = key.indexOf(cipherText.charAt(i));
             morseText[i * 3] = list.get(index / 9);
@@ -62,13 +61,24 @@ public class FractionatedMorseCipher extends UniKeyCipher<String, FullStringKeyT
             boolean end = i == morseText.length - 1;
 
             if (isX || end) { // When char is X or is at the end of the text
-                char character = MorseCode.getCharFromMorse(morseText, lastX, i - lastX + (end && !isX ? 1 : 0));
-                if (character == ' ')
-                    for (int j = lastX; j < i; j++)
-                        plainText[index++] = morseText[j];
-                else
-                    plainText[index++] = character;
+                int length = i - lastX + (end && !isX ? 1 : 0);
+                if (length > 0) {
+                    Character character = MorseCode.getCharFromMorse(morseText, lastX, length);
 
+                    if (character == null) {
+                        for (int j = lastX; j < i; j++) {
+                            plainText[index++] = morseText[j];
+                        }
+                    }
+                    else {
+                        plainText[index++] = character;
+                    }
+                }
+                
+                if (isX && i < morseText.length - 2 && morseText[i + 1] == 'X') {
+                    plainText[index++] = ' ';
+                    i++;
+                } 
                 lastX = i + 1;
             }
         }

@@ -134,11 +134,11 @@ public class EnigmaAttack extends CipherAttack<QuadKey<Integer[], Integer[], Int
             this.squeezeFirst = new DynamicResultList<EnigmaSection>(500);
         }
 
-        public void iterateIndicator(Integer[] rotor) {
-            KeyIterator.iterateIntegerArray(indicator -> iterateReflector(rotor, indicator), 3, 26, true);
+        public boolean iterateIndicator(Integer[] rotor) {
+            return KeyIterator.iterateIntegerArray(indicator -> iterateReflector(rotor, indicator), 3, 26, true);
         }
 
-        public void iterateReflector(Integer[] rotor, Integer[] indicator) {
+        public boolean iterateReflector(Integer[] rotor, Integer[] indicator) {
             for (int reflector = this.start; reflector < this.end; reflector++) {
 
                 char[] plainText = EnigmaAttack.this.getCipher().decodeEfficently(this.getCipherText(), this.getPlainTextHolder(false), QuadKey.of(indicator, EnigmaLib.DEFAULT_SETTING, rotor, reflector));
@@ -150,6 +150,8 @@ public class EnigmaAttack extends CipherAttack<QuadKey<Integer[], Integer[], Int
                 }
                 this.increaseIteration();
             }
+            
+            return true;
         }
     }
 

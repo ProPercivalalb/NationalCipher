@@ -2,34 +2,34 @@ package nationalcipher.cipher.decrypt.methods;
 
 import java.lang.reflect.Array;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
 
 import javalibrary.math.matrics.Matrix;
 import javalibrary.streams.PrimTypeUtil;
 import javalibrary.util.ArrayUtil;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.tools.KeyGeneration;
 
 public class KeyIterator {
 
-    public static void permuteIntegerOrderedKey(Consumer<Integer[]> consumer, int length) {
-        permuteObject(consumer, ArrayUtil.createRangeInteger(length));
+    public static boolean permuteIntegerOrderedKey(KeyFunction<Integer[]> consumer, int length) {
+        return permuteObject(consumer, ArrayUtil.createRangeInteger(length));
     }
 
-    public static void permuteString(Consumer<String> consumer, String str) {
-        permuteString(consumer, PrimTypeUtil.toCharacterArray(str));
+    public static boolean permuteString(KeyFunction<String> consumer, String str) {
+        return permuteString(consumer, PrimTypeUtil.toCharacterArray(str));
     }
 
-    public static void permuteString(Consumer<String> consumer, Character[] str) {
-        permuteObject(d -> consumer.accept(PrimTypeUtil.toString(d)), str);
+    public static boolean permuteString(KeyFunction<String> consumer, Character[] str) {
+        return permuteObject(d -> consumer.apply(PrimTypeUtil.toString(d)), str);
     }
 
-    public static <T> void permuteObject(Consumer<T[]> consumer, T[] items) {
-        permuteObject(consumer, items, 0);
+    public static <T> boolean permuteObject(KeyFunction<T[]> consumer, T[] items) {
+        return permuteObject(consumer, items, 0);
     }
 
-    private static <T> void permuteObject(Consumer<T[]> consumer, T[] arr, int pos) {
+    private static <T> boolean permuteObject(KeyFunction<T[]> consumer, T[] arr, int pos) {
         if (arr.length - pos == 1)
-            consumer.accept(arr);
+            return consumer.apply(arr);
         else {
             for (int i = pos; i < arr.length; i++) {
                 T h = arr[pos];
@@ -37,53 +37,57 @@ public class KeyIterator {
                 arr[pos] = j;
                 arr[i] = h;
 
-                permuteObject(consumer, arr, pos + 1);
+                if (!permuteObject(consumer, arr, pos + 1)) {
+                    return false;
+                }
                 arr[pos] = h;
                 arr[i] = j;
             }
+            
+            return true;
         }
     }
 
-    public static void iterateIntegerArray(Consumer<Integer[]> consumer, int length, int range, boolean repeats) {
-        iterateObject(consumer, new Integer[length], ArrayUtil.createRangeInteger(range), repeats ? null : (a, b) -> a == b);
+    public static boolean iterateIntegerArray(KeyFunction<Integer[]> consumer, int length, int range, boolean repeats) {
+        return iterateObject(consumer, new Integer[length], ArrayUtil.createRangeInteger(range), repeats ? null : (a, b) -> a == b);
     }
 
-    public static void iterateShort26Key(Consumer<String> consumer, int length, boolean repeats) {
-        iterateShortKey(consumer, KeyGeneration.ALL_26_CHARS, length, repeats);
+    public static boolean iterateShort26Key(KeyFunction<String> consumer, int length, boolean repeats) {
+        return iterateShortKey(consumer, KeyGeneration.ALL_26_CHARS, length, repeats);
     }
 
-    public static void iterateShortCustomKey(Consumer<String> consumer, String keyAlphabet, int length, boolean repeats) {
-        iterateShortKey(consumer, PrimTypeUtil.toCharacterArray(keyAlphabet), length, repeats);
+    public static boolean iterateShortCustomKey(KeyFunction<String> consumer, String keyAlphabet, int length, boolean repeats) {
+        return iterateShortKey(consumer, PrimTypeUtil.toCharacterArray(keyAlphabet), length, repeats);
     }
 
-    public static void iterateShortKey(Consumer<String> consumer, Character[] characters, int length, boolean repeats) {
-        iterateObject(o -> consumer.accept(PrimTypeUtil.toString(o)), new Character[length], characters, repeats ? null : (a, b) -> a == b);
+    public static boolean iterateShortKey(KeyFunction<String> consumer, Character[] characters, int length, boolean repeats) {
+        return iterateObject(o -> consumer.apply(PrimTypeUtil.toString(o)), new Character[length], characters, repeats ? null : (a, b) -> a == b);
     }
 
-    public static void iterateMatrix(Consumer<Matrix> consumer, int size) {
-        iterateMatrix(consumer, size, size, 26);
+    public static boolean iterateMatrix(KeyFunction<Matrix> consumer, int size) {
+        return iterateMatrix(consumer, size, size, 26);
     }
 
-    public static void iterateMatrix(Consumer<Matrix> consumer, int noRows, int noColumns, int base) {
-        iterateObject(o -> consumer.accept(new Matrix(o, noRows, noColumns)), new Integer[noRows * noColumns], ArrayUtil.createRangeInteger(base));
+    public static boolean iterateMatrix(KeyFunction<Matrix> consumer, int noRows, int noColumns, int base) {
+        return iterateObject(o -> consumer.apply(new Matrix(o, noRows, noColumns)), new Integer[noRows * noColumns], ArrayUtil.createRangeInteger(base));
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void iterateObject(Consumer<T[]> consumer, int length, T[] items) {
-        iterateObject(consumer, (T[]) Array.newInstance(items.getClass().getComponentType(), length), items);
+    public static <T> boolean iterateObject(KeyFunction<T[]> consumer, int length, T[] items) {
+        return iterateObject(consumer, (T[]) Array.newInstance(items.getClass().getComponentType(), length), items);
     }
 
-    public static <T> void iterateObject(Consumer<T[]> consumer, T[] holder, T[] items) {
-        iterateObject(consumer, holder, items, null, 0);
+    public static <T> boolean iterateObject(KeyFunction<T[]> consumer, T[] holder, T[] items) {
+        return iterateObject(consumer, holder, items, null, 0);
     }
 
-    public static <T> void iterateObject(Consumer<T[]> consumer, T[] holder, T[] items, BiPredicate<T, T> equalsPred) {
-        iterateObject(consumer, holder, items, equalsPred, 0);
+    public static <T> boolean iterateObject(KeyFunction<T[]> consumer, T[] holder, T[] items, BiPredicate<T, T> equalsPred) {
+        return iterateObject(consumer, holder, items, equalsPred, 0);
     }
 
-    private static <T> void iterateObject(Consumer<T[]> consumer, T[] holder, T[] items, BiPredicate<T, T> equalsPred, int pos) {
+    private static <T> boolean iterateObject(KeyFunction<T[]> consumer, T[] holder, T[] items, BiPredicate<T, T> equalsPred, int pos) {
         if (holder.length - pos == 0)
-            consumer.accept(holder);
+            return consumer.apply(holder);
         else {
             skipPath:
             for (T i : items) {
@@ -98,12 +102,15 @@ public class KeyIterator {
                 }
 
                 holder[pos] = i;
-                iterateObject(consumer, holder, items, equalsPred, pos + 1);
+                if (!iterateObject(consumer, holder, items, equalsPred, pos + 1)) {
+                    return false;
+                }
             }
+            return true;
         }
     }
 
-    public static void iterateGrille(Consumer<Integer[]> consumer, int size) {
+    public static boolean iterateGrille(KeyFunction<Integer[]> consumer, int size) {
         double halfSize = size / 2D;
         int rows = (int) Math.ceil(halfSize);
         int cols = (int) Math.floor(halfSize);
@@ -115,7 +122,7 @@ public class KeyIterator {
             for (int c = 0; c < cols; c++)
                 key[count++] = r * size + c;
 
-        KeyIterator.iterateIntegerArray(o -> {
+        return KeyIterator.iterateIntegerArray(o -> {
             int[] starting = (int[]) key;
             Integer[] next = new Integer[starting.length];
 
@@ -129,7 +136,7 @@ public class KeyIterator {
                 }
                 next[i] = value;
             }
-            consumer.accept(next);
+            return consumer.apply(next);
         }, keySize, 4, true);
     }
 }

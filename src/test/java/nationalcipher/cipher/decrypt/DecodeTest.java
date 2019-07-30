@@ -72,6 +72,7 @@ import nationalcipher.cipher.base.keys.QuadKey;
 import nationalcipher.cipher.base.keys.TriKey;
 import nationalcipher.cipher.transposition.RouteCipherType;
 import nationalcipher.cipher.transposition.Routes;
+import nationalcipher.cipher.util.CipherUtils;
 
 public class DecodeTest {
 	
@@ -210,7 +211,7 @@ public class DecodeTest {
         String plainText = "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG";
         String cipherText = "XEOOCHUQFYIJGNESEMKZSNSDZWWADMVQYUT";
         Integer[] key = ArrayUtil.createRangeInteger(54);
-        System.out.println(Arrays.toString(key));
+
         assertEncodeDecode(solitaireCipher, key, plainText, cipherText);
         
         for(int i = 0; i < 1000; i++) {
@@ -421,7 +422,6 @@ public class DecodeTest {
         assertEncodeDecode(grilleCipher, key, plainText, cipherText);
         
         for(int i = 0; i < 1000; i++) {
-            System.out.println(i);
             assertCipherLogic(grilleCipher);
         }
     }
@@ -444,10 +444,10 @@ public class DecodeTest {
     
     @Test
     public void testFractionatedMorse() {
-        // http://www.cryptogram.org/downloads/aca.info/ciphers/Trifid.pdf
+        // http://www.cryptogram.org/downloads/aca.info/ciphers/FractionatedMorse.pdf
         FractionatedMorseCipher fractionatedMorseCipher = new FractionatedMorseCipher();
         
-        String plainText = "COMEATONCE";
+        String plainText = "COME AT ONCE";
         String cipherText = "CBIILTMHVVFL";
         String key = "ROUNDTABLECFGHIJKMPQSVWXYZ";
         
@@ -497,8 +497,8 @@ public class DecodeTest {
         
         String plainText = "SQUARESONEANDFIVEAREACTUALLYTHESAMEASARESQUARESTWOANDEIGHTTHEOVERALLPERIODISFORTY";
         String cipherText = "KZWLYTGEDTQETARBTYGTLFXWLPPOXLTYKUTKGKYTKZWLYTGXSEQETIRZQAAQTCITYKPPVBLHEFHGREYXO";
-        TriKey<String, Boolean, Boolean> key = TriKey.of("DIAGONALS", true, true);
-        
+        TriKey<String, Boolean, Boolean> key = TriKey.of(new RouteTranspositionCipher().encode(CipherUtils.genKeySquare("DIAGONALS"), QuadKey.of(5, 5, Routes.SNAKE_TOPTOBOTTOM_LEFT, Routes.ACROSS_1)), true, false);
+
         assertEncodeDecode(phillipsCipher, key, plainText, cipherText);
         
         for(int i = 0; i < 1000; i++) {
@@ -779,7 +779,6 @@ public class DecodeTest {
 
         String cipherText = "NLBCSPCDFGXZQQCDCMGCGQTBHCFTRHFGWHGB";
         BiKey<String, Integer> key = new BiKey<>("LOGARITHMBCDEFKNPQSUVWXYZ", 6);
-        System.out.println(playfairCipher.padPlainText(plainText, key)); 
         
         assertEncodeDecode(playfairCipher, key, plainText, cipherText);
         
@@ -937,7 +936,7 @@ public class DecodeTest {
     }
     
     private <K> void assertCipherLogic(ICipher<K> cipher, CharSequence plainText) {
-        K key = cipher.randomiseKey();
+        K key = cipher.randomiseKey(plainText.length());
         plainText = cipher.padPlainText(plainText, key);
         CharSequence cipherText = cipher.encode(plainText, key);
         assertCharSequenceEquals(plainText, cipher.decode(cipherText, key));

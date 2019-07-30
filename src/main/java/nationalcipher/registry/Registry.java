@@ -31,6 +31,8 @@ public class Registry<K, T> implements IRegistry<K, T> {
     private Optional<AddCallback<K, T>> addCallback;
     private Optional<RemoveCallback<K, T>> removeCallback;
 
+    private boolean frozen = false;
+    
     private Registry(Class<K> keyType, Class<T> type, Supplier<Map<K, T>> mapSupplier) {
         this.keyType = keyType;
         this.type = type;
@@ -132,6 +134,12 @@ public class Registry<K, T> implements IRegistry<K, T> {
     @Override
     public void freeze() {
         this.map = Collections.unmodifiableMap(this.map);
+        this.frozen = true;
+    }
+    
+    @Override
+    public boolean frozen() {
+        return this.frozen;
     }
 
     @Nullable

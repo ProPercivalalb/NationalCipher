@@ -1,13 +1,14 @@
 package nationalcipher.cipher.base;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.keys.QuinKey;
+import nationalcipher.cipher.base.keys.TriKey;
 
 public abstract class QuinKeyCipher<F, S, T, N, Q, A extends IKeyBuilder<F>, B extends IKeyBuilder<S>, C extends IKeyBuilder<T>, D extends IKeyBuilder<N>, E extends IKeyBuilder<Q>> implements ICipher<QuinKey<F, S, T, N, Q>> {
 
@@ -47,17 +48,17 @@ public abstract class QuinKeyCipher<F, S, T, N, Q, A extends IKeyBuilder<F>, B e
 
     @Override
     public boolean isValid(QuinKey<F, S, T, N, Q> key) {
-        return this.firstType.isValid(key, key.getFirstKey()) && this.secondType.isValid(key, key.getSecondKey()) && this.thirdType.isValid(key, key.getThirdKey()) && this.fourthType.isValid(key, key.getFourthKey()) && this.fifthType.isValid(key, key.getFifthKey());
+        return this.firstType.isValid(key.getFirstKey()) && this.secondType.isValid(key.getSecondKey()) && this.thirdType.isValid(key.getThirdKey()) && this.fourthType.isValid(key.getFourthKey()) && this.fifthType.isValid(key.getFifthKey());
     }
 
     @Override
     public QuinKey<F, S, T, N, Q> randomiseKey() {
         QuinKey<F, S, T, N, Q> key = QuinKey.empty();
-        return key.setFirst(this.firstTypeLimit.randomise(key)).setSecond(this.secondTypeLimit.randomise(key)).setThird(this.thirdTypeLimit.randomise(key)).setFourth(this.fourthTypeLimit.randomise(key)).setFifth(this.fifthTypeLimit.randomise(key));
+        return key.setFirst(this.firstTypeLimit.randomise()).setSecond(this.secondTypeLimit.randomise()).setThird(this.thirdTypeLimit.randomise()).setFourth(this.fourthTypeLimit.randomise()).setFifth(this.fifthTypeLimit.randomise());
     }
 
     @Override
-    public void iterateKeys(Consumer<QuinKey<F, S, T, N, Q>> consumer) {
+    public void iterateKeys(KeyFunction<QuinKey<F, S, T, N, Q>> consumer) {
 //        QuadKey<F, S, T, N> key = QuadKey.empty();
 //        this.firstTypeLimit.iterateKeys(null, f -> {
 //            key.setFirst(f);
@@ -70,15 +71,15 @@ public abstract class QuinKeyCipher<F, S, T, N, Q, A extends IKeyBuilder<F>, B e
 //            });
 //        });
         QuinKey<F, S, T, N, Q> key = QuinKey.empty();
-        this.firstTypeLimit.iterateKeys(null, f -> {
+        this.firstTypeLimit.iterateKeys(f -> {
             key.setFirst(f);
-            this.secondTypeLimit.iterateKeys(key, s -> {
+            return this.secondTypeLimit.iterateKeys(s -> {
                 key.setSecond(s);
-                this.thirdTypeLimit.iterateKeys(key, t -> {
+                return this.thirdTypeLimit.iterateKeys(t -> {
                     key.setThird(t);
-                    this.fourthTypeLimit.iterateKeys(key, n -> {
+                    return this.fourthTypeLimit.iterateKeys(n -> {
                         key.setFourth(n);
-                        this.fifthTypeLimit.iterateKeys(key, q -> consumer.accept(key.setFifth(q).clone()));
+                        return this.fifthTypeLimit.iterateKeys(q -> consumer.apply(key.setFifth(q).clone()));
                     });
                 });
             });
@@ -89,7 +90,7 @@ public abstract class QuinKeyCipher<F, S, T, N, Q, A extends IKeyBuilder<F>, B e
 
     @Override
     public QuinKey<F, S, T, N, Q> alterKey(QuinKey<F, S, T, N, Q> key, double temp, int count) {
-        return QuinKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()), this.fourthType.alterKey(key, key.getFourthKey()), this.fifthType.alterKey(key, key.getFifthKey()));
+        return QuinKey.of(this.firstType.alterKey(key.getFirstKey()), this.secondType.alterKey(key.getSecondKey()), this.thirdType.alterKey(key.getThirdKey()), this.fourthType.alterKey(key.getFourthKey()), this.fifthType.alterKey(key.getFifthKey()));
     }
 
     @Override
@@ -100,6 +101,16 @@ public abstract class QuinKeyCipher<F, S, T, N, Q, A extends IKeyBuilder<F>, B e
     @Override
     public String prettifyKey(QuinKey<F, S, T, N, Q> key) {
         return String.join(" ",  this.firstType.prettifyKey(key.getFirstKey()), this.secondType.prettifyKey(key.getSecondKey()), this.thirdType.prettifyKey(key.getThirdKey()), this.fourthType.prettifyKey(key.getFourthKey()), this.fifthType.prettifyKey(key.getFifthKey()));
+    }
+    
+    @Override
+    public QuinKey<F, S, T, N, Q> parseKey(String input) throws ParseException {
+        String[] parts = input.split(" ");
+        if (parts.length != 5) {
+            throw new ParseException(input, 0);
+        }
+        
+        return QuinKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]), this.thirdType.parse(parts[2]), this.fourthType.parse(parts[3]), this.fifthType.parse(parts[4]));
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {

@@ -3,11 +3,11 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 
@@ -22,21 +22,24 @@ public class GrilleKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public Integer[] randomise(Object partialKey) {
+    public Integer[] randomise() {
         return KeyGeneration.createGrilleKey(RandomUtil.pickRandomInt(this.min, this.max));
     }
 
     @Override
-    public boolean isValid(Object partialKey, Integer[] key) {
+    public boolean isValid(Integer[] key) {
         // TODO
         return true;
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Integer[]> consumer) {
+    public boolean iterateKeys(KeyFunction<Integer[]> consumer) {
         for (int size = this.min; size <= this.max; size++) {
-            KeyIterator.iterateGrille(consumer, size);
+            if (!KeyIterator.iterateGrille(consumer, size)) {
+                return false;
+            }
         }
+        return false;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class GrilleKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public Integer[] alterKey(Object partialKey, Integer[] key) {
+    public Integer[] alterKey(Integer[] key) {
         return key;
     }
     

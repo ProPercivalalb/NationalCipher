@@ -1,13 +1,14 @@
 package nationalcipher.cipher.base;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.keys.QuadKey;
+import nationalcipher.cipher.base.keys.QuinKey;
 
 public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B extends IKeyBuilder<S>, C extends IKeyBuilder<T>, D extends IKeyBuilder<N>> implements ICipher<QuadKey<F, S, T, N>> {
 
@@ -41,17 +42,17 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
 
     @Override
     public boolean isValid(QuadKey<F, S, T, N> key) {
-        return this.firstType.isValid(key, key.getFirstKey()) && this.secondType.isValid(key, key.getSecondKey()) && this.thirdType.isValid(key, key.getThirdKey()) && this.fourthType.isValid(key, key.getFourthKey());
+        return this.firstType.isValid(key.getFirstKey()) && this.secondType.isValid(key.getSecondKey()) && this.thirdType.isValid(key.getThirdKey()) && this.fourthType.isValid(key.getFourthKey());
     }
 
     @Override
     public QuadKey<F, S, T, N> randomiseKey() {
         QuadKey<F, S, T, N> key = QuadKey.empty();
-        return key.setFirst(this.firstTypeLimit.randomise(key)).setSecond(this.secondTypeLimit.randomise(key)).setThird(this.thirdTypeLimit.randomise(key)).setFourth(this.fourthTypeLimit.randomise(key));
+        return key.setFirst(this.firstTypeLimit.randomise()).setSecond(this.secondTypeLimit.randomise()).setThird(this.thirdTypeLimit.randomise()).setFourth(this.fourthTypeLimit.randomise());
     }
 
     @Override
-    public void iterateKeys(Consumer<QuadKey<F, S, T, N>> consumer) {
+    public void iterateKeys(KeyFunction<QuadKey<F, S, T, N>> consumer) {
 //        QuadKey<F, S, T, N> key = QuadKey.empty();
 //        this.firstTypeLimit.iterateKeys(null, f -> {
 //            key.setFirst(f);
@@ -64,13 +65,13 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
 //            });
 //        });
         QuadKey<F, S, T, N> key = QuadKey.empty();
-        this.firstTypeLimit.iterateKeys(null, f -> {
+        this.firstTypeLimit.iterateKeys(f -> {
             key.setFirst(f);
-            this.secondTypeLimit.iterateKeys(key, s -> {
+            return this.secondTypeLimit.iterateKeys(s -> {
                 key.setSecond(s);
-                this.thirdTypeLimit.iterateKeys(key, t -> {
+                return this.thirdTypeLimit.iterateKeys(t -> {
                     key.setThird(t);
-                    this.fourthTypeLimit.iterateKeys(key, n -> consumer.accept(key.setFourth(n).clone()));
+                    return this.fourthTypeLimit.iterateKeys(n -> consumer.apply(key.setFourth(n).clone()));
                 });
             });
         });
@@ -80,7 +81,7 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
 
     @Override
     public QuadKey<F, S, T, N> alterKey(QuadKey<F, S, T, N> key, double temp, int count) {
-        return QuadKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()), this.thirdType.alterKey(key, key.getThirdKey()), this.fourthType.alterKey(key, key.getFourthKey()));
+        return QuadKey.of(this.firstType.alterKey(key.getFirstKey()), this.secondType.alterKey(key.getSecondKey()), this.thirdType.alterKey(key.getThirdKey()), this.fourthType.alterKey(key.getFourthKey()));
     }
 
     @Override
@@ -91,6 +92,16 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
     @Override
     public String prettifyKey(QuadKey<F, S, T, N> key) {
         return String.join(" ",  this.firstType.prettifyKey(key.getFirstKey()), this.secondType.prettifyKey(key.getSecondKey()), this.thirdType.prettifyKey(key.getThirdKey()), this.fourthType.prettifyKey(key.getFourthKey()));
+    }
+    
+    @Override
+    public QuadKey<F, S, T, N> parseKey(String input) throws ParseException {
+        String[] parts = input.split(" ");
+        if (parts.length != 4) {
+            throw new ParseException(input, 0);
+        }
+        
+        return QuadKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]), this.thirdType.parse(parts[2]), this.fourthType.parse(parts[3]));
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {

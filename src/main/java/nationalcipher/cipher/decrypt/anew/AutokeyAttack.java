@@ -15,7 +15,6 @@ public class AutokeyAttack extends PeriodicKeyAttack<AutokeyCipher> implements I
 
     @Override
     public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
-        // Settings grab
         switch (method) {
         case DICTIONARY:
             DecryptionTracker tracker = new DecryptionTracker(text, app);

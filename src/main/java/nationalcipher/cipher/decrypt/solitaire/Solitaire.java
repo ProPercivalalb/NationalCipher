@@ -1,15 +1,10 @@
 package nationalcipher.cipher.decrypt.solitaire;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javalibrary.util.ArrayUtil;
-import javalibrary.util.ListUtil;
-import javalibrary.util.RandomUtil;
-import nationalcipher.cipher.interfaces.IRandEncrypter;
-import nationalcipher.cipher.tools.KeyGeneration;
 
-public class Solitaire implements IRandEncrypter {
+public class Solitaire {
 
     public static final int JOKER_A = 52;
     public static final int JOKER_B = 53;
@@ -463,27 +458,27 @@ public class Solitaire implements IRandEncrypter {
         return plainText;
     }
 
-    @Override
-    public String randomlyEncrypt(String plainText) {
-        Integer[] order = KeyGeneration.createOrder(54);
-        Integer[] halfOrder = ArrayUtil.copy(order);
-
-        List<Integer> all = ListUtil.range(0, 53);
-        while (all.size() > 54 - 16) {
-            int index = RandomUtil.pickRandomElement(all);
-            if (Solitaire.isJoker(index))
-                continue;
-
-            all.remove((Object) index);
-            halfOrder[ArrayUtil.indexOf(order, index)] = -1;
-        }
-        System.out.println(Arrays.toString(order));
-        System.out.println(Arrays.toString(halfOrder));
-        return encode(plainText, order);
-    }
-
-    @Override
-    public int getDifficulty() {
-        return 10;
-    }
+//    @Override
+//    public String randomlyEncrypt(String plainText) {
+//        Integer[] order = KeyGeneration.createOrder(54);
+//        Integer[] halfOrder = ArrayUtil.copy(order);
+//
+//        List<Integer> all = ListUtil.range(0, 53);
+//        while (all.size() > 54 - 16) {
+//            int index = RandomUtil.pickRandomElement(all);
+//            if (Solitaire.isJoker(index))
+//                continue;
+//
+//            all.remove((Object) index);
+//            halfOrder[ArrayUtil.indexOf(order, index)] = -1;
+//        }
+//        System.out.println(Arrays.toString(order));
+//        System.out.println(Arrays.toString(halfOrder));
+//        return encode(plainText, order);
+//    }
+//
+//    @Override
+//    public int getDifficulty() {
+//        return 10;
+//    }
 }

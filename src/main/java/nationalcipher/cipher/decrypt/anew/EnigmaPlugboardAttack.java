@@ -155,7 +155,7 @@ public class EnigmaPlugboardAttack extends CipherAttack<QuinKey<Integer[], Integ
                 for (int t = 0; t < 13; t++) {
                     char[] plainText = this.getCipher().decodeEfficently(tracker.getCipherText(), tracker.getPlainTextHolder(false), key);
 
-                    Solution bestLocalSolution = new Solution(plainText, StatCalculator.calculateMonoIC(plainText) * 1000).setKeyString(this.getCipher().prettifyKey(key)).bakeSolution();
+                    Solution bestLocalSolution = new Solution(plainText, StatCalculator.calculateMonoIC(plainText) * 1000).setKeyString(this.getCipher().prettifyKey(key)).bake();
                     this.output(tracker, bestLocalSolution.toString());
                     int bestPlug1 = -1;
                     int bestPlug2 = -1;
@@ -177,7 +177,7 @@ public class EnigmaPlugboardAttack extends CipherAttack<QuinKey<Integer[], Integ
                             Solution lastSolution = new Solution(testText, StatCalculator.calculateMonoIC(testText) * 1000); // How should the text be scored?
 
                             if (lastSolution.isBetterThan(bestLocalSolution)) {
-                                bestLocalSolution = lastSolution.setKeyString(this.getCipher().prettifyKey(key)).bakeSolution();
+                                bestLocalSolution = lastSolution.setKeyString(this.getCipher().prettifyKey(key)).bake();
                                 bestPlug1 = plug1;
                                 bestPlug2 = plug2;
                             }
@@ -238,11 +238,11 @@ public class EnigmaPlugboardAttack extends CipherAttack<QuinKey<Integer[], Integ
             this.squeezeSecond = new DynamicResultList<EnigmaSection>(64 * 2);
         }
 
-        public void onList(Integer[] rotor) {
-            KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
+        public boolean onList(Integer[] rotor) {
+            return KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
         }
 
-        public void onList2(Integer[] rotor, Integer[] indicator) {
+        public boolean onList2(Integer[] rotor, Integer[] indicator) {
             for (int reflector = this.start; reflector < this.end; reflector++) {
 
                 char[] plainText = EnigmaPlugboardAttack.this.getCipher().decodeEfficently(this.getCipherText(), this.getPlainTextHolder(false), QuinKey.of(indicator, EnigmaLib.DEFAULT_SETTING, rotor, reflector, null));
@@ -254,13 +254,14 @@ public class EnigmaPlugboardAttack extends CipherAttack<QuinKey<Integer[], Integ
                 
                 this.increaseIteration();
             }
+            return true;
         }
 
-        public void onList3(Integer[] rotor) {
-            KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
+        public boolean onList3(Integer[] rotor) {
+            return KeyIterator.iterateIntegerArray(o -> onList2(rotor, o), 3, 26, true);
         }
 
-        public void onList4(Integer[] rotor, Integer[] indicator) {
+        public boolean onList4(Integer[] rotor, Integer[] indicator) {
             for (int reflector = this.start; reflector < this.end; reflector++) {
                 Integer[] plugboard = new Integer[26];
                 Integer[] possiblePlugBoard = new Integer[26];
@@ -271,7 +272,7 @@ public class EnigmaPlugboardAttack extends CipherAttack<QuinKey<Integer[], Integ
 
                 while (true) {
                     char[] plainText = EnigmaPlugboardAttack.this.getCipher().decodeEfficently(this.getCipherText(), this.getPlainTextHolder(false), QuinKey.of(indicator, EnigmaLib.DEFAULT_SETTING, rotor, reflector, plugboard));
-                    Solution bestSolution = new Solution(plainText, StatCalculator.calculateMonoIC(plainText) * 1000).bakeSolution();
+                    Solution bestSolution = new Solution(plainText, StatCalculator.calculateMonoIC(plainText) * 1000).bake();
                     int bestPlug1 = 0;
                     int bestPlug2 = 1;
                     char[] testText = ArrayUtil.copy(plainText);
@@ -319,6 +320,7 @@ public class EnigmaPlugboardAttack extends CipherAttack<QuinKey<Integer[], Integ
                     possiblePlugBoard = possiblePlugBoardNext;
                 }
             }
+            return true;
         }
     }
 }

@@ -1,23 +1,14 @@
 package nationalcipher.cipher.decrypt.anew;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
+import java.util.concurrent.TimeUnit;
 
 import javalibrary.language.ILanguage;
-import javalibrary.lib.BooleanLib;
 import javalibrary.list.DynamicResultList;
 import javalibrary.list.Result;
 import javalibrary.list.ResultPositive;
 import javalibrary.streams.PrimTypeUtil;
-import javalibrary.swing.JSpinnerUtil;
 import javalibrary.util.ArrayUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.cipher.base.anew.ADFGXCipher;
@@ -29,18 +20,15 @@ import nationalcipher.cipher.base.keys.QuadKey;
 import nationalcipher.cipher.decrypt.CipherAttack;
 import nationalcipher.cipher.decrypt.methods.DecryptionMethod;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
+import nationalcipher.cipher.setting.SettingTypes;
 import nationalcipher.cipher.stats.StatCalculator;
 import nationalcipher.cipher.tools.KeyGeneration;
-import nationalcipher.cipher.tools.SettingParse;
-import nationalcipher.cipher.tools.SubOptionPanel;
-import nationalcipher.cipher.util.CipherUtils;
+import nationalcipher.parallel.MasterThread;
 import nationalcipher.ui.IApplication;
 import nationalcipher.util.CharArrayWrapper;
 
 public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String, ReadMode>, ADFGXCipher> {
 
-    public JSpinner[] rangeSpinner;
-    public JComboBox<Boolean> directionOption;
     public final Character[] alphabet; //Key square characters
     public final Character[] charHolders; //ADFGX characters
     
@@ -49,39 +37,41 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
         this.setAttackMethods(DecryptionMethod.PERIODIC_KEY);
         this.alphabet = KeyGeneration.ALL_25_CHARS;
         this.charHolders = PrimTypeUtil.toCharacterArray("ADFGX");
-        this.rangeSpinner = JSpinnerUtil.createRangeSpinners(2, 8, 2, 12, 1);
-        this.directionOption = new JComboBox<Boolean>(BooleanLib.OBJECT_REVERSED);
+        this.addSetting(SettingTypes.createIntRange("period_range", 2, 5, 2, 100, 1, (values, cipher) -> {cipher.setSecondKeyLimit(builder -> builder.setRange(values));}));
+        this.addSetting(SettingTypes.createCombo("read_mode", ReadMode.values(), (value, cipher) -> {cipher.setFourthKeyLimit(builder -> builder.setUniverse(value));}));
     }
 
-    @Override
-    public void createSettingsUI(JDialog dialog, JPanel panel) {
-        panel.add(new SubOptionPanel("Period Range:", this.rangeSpinner));
-        panel.add(new SubOptionPanel("Read down (T) - Read across (F)", this.directionOption));
-    }
-    
     @Override
     public DecryptionTracker attemptAttack(CharSequence text, DecryptionMethod method, IApplication app) {
         ADFGXTracker tracker = new ADFGXTracker(text, app);
-        
-        int[] periodRange = SettingParse.getIntegerRange(this.rangeSpinner);
-        tracker.readDefault = SettingParse.getBooleanValue(this.directionOption) ? ReadMode.DOWN : ReadMode.ACROSS;
-        
-        // Settings grab
+
         switch (method) {
         case PERIODIC_KEY:
-            IKeyType<Integer[]> orderedKey = this.getCipher().setSecondKeyLimit(builder -> builder.setRange(periodRange)).getSecondKeyType();
+            IKeyType<Integer[]> orderedKey = this.getCipher().getSecondKeyType();
             
             app.getProgress().addMaxValue(orderedKey.getNumOfKeys());
             
-            Consumer<Consumer<Integer[]>> handler = CipherUtils.optionalParallel(()-> {
-                List<Integer[]> keys = new ArrayList<>(orderedKey.getNumOfKeys().intValue());
-                orderedKey.iterateKeys(null, order -> keys.add(ArrayUtil.copy(order)));
-                return keys.parallelStream()::forEach;
-            }, ()-> {
-                return task -> orderedKey.iterateKeys(null, task);
-            }, tracker);
-
-            handler.accept(tracker::onPermute);
+            if (tracker.getSettings().useParallel()) {
+                MasterThread thread = new MasterThread((control) -> {
+                    orderedKey.iterateKeys(key -> {
+                        Integer[] keyCopy = ArrayUtil.copy(key);
+                        Runnable job = () -> {
+                            tracker.onPermute(keyCopy);
+                        };
+                        while(!control.addJob(job)) {
+                            if (control.isFinishing()) { return false; }
+                        }
+                        
+                        return true;
+                    });
+                });
+                thread.start();
+                
+                thread.waitTillCompleted(tracker::shouldStop);
+                
+            } else {
+                orderedKey.iterateKeys(tracker::onPermute);
+            }
             tracker.finish();
             
             if (tracker.resultsList.size() < 1) {
@@ -95,6 +85,7 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
             Iterator<ADFGXResult> iterator = tracker.resultsList.iterator();
             
             while (iterator.hasNext()) {
+                if (tracker.shouldStop()) { break; }
                 ADFGXResult section = iterator.next();
 
                 char[] tempText = new char[section.decrypted.length / 2];
@@ -124,7 +115,6 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
     public class ADFGXTracker extends DecryptionTracker {
 
         public final ColumnarTranspositionCipher transCipher;
-        public ReadMode readDefault;
         private DynamicResultList<ADFGXResult> resultsList;
 
         public ADFGXTracker(CharSequence text, IApplication app) {
@@ -133,19 +123,25 @@ public class ADFGXAttack extends CipherAttack<QuadKey<String, Integer[], String,
             this.transCipher = new ColumnarTranspositionCipher();
         }
 
-        public void onPermute(Integer[] data) {
+        public boolean onPermute(Integer[] data) {
+            if (this.shouldStop()) { return false; }
             char[] decrypted = new char[this.getOutputTextLength(this.getCipherText().length())];
-            this.transCipher.decodeEfficently(this.getCipherText(), decrypted, BiKey.of(data, this.readDefault));
+            ADFGXAttack.this.getCipher().getFourthKeyType().iterateKeys(readMode -> {
+                if (this.shouldStop()) { return false; }
+                this.transCipher.decodeEfficently(this.getCipherText(), decrypted, BiKey.of(data, readMode));
 
-            ADFGXResult section = new ADFGXResult(decrypted, this.getLanguage(), Arrays.copyOf(data, data.length));
+                ADFGXResult section = new ADFGXResult(decrypted, this.getLanguage(), Arrays.copyOf(data, data.length));
 
-            if (this.resultsList.add(section)) {
-                if (section.score < 5D) {
-                    ADFGXAttack.this.output(this, section.toString());
+                if (this.resultsList.add(section)) {
+                    if (section.score < 5D) {
+                        ADFGXAttack.this.output(this, section.toString());
+                    }
                 }
-            }
-            
-            this.increaseIteration();
+                
+                this.increaseIteration();
+                return true;
+            });
+            return true;
         }
     }
 

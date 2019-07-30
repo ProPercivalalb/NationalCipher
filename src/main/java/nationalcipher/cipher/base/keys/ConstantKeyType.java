@@ -1,9 +1,10 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 
 import nationalcipher.api.IKeyType;
+import nationalcipher.cipher.base.KeyFunction;
 
 public class ConstantKeyType<T> implements IKeyType<T> {
 
@@ -14,17 +15,17 @@ public class ConstantKeyType<T> implements IKeyType<T> {
     }
 
     @Override
-    public T randomise(Object partialKey) {
+    public T randomise() {
         return this.constant;
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<T> consumer) {
-        consumer.accept(this.constant);
+    public boolean iterateKeys(KeyFunction<T> consumer) {
+        return consumer.apply(this.constant);
     }
 
     @Override
-    public boolean isValid(Object fullKey, T key) {
+    public boolean isValid(T key) {
         return key == this.constant ? true : key.equals(this.constant);
     }
 
@@ -34,8 +35,13 @@ public class ConstantKeyType<T> implements IKeyType<T> {
     }
 
     @Override
-    public T alterKey(Object fullKey, T key) {
+    public T alterKey(T key) {
         return key;
+    }
+    
+    @Override
+    public T parse(String input) throws ParseException {
+        return this.constant;
     }
 
     public static <T> Builder<T> builder(T constant) {

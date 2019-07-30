@@ -46,7 +46,7 @@ public class Solution extends ResultNegative {
      * Makes a copy of the text array as quite often this array reference is reused
      * so it can change
      */
-    public Solution bakeSolution() {
+    public Solution bake() {
         if (!this.beenBaked) {
             this.beenBaked = true;
             this.text = ArrayUtil.copy(this.text);

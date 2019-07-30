@@ -3,7 +3,6 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import javalibrary.math.MathUtil;
 import javalibrary.util.ArrayUtil;
@@ -11,6 +10,7 @@ import javalibrary.util.ListUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.base.enigma.EnigmaUtil;
 import nationalcipher.cipher.util.CipherUtils;
 
@@ -27,7 +27,7 @@ public class PlugboardKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public Integer[] randomise(Object partialKey) {
+    public Integer[] randomise() {
         int numPlugs = RandomUtil.pickRandomInt(this.minPlugs, this.maxPlugs);
         Integer[] key = ArrayUtil.createRangeInteger(0, this.plugboardSize);
         List<Integer> plugs = ListUtil.range(0, this.plugboardSize - 1);
@@ -44,17 +44,17 @@ public class PlugboardKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Integer[]> consumer) {
+    public boolean iterateKeys(KeyFunction<Integer[]> consumer) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
-    public Integer[] alterKey(Object fullKey, Integer[] key) {
+    public Integer[] alterKey(Integer[] key) {
         return key;
     }
 
     @Override
-    public boolean isValid(Object fullKey, Integer[] key) {
+    public boolean isValid(Integer[] key) {
         if (key.length != this.plugboardSize) {
             return false;
         }

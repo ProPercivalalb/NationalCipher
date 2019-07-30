@@ -1,7 +1,7 @@
 package nationalcipher.cipher.base;
 
 import java.math.BigInteger;
-import java.util.function.Consumer;
+import java.text.ParseException;
 import java.util.function.Function;
 
 import nationalcipher.api.ICipher;
@@ -29,32 +29,24 @@ public abstract class BiKeyCipher<F, S, A extends IKeyBuilder<F>, B extends IKey
     
     @Override
     public boolean isValid(BiKey<F, S> key) {
-        return this.firstType.isValid(key, key.getFirstKey()) && this.secondType.isValid(key, key.getSecondKey());
+        return this.firstType.isValid(key.getFirstKey()) && this.secondType.isValid(key.getSecondKey());
     }
 
     @Override
     public BiKey<F, S> randomiseKey() {
-        BiKey<F, S> key = BiKey.empty();
-        return key.setFirst(this.firstTypeLimit.randomise(key)).setSecond(this.secondTypeLimit.randomise(key));
+        return BiKey.of(this.firstTypeLimit.randomise(), this.secondTypeLimit.randomise());
     }
 
     @Override
-    public void iterateKeys(Consumer<BiKey<F, S>> consumer) {
-//        BiKey<F, S> key = BiKey.empty();
-//        this.firstTypeLimit.iterateKeys(null, f -> {
-//            key.setFirst(f);
-//            this.secondTypeLimit.iterateKeys(key, s -> consumer.accept(key.setSecond(s)));
-//        });
-        BiKey<F, S> key = BiKey.empty();
-        this.firstTypeLimit.iterateKeys(null, f -> {
-            key.setFirst(f);
-            this.secondTypeLimit.iterateKeys(key, s -> consumer.accept(key.setSecond(s).clone()));
-        });
+    public void iterateKeys(KeyFunction<BiKey<F, S>> consumer) {
+        this.firstTypeLimit.iterateKeys(f -> 
+            this.secondTypeLimit.iterateKeys(s -> consumer.apply(BiKey.of(f, s)))
+        );
     }
 
     @Override
     public BiKey<F, S> alterKey(BiKey<F, S> key, double temp, int count) {
-        return BiKey.of(this.firstType.alterKey(key, key.getFirstKey()), this.secondType.alterKey(key, key.getSecondKey()));
+        return BiKey.of(this.firstType.alterKey(key.getFirstKey()), this.secondType.alterKey(key.getSecondKey()));
     }
 
     @Override
@@ -65,6 +57,16 @@ public abstract class BiKeyCipher<F, S, A extends IKeyBuilder<F>, B extends IKey
     @Override
     public String prettifyKey(BiKey<F, S> key) {
         return String.join(" ",  this.firstType.prettifyKey(key.getFirstKey()), this.secondType.prettifyKey(key.getSecondKey()));
+    }
+    
+    @Override
+    public BiKey<F, S> parseKey(String input) throws ParseException {
+        String[] parts = input.split(" ");
+        if (parts.length != 2) {
+            throw new ParseException(input, 0);
+        }
+        
+        return BiKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]));
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {
@@ -79,7 +81,7 @@ public abstract class BiKeyCipher<F, S, A extends IKeyBuilder<F>, B extends IKey
         this.firstTypeLimit = firstKeyFunc.apply(this.firstKeyBuilder).create();
     }
     
-    public void setSecondKeyLimit(Function<B, IKeyBuilder<S>> secondKeyFunc) {
+    public void setSecondKeyDomain(Function<B, IKeyBuilder<S>> secondKeyFunc) {
         this.secondTypeLimit = secondKeyFunc.apply(this.secondKeyBuilder).create();
     }
     

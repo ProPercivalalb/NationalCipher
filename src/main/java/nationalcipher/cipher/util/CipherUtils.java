@@ -15,7 +15,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import javalibrary.util.ArrayUtil;
 import nationalcipher.cipher.decrypt.methods.DecryptionTracker;
+import nationalcipher.cipher.tools.KeyGeneration;
 
 public class CipherUtils {
 
@@ -93,5 +95,24 @@ public class CipherUtils {
             consumer3 = (o, c) -> lists[j].accept(key, n -> {list.add(n); consumer2.accept(key, null);});
         }
         consumer3.accept(null, null);
+    }
+
+    public static String genKeySquare(String keyword) {
+        Character[] alphabet = KeyGeneration.ALL_25_CHARS;
+        char[] builder = new char[alphabet.length];
+        int index = 0;
+        for (int i = 0; i < keyword.length(); i++) {
+            if (ArrayUtil.contains(alphabet, keyword.charAt(i)) && !ArrayUtil.contains(builder, 0, index, keyword.charAt(i))) {
+                builder[index++] = keyword.charAt(i);
+            }
+        }
+        
+        for (char ch : alphabet) {
+            int keyindex = keyword.indexOf(ch);
+            if (keyindex == -1) {
+                builder[index++] = ch;
+            }
+        }
+        return new String(builder);
     }
 }

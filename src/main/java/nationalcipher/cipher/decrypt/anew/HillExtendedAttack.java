@@ -43,7 +43,6 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
 
         switch (method) {
         case PERIODIC_KEY:
-            this.readLatestSettings();
             for (int size = this.sizeRange[0]; size <= this.sizeRange[1]; size++) {
                 tracker.resultList.clear();
                 if (tracker.getCipherText().length() % size != 0) {
@@ -77,9 +76,9 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
         }
     }
 
-    public void iterateMatrixRows(HillTracker tracker, Integer[] row) {
+    public boolean iterateMatrixRows(HillTracker tracker, Integer[] row) {
         if (MathUtil.allDivisibleBy(row, 0, tracker.size, 2, 13)) {
-            return;
+            return true;
         }
 
         char[] decrypted = new char[tracker.lengthSub];
@@ -100,9 +99,10 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
                 this.output(tracker, "%s, %f, %s", Arrays.toString(row), score, new String(decrypted));
             }
         }
+        return true;
     }
     
-    public void iteratePossibleRows(HillTracker tracker, HillSection[] data) {
+    public boolean iteratePossibleRows(HillTracker tracker, HillSection[] data) {
         // Create key matrices from data
         int[] inverseData = new int[tracker.size * tracker.size];
         int[] extendedData = new int[tracker.size];
@@ -117,7 +117,7 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
         Matrix inverseMatrix = new Matrix(inverseData, tracker.size);
         
         if (!inverseMatrix.hasInverseMod(26)) {
-            return;
+            return true;
         }
         
         for (int s = 0; s < tracker.size; s++) {
@@ -130,6 +130,7 @@ public class HillExtendedAttack extends CipherAttack<BiKey<Matrix, Matrix>, Hill
         tracker.lastSolution = new Solution(tracker.getPlainTextHolder(false), tracker.getLanguage());
 
         this.updateIfBetterThanBest(tracker, tracker.lastSolution, () -> BiKey.of(inverseMatrix.inverseMod(26), new Matrix(extendedData, tracker.size, 1)));
+        return true;
     }
 
     public class HillTracker extends DecryptionTracker {

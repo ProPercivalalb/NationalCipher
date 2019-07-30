@@ -78,7 +78,8 @@ public class EncrypterRegistry {
     }
 
     public static void registerAll() {
-
+        if (RAND_ENCRYPTERS.frozen()) return;
+        
         RAND_ENCRYPTERS.registerAll(new ADFGXCipher(), new AffineCipher(), new AMSCOCipher());
         RAND_ENCRYPTERS.register(new BazeriesCipher());
         RAND_ENCRYPTERS.register(new BifidCipher());
@@ -133,6 +134,7 @@ public class EncrypterRegistry {
         RAND_ENCRYPTERS.register(new RagbabyCipher());
         RAND_ENCRYPTERS.register(new GrilleCipher());
         RAND_ENCRYPTERS.register(new HuttonCipher());
+        RAND_ENCRYPTERS.freeze();
     }
 
     static {

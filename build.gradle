@@ -2,10 +2,11 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
 
-mainClassName = 'nationalcipher.MainNew'
+mainClassName = 'nationalcipher.MainCLI'
 
 repositories {
-    jcenter()
+    jcenter();
+    mavenCentral();
 }
 
 jar {
@@ -26,4 +27,5 @@ dependencies {
 	
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }

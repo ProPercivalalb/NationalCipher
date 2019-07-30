@@ -16,49 +16,49 @@ import nationalcipher.cipher.decrypt.methods.Solution;
  */
 public interface IKeySearchAttack<K> extends IAttackMethod<K> {
 
-    default DecryptionTracker tryKeySearch(DecryptionTracker tracker,  int minLength, int maxLength) {
+    default DecryptionTracker tryKeySearch(DecryptionTracker tracker, int length) {
         tracker.getProgress().setIndeterminate(true);
         
-        stop:
-        for (int length = minLength; length <= maxLength; length++) {
+        char[] parent = new char[length];
+        Arrays.fill(parent, 'A');
 
-            char[] parent = new char[length];
-            Arrays.fill(parent, 'A');
+        Solution currentBestSolution = Solution.WORST_SOLUTION;
 
-            Solution currentBestSolution = Solution.WORST_SOLUTION;
-
-            while (true) {
-                boolean change = false;
-                for (int i = 0; i < length; i++) {
-                    for (char j = 'A'; j <= 'Z'; j += this.getCharStep()) {
-                        if (tracker.shouldStop()) {
-                            break stop;
-                        }
-                        
-                        char previous = parent[i];
-                        parent[i] = j;
-
-                        tracker.lastSolution = this.toSolution(tracker, this.useStringGetKey(tracker, new String(parent)));
-                        tracker.addSolution(tracker.lastSolution);
-
-                        if (tracker.lastSolution.score >= currentBestSolution.score) {
-                            currentBestSolution = tracker.lastSolution;
-                            change = previous != j;
-                        } else { // Last solution is worst so revert key
-                            parent[i] = previous;
-                        }
-
-                        this.onPostIteration(tracker, tracker.iteration);
+        while (true) {
+            boolean change = false;
+            for (int i = 0; i < length; i++) {
+                for (char j = 'A'; j <= 'Z'; j += this.getCharStep()) {
+                    if (tracker.shouldStop()) {
+                        return tracker;
                     }
-                }
+                    
+                    //TODO if (!this.hasDuplicateLetters() && )
+                        
+                    char previous = parent[i];
+                    parent[i] = j;
 
-                // No change to the key resulted in a better solution so we must have found the solution
-                if (!change)
-                    break;
+                    tracker.lastSolution = this.toSolution(tracker, this.useStringGetKey(tracker, new String(parent)));
+                    tracker.addSolution(tracker.lastSolution);
+
+                    if (tracker.lastSolution.score >= currentBestSolution.score) {
+                        currentBestSolution = tracker.lastSolution;
+                        currentBestSolution.bake();
+                        change = previous != j;
+                    } else { // Last solution is worst so revert key
+                        parent[i] = previous;
+                    }
+
+                    this.onPostIteration(tracker, tracker.iteration);
+                }
             }
 
-            this.updateIfBetterThanBest(tracker, currentBestSolution, () -> this.useStringGetKey(tracker, new String(parent)));
+            // No change to the key resulted in a better solution so we must have found the solution
+            if (!change) {
+                break;
+            }
         }
+
+        this.updateIfBetterThanBest(tracker, currentBestSolution, () -> this.useStringGetKey(tracker, new String(parent)));
         
         tracker.finish();
         return tracker;

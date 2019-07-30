@@ -1,15 +1,16 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 
 public class IntegerGenKeyType implements IKeyType<Integer> {
 
@@ -23,28 +24,42 @@ public class IntegerGenKeyType implements IKeyType<Integer> {
     }
 
     @Override
-    public Integer randomise(Object partialKey) {
+    public Integer randomise() {
         return RandomUtil.pickRandomElement(this.universe);
     }
 
     @Override
-    public boolean isValid(Object partialKey, Integer key) {
+    public boolean isValid(Integer key) {
         return this.universe.contains(key);
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Integer> consumer) {
-        this.universe.forEach(consumer);
+    public boolean iterateKeys(KeyFunction<Integer> consumer) {
+        for (Integer atom : universe) {
+            if (!consumer.apply(atom)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
-    public Integer alterKey(Object partialKey, Integer key) {
+    public Integer alterKey(Integer key) {
         return this.alterable ? RandomUtil.pickRandomElement(this.universe) : key;
     }
 
     @Override
     public BigInteger getNumOfKeys() {
         return BigInteger.valueOf(this.universe.size());
+    }
+    
+    @Override
+    public Integer parse(String input) throws ParseException {
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            throw new ParseException(input, 0);
+        }
     }
 
     public static Builder builder() {

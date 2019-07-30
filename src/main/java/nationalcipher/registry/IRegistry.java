@@ -63,6 +63,8 @@ public interface IRegistry<K, T> {
     public @Nonnull Collection<Entry<K, T>> getEntries();
 
     public void freeze();
+    
+    public boolean frozen();
 
     default void accept(K key, Consumer<T> fun) {
         this.getWrapped(key).ifPresent(v -> fun.accept(v));

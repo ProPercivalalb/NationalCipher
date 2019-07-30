@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import javalibrary.language.ILanguage;
@@ -52,7 +53,7 @@ public class Settings {
         this.useParallel = false;
 
         this.loadElements = new ArrayList<ILoadElement>();
-        this.gson = new Gson();
+        this.gson = new GsonBuilder().setPrettyPrinting().create();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> writeToFile()));
 
         new Thread(() -> {

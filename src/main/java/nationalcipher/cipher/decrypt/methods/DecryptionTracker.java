@@ -85,7 +85,7 @@ public class DecryptionTracker implements IDecryptionTracker {
             return;
 
         if (NationalCipherUI.topSolutions.addSolution(solution)) { // Added successfully
-            solution.bakeSolution();
+            solution.bake();
         }
     }
 

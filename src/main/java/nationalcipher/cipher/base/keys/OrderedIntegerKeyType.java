@@ -1,16 +1,17 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IRangedKeyBuilder;
+import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.decrypt.methods.KeyIterator;
 import nationalcipher.cipher.tools.KeyGeneration;
 import nationalcipher.cipher.tools.KeyManipulation;
@@ -32,7 +33,7 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public Integer[] randomise(Object partialKey) {
+    public Integer[] randomise() {
         BiFunction<Integer, Integer, Integer[]> func = this.repeats ? KeyGeneration::createRepeatingShortOrderKey : KeyGeneration::createShortOrderKey;
 
         int length = RandomUtil.pickRandomInt(this.min, this.max);
@@ -40,7 +41,7 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public boolean isValid(Object fullKey, Integer[] key) {
+    public boolean isValid(Integer[] key) {
         for (int i = 0; i < key.length; i++) {
             if (key[i] >= this.range.orElse(key.length) || key[i] < 0) {
                 return false;
@@ -55,14 +56,17 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
     }
 
     @Override
-    public void iterateKeys(Object partialKey, Consumer<Integer[]> consumer) {
+    public boolean iterateKeys(KeyFunction<Integer[]> consumer) {
         for (int length = this.min; length <= this.max; length++) {
-            KeyIterator.iterateIntegerArray(consumer, this.range.orElse(length), length, this.repeats);
+            if (!KeyIterator.iterateIntegerArray(consumer, this.range.orElse(length), length, this.repeats)) {
+                return false;
+            }
         }
+        return true;
     }
 
     @Override
-    public Integer[] alterKey(Object partialKey, Integer[] key) {
+    public Integer[] alterKey(Integer[] key) {
         return KeyManipulation.modifyOrder(key);
     }
 
@@ -90,6 +94,31 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
         }
         
         return total;
+    }
+    
+    @Override
+    public Integer[] parse(String input) throws ParseException {
+        if (input.startsWith("[") && input.endsWith("]")) {
+            String[] elements = input.substring(1, input.length() - 1).split(",");
+            Integer[] key = new Integer[elements.length];
+            for (int i = 0; i < elements.length; i++) {
+                try {
+                    key[i] = Integer.valueOf(elements[i]);
+                } catch (NumberFormatException e) {
+                    throw new ParseException(input, 0);
+                }
+            }
+            return key;
+        }
+        throw new ParseException(input, 0);
+    }
+    
+    public int getMin() {
+        return this.min;
+    }
+    
+    public int getMax() {
+        return this.max;
     }
 
     public static Builder builder() {

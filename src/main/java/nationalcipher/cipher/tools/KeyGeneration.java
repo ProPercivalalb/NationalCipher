@@ -17,15 +17,11 @@ public class KeyGeneration {
 
     public final static Character[] ALL_POLLUX_CHARS = PrimTypeUtil.toCharacterArray("X.-");
 
-    public final static Character[] ALL_36_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"); // 0-9
-                                                                                                                          // added
-    public final static Character[] ALL_27_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ#"); // #
-                                                                                                                 // added
+    public final static Character[] ALL_36_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"); // 0-9 added
+    public final static Character[] ALL_27_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ#"); // # added
     public final static Character[] ALL_26_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    public final static Character[] ALL_25_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWXYZ"); // J
-                                                                                                               // removed
-    public final static Character[] ALL_24_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWYZ"); // J & X
-                                                                                                              // removed
+    public final static Character[] ALL_25_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWXYZ"); // J removed
+    public final static Character[] ALL_24_CHARS = PrimTypeUtil.toCharacterArray("ABCDEFGHIKLMNOPQRSTUVWYZ"); // J & X removed
 
     public static String createRepeatingShortKey26(int length) {
         return createRepeatingShortKeyUniversal(ALL_26_CHARS, length);
