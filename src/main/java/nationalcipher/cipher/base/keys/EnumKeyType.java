@@ -3,6 +3,7 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
@@ -59,6 +60,15 @@ public class EnumKeyType<T extends Enum<?>> implements IKeyType<T> {
             }
         }
         throw new ParseException(input, 0);
+    }
+    
+    @Override
+    public String getHelp() {
+        StringJoiner joiner = new StringJoiner("|");
+        for (T atom : this.universe) {
+            joiner.add(atom.name());
+        }
+        return joiner.toString();
     }
 
     public static <T extends Enum<?>> Builder<T> builder(Class<T> enumType) {

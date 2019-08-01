@@ -3,11 +3,11 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
-import nationalcipher.api.IRangedKeyBuilder;
 import nationalcipher.cipher.base.KeyFunction;
 
 public class BooleanKeyType implements IKeyType<Boolean> {
@@ -68,6 +68,15 @@ public class BooleanKeyType implements IKeyType<Boolean> {
         } catch (NumberFormatException e) {}
 
         throw new ParseException(input, 0);
+    }
+    
+    @Override
+    public String getHelp() {
+        StringJoiner joiner = new StringJoiner("|");
+        for (Boolean value : this.universe) {
+            joiner.add(Boolean.toString(value));
+        }
+        return joiner.toString();
     }
 
     public static Builder builder() {

@@ -2,6 +2,7 @@ package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.StringJoiner;
 
 import nationalcipher.api.IKeyType;
 import nationalcipher.cipher.base.KeyFunction;
@@ -42,6 +43,11 @@ public class ConstantKeyType<T> implements IKeyType<T> {
     @Override
     public T parse(String input) throws ParseException {
         return this.constant;
+    }
+    
+    @Override
+    public String getHelp() {
+        return this.constant.toString();
     }
 
     public static <T> Builder<T> builder(T constant) {

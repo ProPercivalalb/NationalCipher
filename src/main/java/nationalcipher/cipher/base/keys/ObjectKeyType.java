@@ -70,6 +70,17 @@ public class ObjectKeyType<T> implements IKeyType<T> {
         }
         throw new ParseException(input, 0);
     }
+    
+    @Override
+    public String getHelp() {
+        StringBuilder builder = new StringBuilder();
+        for (T atom : this.universe) {
+            if (atom instanceof Character) {
+                builder.append(atom);
+            }
+        }
+        return builder.toString();
+    }
 
     public static <T> Builder<T> builder() {
         return new Builder<>();

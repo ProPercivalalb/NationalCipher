@@ -3,6 +3,7 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.function.BiFunction;
 
 import javalibrary.streams.PrimTypeUtil;
@@ -100,6 +101,11 @@ public class VariableStringKeyType implements IKeyType<String> {
     @Override
     public String parse(String input) throws ParseException {
         return input;
+    }
+    
+    @Override
+    public String getHelp() {
+        return "keyword";
     }
 
     public static Builder builder() {

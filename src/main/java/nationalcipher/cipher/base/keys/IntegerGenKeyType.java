@@ -61,6 +61,11 @@ public class IntegerGenKeyType implements IKeyType<Integer> {
             throw new ParseException(input, 0);
         }
     }
+    
+    @Override
+    public String getHelp() {
+        return "int";
+    }
 
     public static Builder builder() {
         return new Builder();

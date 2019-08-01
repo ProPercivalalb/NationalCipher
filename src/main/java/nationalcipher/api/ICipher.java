@@ -91,7 +91,7 @@ public interface ICipher<K> {
     }
     
     @Nullable
-    default String getHelp(String prefix) {
+    default String getHelp() {
         return null;
     }
 

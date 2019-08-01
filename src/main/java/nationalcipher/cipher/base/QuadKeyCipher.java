@@ -4,11 +4,12 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
 import nationalcipher.cipher.base.keys.QuadKey;
-import nationalcipher.cipher.base.keys.QuinKey;
 
 public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B extends IKeyBuilder<S>, C extends IKeyBuilder<T>, D extends IKeyBuilder<N>> implements ICipher<QuadKey<F, S, T, N>> {
 
@@ -102,6 +103,11 @@ public abstract class QuadKeyCipher<F, S, T, N, A extends IKeyBuilder<F>, B exte
         }
         
         return QuadKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]), this.thirdType.parse(parts[2]), this.fourthType.parse(parts[3]));
+    }
+    
+    @Nullable
+    public String getHelp() {
+        return String.join(" ",  this.firstType.getHelp(), this.secondType.getHelp(), this.thirdType.getHelp(), this.fourthType.getHelp());
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {

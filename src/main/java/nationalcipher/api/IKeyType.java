@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.function.Function;
 
-import javax.annotation.Nullable;
-
 import nationalcipher.cipher.base.KeyFunction;
 
 public interface IKeyType<K> {
@@ -32,10 +30,13 @@ public interface IKeyType<K> {
     default String prettifyKey(K key) {
         return key.toString();
     }
-    
-    //K parse(String input) throws ParseException;
+
     default K parse(String input) throws ParseException {
-        return this.randomise();
+        throw new UnsupportedOperationException();
+    }
+
+    default String getHelp() {
+        return this.getClass().getSimpleName();
     }
     
     public interface IKeyBuilder<K> {

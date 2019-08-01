@@ -2,7 +2,6 @@ package nationalcipher.cipher.decrypt.anew;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 
 import javalibrary.language.ILanguage;
 import javalibrary.list.DynamicResultList;

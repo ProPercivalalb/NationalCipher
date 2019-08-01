@@ -62,6 +62,11 @@ public class FullStringKeyType implements IKeyType<String> {
         return input;
     }
     
+    @Override
+    public String getHelp() {
+        return "key";
+    }
+    
     public static Builder builder() {
         return new Builder();
     }

@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
@@ -67,6 +69,11 @@ public abstract class BiKeyCipher<F, S, A extends IKeyBuilder<F>, B extends IKey
         }
         
         return BiKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]));
+    }
+    
+    @Nullable
+    public String getHelp() {
+        return String.join(" ",  this.firstType.getHelp(), this.secondType.getHelp());
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {

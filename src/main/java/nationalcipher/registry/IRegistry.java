@@ -86,4 +86,5 @@ public interface IRegistry<K, T> {
 
         public @Nonnull K getKey(IRegistry<K, T> reg, T value);
     }
+
 }

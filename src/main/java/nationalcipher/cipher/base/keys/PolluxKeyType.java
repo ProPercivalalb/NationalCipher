@@ -2,7 +2,6 @@ package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Optional;
 
 import javalibrary.streams.PrimTypeUtil;

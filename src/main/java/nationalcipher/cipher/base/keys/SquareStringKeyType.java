@@ -1,6 +1,7 @@
 package nationalcipher.cipher.base.keys;
 
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.Optional;
 
 import javalibrary.math.MathUtil;
@@ -58,6 +59,16 @@ public class SquareStringKeyType implements IKeyType<String> {
     @Override
     public BigInteger getNumOfKeys() {
         return MathUtil.factorialBig(BigInteger.valueOf(this.alphabet.length));
+    }
+    
+    @Override
+    public String parse(String input) throws ParseException {
+        return input;
+    }
+    
+    @Override
+    public String getHelp() {
+        return "keysquare"+this.rows+"x"+this.columns;
     }
 
     public static Builder builder() {

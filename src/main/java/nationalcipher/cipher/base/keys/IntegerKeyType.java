@@ -3,7 +3,6 @@ package nationalcipher.cipher.base.keys;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.IKeyType;
@@ -59,6 +58,12 @@ public class IntegerKeyType implements IKeyType<Integer> {
         } catch (NumberFormatException e) {
             throw new ParseException(input, 0);
         }
+    }
+    
+    @Override
+    public String getHelp() {
+        StringBuilder builder = new StringBuilder();
+        return this.min+ "-"+this.max;
     }
     
     public int getMin() {

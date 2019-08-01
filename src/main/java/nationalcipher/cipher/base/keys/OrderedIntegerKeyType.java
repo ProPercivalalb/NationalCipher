@@ -113,6 +113,11 @@ public class OrderedIntegerKeyType implements IKeyType<Integer[]> {
         throw new ParseException(input, 0);
     }
     
+    @Override
+    public String getHelp() {
+        return "array";
+    }
+    
     public int getMin() {
         return this.min;
     }

@@ -4,10 +4,11 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IKeyType;
 import nationalcipher.api.IKeyType.IKeyBuilder;
-import nationalcipher.cipher.base.keys.BiKey;
 import nationalcipher.cipher.base.keys.TriKey;
 
 public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends IKeyBuilder<S>, C extends IKeyBuilder<T>> implements ICipher<TriKey<F, S, T>> {
@@ -88,6 +89,11 @@ public abstract class TriKeyCipher<F, S, T, A extends IKeyBuilder<F>, B extends 
         }
         
         return TriKey.of(this.firstType.parse(parts[0]), this.secondType.parse(parts[1]), this.thirdType.parse(parts[2]));
+    }
+    
+    @Nullable
+    public String getHelp() {
+        return String.join(" ",  this.firstType.getHelp(), this.secondType.getHelp(), this.thirdType.getHelp());
     }
     
     public IKeyBuilder<F> limitDomainForFirstKey(A firstKey) {

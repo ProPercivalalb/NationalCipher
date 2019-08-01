@@ -11,12 +11,8 @@ import javalibrary.util.ArrayUtil;
 import javalibrary.util.RandomUtil;
 import nationalcipher.api.ICipher;
 import nationalcipher.api.IFormat;
-import nationalcipher.api.IKeyType;
-import nationalcipher.api.IKeyType.IKeyBuilder;
-import nationalcipher.cipher.base.BiKeyCipher;
 import nationalcipher.cipher.base.KeyFunction;
 import nationalcipher.cipher.base.keys.BiKey;
-import nationalcipher.cipher.base.keys.IntegerKeyType;
 import nationalcipher.cipher.base.keys.OrderedIntegerKeyType;
 
 public class RedefenceCipher implements ICipher<BiKey<Integer[], Integer>> {

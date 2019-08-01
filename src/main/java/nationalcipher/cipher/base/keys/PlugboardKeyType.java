@@ -70,6 +70,11 @@ public class PlugboardKeyType implements IKeyType<Integer[]> {
         
         return true;
     }
+    
+    @Override
+    public String getHelp() {
+        return "Plugs:AB-UJ-DH";
+    }
 
     @Override
     public String prettifyKey(Integer[] key) {
